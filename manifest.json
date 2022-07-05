@@ -1,0 +1,13 @@
+{
+    "manifest_version": 2,
+    "name": "CharTracker",
+    "version": "0.0.1",
+  
+    "description": "Completely automated reading statistics and tracking",
+
+    "background": {
+      "persistent": true,
+      "scripts": ["background.js"]
+    }
+  }
+  

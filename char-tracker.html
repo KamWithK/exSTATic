@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style type="text/tailwindcss">
+    @layer components {
+        .sentence-entry {
+            @apply flex items-center dark:bg-slate-900 p-4 gap-4;
+        }
+        .circle-bullet-point {
+            @apply rounded-full h-12 w-12 bg-indigo-500 flex-none;
+        }
+        .sentence {
+            @apply inline-block text-left dark:text-slate-400;
+        }
+    }
+  </style>
+</head>
+
+<body class="dark:bg-slate-800 px-12">
+  <h1 class="text-5xl text-indigo-400 py-6">Game</h1> <!-- REPLACE WITH GAME NAME -->
+
+  <div class="flex flex-col gap-2">
+    <!-- <div class="sentence-entry">
+        <svg class="circle-bullet-point"></svg>
+        <p class="sentence">「稽古は夜までかかるわよ。夕方には開けられないんだから、お客を増やすしかないじゃない」</p>
+    </div> -->
+    <!-- POPULATE -->
+  </div>
+</body>
+</html>

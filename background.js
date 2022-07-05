@@ -17,9 +17,6 @@ function connectionOpened(event) {
 //     "game_path": {
 //         "name": "",
 //         "dates_read_on": [],
-//         "lines": {
-//             "id": "line"
-//         },
 //         "last_line_added": "id"
 //         "date": {
 //             "lines_read": 0,
@@ -28,7 +25,10 @@ function connectionOpened(event) {
 //             "last_line_recieved": ...,
 //             "last_session_start": ...
 //         },
-//     }
+//     },
+//     "game_path_lines": {
+//         "id": "line"
+//     },
 // }
 
 function lineFetched(event) {
@@ -50,6 +50,7 @@ function lineFetched(event) {
         if (Object.keys(result).length === 0) {
             var game_entry = {}
             game_entry[data["process_path"]] = newGameEntry(data["sentence"], date, time)
+            game_entry[data["process_path"] + "_lines"] = {0: data["sentence"]}
             chrome.storage.local.set(game_entry);
         } else {
         }
@@ -60,9 +61,6 @@ function newGameEntry(line, date, time) {
     var game_entry = {
         "name": "",
         "dates_read_on": [date],
-        "lines": {
-            0: line
-        },
         "last_line_added": 0
     };
     

@@ -18,13 +18,13 @@ function connectionOpened(event) {
 //         "name": "",
 //         "dates_read_on": [],
 //         "last_line_added": "id"
-//         "date": {
-//             "lines_read": 0,
-//             "chars_read": 0,
-//             "time_read": 0,
-//             "last_line_recieved": ...,
-//             "last_session_start": ...
-//         },
+//     },
+//     "game_path_date": {
+//         "lines_read": 0,
+//         "chars_read": 0,
+//         "time_read": 0,
+//         "last_line_recieved": ...,
+//         "last_session_start": ...
 //     },
 //     "game_path_lines": {
 //         "id": "line"
@@ -49,9 +49,8 @@ function lineFetched(event) {
         // TODO: Otherwise update the existing one
         if (Object.keys(result).length === 0) {
             var game_entry = {}
-            game_entry[data["process_path"]] = newGameEntry(
-                data["process_path"], data["sentence"], date, time
-            )
+            game_entry[data["process_path"]] = newGameEntry(data["process_path"], date)
+            game_entry[data["process_path"] + "_" + date] = newDateEntry(data["sentence"], time)
             game_entry[data["process_path"] + "_lines"] = {0: data["sentence"]}
             chrome.storage.local.set(game_entry);
         } else {
@@ -59,14 +58,12 @@ function lineFetched(event) {
     });
 }
 
-function newGameEntry(name, line, date, time) {
+function newGameEntry(name, date) {
     var game_entry = {
         "name": name,
         "dates_read_on": [date],
         "last_line_added": 0
     };
-    
-    game_entry[date] = newDateEntry(line, time)
 
     return game_entry
 }

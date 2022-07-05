@@ -49,7 +49,9 @@ function lineFetched(event) {
         // TODO: Otherwise update the existing one
         if (Object.keys(result).length === 0) {
             var game_entry = {}
-            game_entry[data["process_path"]] = newGameEntry(data["sentence"], date, time)
+            game_entry[data["process_path"]] = newGameEntry(
+                data["process_path"], data["sentence"], date, time
+            )
             game_entry[data["process_path"] + "_lines"] = {0: data["sentence"]}
             chrome.storage.local.set(game_entry);
         } else {
@@ -57,9 +59,9 @@ function lineFetched(event) {
     });
 }
 
-function newGameEntry(line, date, time) {
+function newGameEntry(name, line, date, time) {
     var game_entry = {
-        "name": "",
+        "name": name,
         "dates_read_on": [date],
         "last_line_added": 0
     };

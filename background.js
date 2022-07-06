@@ -53,39 +53,46 @@ function lineFetched(event) {
     data = JSON.parse(event.data)
     console.log("Raw Data: ", data)
 
+    process_path = data["process_path"]
+    line = data["sentence"]
+
     // Update or create a game entry
     // Each game is stored as numerous small chunks of data
-    updatedGameEntry(data["process_path"], data["sentence"], date, time)
-}
-
-function updatedGameEntry(process_path, line, date, time) {
-    // NOTE: Callbacks within callbacks here is necessary
-    // Required to ensure operations do not intefere with each other
     chrome.storage.local.get(
         [process_path, process_path + "_" + date, process_path + "_lines"],
         function(game_entry) {
             if (Object.keys(game_entry).length === 0) {
-                var game_entry = {}
-                game_entry[process_path] = newGameEntry(process_path, date)
-                game_entry[process_path + "_" + date] = newDateEntry(line, time)
-                game_entry[process_path + "_lines"] = {0: line}
-
-                chrome.storage.local.set(game_entry)
+                createGameEntry(process_path, line, date, time)
             } else {
-                game_main_entry = game_entry[process_path]
-                if (!game_main_entry["dates_read_on"].includes(date)) {
-                    game_main_entry["dates_read_on"].push(date)
-                }
-                game_main_entry["last_line_added"] += 1
-                dates_read_on = structuredClone(game_main_entry["dates_read_on"])
-
-                game_entry[process_path + "_lines"][game_main_entry["last_line_added"]] = line
-
-                // Function will call set on entire game entry
-                updateDateGameEntry(game_entry, dates_read_on, process_path, line, date, time)
+                updatedGameEntry(game_entry, process_path, line, date, time)
             }
         }
     )
+}
+
+function createGameEntry(process_path, line, date, time) {
+    var game_entry = {}
+    game_entry[process_path] = newGameEntry(process_path, date)
+    game_entry[process_path + "_" + date] = newDateEntry(line, time)
+    game_entry[process_path + "_lines"] = {0: line}
+
+    chrome.storage.local.set(game_entry)
+}
+
+function updatedGameEntry(game_entry, process_path, line, date, time) {
+    // NOTE: Callbacks within callbacks here is necessary
+    // Required to ensure operations do not intefere with each other
+    game_main_entry = game_entry[process_path]
+    if (!game_main_entry["dates_read_on"].includes(date)) {
+        game_main_entry["dates_read_on"].push(date)
+    }
+    game_main_entry["last_line_added"] += 1
+    dates_read_on = structuredClone(game_main_entry["dates_read_on"])
+
+    game_entry[process_path + "_lines"][game_main_entry["last_line_added"]] = line
+
+    // Function will call set on entire game entry
+    updateDateGameEntry(game_entry, dates_read_on, process_path, line, date, time)
 }
 
 function newGameEntry(name, date) {

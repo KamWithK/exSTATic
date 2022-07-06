@@ -36,7 +36,8 @@ function connectionOpened(event) {
 //         "last_line_recieved": ...,
 //         "last_session_start": ...
 //     },
-//     ["game_path", 0]: "line"
+//     ["game_path", 0]: "line",
+//     "previously_hooked": "game_path"
 // }
 
 function lineFetched(event) {
@@ -52,6 +53,9 @@ function lineFetched(event) {
 
     process_path = data["process_path"]
     line = data["sentence"]
+
+    // Set this as last hooked game
+    chrome.storage.local.set({"previously_hooked": process_path})
 
     // Update or create a game entry
     // Each game is stored as numerous small chunks of data

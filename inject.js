@@ -1,5 +1,17 @@
 console.log("Injected")
 
+function setNameTitle() {
+    chrome.storage.local.get("previously_hooked", function(game_entry) {
+        process_path = game_entry["previously_hooked"]
+    
+        chrome.storage.local.get(process_path, function(game_entry) {
+            game_name_title = document.getElementById("game_name").innerHTML = game_entry[process_path]["name"]
+        })
+    })
+}
+
+setNameTitle()
+
 function parseLineKey(key, old_value, new_value) {
     try {
         parsed = JSON.parse(key)
@@ -37,6 +49,8 @@ chrome.storage.local.onChanged.addListener(function (changes, _) {
         key = parseLineKey(key, oldValue, newValue)
         
         if (key) {
+            setNameTitle()
+            
             process_path = key[0]
             line_id = key[1]
             line = newValue

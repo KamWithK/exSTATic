@@ -14,7 +14,7 @@ function parseLineKey(key, old_value, new_value) {
     return false
 }
 
-chrome.storage.onChanged.addListener(function (changes, _) {
+chrome.storage.local.onChanged.addListener(function (changes, _) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
         key = parseLineKey(key, oldValue, newValue)
         if (key) {

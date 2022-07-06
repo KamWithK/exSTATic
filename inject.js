@@ -18,7 +18,9 @@ async function previousGameEntry() {
 
 async function setNameTitle() {
     game_entry = await previousGameEntry()
-    document.getElementById("game_name").innerHTML = game_entry[Object.keys(game_entry)[0]]["name"]
+    game_name = game_entry[Object.keys(game_entry)[0]]["name"]
+    document.getElementById("game_name").innerHTML = game_name
+    document.title = "CharTracker | " + game_name
 }
 
 setNameTitle()

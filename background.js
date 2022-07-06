@@ -68,18 +68,17 @@ function lineFetched(event) {
     )
 }
 
-function createGameEntry(process_path, line, date, time) {
+async function createGameEntry(process_path, line, date, time) {
     var game_entry = {}
     game_entry[process_path] = newGameEntry(process_path, date)
-    game_entry[process_path + "_" + date] = newDateEntry(line, time)
+    game_entry[process_path + "_" + date] = await newDateEntry(process_path, line, time)
     game_entry[process_path + "_0"] = line
 
     chrome.storage.local.set(game_entry)
 }
 
-function updatedGameEntry(game_entry, process_path, line, date, time) {
-    // NOTE: Callbacks within callbacks here is necessary
-    // Required to ensure operations do not intefere with each other
+async function updatedGameEntry(game_entry, process_path, line, date, time) {
+    // Update the main entry
     game_main_entry = game_entry[process_path]
     if (!game_main_entry["dates_read_on"].includes(date)) {
         game_main_entry["dates_read_on"].push(date)
@@ -87,10 +86,62 @@ function updatedGameEntry(game_entry, process_path, line, date, time) {
     game_main_entry["last_line_added"] += 1
     dates_read_on = structuredClone(game_main_entry["dates_read_on"])
 
+    // Add the recieved line
     game_entry[process_path + "_" + game_main_entry["last_line_added"]] = line
 
-    // Function will call set on entire game entry
-    updateDateGameEntry(game_entry, dates_read_on, process_path, line, date, time)
+    // Update the daily statistics entry
+    game_date_entry = game_entry[process_path + "_" + date]
+    
+    // The average/estimate is calculated first even though its added afterwards
+    // Ensures only previous history effects current measures
+    elapsed_time = time - game_date_entry["last_line_recieved"]
+    estimate_read_time = await estimateLineReadtime(dates_read_on, process_path, line)
+    
+    game_date_entry["lines_read"] += lineSplitCount(line)
+    game_date_entry["chars_read"] += charsInLine(line)
+    game_date_entry["last_line_recieved"] = time
+
+    // Check whether some multiple of the average (or worst case) read time was taken
+    // If this was not the case then a break was likely taken
+    if (elapsed_time <= (MAX_TIME_MULTIPLE * estimate_read_time)) {
+        game_date_entry["time_read"] += elapsed_time
+    } else {
+        game_date_entry["time_read"] += estimate_read_time
+        game_date_entry["last_session_start"] = time
+    }
+    
+    chrome.storage.local.set(game_entry)
+}
+
+async function recentAverageCharSpeed(dates_read_on, process_path) {
+    // When nothing can be found use a reasonable slow speed measure
+    if (dates_read_on.length == 0) {
+        return MIN_CHAR_READTIME
+    }
+
+    last_date = dates_read_on.pop()
+
+    char_speed = new Promise((resolve, reject) => {
+        chrome.storage.local.get(process_path + "_" + last_date, function(last_game_entry) {
+            last_game_date_entry = last_game_entry[process_path + "_" + last_date]
+
+            time_read = last_game_date_entry["time_read"]
+            chars_read = last_game_date_entry["chars_read"]
+
+            if (time_read >= MIN_TIME_READ) {
+                resolve(time_read / chars_read)
+            }
+            else {
+                resolve(predictedLineReadTime(dates_read_on, process_path))
+            }
+        })
+    })
+
+    return char_speed
+}
+
+async function estimateLineReadtime(dates_read_on, process_path, line) {
+    return (await recentAverageCharSpeed(dates_read_on, process_path)) * charsInLine(line)
 }
 
 function newGameEntry(name, date) {
@@ -103,54 +154,14 @@ function newGameEntry(name, date) {
     return game_entry
 }
 
-function newDateEntry(line, time) {
+async function newDateEntry(process_path, line, time) {
     return {
         "lines_read": lineSplitCount(line),
         "chars_read": charsInLine(line),
-        "time_read": 0, // TODO: Use estimate
+        "time_read": await estimateLineReadtime([], process_path, line),
         "last_line_recieved": time,
         "last_session_start": time
     }
-}
-
-function updateDateGameEntry(game_entry, dates_read_on, process_path, line, date, time) {
-    game_date_entry = game_entry[process_path + "_" + date]
-    elapsed_time = time - game_date_entry["last_line_recieved"]
-
-    game_date_entry["last_line_recieved"] = time
-
-    // Look from most to least recent days
-    // Pick the most recent day with the min read time satisfied
-    // Base the estimated line read time off its average reading speeding
-    // If one can't be found then use a reasonable maximum read speed
-    last_date = dates_read_on.pop()
-    chrome.storage.local.get(process_path + "_" + last_date, function(last_game_entry) {
-        last_game_date_entry = last_game_entry[process_path + "_" + last_date]
-
-        time_read = last_game_date_entry["time_read"]
-        chars_read = last_game_date_entry["chars_read"]
-
-        if (time_read >= MIN_TIME_READ || dates_read_on.length === 0) {
-            char_speed = time_read >= MIN_TIME_READ ? time_read / chars_read : MIN_CHAR_READTIME
-            estimate_read_time = charsInLine(line) * char_speed
-            
-            game_date_entry["lines_read"] += lineSplitCount(line)
-            game_date_entry["chars_read"] += charsInLine(line)
-            
-            is_reading = elapsed_time <= (MAX_TIME_MULTIPLE * estimate_read_time)
-            if (is_reading) {
-                game_date_entry["time_read"] += elapsed_time
-            } else {
-                game_date_entry["time_read"] += estimate_read_time
-                game_date_entry["last_session_start"] = time
-            }
-            
-            chrome.storage.local.set(game_entry)
-        }
-        else {
-            updateDateGameEntry(game_entry, dates_read_on, process_path, line, date, time)
-        }
-    })
 }
 
 function lineSplitCount(line) {

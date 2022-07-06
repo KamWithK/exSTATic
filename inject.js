@@ -35,7 +35,7 @@ function parseLineKey(key, old_value, new_value) {
     return false
 }
 
-function insertLine(line) {
+function insertLine(line, line_id) {
     entry_holder = document.getElementById("entry_holder")
     
     new_div = document.createElement("div")
@@ -45,7 +45,8 @@ function insertLine(line) {
     new_div.classList.add("sentence-entry")
     new_svg.classList.add("circle-bullet-point")
     new_p.classList.add("sentence")
-    
+
+    new_div.dataset.line_id = line_id    
     new_p.innerHTML = line
     
     entry_holder.appendChild(new_div)
@@ -62,8 +63,8 @@ async function bulkLineAdd() {
 
     chrome.storage.local.get(id_queries, function(game_date_entries) {
         for (let [key, line] of Object.entries(game_date_entries)) {
-            id = JSON.parse(key)[1]
-            insertLine(line)
+            line_id = JSON.parse(key)[1]
+            insertLine(line, line_id)
           }
     })
 }
@@ -80,7 +81,7 @@ chrome.storage.local.onChanged.addListener(function (changes, _) {
             line_id = key[1]
             line = newValue
 
-            insertLine(line)
+            insertLine(line, line_id)
         }
     }
 })

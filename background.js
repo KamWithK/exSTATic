@@ -36,9 +36,7 @@ function connectionOpened(event) {
 //         "last_line_recieved": ...,
 //         "last_session_start": ...
 //     },
-//     "game_path_lines": {
-//         "id": "line"
-//     },
+//     "game_path_0": "line"
 // }
 
 function lineFetched(event) {
@@ -59,7 +57,7 @@ function lineFetched(event) {
     // Update or create a game entry
     // Each game is stored as numerous small chunks of data
     chrome.storage.local.get(
-        [process_path, process_path + "_" + date, process_path + "_lines"],
+        [process_path, process_path + "_" + date],
         function(game_entry) {
             if (Object.keys(game_entry).length === 0) {
                 createGameEntry(process_path, line, date, time)
@@ -74,7 +72,7 @@ function createGameEntry(process_path, line, date, time) {
     var game_entry = {}
     game_entry[process_path] = newGameEntry(process_path, date)
     game_entry[process_path + "_" + date] = newDateEntry(line, time)
-    game_entry[process_path + "_lines"] = {0: line}
+    game_entry[process_path + "_0"] = line
 
     chrome.storage.local.set(game_entry)
 }
@@ -89,7 +87,7 @@ function updatedGameEntry(game_entry, process_path, line, date, time) {
     game_main_entry["last_line_added"] += 1
     dates_read_on = structuredClone(game_main_entry["dates_read_on"])
 
-    game_entry[process_path + "_lines"][game_main_entry["last_line_added"]] = line
+    game_entry[process_path + "_" + game_main_entry["last_line_added"]] = line
 
     // Function will call set on entire game entry
     updateDateGameEntry(game_entry, dates_read_on, process_path, line, date, time)

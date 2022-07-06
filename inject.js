@@ -1,13 +1,22 @@
 console.log("Injected")
 
-function setNameTitle() {
-    chrome.storage.local.get("previously_hooked", function(game_entry) {
-        process_path = game_entry["previously_hooked"]
-    
-        chrome.storage.local.get(process_path, function(game_entry) {
-            game_name_title = document.getElementById("game_name").innerHTML = game_entry[process_path]["name"]
+async function previousGameEntry() {
+    return new Promise((resolve, _) => {
+        chrome.storage.local.get("previously_hooked", function(game_entry) {
+            if (game_entry === undefined || game_entry["previously_hooked"] === undefined) {
+                reject()
+            }
+
+            chrome.storage.local.get(game_entry["previously_hooked"], function(game_entry) {
+                resolve(game_entry)
+            })
         })
     })
+}
+
+async function setNameTitle() {
+    game_entry = await previousGameEntry()
+    document.getElementById("game_name").innerHTML = game_entry[Object.keys(game_entry)[0]]["name"]
 }
 
 setNameTitle()
@@ -44,13 +53,29 @@ function insertLine(line) {
     new_div.appendChild(new_p)
 }
 
+async function bulkLineAdd() {
+    game_entry = await previousGameEntry()
+    process_path = Object.keys(game_entry)[0]
+    max_line_id = game_entry[process_path]["last_line_added"]
+
+    id_queries = [...Array(max_line_id + 1).keys()].map(id => JSON.stringify([process_path, id]))
+
+    chrome.storage.local.get(id_queries, function(game_date_entries) {
+        for (let [key, line] of Object.entries(game_date_entries)) {
+            id = JSON.parse(key)[1]
+            insertLine(line)
+          }
+    })
+}
+bulkLineAdd()
+
 chrome.storage.local.onChanged.addListener(function (changes, _) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
         key = parseLineKey(key, oldValue, newValue)
         
         if (key) {
             setNameTitle()
-            
+
             process_path = key[0]
             line_id = key[1]
             line = newValue

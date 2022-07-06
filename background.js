@@ -47,7 +47,6 @@ function lineFetched(event) {
 
     // Parse provided data
     // Should contain sentence and executable (process) path
-    // TODO: Check
     data = JSON.parse(event.data)
     console.log("Raw Data: ", data)
 

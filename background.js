@@ -36,7 +36,7 @@ function connectionOpened(event) {
 //         "last_line_recieved": ...,
 //         "last_session_start": ...
 //     },
-//     "game_path_0": "line"
+//     ["game_path", 0]: "line"
 // }
 
 function lineFetched(event) {
@@ -71,7 +71,7 @@ async function createGameEntry(process_path, line, date, time) {
     var game_entry = {}
     game_entry[process_path] = newGameEntry(process_path, date)
     game_entry[process_path + "_" + date] = await newDateEntry(process_path, line, time)
-    game_entry[process_path + "_0"] = line
+    game_entry[JSON.stringify([process_path, 0])] = line
 
     chrome.storage.local.set(game_entry)
 }
@@ -86,7 +86,7 @@ async function updatedGameEntry(game_entry, process_path, line, date, time) {
     dates_read_on = structuredClone(game_main_entry["dates_read_on"])
 
     // Add the recieved line
-    game_entry[process_path + "_" + game_main_entry["last_line_added"]] = line
+    game_entry[JSON.stringify([process_path, game_main_entry["last_line_added"]])] = line
 
     // Update the daily statistics entry
     game_date_entry = game_entry[process_path + "_" + date]

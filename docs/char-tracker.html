@@ -13,7 +13,7 @@
             @apply flex items-center dark:bg-slate-900 p-4 gap-4;
         }
         .circle-bullet-point {
-            @apply rounded-full h-12 w-12 bg-indigo-500 flex-none;
+            @apply rounded-full h-2 w-2 bg-indigo-500 m-1 flex-none;
         }
         .sentence {
             @apply grow inline-block text-left dark:text-slate-400;
@@ -21,12 +21,32 @@
         .delete-button {
           @apply rounded-full inline-flex dark:text-indigo-500 dark:border-indigo-500 p-2 hover:bg-indigo-700 hover:text-white;
         }
+        .stat-numbers {
+          @apply font-mono text-base;
+        }
+        .stat-annotation {
+          @apply text-xs tracking-tighter;
+        }
     }
   </style>
 </head>
 
 <body class="dark:bg-slate-800 px-12">
-  <h1 id="game_name" class="text-5xl text-indigo-400 py-6">Game</h1> <!-- REPLACE WITH GAME NAME -->
+  <div class="flex justify-center justify-items-start">
+    <h1 id="game_name" class="grow text-5xl text-indigo-400 py-6">Game</h1> <!-- REPLACE WITH GAME NAME -->
+
+    <div class="flex items-center gap-2 m-3 p-3 bg-indigo-400">
+      <div id="chars_read" class="stat-numbers">000,000</div>
+      <div class="stat-annotation">Chars</div>
+      <span class="material-icons">arrow_downward</span>
+      <div id="elapsed_time" class="stat-numbers">00:00:00</div>
+      <div class="stat-annotation">Elapsed</div>
+      <span class="material-icons">arrow_upward</span>
+      <div id="chars_per_hour" class="stat-numbers">00,000</div>
+      <div class="stat-annotation">Chars / Hour</div>
+      <span class="material-icons">bolt</span> <!-- bedtime off, bolt on -->
+    </div>
+  </div>
 
   <div id="entry_holder" class="flex flex-col gap-2">
     <!-- <div class="sentence-entry">

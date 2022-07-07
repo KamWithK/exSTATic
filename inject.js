@@ -39,6 +39,45 @@ function parseLineKey(key, old_value, new_value) {
     return false
 }
 
+function charsInLine(line) {
+    return line.length
+}
+
+function lineSplitCount(line) {
+    line.split("\n")
+    return line.split("\n").length
+}
+
+function deleteLine(event) {
+    confirmed = confirm(
+        "Are you sure you'd like to delete this line?\nChar and line statistics will be modified accordingly however time read won't change..."
+    )
+
+    if (confirmed) {
+        element_div = event["target"].parentNode
+        
+        line_id = element_div.dataset.line_id
+        line_key = JSON.stringify([previous_game, Number.parseInt(line_id)])
+
+        chrome.storage.local.get([line_key, previous_game], function(game_entry) {
+            line = game_entry[line_key]
+
+            delete game_entry[line_key]
+            chrome.storage.local.remove(line_key)
+
+            // TODO: Remove assumption that this was read today or ensure it's true
+            game_date_key = previous_game + "_" + game_entry[previous_game]["dates_read_on"][0]
+            chrome.storage.local.get(game_date_key, function(game_entry) {
+                game_entry[game_date_key]["lines_read"] -= charsInLine(line)
+                game_entry[game_date_key]["chars_read"] -= lineSplitCount(line)
+
+                chrome.storage.local.set(game_entry)
+                element_div.remove()
+            })
+        })
+    }
+}
+
 function newLineDiv(line, line_id) {
     container_div = document.createElement("div")
     new_svg = document.createElement("svg")
@@ -54,6 +93,8 @@ function newLineDiv(line, line_id) {
     container_div.dataset.line_id = line_id    
     new_p.innerHTML = line
     new_button.innerHTML = "delete"
+
+    new_button.onclick = deleteLine;
     
     container_div.appendChild(new_svg)
     container_div.appendChild(new_p)
@@ -101,7 +142,7 @@ chrome.storage.local.onChanged.addListener(function (changes, _) {
             line_id = key[1]
             line = newValue
 
-            if (process_path != previous_game && previous_game !== undefined) {
+            if (process_path != previous_game) {
                 console.log("Game Changed, Readding Lines...")
                 bulkLineAdd()
             } else {

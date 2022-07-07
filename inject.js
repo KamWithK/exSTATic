@@ -43,16 +43,21 @@ function newLineDiv(line, line_id) {
     container_div = document.createElement("div")
     new_svg = document.createElement("svg")
     new_p = document.createElement("p")
+    new_button = document.createElement("button")
     
     container_div.classList.add("sentence-entry")
     new_svg.classList.add("circle-bullet-point")
     new_p.classList.add("sentence")
+    new_button.classList.add("delete-button")
+    new_button.classList.add("material-icons")
 
     container_div.dataset.line_id = line_id    
     new_p.innerHTML = line
+    new_button.innerHTML = "delete"
     
     container_div.appendChild(new_svg)
     container_div.appendChild(new_p)
+    container_div.appendChild(new_button)
 
     return container_div
 }

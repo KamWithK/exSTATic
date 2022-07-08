@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build": "node esbuild.js"
+  },
+  "dependencies": {
+    "esbuild": "^0.14.48"
+  }
+}

@@ -1,20 +1,9 @@
 console.log("Injected")
 
-var previous_game
+import { charsInLine, lineSplitCount } from "./calculations"
+import { previousGameEntry, safeDeleteLine } from "./storage"
 
-async function previousGameEntry() {
-    return new Promise((resolve, _) => {
-        chrome.storage.local.get("previously_hooked", function(game_entry) {
-            if (game_entry === undefined || game_entry["previously_hooked"] === undefined) {
-                reject()
-            }
-            
-            chrome.storage.local.get(game_entry["previously_hooked"], function(game_entry) {
-                resolve(game_entry)
-            })
-        })
-    })
-}
+var previous_game
 
 function gameNameChanged(event) {
     // Set document title
@@ -59,15 +48,6 @@ function parseLineKey(key, old_value, new_value) {
     return false
 }
 
-function charsInLine(line) {
-    return line.length
-}
-
-function lineSplitCount(line) {
-    line.split("\n")
-    return line.split("\n").length
-}
-
 function deleteLine(event) {
     confirmed = confirm(
         "Are you sure you'd like to delete this line?\nChar and line statistics will be modified accordingly however time read won't change..."
@@ -76,25 +56,11 @@ function deleteLine(event) {
     if (confirmed) {
         element_div = event["target"].parentNode
         
-        line_id = element_div.dataset.line_id
-        line_key = JSON.stringify([previous_game, Number.parseInt(line_id)])
+        line_id = Number.parseInt(element_div.dataset.line_id)
+        line = element_div.querySelector(".sentence").textContent
 
-        chrome.storage.local.get([line_key, previous_game], function(game_entry) {
-            line = game_entry[line_key]
-
-            delete game_entry[line_key]
-            chrome.storage.local.remove(line_key)
-
-            // TODO: Remove assumption that this was read today or ensure it's true
-            game_date_key = previous_game + "_" + game_entry[previous_game]["dates_read_on"][0]
-            chrome.storage.local.get(game_date_key, function(game_entry) {
-                game_entry[game_date_key]["lines_read"] -= charsInLine(line)
-                game_entry[game_date_key]["chars_read"] -= lineSplitCount(line)
-
-                chrome.storage.local.set(game_entry)
-                element_div.remove()
-            })
-        })
+        safeDeleteLine(previous_game, line_id, line)
+        element_div.remove()
     }
 }
 
@@ -131,11 +97,10 @@ function insertLine(line, line_id) {
 
 async function bulkLineAdd() {
     game_entry = await previousGameEntry()
-    process_path = Object.keys(game_entry)[0]
-    previous_game = process_path
-    max_line_id = game_entry[process_path]["last_line_added"]
+    previous_game = Object.keys(game_entry)[0]
+    max_line_id = game_entry[previous_game]["last_line_added"]
 
-    id_queries = [...Array(max_line_id + 1).keys()].map(id => JSON.stringify([process_path, id]))
+    id_queries = [...Array(max_line_id + 1).keys()].map(id => JSON.stringify([previous_game, id]))
 
     chrome.storage.local.get(id_queries, function(game_date_entries) {
         line_divs = []
@@ -145,8 +110,7 @@ async function bulkLineAdd() {
             line_divs.push(newLineDiv(line, line_id))
         }
 
-        entry_holder = document.getElementById("entry_holder")
-        entry_holder.replaceChildren(...line_divs)
+        document.getElementById("entry_holder").replaceChildren(...line_divs)
     })
 }
 bulkLineAdd()

@@ -8,7 +8,7 @@ async function previousGameEntry() {
             if (game_entry === undefined || game_entry["previously_hooked"] === undefined) {
                 reject()
             }
-
+            
             chrome.storage.local.get(game_entry["previously_hooked"], function(game_entry) {
                 resolve(game_entry)
             })
@@ -16,14 +16,34 @@ async function previousGameEntry() {
     })
 }
 
-async function setNameTitle() {
+function gameNameChanged(event) {
+    // Set document title
+    document.title = "CharTracker | " + game_name
+
+    // Store name
+    chrome.storage.local.get(previous_game, function(game_entry) {
+        game_entry[Object.keys(game_entry)[0]]["name"] = event["target"].value
+
+        chrome.storage.local.set(game_entry)
+    })
+}
+document.getElementById("game_name").onchange = gameNameChanged
+
+async function showNameTitle() {
+    game_name_heading = document.getElementById("game_name")
+
+    // Disable editing of name until the previous value has been set
+    game_name_heading.disabled = true
     game_entry = await previousGameEntry()
     game_name = game_entry[Object.keys(game_entry)[0]]["name"]
-    document.getElementById("game_name").innerHTML = game_name
+    game_name_heading.value = game_name
+    game_name_heading.disabled = false
+
+    // Set the document title
     document.title = "CharTracker | " + game_name
 }
 
-setNameTitle()
+showNameTitle()
 
 function parseLineKey(key, old_value, new_value) {
     try {
@@ -136,7 +156,7 @@ chrome.storage.local.onChanged.addListener(function (changes, _) {
         key = parseLineKey(key, oldValue, newValue)
         
         if (key) {
-            setNameTitle()
+            showNameTitle()
 
             process_path = key[0]
             line_id = key[1]

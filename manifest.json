@@ -10,7 +10,10 @@
       "scripts": ["background.js"]
     },
     "content_scripts": [{
-      "matches": ["https://kamwithk.github.io/CharTracker/char-tracker.html"],
+      "matches": [
+        "https://kamwithk.github.io/CharTracker/char-tracker.html",
+        "file:///*/CharTracker/*/char-tracker.html"
+      ],
       "js": ["inject.js"]
     }],
 

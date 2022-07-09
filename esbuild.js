@@ -7,7 +7,7 @@ esbuild
       "src/inject.js"
     ],
     bundle: true,
-    minify: true,
+    minify: false,
     target: ["chrome102", "firefox102"],
     outdir: "build"
   })

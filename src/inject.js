@@ -29,7 +29,11 @@ async function showNameTitle() {
     game_name_heading.disabled = false
 
     // Set the document title
-    document.title = "CharTracker | " + game_name
+    if ("game_name" in window) {
+        document.title = "CharTracker | " + game_name
+    } else {
+        document.title = "CharTracker"
+    }
 }
 
 showNameTitle()

@@ -1,8 +1,10 @@
+// Source of information - https://en.wikipedia.org/wiki/List_of_Japanese_typographic_symbols
+var IGNORE = /[〔〕《》〖〗〘〙〚〛【】「」［］『』｛｝\[\]()（）｟｠〈〉≪≫。、.,※＊'：！?？‥…―─ｰ〽～→♪♪ ♫ ♬ ♩\"　\t\n]/g
+
 export function charsInLine(line) {
-    return line.length
+    return line.replaceAll(IGNORE, "").length
 }
 
 export function lineSplitCount(line) {
-    line.split("\n")
-    return line.split("\n").length
+    return line.split("\n").split("。").length
 }

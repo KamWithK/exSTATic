@@ -1,7 +1,7 @@
 import { charsInLine, lineSplitCount } from "./calculations"
 
 // One hour in milliseconds
-var MAX_TIME_AWAY = 1 * 60 * 60 * 1000
+var MAX_TIME_AWAY = 60 * 1000
 
 // STORAGE SPEC
 // {
@@ -66,8 +66,7 @@ export async function updatedGameEntry(game_entry, process_path, line, date, tim
         estimate_readtime = average_char_speed * charsInLine(line)
 
         // Don't add up excessively large readtimes
-        // Use whatever is larger, average readspeed based estimate or a reasonable maximum time
-        if (elapsed_time > Math.max(MAX_TIME_AWAY, estimate_readtime)) {
+        if (elapsed_time > MAX_TIME_AWAY) {
             game_date_entry["time_read"] += estimate_readtime
         } else {
             game_date_entry["time_read"] += elapsed_time
@@ -91,6 +90,23 @@ export async function previousGameEntry() {
             }
             
             chrome.storage.local.get(game_entry["previously_hooked"], function(game_entry) {
+                resolve(game_entry)
+            })
+        })
+    })
+}
+
+export async function todayGameEntry() {
+    rn = new Date()
+    date = rn.getFullYear() + "/" + rn.getMonth() + "/" + rn.getDate()
+
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.get("previously_hooked", function(game_entry) {
+            if (game_entry === undefined || game_entry["previously_hooked"] === undefined) {
+                reject()
+            }
+            
+            chrome.storage.local.get(game_entry["previously_hooked"] + "_" + date, function(game_entry) {
                 resolve(game_entry)
             })
         })

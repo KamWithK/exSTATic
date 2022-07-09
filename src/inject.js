@@ -1,10 +1,14 @@
 console.log("Injected")
 
-import { previousGameEntry, safeDeleteLine } from "./storage"
+import { previousGameEntry, safeDeleteLine, todayGameEntry } from "./storage"
 import { isGameEntry, isGameDateEntry, isLineEntry } from "./check_entry_type"
+
+var MAX_TIME_AWAY = 60 * 1000
 
 var previous_game
 var previous_time
+var chars_read
+var time_read
 
 function gameNameChanged(event) {
     chrome.storage.local.get(previous_game, function(game_entry) {
@@ -98,19 +102,48 @@ function setStats(chars_read, time_read) {
     // Set speed
     average = Math.round(chars_read / (time_read / (60 * 60 * 1000)))
     document.getElementById("chars_per_hour").innerHTML = average.toLocaleString()
+
+    // Set elapsed time
+    date = new Date(0)
+    date.setMilliseconds(time_read)
+    document.getElementById("elapsed_time").innerHTML = date.toISOString().substr(11, 8)
 }
 
 // Initialise empty windows when a previous game is found
 async function startup() {
     document.getElementById("entry_holder").replaceChildren()
     try {
+        // Preload entries and set window title
         game_entry = await previousGameEntry()
         previous_game = Object.keys(game_entry)[0]
         bulkLineAdd(game_entry[previous_game], previous_game)
         showNameTitle(game_entry[previous_game]["name"])
+
+        today_previous_game = await todayGameEntry()
+        today_previous_game = today_previous_game[Object.keys(today_previous_game)[0]]
+
+        // Preset required properties for statistics
+        previous_time = today_previous_game["last_line_recieved"]
+        chars_read = today_previous_game["chars_read"]
+        time_read = today_previous_game["time_read"]
     } catch {}
 }
 startup()
+
+// Update the statistics live
+setInterval(function() {
+    time_now = new Date().getTime()
+    time_between_lines = time_now - previous_time
+
+    // Keep incrementing the timer whilst no break greater than allowed has been taken
+    if (time_between_lines <= MAX_TIME_AWAY) {
+        time_so_far = time_read + time_between_lines
+
+        setStats(chars_read, time_so_far)
+    } else {
+        setStats(chars_read, time_read)
+    }
+}, 1000)
 
 chrome.storage.local.onChanged.addListener(function (changes, _) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
@@ -123,7 +156,8 @@ chrome.storage.local.onChanged.addListener(function (changes, _) {
         
         if (isGameDateEntry(key, newValue)) {
             previous_time = newValue["last_line_recieved"]
-            setStats(newValue["chars_read"], newValue["time_read"])
+            chars_read = newValue["chars_read"]
+            time_read = newValue["time_read"]
         }
         
         if (isLineEntry(key, oldValue, newValue)) {

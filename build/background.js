@@ -9,7 +9,7 @@
   }
 
   // src/storage.js
-  var MAX_TIME_AWAY = 1 * 60 * 60 * 1e3;
+  var MAX_TIME_AWAY = 60 * 1e3;
   async function createGameEntry(process_path2, line2, date2, time2) {
     var game_entry = {};
     game_entry[process_path2] = {
@@ -42,7 +42,7 @@
       elapsed_time = time2 - game_date_entry["last_line_recieved"];
       average_char_speed = game_date_entry["chars_read"] / game_date_entry["time_read"];
       estimate_readtime = average_char_speed * charsInLine(line2);
-      if (elapsed_time > Math.max(MAX_TIME_AWAY, estimate_readtime)) {
+      if (elapsed_time > MAX_TIME_AWAY) {
         game_date_entry["time_read"] += estimate_readtime;
       } else {
         game_date_entry["time_read"] += elapsed_time;

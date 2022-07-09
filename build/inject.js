@@ -9,7 +9,7 @@
   }
 
   // src/storage.js
-  var MAX_TIME_AWAY = 1 * 60 * 60 * 1e3;
+  var MAX_TIME_AWAY = 60 * 1e3;
   async function previousGameEntry() {
     return new Promise((resolve, reject) => {
       chrome.storage.local.get("previously_hooked", function(game_entry2) {
@@ -17,6 +17,20 @@
           reject();
         }
         chrome.storage.local.get(game_entry2["previously_hooked"], function(game_entry3) {
+          resolve(game_entry3);
+        });
+      });
+    });
+  }
+  async function todayGameEntry() {
+    rn = new Date();
+    date = rn.getFullYear() + "/" + rn.getMonth() + "/" + rn.getDate();
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.get("previously_hooked", function(game_entry2) {
+        if (game_entry2 === void 0 || game_entry2["previously_hooked"] === void 0) {
+          reject();
+        }
+        chrome.storage.local.get(game_entry2["previously_hooked"] + "_" + date, function(game_entry3) {
           resolve(game_entry3);
         });
       });
@@ -62,7 +76,11 @@
 
   // src/inject.js
   console.log("Injected");
+  var MAX_TIME_AWAY2 = 60 * 1e3;
   var previous_game;
+  var previous_time;
+  var chars_read;
+  var time_read;
   function gameNameChanged(event) {
     chrome.storage.local.get(previous_game, function(game_entry2) {
       game_entry2[previous_game]["name"] = event["target"].value;
@@ -123,10 +141,13 @@
       document.getElementById("entry_holder").replaceChildren(...line_divs);
     });
   }
-  function setStats(chars_read, time_read) {
-    document.getElementById("chars_read").innerHTML = chars_read.toLocaleString();
-    average = Math.round(chars_read / (time_read / (60 * 60 * 1e3)));
+  function setStats(chars_read2, time_read2) {
+    document.getElementById("chars_read").innerHTML = chars_read2.toLocaleString();
+    average = Math.round(chars_read2 / (time_read2 / (60 * 60 * 1e3)));
     document.getElementById("chars_per_hour").innerHTML = average.toLocaleString();
+    date = new Date(0);
+    date.setMilliseconds(time_read2);
+    document.getElementById("elapsed_time").innerHTML = date.toISOString().substr(11, 8);
   }
   async function startup() {
     document.getElementById("entry_holder").replaceChildren();
@@ -135,10 +156,25 @@
       previous_game = Object.keys(game_entry)[0];
       bulkLineAdd(game_entry[previous_game], previous_game);
       showNameTitle(game_entry[previous_game]["name"]);
+      today_previous_game = await todayGameEntry();
+      today_previous_game = today_previous_game[Object.keys(today_previous_game)[0]];
+      previous_time = today_previous_game["last_line_recieved"];
+      chars_read = today_previous_game["chars_read"];
+      time_read = today_previous_game["time_read"];
     } catch {
     }
   }
   startup();
+  setInterval(function() {
+    time_now = new Date().getTime();
+    time_between_lines = time_now - previous_time;
+    if (time_between_lines <= MAX_TIME_AWAY2) {
+      time_so_far = time_read + time_between_lines;
+      setStats(chars_read, time_so_far);
+    } else {
+      setStats(chars_read, time_read);
+    }
+  }, 1e3);
   chrome.storage.local.onChanged.addListener(function(changes, _) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (isGameEntry(key, newValue)) {
@@ -148,7 +184,9 @@
         }
       }
       if (isGameDateEntry(key, newValue)) {
-        setStats(newValue["chars_read"], newValue["time_read"]);
+        previous_time = newValue["last_line_recieved"];
+        chars_read = newValue["chars_read"];
+        time_read = newValue["time_read"];
       }
       if (isLineEntry(key, oldValue, newValue)) {
         process_path = key[0];

@@ -66,9 +66,8 @@ export async function updatedGameEntry(game_entry, process_path, line, date, tim
         estimate_readtime = average_char_speed * charsInLine(line)
 
         // Don't add up excessively large readtimes
-        if (elapsed_time > MAX_TIME_AWAY) {
-            game_date_entry["time_read"] += estimate_readtime
-        } else {
+        // The time up to the max will be added by the injection script
+        if (elapsed_time <= MAX_TIME_AWAY) {
             game_date_entry["time_read"] += elapsed_time
         }
         

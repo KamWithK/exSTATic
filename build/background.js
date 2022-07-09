@@ -42,9 +42,7 @@
       elapsed_time = time2 - game_date_entry["last_line_recieved"];
       average_char_speed = game_date_entry["chars_read"] / game_date_entry["time_read"];
       estimate_readtime = average_char_speed * charsInLine(line2);
-      if (elapsed_time > MAX_TIME_AWAY) {
-        game_date_entry["time_read"] += estimate_readtime;
-      } else {
+      if (elapsed_time <= MAX_TIME_AWAY) {
         game_date_entry["time_read"] += elapsed_time;
       }
       game_date_entry["lines_read"] += lineSplitCount(line2);

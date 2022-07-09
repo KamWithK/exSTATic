@@ -68,7 +68,9 @@
   function isLineEntry(key, old_value, new_value) {
     try {
       parsed = JSON.parse(key);
-      return old_value == void 0 && typeof new_value == "string" && typeof key === "string" && parsed.length == 2 && typeof parsed[0] === "string" && Number.isInteger(parsed[1]);
+      if (old_value == void 0 && typeof new_value == "string" && typeof key === "string" && parsed.length == 2 && typeof parsed[0] === "string" && Number.isInteger(parsed[1])) {
+        return parsed;
+      }
     } catch {
     }
     return false;
@@ -81,6 +83,7 @@
   var previous_time;
   var chars_read;
   var time_read;
+  var idle_time_added = true;
   function gameNameChanged(event) {
     chrome.storage.local.get(previous_game, function(game_entry2) {
       game_entry2[previous_game]["name"] = event["target"].value;
@@ -161,24 +164,34 @@
       previous_time = today_previous_game["last_line_recieved"];
       chars_read = today_previous_game["chars_read"];
       time_read = today_previous_game["time_read"];
+      setStats(chars_read, time_read);
     } catch {
     }
   }
   startup();
-  setInterval(function() {
+  setInterval(async function() {
     time_now = new Date().getTime();
     time_between_lines = time_now - previous_time;
     if (time_between_lines <= MAX_TIME_AWAY2) {
+      idle_time_added = false;
       time_so_far = time_read + time_between_lines;
       setStats(chars_read, time_so_far);
     } else {
-      setStats(chars_read, time_read);
+      if (!idle_time_added) {
+        time_read += MAX_TIME_AWAY2;
+        setStats(chars_read, time_read);
+        game_entry = await todayGameEntry();
+        game_entry[Object.keys(game_entry)[0]]["time_read"] = time_read;
+        chrome.storage.local.set(game_entry);
+        idle_time_added = true;
+      }
     }
   }, 1e3);
   chrome.storage.local.onChanged.addListener(function(changes, _) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (isGameEntry(key, newValue)) {
         if (key != previous_game) {
+          previous_game = key;
           showNameTitle(newValue["name"]);
           bulkLineAdd(newValue, key);
         }
@@ -188,7 +201,8 @@
         chars_read = newValue["chars_read"];
         time_read = newValue["time_read"];
       }
-      if (isLineEntry(key, oldValue, newValue)) {
+      key = isLineEntry(key, oldValue, newValue);
+      if (key) {
         process_path = key[0];
         line_id = key[1];
         line = newValue;

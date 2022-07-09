@@ -1,6 +1,5 @@
 console.log("Injected")
 
-import { charsInLine, lineSplitCount } from "./calculations"
 import { previousGameEntry, safeDeleteLine } from "./storage"
 
 var previous_game
@@ -38,15 +37,25 @@ async function showNameTitle() {
 
 showNameTitle()
 
-function parseLineKey(key, old_value, new_value) {
+function isLineEntry(key, old_value, new_value) {
     try {
         parsed = JSON.parse(key)
         
-        if (old_value == undefined && typeof new_value == "string"
+        if (old_value == "undefined" && typeof new_value == "string"
             && typeof(key) === "string" && parsed.length == 2
             && typeof(parsed[0]) === "string" && Number.isInteger(parsed[1])) {
                 return parsed
             }
+    } catch {}
+
+    return false
+}
+
+function isGameEntry(key, old_value, new_value) {
+    try {
+        return (typeof(key) === "string" && typeof new_value == "object"
+            && "lines_read" in new_value && "chars_read" in new_value && "time_read" in new_value
+            && "last_line_recieved" in new_value)
     } catch {}
 
     return false
@@ -119,11 +128,21 @@ async function bulkLineAdd() {
 }
 bulkLineAdd()
 
+function setStats(chars_read, time_read) {
+    // Set char counter
+    document.getElementById("chars_read").innerHTML = chars_read.toLocaleString()
+
+    // Set speed
+    average = Math.round(chars_read / (time_read / (60 * 60 * 1000)))
+    document.getElementById("chars_per_hour").innerHTML = average.toLocaleString()
+}
+
 chrome.storage.local.onChanged.addListener(function (changes, _) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
-        key = parseLineKey(key, oldValue, newValue)
-        
-        if (key) {
+        if (isGameEntry(key, oldValue, newValue)) {
+            setStats(newValue["chars_read"], newValue["time_read"])
+        }
+        if (isLineEntry(key, oldValue, newValue)) {
             showNameTitle()
 
             process_path = key[0]
@@ -131,7 +150,6 @@ chrome.storage.local.onChanged.addListener(function (changes, _) {
             line = newValue
 
             if (process_path != previous_game) {
-                console.log("Game Changed, Readding Lines...")
                 bulkLineAdd()
             } else {
                 insertLine(line, line_id)

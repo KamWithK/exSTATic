@@ -4,6 +4,7 @@ import { previousGameEntry, safeDeleteLine } from "./storage"
 import { isGameEntry, isGameDateEntry, isLineEntry } from "./check_entry_type"
 
 var previous_game
+var previous_time
 
 function gameNameChanged(event) {
     chrome.storage.local.get(previous_game, function(game_entry) {
@@ -119,8 +120,9 @@ chrome.storage.local.onChanged.addListener(function (changes, _) {
                 bulkLineAdd(newValue, key)
             }
         }
-
+        
         if (isGameDateEntry(key, newValue)) {
+            previous_time = newValue["last_line_recieved"]
             setStats(newValue["chars_read"], newValue["time_read"])
         }
         

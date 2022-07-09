@@ -4,13 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Noto+Sans+JP&display=swap');
+  </style>
   <style type="text/tailwindcss">
     @layer components {
         .sentence-entry {
             @apply flex items-center dark:bg-slate-900 p-4 gap-4;
+            font-family: 'Klee One', cursive;
+            /* font-family: 'Noto Sans JP', sans-serif; */
         }
         .circle-bullet-point {
             @apply rounded-full h-2 w-2 bg-indigo-500 m-1 flex-none;

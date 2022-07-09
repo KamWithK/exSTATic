@@ -1,7 +1,7 @@
 import { charsInLine, lineSplitCount } from "./calculations"
-import { estimateLineReadtime } from "./statistics"
 
-var MAX_TIME_MULTIPLE = 2
+// One hour in milliseconds
+var MAX_TIME_AWAY = 1 * 60 * 60 * 1000
 
 // STORAGE SPEC
 // {
@@ -14,8 +14,7 @@ var MAX_TIME_MULTIPLE = 2
 //         "lines_read": 0,
 //         "chars_read": 0,
 //         "time_read": 0,
-//         "last_line_recieved": ...,
-//         "last_session_start": ...
+//         "last_line_recieved": ...
 //     },
 //     ["game_path", 0]: "line",
 //     "previously_hooked": "game_path"
@@ -38,9 +37,8 @@ async function newDateEntry(process_path, line, time) {
     return {
         "lines_read": lineSplitCount(line),
         "chars_read": charsInLine(line),
-        "time_read": await estimateLineReadtime([], process_path, line),
-        "last_line_recieved": time,
-        "last_session_start": time
+        "time_read": 0,
+        "last_line_recieved": time
     }
 }
 
@@ -63,20 +61,21 @@ export async function updatedGameEntry(game_entry, process_path, line, date, tim
         // The average/estimate is calculated first even though its added afterwards
         // Ensures only previous history effects current measures
         elapsed_time = time - game_date_entry["last_line_recieved"]
-        estimate_read_time = await estimateLineReadtime(dates_read_on, process_path, line)
+
+        average_char_speed = game_date_entry["chars_read"] / game_date_entry["time_read"]
+        estimate_readtime = average_char_speed * charsInLine(line)
+
+        // Don't add up excessively large readtimes
+        // Use whatever is larger, average readspeed based estimate or a reasonable maximum time
+        if (elapsed_time > Math.max(MAX_TIME_AWAY, estimate_readtime)) {
+            game_date_entry["time_read"] += estimate_readtime
+        } else {
+            game_date_entry["time_read"] += elapsed_time
+        }
         
         game_date_entry["lines_read"] += lineSplitCount(line)
         game_date_entry["chars_read"] += charsInLine(line)
         game_date_entry["last_line_recieved"] = time
-    
-        // Check whether some multiple of the average (or worst case) read time was taken
-        // If this was not the case then a break was likely taken
-        if (elapsed_time <= (MAX_TIME_MULTIPLE * estimate_read_time)) {
-            game_date_entry["time_read"] += elapsed_time
-        } else {
-            game_date_entry["time_read"] += estimate_read_time
-            game_date_entry["last_session_start"] = time
-        }
     } else {
         game_entry[process_path + "_" + date] = await newDateEntry(process_path, line, time)
     }
@@ -85,7 +84,7 @@ export async function updatedGameEntry(game_entry, process_path, line, date, tim
 }
 
 export async function previousGameEntry() {
-    return new Promise((resolve, _) => {
+    return new Promise((resolve, reject) => {
         chrome.storage.local.get("previously_hooked", function(game_entry) {
             if (game_entry === undefined || game_entry["previously_hooked"] === undefined) {
                 reject()

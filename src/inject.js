@@ -1,64 +1,29 @@
 console.log("Injected")
 
 import { previousGameEntry, safeDeleteLine } from "./storage"
+import { isGameEntry, isGameDateEntry, isLineEntry } from "./check_entry_type"
 
 var previous_game
 
 function gameNameChanged(event) {
-    // Set document title
-    document.title = "CharTracker | " + game_name
-
-    // Store name
     chrome.storage.local.get(previous_game, function(game_entry) {
-        game_entry[Object.keys(game_entry)[0]]["name"] = event["target"].value
+        game_entry[previous_game]["name"] = event["target"].value
 
         chrome.storage.local.set(game_entry)
     })
 }
 document.getElementById("game_name").onchange = gameNameChanged
 
-async function showNameTitle() {
+async function showNameTitle(game_name) {
     game_name_heading = document.getElementById("game_name")
 
     // Disable editing of name until the previous value has been set
     game_name_heading.disabled = true
-    game_entry = await previousGameEntry()
-    game_name = game_entry[Object.keys(game_entry)[0]]["name"]
     game_name_heading.value = game_name
     game_name_heading.disabled = false
 
     // Set the document title
-    if ("game_name" in window) {
-        document.title = "CharTracker | " + game_name
-    } else {
-        document.title = "CharTracker"
-    }
-}
-
-showNameTitle()
-
-function isLineEntry(key, old_value, new_value) {
-    try {
-        parsed = JSON.parse(key)
-        
-        if (old_value == "undefined" && typeof new_value == "string"
-            && typeof(key) === "string" && parsed.length == 2
-            && typeof(parsed[0]) === "string" && Number.isInteger(parsed[1])) {
-                return parsed
-            }
-    } catch {}
-
-    return false
-}
-
-function isGameEntry(key, old_value, new_value) {
-    try {
-        return (typeof(key) === "string" && typeof new_value == "object"
-            && "lines_read" in new_value && "chars_read" in new_value && "time_read" in new_value
-            && "last_line_recieved" in new_value)
-    } catch {}
-
-    return false
+    document.title = "CharTracker | " + game_name
 }
 
 function deleteLine(event) {
@@ -108,12 +73,10 @@ function insertLine(line, line_id) {
     entry_holder.appendChild(new_div)
 }
 
-async function bulkLineAdd() {
-    game_entry = await previousGameEntry()
-    previous_game = Object.keys(game_entry)[0]
-    max_line_id = game_entry[previous_game]["last_line_added"]
+async function bulkLineAdd(game_entry, game_name) {
+    max_line_id = game_entry["last_line_added"]
 
-    id_queries = [...Array(max_line_id + 1).keys()].map(id => JSON.stringify([previous_game, id]))
+    id_queries = [...Array(max_line_id + 1).keys()].map(id => JSON.stringify([game_name, id]))
 
     chrome.storage.local.get(id_queries, function(game_date_entries) {
         line_divs = []
@@ -126,7 +89,6 @@ async function bulkLineAdd() {
         document.getElementById("entry_holder").replaceChildren(...line_divs)
     })
 }
-bulkLineAdd()
 
 function setStats(chars_read, time_read) {
     // Set char counter
@@ -137,21 +99,37 @@ function setStats(chars_read, time_read) {
     document.getElementById("chars_per_hour").innerHTML = average.toLocaleString()
 }
 
+// Initialise empty windows when a previous game is found
+async function startup() {
+    document.getElementById("entry_holder").replaceChildren()
+    try {
+        game_entry = await previousGameEntry()
+        previous_game = Object.keys(game_entry)[0]
+        bulkLineAdd(game_entry[previous_game], previous_game)
+        showNameTitle(game_entry[previous_game]["name"])
+    } catch {}
+}
+startup()
+
 chrome.storage.local.onChanged.addListener(function (changes, _) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
-        if (isGameEntry(key, oldValue, newValue)) {
+        if (isGameEntry(key, newValue)) {
+            if (key != previous_game) {
+                showNameTitle(newValue["name"])
+                bulkLineAdd(newValue, key)
+            }
+        }
+
+        if (isGameDateEntry(key, newValue)) {
             setStats(newValue["chars_read"], newValue["time_read"])
         }
+        
         if (isLineEntry(key, oldValue, newValue)) {
-            showNameTitle()
-
             process_path = key[0]
             line_id = key[1]
             line = newValue
-
-            if (process_path != previous_game) {
-                bulkLineAdd()
-            } else {
+            
+            if (process_path == previous_game) {
                 insertLine(line, line_id)
             }
         }

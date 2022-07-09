@@ -167,6 +167,9 @@
       setStats(chars_read, time_read);
     } catch {
     }
+    setTimeout(function() {
+      window.scrollTo(0, document.getElementById("entry_holder").scrollHeight);
+    }, 200);
   }
   startup();
   setInterval(async function() {
@@ -210,6 +213,7 @@
           insertLine(line, line_id);
         }
       }
+      window.scrollTo(0, document.getElementById("entry_holder").scrollHeight);
     }
   });
 })();

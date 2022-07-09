@@ -130,6 +130,12 @@ async function startup() {
 
         setStats(chars_read, time_read)
     } catch {}
+
+    // Scroll to the bottom
+    // Can't tell when window content is fully loaded so function is delayed instead
+    setTimeout(function() {
+        window.scrollTo(0, document.getElementById("entry_holder").scrollHeight)
+    }, 200)
 }
 startup()
 
@@ -162,6 +168,7 @@ setInterval(async function() {
 chrome.storage.local.onChanged.addListener(function (changes, _) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
         if (isGameEntry(key, newValue)) {
+            // Change games
             if (key != previous_game) {
                 previous_game = key
                 showNameTitle(newValue["name"])
@@ -174,16 +181,19 @@ chrome.storage.local.onChanged.addListener(function (changes, _) {
             chars_read = newValue["chars_read"]
             time_read = newValue["time_read"]
         }
-
+        
         key = isLineEntry(key, oldValue, newValue)        
         if (key) {
             process_path = key[0]
             line_id = key[1]
             line = newValue
-
+            
             if (process_path == previous_game) {
                 insertLine(line, line_id)
             }
         }
+
+        // Scroll to the bottom
+        window.scrollTo(0, document.getElementById("entry_holder").scrollHeight)
     }
 })

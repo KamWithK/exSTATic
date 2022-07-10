@@ -130,12 +130,6 @@ async function startup() {
 
         setStats(chars_read, time_read)
     } catch {}
-
-    // Scroll to the bottom
-    // Can't tell when window content is fully loaded so function is delayed instead
-    setTimeout(function() {
-        window.scrollTo(0, document.getElementById("entry_holder").scrollHeight)
-    }, 200)
 }
 startup()
 
@@ -192,8 +186,5 @@ chrome.storage.local.onChanged.addListener(function (changes, _) {
                 insertLine(line, line_id)
             }
         }
-
-        // Scroll to the bottom
-        window.scrollTo(0, document.getElementById("entry_holder").scrollHeight)
     }
 })

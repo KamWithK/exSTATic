@@ -1,11 +1,12 @@
 (() => {
   // src/calculations.js
   var IGNORE = /[〔〕《》〖〗〘〙〚〛【】「」［］『』｛｝\[\]()（）｟｠〈〉≪≫。、.,※＊'：！?？‥…―─ｰ〽～→♪♪ ♫ ♬ ♩\"　\t\n]/g;
+  var SPLIT = /[\n。.！?？]/g;
   function charsInLine(line2) {
     return line2.replaceAll(IGNORE, "").length;
   }
   function lineSplitCount(line2) {
-    return line2.split("\n").split("\u3002").length;
+    return line2.split(SPLIT).length;
   }
 
   // src/storage.js
@@ -167,9 +168,6 @@
       setStats(chars_read, time_read);
     } catch {
     }
-    setTimeout(function() {
-      window.scrollTo(0, document.getElementById("entry_holder").scrollHeight);
-    }, 200);
   }
   startup();
   setInterval(async function() {
@@ -213,7 +211,6 @@
           insertLine(line, line_id);
         }
       }
-      window.scrollTo(0, document.getElementById("entry_holder").scrollHeight);
     }
   });
 })();

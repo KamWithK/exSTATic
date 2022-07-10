@@ -98,4 +98,12 @@
   function fontSizeChanged(font_size) {
     document.documentElement.style.setProperty("--default-jp-font-size", font_size + "rem")
   }
+
+  element_holder = document.getElementById("entry_holder")
+  function mutationScroll(mutation_list, observer) {
+    window.scrollTo(0, element_holder.scrollHeight)
+  }
+
+  const observer = new MutationObserver(mutationScroll)
+  observer.observe(element_holder, {"childList": true, "subtree": true})
 </script>

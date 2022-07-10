@@ -1,11 +1,12 @@
 (() => {
   // src/calculations.js
   var IGNORE = /[〔〕《》〖〗〘〙〚〛【】「」［］『』｛｝\[\]()（）｟｠〈〉≪≫。、.,※＊'：！?？‥…―─ｰ〽～→♪♪ ♫ ♬ ♩\"　\t\n]/g;
+  var SPLIT = /[\n。.！?？]/g;
   function charsInLine(line2) {
     return line2.replaceAll(IGNORE, "").length;
   }
   function lineSplitCount(line2) {
-    return line2.split("\n").split("\u3002").length;
+    return line2.split(SPLIT).length;
   }
 
   // src/storage.js

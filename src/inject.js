@@ -138,11 +138,15 @@ async function startup() {
     try {
         // Set the UI properties
         chrome.storage.local.get(["font", "font_size"], function(property_entries) {
-            document.getElementById("font").value = property_entries["font"]
-            document.getElementById("font_size").value = property_entries["font_size"]
+            if (property_entries.hasOwnProperty("font")) {
+                document.getElementById("font").value = property_entries["font"]
+                document.documentElement.style.setProperty("--default-jp-font", property_entries["font"])
+            }
 
-            document.documentElement.style.setProperty("--default-jp-font", property_entries["font"])
-            document.documentElement.style.setProperty("--default-jp-font-size", property_entries["font_size"] + "rem")
+            if (property_entries.hasOwnProperty("font_size")) {
+                document.getElementById("font_size").value = property_entries["font_size"]
+                document.documentElement.style.setProperty("--default-jp-font-size", property_entries["font_size"] + "rem")
+            }
         })
 
         // Preload entries and set window title

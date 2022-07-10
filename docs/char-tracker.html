@@ -12,54 +12,74 @@
   </style>
   <style type="text/tailwindcss">
     @layer components {
+        .jp-text {
+          font-family: "Klee One";
+          /* font-family: "Noto Sans JP"; */
+        }
         .sentence-entry {
-            @apply flex items-center dark:bg-slate-900 p-4 gap-4;
-            font-family: 'Klee One', cursive;
-            /* font-family: 'Noto Sans JP', sans-serif; */
+            @apply flex items-center dark:bg-slate-900 jp-text p-4 gap-4;
         }
         .circle-bullet-point {
             @apply rounded-full h-2 w-2 bg-indigo-500 m-1 flex-none;
         }
         .sentence {
-            @apply grow inline-block text-left dark:text-slate-400;
+            @apply grow inline-block text-left dark:text-slate-400 jp-text;
         }
         .delete-button {
           @apply rounded-full inline-flex dark:text-indigo-500 dark:border-indigo-500 p-2 hover:bg-indigo-700 hover:text-white;
         }
         .stat-numbers {
-          @apply font-mono text-base;
+          @apply font-mono text-base whitespace-nowrap;
         }
         .stat-annotation {
-          @apply text-xs tracking-tighter;
+          @apply text-xs tracking-tighter whitespace-nowrap;
+        }
+        .dropdown:hover .dropdown-menu {
+          display: grid;
+        }
+        .menu-buttons {
+          @apply text-left col-span-2 p-4 dark:bg-slate-900 text-white hover:bg-slate-700;
+        }
+        .menu-input {
+          @apply col-start-2 p-1 grow bg-slate-700 text-gray-300;
+        }
+        .menu-label {
+          @apply p-4 dark:bg-slate-900 text-white;
         }
     }
   </style>
 </head>
 
 <body class="dark:bg-slate-800 px-12">
-  <div class="flex items-center">
-    <input id="game_name" class="grow pb-3 text-5xl bg-transparent text-indigo-400" type="text" value="Game" disabled="true"> <!-- REPLACE WITH GAME NAME -->
-    
-    <div class="flex items-center gap-2 m-6 p-3 bg-indigo-400 bg-opacity-70 blur-sm hover:filter-none hover:bg-opacity-80">
-      <div id="chars_read" class="stat-numbers">000,000</div>
-      <div class="stat-annotation">Chars</div>
-      <span class="material-icons">auto_stories</span>
-      <div id="elapsed_time" class="stat-numbers">00:00:00</div>
-      <div class="stat-annotation">Elapsed</div>
-      <span class="material-icons">timer</span>
-      <div id="chars_per_hour" class="stat-numbers">00,000</div>
-      <div class="stat-annotation">Chars / Hour</div>
-      <span class="material-icons">hourglass_bottom</span> <!-- bedtime off, hourglass_bottom on -->
+  <div class="flex py-3 bg-slate-800 items-start sticky top-0 justify-between ">
+    <input id="game_name" class="w-20 shrink grow justify-self-start text-4xl jp-text bg-transparent text-indigo-400" type="text" value="Game" disabled="true"> <!-- REPLACE WITH GAME NAME -->
+
+    <div class="place-self-center relative dropdown">
+      <div class="blur flex items-center p-3 gap-3 bg-indigo-400 bg-opacity-70 hover:filter-none hover:bg-opacity-80">
+        <div id="chars_read" class="stat-numbers">000,000</div>
+        <div class="stat-annotation">Chars</div>
+        <span class="material-icons">auto_stories</span>
+        <div id="elapsed_time" class="stat-numbers">00:00:00</div>
+        <div class="stat-annotation">Elapsed</div>
+        <span class="material-icons">timer</span>
+        <div id="chars_per_hour" class="stat-numbers">00,000</div>
+        <div class="stat-annotation">Chars / Hour</div>
+        <span class="material-icons">hourglass_bottom</span> <!-- bedtime off, hourglass_bottom on -->
+        <span class="material-icons rounded">more_vert</span>
+      </div>
+
+      <div class="dropdown-menu hidden absolute left-0 right-0 grid-rows-2">
+        <div class="menu-label">Font</div>
+        <input id="font" class="menu-input" type="text" value="Klee One">
+        <div class="menu-label">Font Size</div>
+        <input id="font_size" class="menu-input" type="number" value=40>
+        <button id="export_stats" class="menu-buttons">Export Stats</button>
+        <button id="view_stats" class="menu-buttons">View Stats</button>
+      </div>
     </div>
   </div>
 
   <div id="entry_holder" class="flex flex-col gap-2">
-    <!-- <div class="sentence-entry">
-        <svg class="circle-bullet-point"></svg>
-        <p class="sentence">「稽古は夜までかかるわよ。夕方には開けられないんだから、お客を増やすしかないじゃない」</p>
-        <button class="delete-button material-icons">delete</button>
-    </div> -->
-    <!-- POPULATE -->
   </div>
 </body>
 </html>

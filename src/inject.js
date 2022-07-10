@@ -2,6 +2,7 @@ console.log("Injected")
 
 import { previousGameEntry, safeDeleteLine, todayGameEntry } from "./storage"
 import { isGameEntry, isGameDateEntry, isLineEntry } from "./check_entry_type"
+import { exportStats } from "./stats"
 
 var MAX_TIME_AWAY = 60 * 1000
 
@@ -188,3 +189,7 @@ chrome.storage.local.onChanged.addListener(function (changes, _) {
         }
     }
 })
+
+// TODO: Remove hardcoded function being called
+document.getElementById("export_stats").onclick = exportStats
+exportStats()

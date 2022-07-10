@@ -185,9 +185,27 @@
     date.setSeconds(time_read2);
     document.getElementById("elapsed_time").innerHTML = date.toISOString().substr(11, 8);
   }
+  document.getElementById("font").onchange = function(event) {
+    chrome.storage.local.set({
+      "font": event["target"].value
+    });
+    document.documentElement.style.setProperty("--default-jp-font", event["target"].value);
+  };
+  document.getElementById("font_size").onchange = function(event) {
+    chrome.storage.local.set({
+      "font_size": event["target"].value
+    });
+    document.documentElement.style.setProperty("--default-jp-font-size", event["target"].value + "rem");
+  };
   async function startup() {
     document.getElementById("entry_holder").replaceChildren();
     try {
+      chrome.storage.local.get(["font", "font_size"], function(property_entries) {
+        document.getElementById("font").value = property_entries["font"];
+        document.getElementById("font_size").value = property_entries["font_size"];
+        document.documentElement.style.setProperty("--default-jp-font", property_entries["font"]);
+        document.documentElement.style.setProperty("--default-jp-font-size", property_entries["font_size"] + "rem");
+      });
       game_entry = await previousGameEntry();
       previous_game = Object.keys(game_entry)[0];
       bulkLineAdd(game_entry[previous_game], previous_game);

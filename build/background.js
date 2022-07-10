@@ -20,6 +20,14 @@
   // src/storage.js
   var MAX_TIME_AWAY = 60;
   async function createGameEntry(process_path2, line2, date2, time2) {
+    chrome.storage.local.get("games", function(games_list) {
+      if ("games" in games_list) {
+        games_list["games"].push(process_path2);
+      } else {
+        games_list = { "games": [process_path2] };
+      }
+      chrome.storage.local.set(games_list);
+    });
     var game_entry = {};
     game_entry[process_path2] = {
       "name": process_path2,

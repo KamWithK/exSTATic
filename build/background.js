@@ -85,10 +85,10 @@
   }
   connectToWebSocket();
   chrome.runtime.onMessage.addListener(function(arg, sender, send_response) {
-    blob = new Blob(arg, { type: "text/csv" });
+    blob = new Blob(arg["csv"], arg["blob_options"]);
     chrome.downloads.download({
       url: URL.createObjectURL(blob),
-      filename: "char_tracker_daily_data.csv"
+      filename: arg["filename"]
     });
   });
 })();

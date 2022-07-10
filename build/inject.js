@@ -82,6 +82,7 @@
     game_entry = await previousGameEntry();
     process_path = Object.keys(game_entry)[0];
     game_entry = game_entry[process_path];
+    game_name = game_entry["name"];
     game_date_queries = game_entry["dates_read_on"].map((date2) => process_path + "_" + date2);
     csv_string = new Promise((resolve, _) => {
       chrome.storage.local.get(game_date_queries, function(game_date_entries) {
@@ -92,7 +93,11 @@
         resolve(csv_string);
       });
     });
-    chrome.runtime.sendMessage([await csv_string]);
+    chrome.runtime.sendMessage({
+      "csv": [await csv_string],
+      "blob_options": { "type": "text/csv" },
+      "filename": game_name + "_daily_stats.csv"
+    });
   }
 
   // src/inject.js
@@ -110,12 +115,12 @@
     });
   }
   document.getElementById("game_name").onchange = gameNameChanged;
-  async function showNameTitle(game_name) {
+  async function showNameTitle(game_name2) {
     game_name_heading = document.getElementById("game_name");
     game_name_heading.disabled = true;
-    game_name_heading.value = game_name;
+    game_name_heading.value = game_name2;
     game_name_heading.disabled = false;
-    document.title = "CharTracker | " + game_name;
+    document.title = "CharTracker | " + game_name2;
   }
   function deleteLine(event) {
     confirmed = confirm("Are you sure you'd like to delete this line?\nChar and line statistics will be modified accordingly however time read won't change...");
@@ -151,9 +156,9 @@
     new_div = newLineDiv(line2, line_id2);
     entry_holder.appendChild(new_div);
   }
-  async function bulkLineAdd(game_entry2, game_name) {
+  async function bulkLineAdd(game_entry2, game_name2) {
     max_line_id = game_entry2["last_line_added"];
-    id_queries = [...Array(max_line_id + 1).keys()].map((id) => JSON.stringify([game_name, id]));
+    id_queries = [...Array(max_line_id + 1).keys()].map((id) => JSON.stringify([game_name2, id]));
     chrome.storage.local.get(id_queries, function(game_date_entries) {
       line_divs = [];
       for (let [key, line2] of Object.entries(game_date_entries)) {
@@ -232,5 +237,4 @@
     }
   });
   document.getElementById("export_stats").onclick = exportStats;
-  exportStats();
 })();

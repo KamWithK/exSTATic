@@ -4,6 +4,7 @@ export async function exportStats() {
     game_entry = await previousGameEntry()
     process_path = Object.keys(game_entry)[0]
     game_entry = game_entry[process_path]
+    game_name = game_entry["name"]
 
     game_date_queries = game_entry["dates_read_on"].map(date => process_path + "_" +  date)
 
@@ -22,5 +23,9 @@ export async function exportStats() {
         })
     })
 
-    chrome.runtime.sendMessage([await csv_string])
+    chrome.runtime.sendMessage({
+        "csv": [await csv_string],
+        "blob_options": { "type": "text/csv" },
+        "filename": game_name + "_daily_stats.csv"
+    })
 }

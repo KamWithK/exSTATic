@@ -3,8 +3,15 @@ console.log("Injected")
 import { previousGameEntry, safeDeleteLine, todayGameEntry } from "./storage"
 import { isGameEntry, isGameDateEntry, isLineEntry } from "./check_entry_type"
 import { exportStats } from "./stats"
+import { timeNowSeconds } from "./calculations"
 
-var MAX_TIME_AWAY = 60 * 1000
+var SECS_TO_HOURS = 60 * 60
+
+// In seconds
+var MAX_TIME_AWAY = 60
+
+// In milliseconds
+REFRESH_STATS_INTERVAL = 1000
 
 var previous_game
 var previous_time
@@ -102,12 +109,12 @@ function setStats(chars_read, time_read) {
     document.getElementById("chars_read").innerHTML = chars_read.toLocaleString()
 
     // Set speed
-    average = Math.round(chars_read / (time_read / (60 * 60 * 1000)))
+    average = Math.round(chars_read / (time_read / SECS_TO_HOURS))
     document.getElementById("chars_per_hour").innerHTML = average.toLocaleString()
 
     // Set elapsed time
     date = new Date(0)
-    date.setMilliseconds(time_read)
+    date.setSeconds(time_read)
     document.getElementById("elapsed_time").innerHTML = date.toISOString().substr(11, 8)
 }
 
@@ -136,7 +143,7 @@ startup()
 
 // Update the statistics live
 setInterval(async function() {
-    time_now = new Date().getTime()
+    time_now = timeNowSeconds()
     time_between_lines = time_now - previous_time
 
     // Keep incrementing the timer whilst no break greater than allowed has been taken
@@ -158,7 +165,7 @@ setInterval(async function() {
             idle_time_added = true
         }
     }
-}, 1000)
+}, REFRESH_STATS_INTERVAL)
 
 chrome.storage.local.onChanged.addListener(function (changes, _) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {

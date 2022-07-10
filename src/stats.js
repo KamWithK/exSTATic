@@ -1,6 +1,6 @@
 import { previousGameEntry } from "./storage"
 
-var MS_TO_HRS = 60 * 60 * 1000
+var SECS_TO_HRS = 60 * 60
 
 export async function exportStats() {
     game_entry = await previousGameEntry()
@@ -15,7 +15,7 @@ export async function exportStats() {
             csv_string = "date,lines_read,chars_read,time_read,speed" + "\r\n"
             
             Object.entries(game_date_entries).forEach(element => {
-                readtime_hours = element[1]["time_read"] / MS_TO_HRS
+                readtime_hours = element[1]["time_read"] / SECS_TO_HRS
                 
                 csv_string += element[0].split("_").at(-1) + ","
                     + element[1]["lines_read"] + ","

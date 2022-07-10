@@ -1,5 +1,6 @@
 console.log("CharTracker")
 
+import { dateNowString, timeNowSeconds } from "./calculations"
 import { createGameEntry, updatedGameEntry } from "./storage"
 
 function connectToWebSocket(_) {
@@ -16,9 +17,8 @@ function connectionOpened(event) {
 
 function lineFetched(event) {
     // Start by getting a timestamp for accuracy
-    rn = new Date()
-    date = rn.getFullYear() + "/" + rn.getMonth() + "/" + rn.getDate()
-    time = rn.getTime()
+    time = timeNowSeconds()
+    date = dateNowString()
 
     // Parse provided data
     // Should contain sentence and executable (process) path

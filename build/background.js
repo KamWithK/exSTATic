@@ -8,9 +8,17 @@
   function lineSplitCount(line2) {
     return line2.split(SPLIT).length;
   }
+  function dateNowString() {
+    rn = new Date();
+    return rn.getFullYear() + "/" + (rn.getMonth() + 1) + "/" + rn.getDate();
+  }
+  function timeNowSeconds() {
+    rn = new Date();
+    return rn.getTime() / 1e3;
+  }
 
   // src/storage.js
-  var MAX_TIME_AWAY = 60 * 1e3;
+  var MAX_TIME_AWAY = 60;
   async function createGameEntry(process_path2, line2, date2, time2) {
     var game_entry = {};
     game_entry[process_path2] = {
@@ -67,9 +75,8 @@
     console.log("Connected");
   }
   function lineFetched(event) {
-    rn = new Date();
-    date = rn.getFullYear() + "/" + rn.getMonth() + "/" + rn.getDate();
-    time = rn.getTime();
+    time = timeNowSeconds();
+    date = dateNowString();
     data = JSON.parse(event.data);
     console.log("Raw Data: ", data);
     process_path = data["process_path"];

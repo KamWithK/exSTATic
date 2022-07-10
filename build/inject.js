@@ -8,9 +8,16 @@
   function lineSplitCount(line2) {
     return line2.split(SPLIT).length;
   }
+  function dateNowString() {
+    rn = new Date();
+    return rn.getFullYear() + "/" + (rn.getMonth() + 1) + "/" + rn.getDate();
+  }
+  function timeNowSeconds() {
+    rn = new Date();
+    return rn.getTime() / 1e3;
+  }
 
   // src/storage.js
-  var MAX_TIME_AWAY = 60 * 1e3;
   async function previousGameEntry() {
     return new Promise((resolve, reject) => {
       chrome.storage.local.get("previously_hooked", function(game_entry2) {
@@ -24,14 +31,12 @@
     });
   }
   async function todayGameEntry() {
-    rn = new Date();
-    date = rn.getFullYear() + "/" + rn.getMonth() + "/" + rn.getDate();
     return new Promise((resolve, reject) => {
       chrome.storage.local.get("previously_hooked", function(game_entry2) {
         if (game_entry2 === void 0 || game_entry2["previously_hooked"] === void 0) {
           reject();
         }
-        chrome.storage.local.get(game_entry2["previously_hooked"] + "_" + date, function(game_entry3) {
+        chrome.storage.local.get(game_entry2["previously_hooked"] + "_" + dateNowString(), function(game_entry3) {
           resolve(game_entry3);
         });
       });
@@ -78,7 +83,7 @@
   }
 
   // src/stats.js
-  var MS_TO_HRS = 60 * 60 * 1e3;
+  var SECS_TO_HRS = 60 * 60;
   async function exportStats() {
     game_entry = await previousGameEntry();
     process_path = Object.keys(game_entry)[0];
@@ -89,7 +94,7 @@
       chrome.storage.local.get(game_date_queries, function(game_date_entries) {
         csv_string = "date,lines_read,chars_read,time_read,speed\r\n";
         Object.entries(game_date_entries).forEach((element) => {
-          readtime_hours = element[1]["time_read"] / MS_TO_HRS;
+          readtime_hours = element[1]["time_read"] / SECS_TO_HRS;
           csv_string += element[0].split("_").at(-1) + "," + element[1]["lines_read"] + "," + element[1]["chars_read"] + "," + readtime_hours + "," + element[1]["chars_read"] / readtime_hours + "\r\n";
         });
         resolve(csv_string);
@@ -104,7 +109,9 @@
 
   // src/inject.js
   console.log("Injected");
-  var MAX_TIME_AWAY2 = 60 * 1e3;
+  var SECS_TO_HOURS = 60 * 60;
+  var MAX_TIME_AWAY = 60;
+  REFRESH_STATS_INTERVAL = 1e3;
   var previous_game;
   var previous_time;
   var chars_read;
@@ -172,10 +179,10 @@
   }
   function setStats(chars_read2, time_read2) {
     document.getElementById("chars_read").innerHTML = chars_read2.toLocaleString();
-    average = Math.round(chars_read2 / (time_read2 / (60 * 60 * 1e3)));
+    average = Math.round(chars_read2 / (time_read2 / SECS_TO_HOURS));
     document.getElementById("chars_per_hour").innerHTML = average.toLocaleString();
     date = new Date(0);
-    date.setMilliseconds(time_read2);
+    date.setSeconds(time_read2);
     document.getElementById("elapsed_time").innerHTML = date.toISOString().substr(11, 8);
   }
   async function startup() {
@@ -196,15 +203,15 @@
   }
   startup();
   setInterval(async function() {
-    time_now = new Date().getTime();
+    time_now = timeNowSeconds();
     time_between_lines = time_now - previous_time;
-    if (time_between_lines <= MAX_TIME_AWAY2) {
+    if (time_between_lines <= MAX_TIME_AWAY) {
       idle_time_added = false;
       time_so_far = time_read + time_between_lines;
       setStats(chars_read, time_so_far);
     } else {
       if (!idle_time_added) {
-        time_read += MAX_TIME_AWAY2;
+        time_read += MAX_TIME_AWAY;
         setStats(chars_read, time_read);
         game_entry = await todayGameEntry();
         game_entry[Object.keys(game_entry)[0]]["time_read"] = time_read;
@@ -212,7 +219,7 @@
         idle_time_added = true;
       }
     }
-  }, 1e3);
+  }, REFRESH_STATS_INTERVAL);
   chrome.storage.local.onChanged.addListener(function(changes, _) {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
       if (isGameEntry(key, newValue)) {

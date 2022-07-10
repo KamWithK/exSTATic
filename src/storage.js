@@ -1,7 +1,7 @@
-import { charsInLine, lineSplitCount } from "./calculations"
+import { charsInLine, dateNowString, lineSplitCount } from "./calculations"
 
-// One hour in milliseconds
-var MAX_TIME_AWAY = 60 * 1000
+// In seconds
+var MAX_TIME_AWAY = 60
 
 // STORAGE SPEC
 // {
@@ -96,16 +96,13 @@ export async function previousGameEntry() {
 }
 
 export async function todayGameEntry() {
-    rn = new Date()
-    date = rn.getFullYear() + "/" + rn.getMonth() + "/" + rn.getDate()
-
     return new Promise((resolve, reject) => {
         chrome.storage.local.get("previously_hooked", function(game_entry) {
             if (game_entry === undefined || game_entry["previously_hooked"] === undefined) {
                 reject()
             }
             
-            chrome.storage.local.get(game_entry["previously_hooked"] + "_" + date, function(game_entry) {
+            chrome.storage.local.get(game_entry["previously_hooked"] + "_" + dateNowString(), function(game_entry) {
                 resolve(game_entry)
             })
         })

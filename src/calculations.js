@@ -9,3 +9,13 @@ export function charsInLine(line) {
 export function lineSplitCount(line) {
     return line.split(SPLIT).length
 }
+
+export function dateNowString() {
+    rn = new Date()
+    return rn.getFullYear() + "/" + (rn.getMonth() + 1) + "/" + rn.getDate()
+}
+
+export function timeNowSeconds() {
+    rn = new Date()
+    return rn.getTime() / 1000
+}

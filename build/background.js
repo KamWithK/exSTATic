@@ -73,6 +73,7 @@
 
   // src/background.js
   console.log("CharTracker");
+  var SPLIT_PATH = /\\|\//g;
   function connectToWebSocket(_) {
     const socket = new WebSocket("ws://localhost:9001");
     socket.onmessage = lineFetched;
@@ -89,6 +90,8 @@
     console.log("Raw Data: ", data);
     process_path = data["process_path"];
     line = data["sentence"];
+    path_segments = process_path.split(SPLIT_PATH);
+    process_path = path_segments.slice(Math.max(0, path_segments.length - 3)).join("/");
     chrome.storage.local.set({ "previously_hooked": process_path });
     chrome.storage.local.get([process_path, process_path + "_" + date], function(game_entry) {
       if (Object.keys(game_entry).length === 0) {

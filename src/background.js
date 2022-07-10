@@ -3,6 +3,8 @@ console.log("CharTracker")
 import { dateNowString, timeNowSeconds } from "./calculations"
 import { createGameEntry, updatedGameEntry } from "./storage"
 
+var SPLIT_PATH = /\\|\//g
+
 function connectToWebSocket(_) {
     const socket = new WebSocket("ws://localhost:9001")
 
@@ -27,6 +29,10 @@ function lineFetched(event) {
 
     process_path = data["process_path"]
     line = data["sentence"]
+
+    // Only consider at max the last three sections of the path
+    path_segments = process_path.split(SPLIT_PATH)
+    process_path = path_segments.slice(Math.max(0, path_segments.length - 3)).join("\/")
 
     // Set this as last hooked game
     chrome.storage.local.set({"previously_hooked": process_path})

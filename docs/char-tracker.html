@@ -77,8 +77,13 @@
       <div class="dropdown-menu hidden absolute left-0 right-0 grid-rows-2">
         <div class="menu-label">Font</div>
         <input id="font" onchange="fontChanged(this.value)" class="menu-input" type="text" value="Klee One">
+
         <div class="menu-label">Font Size (rem)</div>
         <input id="font_size" onchange="fontSizeChanged(this.value)" class="menu-input" type="number" value=2>
+        
+        <div class="menu-label">Max AFK Time (secs)</div>
+        <input id="afk_max_time" class="menu-input" type="number" value=60>
+        
         <button id="export_stats" class="menu-buttons">Export Stats</button>
         <button id="view_stats" class="menu-buttons">View Stats</button>
       </div>

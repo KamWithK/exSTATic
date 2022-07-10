@@ -62,6 +62,14 @@
     }
     chrome.storage.local.set(game_entry);
   }
+  function setConstants() {
+    chrome.storage.local.get("afk_max_time", function(afk_max_entry) {
+      if ("afk_max_time" in afk_max_entry) {
+        MAX_TIME_AWAY = afk_max_entry["afk_max_time"];
+      }
+    });
+  }
+  setConstants();
 
   // src/background.js
   console.log("CharTracker");

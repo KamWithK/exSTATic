@@ -125,3 +125,12 @@ export function safeDeleteLine(process_path, line_id, line) {
         })
     })
 }
+
+function setConstants() {
+    chrome.storage.local.get("afk_max_time", function(afk_max_entry) {
+        if ("afk_max_time" in afk_max_entry) {
+            MAX_TIME_AWAY = afk_max_entry["afk_max_time"]
+        }
+    })
+}
+setConstants()

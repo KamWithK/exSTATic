@@ -18,6 +18,7 @@
   }
 
   // src/storage.js
+  var MAX_TIME_AWAY = 60;
   async function previousGameEntry() {
     return new Promise((resolve, reject) => {
       chrome.storage.local.get("previously_hooked", function(game_entry2) {
@@ -55,6 +56,14 @@
       });
     });
   }
+  function setConstants() {
+    chrome.storage.local.get("afk_max_time", function(afk_max_entry) {
+      if ("afk_max_time" in afk_max_entry) {
+        MAX_TIME_AWAY = afk_max_entry["afk_max_time"];
+      }
+    });
+  }
+  setConstants();
 
   // src/check_entry_type.js
   function isGameEntry(key, new_value) {
@@ -110,8 +119,8 @@
   // src/inject.js
   console.log("Injected");
   var SECS_TO_HOURS = 60 * 60;
-  var MAX_TIME_AWAY = 60;
-  REFRESH_STATS_INTERVAL = 1e3;
+  var MAX_TIME_AWAY2 = 60;
+  var REFRESH_STATS_INTERVAL = 1e3;
   var previous_game;
   var previous_time;
   var chars_read;
@@ -197,10 +206,13 @@
     });
     document.documentElement.style.setProperty("--default-jp-font-size", event["target"].value + "rem");
   };
+  document.getElementById("afk_max_time").onchange = function(event) {
+    chrome.storage.local.set({ "afk_max_time": event["target"].value });
+  };
   async function startup() {
     document.getElementById("entry_holder").replaceChildren();
     try {
-      chrome.storage.local.get(["font", "font_size"], function(property_entries) {
+      chrome.storage.local.get(["font", "font_size", "afk_max_time"], function(property_entries) {
         if (property_entries.hasOwnProperty("font")) {
           document.getElementById("font").value = property_entries["font"];
           document.documentElement.style.setProperty("--default-jp-font", property_entries["font"]);
@@ -208,6 +220,10 @@
         if (property_entries.hasOwnProperty("font_size")) {
           document.getElementById("font_size").value = property_entries["font_size"];
           document.documentElement.style.setProperty("--default-jp-font-size", property_entries["font_size"] + "rem");
+        }
+        if (property_entries.hasOwnProperty("afk_max_time")) {
+          MAX_TIME_AWAY2 = property_entries["afk_max_time"];
+          document.getElementById("afk_max_time").value = property_entries["afk_max_time"];
         }
       });
       game_entry = await previousGameEntry();
@@ -227,13 +243,13 @@
   setInterval(async function() {
     time_now = timeNowSeconds();
     time_between_lines = time_now - previous_time;
-    if (time_between_lines <= MAX_TIME_AWAY) {
+    if (time_between_lines <= MAX_TIME_AWAY2) {
       idle_time_added = false;
       time_so_far = time_read + time_between_lines;
       setStats(chars_read, time_so_far);
     } else {
       if (!idle_time_added) {
-        time_read += MAX_TIME_AWAY;
+        time_read += MAX_TIME_AWAY2;
         setStats(chars_read, time_read);
         game_entry = await todayGameEntry();
         game_entry[Object.keys(game_entry)[0]]["time_read"] = time_read;

@@ -11,7 +11,7 @@ var SECS_TO_HOURS = 60 * 60
 var MAX_TIME_AWAY = 60
 
 // In milliseconds
-REFRESH_STATS_INTERVAL = 1000
+var REFRESH_STATS_INTERVAL = 1000
 
 var previous_game
 var previous_time
@@ -132,12 +132,16 @@ document.getElementById("font_size").onchange = function(event) {
     document.documentElement.style.setProperty("--default-jp-font-size", event["target"].value + "rem")
 }
 
+document.getElementById("afk_max_time").onchange = function(event) {
+    chrome.storage.local.set({"afk_max_time": event["target"].value})
+}
+
 // Initialise empty windows when a previous game is found
 async function startup() {
     document.getElementById("entry_holder").replaceChildren()
     try {
         // Set the UI properties
-        chrome.storage.local.get(["font", "font_size"], function(property_entries) {
+        chrome.storage.local.get(["font", "font_size", "afk_max_time"], function(property_entries) {
             if (property_entries.hasOwnProperty("font")) {
                 document.getElementById("font").value = property_entries["font"]
                 document.documentElement.style.setProperty("--default-jp-font", property_entries["font"])
@@ -146,6 +150,11 @@ async function startup() {
             if (property_entries.hasOwnProperty("font_size")) {
                 document.getElementById("font_size").value = property_entries["font_size"]
                 document.documentElement.style.setProperty("--default-jp-font-size", property_entries["font_size"] + "rem")
+            }
+
+            if (property_entries.hasOwnProperty("afk_max_time")) {
+                MAX_TIME_AWAY = property_entries["afk_max_time"]
+                document.getElementById("afk_max_time").value = property_entries["afk_max_time"]
             }
         })
 

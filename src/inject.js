@@ -192,4 +192,3 @@ chrome.storage.local.onChanged.addListener(function (changes, _) {
 
 // TODO: Remove hardcoded function being called
 document.getElementById("export_stats").onclick = exportStats
-exportStats()

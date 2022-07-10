@@ -78,6 +78,7 @@
   }
 
   // src/stats.js
+  var MS_TO_HRS = 60 * 60 * 1e3;
   async function exportStats() {
     game_entry = await previousGameEntry();
     process_path = Object.keys(game_entry)[0];
@@ -86,9 +87,10 @@
     game_date_queries = game_entry["dates_read_on"].map((date2) => process_path + "_" + date2);
     csv_string = new Promise((resolve, _) => {
       chrome.storage.local.get(game_date_queries, function(game_date_entries) {
-        csv_string = "date,lines_read,chars_read,time_read\r\n";
+        csv_string = "date,lines_read,chars_read,time_read,speed\r\n";
         Object.entries(game_date_entries).forEach((element) => {
-          csv_string += element[0].split("_").at(-1) + "," + element[1]["lines_read"] + "," + element[1]["chars_read"] + "," + element[1]["time_read"] + "\r\n";
+          readtime_hours = element[1]["time_read"] / MS_TO_HRS;
+          csv_string += element[0].split("_").at(-1) + "," + element[1]["lines_read"] + "," + element[1]["chars_read"] + "," + readtime_hours + "," + element[1]["chars_read"] / readtime_hours + "\r\n";
         });
         resolve(csv_string);
       });

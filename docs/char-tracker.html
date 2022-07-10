@@ -12,9 +12,15 @@
   </style>
   <style type="text/tailwindcss">
     @layer components {
+        :root {
+          --default-jp-font: "Klee One";
+          /* --default-jp-font: "Noto Sans JP"; */
+          --default-jp-font-size: 2rem;
+        }
+
         .jp-text {
-          font-family: "Klee One";
-          /* font-family: "Noto Sans JP"; */
+          font-family: var(--default-jp-font);
+          font-size: var(--default-jp-font-size)
         }
         .sentence-entry {
             @apply flex items-center dark:bg-slate-900 jp-text p-4 gap-4;
@@ -52,7 +58,7 @@
 
 <body class="dark:bg-slate-800 px-12">
   <div class="flex py-3 bg-slate-800 items-start sticky top-0 justify-between ">
-    <input id="game_name" class="w-20 shrink grow justify-self-start text-4xl jp-text bg-transparent text-indigo-400" type="text" value="Game" disabled="true"> <!-- REPLACE WITH GAME NAME -->
+    <input id="game_name" class="w-20 shrink grow justify-self-start text-5xl jp-text bg-transparent text-indigo-400" type="text" value="Game" disabled="true"> <!-- REPLACE WITH GAME NAME -->
 
     <div class="place-self-center relative dropdown">
       <div class="blur flex items-center p-3 gap-3 bg-indigo-400 bg-opacity-70 hover:filter-none hover:bg-opacity-80">
@@ -70,9 +76,9 @@
 
       <div class="dropdown-menu hidden absolute left-0 right-0 grid-rows-2">
         <div class="menu-label">Font</div>
-        <input id="font" class="menu-input" type="text" value="Klee One">
-        <div class="menu-label">Font Size</div>
-        <input id="font_size" class="menu-input" type="number" value=40>
+        <input id="font" onchange="fontChanged(this.value)" class="menu-input" type="text" value="Klee One">
+        <div class="menu-label">Font Size (rem)</div>
+        <input id="font_size" onchange="fontSizeChanged(this.value)" class="menu-input" type="number" value=2>
         <button id="export_stats" class="menu-buttons">Export Stats</button>
         <button id="view_stats" class="menu-buttons">View Stats</button>
       </div>
@@ -83,3 +89,13 @@
   </div>
 </body>
 </html>
+
+<script>
+  function fontChanged(font) {
+    document.documentElement.style.setProperty("--default-jp-font", font)
+  }
+
+  function fontSizeChanged(font_size) {
+    document.documentElement.style.setProperty("--default-jp-font-size", font_size + "rem")
+  }
+</script>

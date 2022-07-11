@@ -3,6 +3,8 @@
     "build": "node esbuild.js"
   },
   "dependencies": {
-    "esbuild": "^0.14.48"
+    "chart.js": "^3.8.0",
+    "esbuild": "^0.14.48",
+    "webextension-polyfill": "^0.9.0"
   }
 }

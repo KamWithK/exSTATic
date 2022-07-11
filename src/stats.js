@@ -29,6 +29,7 @@ export async function exportStats() {
     })
 
     chrome.runtime.sendMessage({
+        "action": "export_csv",
         "csv": [await csv_string],
         "blob_options": { "type": "text/csv" },
         "filename": game_name + "_daily_stats.csv"

@@ -110,13 +110,14 @@
       });
     });
     chrome.runtime.sendMessage({
+      "action": "export_csv",
       "csv": [await csv_string],
       "blob_options": { "type": "text/csv" },
       "filename": game_name + "_daily_stats.csv"
     });
   }
 
-  // src/inject.js
+  // src/tracker_inject.js
   console.log("Injected");
   var SECS_TO_HOURS = 60 * 60;
   var MAX_TIME_AWAY2 = 60;
@@ -208,6 +209,13 @@
   };
   document.getElementById("afk_max_time").onchange = function(event) {
     chrome.storage.local.set({ "afk_max_time": event["target"].value });
+  };
+  document.getElementById("view_stats").onclick = function(event) {
+    url = chrome.runtime.getURL("docs/stats.html");
+    chrome.runtime.sendMessage({
+      "action": "open_tab",
+      "url": "https://kamwithk.github.io/CharTracker/stats.html"
+    });
   };
   async function startup() {
     document.getElementById("entry_holder").replaceChildren();

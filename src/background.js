@@ -55,10 +55,15 @@ connectToWebSocket()
 
 // Downloads have to be redirected here
 chrome.runtime.onMessage.addListener(function(arg, sender, send_response) {
-    blob = new Blob(arg["csv"], arg["blob_options"])
-    
-    chrome.downloads.download({
-        url: URL.createObjectURL(blob),
-        filename: arg["filename"]
-    })
+    if (arg["action"] == "export_csv") {
+        blob = new Blob(arg["csv"], arg["blob_options"])
+        
+        chrome.downloads.download({
+            url: URL.createObjectURL(blob),
+            filename: arg["filename"]
+        })
+    }
+    else if (arg["action"] == "open_tab") {
+        chrome.tabs.create({"url": arg["url"]})
+    }
 })

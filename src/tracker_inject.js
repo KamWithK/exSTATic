@@ -136,6 +136,15 @@ document.getElementById("afk_max_time").onchange = function(event) {
     chrome.storage.local.set({"afk_max_time": event["target"].value})
 }
 
+document.getElementById("view_stats").onclick = function(event) {
+    url = chrome.runtime.getURL("docs/stats.html")
+
+    chrome.runtime.sendMessage({
+        "action": "open_tab",
+        "url": "https://kamwithk.github.io/CharTracker/stats.html"
+    })
+}
+
 // Initialise empty windows when a previous game is found
 async function startup() {
     document.getElementById("entry_holder").replaceChildren()

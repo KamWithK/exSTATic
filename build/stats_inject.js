@@ -14088,9 +14088,9 @@
   var browser = require_browser_polyfill();
   var SECS_TO_HRS = 60 * 60;
   async function getGameData(process_path) {
-    game_entry = (await browser.storage.local.get(process_path))[process_path];
-    game_date_keys = game_entry["dates_read_on"].map((date) => process_path + "_" + date);
-    game_date_entries = await browser.storage.local.get(game_date_keys);
+    let game_entry = (await browser.storage.local.get(process_path))[process_path];
+    let game_date_keys = game_entry["dates_read_on"].map((date) => process_path + "_" + date);
+    let game_date_entries = await browser.storage.local.get(game_date_keys);
     return Object.values(game_date_entries).map((game_date_entry, index) => {
       delete game_date_entry["last_line_recieved"];
       game_date_entry["time_read"] = game_date_entry["time_read"] / SECS_TO_HRS;
@@ -14119,15 +14119,6 @@
     purple: "rgb(153, 102, 255)",
     grey: "rgb(201, 203, 207)"
   };
-  var NAMED_COLORS = [
-    CHART_COLORS.red,
-    CHART_COLORS.orange,
-    CHART_COLORS.yellow,
-    CHART_COLORS.green,
-    CHART_COLORS.blue,
-    CHART_COLORS.purple,
-    CHART_COLORS.grey
-  ];
   async function startup() {
     game_json_data = await getData();
     context = document.getElementById("average_speed_over_time").getContext("2d");
@@ -14136,8 +14127,6 @@
       "data": {
         "datasets": [{
           "label": "Overall Average",
-          "cubicInterpolationMode": "monotone",
-          "tension": 1.1,
           "borderColor": CHART_COLORS.red,
           "data": game_json_data
         }]

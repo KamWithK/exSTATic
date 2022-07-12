@@ -1,11 +1,11 @@
-var browser = require("webextension-polyfill");
+var browser = require("webextension-polyfill")
 
 var SECS_TO_HRS = 60 * 60
 
 export async function getGameData(process_path) {
-    game_entry = (await browser.storage.local.get(process_path))[process_path]
-    game_date_keys = game_entry["dates_read_on"].map(date => process_path + "_" + date)
-    game_date_entries = await browser.storage.local.get(game_date_keys)
+    let game_entry = (await browser.storage.local.get(process_path))[process_path]
+    let game_date_keys = game_entry["dates_read_on"].map(date => process_path + "_" + date)
+    let game_date_entries = await browser.storage.local.get(game_date_keys)
 
     return Object.values(game_date_entries).map((game_date_entry, index) => {
         delete game_date_entry["last_line_recieved"]

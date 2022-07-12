@@ -11,17 +11,7 @@ export const CHART_COLORS = {
     blue: "rgb(54, 162, 235)",
     purple: "rgb(153, 102, 255)",
     grey: "rgb(201, 203, 207)"
-};
-
-const NAMED_COLORS = [
-    CHART_COLORS.red,
-    CHART_COLORS.orange,
-    CHART_COLORS.yellow,
-    CHART_COLORS.green,
-    CHART_COLORS.blue,
-    CHART_COLORS.purple,
-    CHART_COLORS.grey,
-];
+}
 
 async function startup() {
     game_json_data = await getData()
@@ -32,8 +22,6 @@ async function startup() {
         "data": {
             "datasets": [{
                 "label": "Overall Average",
-                "cubicInterpolationMode": "monotone",
-                "tension": 1.1,
                 "borderColor": CHART_COLORS.red,
                 "data": game_json_data
             }]

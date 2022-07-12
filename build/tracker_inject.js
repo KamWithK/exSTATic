@@ -1096,16 +1096,16 @@
   var browser = require_browser_polyfill();
   var SECS_TO_HRS = 60 * 60;
   async function getGameData(process_path2) {
-    game_entry = (await browser.storage.local.get(process_path2))[process_path2];
-    game_date_keys = game_entry["dates_read_on"].map((date2) => process_path2 + "_" + date2);
-    game_date_entries = await browser.storage.local.get(game_date_keys);
+    let game_entry2 = (await browser.storage.local.get(process_path2))[process_path2];
+    let game_date_keys = game_entry2["dates_read_on"].map((date2) => process_path2 + "_" + date2);
+    let game_date_entries = await browser.storage.local.get(game_date_keys);
     return Object.values(game_date_entries).map((game_date_entry2, index) => {
       delete game_date_entry2["last_line_recieved"];
       game_date_entry2["time_read"] = game_date_entry2["time_read"] / SECS_TO_HRS;
       game_date_entry2["read_speed"] = game_date_entry2["chars_read"] / game_date_entry2["time_read"];
-      game_date_entry2["date"] = game_entry["dates_read_on"][index];
+      game_date_entry2["date"] = game_entry2["dates_read_on"][index];
       game_date_entry2["process_path"] = process_path2;
-      game_date_entry2["name"] = game_entry["name"];
+      game_date_entry2["name"] = game_entry2["name"];
       return game_date_entry2;
     });
   }
@@ -1187,9 +1187,9 @@
   async function bulkLineAdd(game_entry2, game_name) {
     max_line_id = game_entry2["last_line_added"];
     id_queries = [...Array(max_line_id + 1).keys()].map((id) => JSON.stringify([game_name, id]));
-    chrome.storage.local.get(id_queries, function(game_date_entries2) {
+    chrome.storage.local.get(id_queries, function(game_date_entries) {
       line_divs = [];
-      for (let [key, line2] of Object.entries(game_date_entries2)) {
+      for (let [key, line2] of Object.entries(game_date_entries)) {
         line_id = JSON.parse(key)[1];
         line_divs.push(newLineDiv(line2, line_id));
       }

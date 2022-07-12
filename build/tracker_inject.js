@@ -1094,14 +1094,14 @@
 
   // src/stats.js
   var browser = require_browser_polyfill();
-  var SECS_TO_HRS = 60 ^ 2;
+  var SECS_TO_HRS = 60 * 60;
   async function getGameData(process_path2) {
     game_entry = (await browser.storage.local.get(process_path2))[process_path2];
     game_date_keys = game_entry["dates_read_on"].map((date2) => process_path2 + "_" + date2);
     game_date_entries = await browser.storage.local.get(game_date_keys);
     return Object.values(game_date_entries).map((game_date_entry2, index) => {
       delete game_date_entry2["last_line_recieved"];
-      game_date_entry2["time_read"] /= SECS_TO_HRS;
+      game_date_entry2["time_read"] = game_date_entry2["time_read"] / SECS_TO_HRS;
       game_date_entry2["read_speed"] = game_date_entry2["chars_read"] / game_date_entry2["time_read"];
       game_date_entry2["date"] = game_entry["dates_read_on"][index];
       game_date_entry2["process_path"] = process_path2;

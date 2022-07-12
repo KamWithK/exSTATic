@@ -14086,14 +14086,14 @@
 
   // src/stats.js
   var browser = require_browser_polyfill();
-  var SECS_TO_HRS = 60 ^ 2;
+  var SECS_TO_HRS = 60 * 60;
   async function getGameData(process_path) {
     game_entry = (await browser.storage.local.get(process_path))[process_path];
     game_date_keys = game_entry["dates_read_on"].map((date) => process_path + "_" + date);
     game_date_entries = await browser.storage.local.get(game_date_keys);
     return Object.values(game_date_entries).map((game_date_entry, index) => {
       delete game_date_entry["last_line_recieved"];
-      game_date_entry["time_read"] /= SECS_TO_HRS;
+      game_date_entry["time_read"] = game_date_entry["time_read"] / SECS_TO_HRS;
       game_date_entry["read_speed"] = game_date_entry["chars_read"] / game_date_entry["time_read"];
       game_date_entry["date"] = game_entry["dates_read_on"][index];
       game_date_entry["process_path"] = process_path;
@@ -14110,6 +14110,24 @@
   // src/stats_inject.js
   console.log("Injected");
   require_chart();
+  var CHART_COLORS = {
+    red: "rgb(255, 99, 132)",
+    orange: "rgb(255, 159, 64)",
+    yellow: "rgb(255, 205, 86)",
+    green: "rgb(75, 192, 192)",
+    blue: "rgb(54, 162, 235)",
+    purple: "rgb(153, 102, 255)",
+    grey: "rgb(201, 203, 207)"
+  };
+  var NAMED_COLORS = [
+    CHART_COLORS.red,
+    CHART_COLORS.orange,
+    CHART_COLORS.yellow,
+    CHART_COLORS.green,
+    CHART_COLORS.blue,
+    CHART_COLORS.purple,
+    CHART_COLORS.grey
+  ];
   async function startup() {
     game_json_data = await getData();
     context = document.getElementById("average_speed_over_time").getContext("2d");
@@ -14117,11 +14135,41 @@
       "type": "line",
       "data": {
         "datasets": [{
-          "label": "Average Reading Speed Over Time",
+          "label": "Overall Average",
+          "cubicInterpolationMode": "monotone",
+          "tension": 1.1,
+          "borderColor": CHART_COLORS.red,
           "data": game_json_data
         }]
       },
       "options": {
+        "responsive": true,
+        "plugins": {
+          "title": {
+            "display": true,
+            "text": "Average Reading Speed Over Time"
+          }
+        },
+        "interaction": {
+          "mode": "index",
+          "intersect": false
+        },
+        "scales": {
+          "x": {
+            "display": true,
+            "title": {
+              "display": true,
+              "text": "Time"
+            }
+          },
+          "y": {
+            "display": true,
+            "title": {
+              "display": true,
+              "text": "Average Speed"
+            }
+          }
+        },
         "parsing": {
           "xAxisKey": "date",
           "yAxisKey": "read_speed"

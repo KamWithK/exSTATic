@@ -1,6 +1,6 @@
 var browser = require("webextension-polyfill");
 
-var SECS_TO_HRS = 60 ^ 2
+var SECS_TO_HRS = 60 * 60
 
 export async function getGameData(process_path) {
     game_entry = (await browser.storage.local.get(process_path))[process_path]
@@ -9,7 +9,7 @@ export async function getGameData(process_path) {
 
     return Object.values(game_date_entries).map((game_date_entry, index) => {
         delete game_date_entry["last_line_recieved"]
-        game_date_entry["time_read"] /= SECS_TO_HRS
+        game_date_entry["time_read"] = game_date_entry["time_read"] / SECS_TO_HRS
         game_date_entry["read_speed"] = game_date_entry["chars_read"] / game_date_entry["time_read"]
         game_date_entry["date"] = game_entry["dates_read_on"][index]
         game_date_entry["process_path"] = process_path

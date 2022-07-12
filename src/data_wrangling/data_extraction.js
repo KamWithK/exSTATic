@@ -35,6 +35,6 @@ export async function exportStats() {
         "action": "export_csv",
         "csv": [csv_string],
         "blob_options": { "type": "text/csv" },
-        "filename": "chartracker_stats.csv"
+        "filename": "exSTATic_stats.csv"
     })
 }

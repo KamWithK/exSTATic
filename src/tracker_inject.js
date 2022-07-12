@@ -39,7 +39,7 @@ function showNameTitle(game_name) {
     game_name_heading.disabled = false
 
     // Set the document title
-    document.title = "CharTracker | " + game_name
+    document.title = "exSTATic | " + game_name
 }
 
 function deleteLine(event) {
@@ -138,7 +138,7 @@ document.getElementById("afk_max_time").onchange = setProperty
 document.getElementById("view_stats").onclick = (_) => {
     chrome.runtime.sendMessage({
         "action": "open_tab",
-        "url": "https://kamwithk.github.io/CharTracker/stats.html"
+        "url": "https://kamwithk.github.io/exSTATic/stats.html"
     })
 }
 document.getElementById("export_stats").onclick = exportStats

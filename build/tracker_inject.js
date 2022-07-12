@@ -1110,7 +1110,7 @@
       "action": "export_csv",
       "csv": [csv_string],
       "blob_options": { "type": "text/csv" },
-      "filename": "chartracker_stats.csv"
+      "filename": "exSTATic_stats.csv"
     });
   }
 
@@ -1136,7 +1136,7 @@
     game_name_heading.disabled = true;
     game_name_heading.value = game_name;
     game_name_heading.disabled = false;
-    document.title = "CharTracker | " + game_name;
+    document.title = "exSTATic | " + game_name;
   }
   function deleteLine(event) {
     confirmed = confirm("Are you sure you'd like to delete this line?\nChar and line statistics will be modified accordingly however time read won't change...");
@@ -1203,7 +1203,7 @@
   document.getElementById("view_stats").onclick = (_) => {
     chrome.runtime.sendMessage({
       "action": "open_tab",
-      "url": "https://kamwithk.github.io/CharTracker/stats.html"
+      "url": "https://kamwithk.github.io/exSTATic/stats.html"
     });
   };
   document.getElementById("export_stats").onclick = exportStats;

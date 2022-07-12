@@ -1119,7 +1119,7 @@
   }
 
   // src/background.js
-  console.log("CharTracker");
+  console.log("exSTATic");
   function connectToWebSocket(_) {
     const socket = new WebSocket("ws://localhost:9001");
     socket.onmessage = dataFetched;

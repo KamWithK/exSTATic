@@ -1,6 +1,6 @@
 {
     "manifest_version": 2,
-    "name": "CharTracker",
+    "name": "exSTATic",
     "version": "0.0.1",
   
     "description": "Completely automated reading statistics and tracking",
@@ -12,15 +12,15 @@
     "content_scripts": [
       {
         "matches": [
-          "https://kamwithk.github.io/CharTracker/char-tracker.html",
-          "file:///*/CharTracker/*/char-tracker.html"
+          "https://kamwithk.github.io/exSTATic/char-tracker.html",
+          "file:///*/exSTATic/*/char-tracker.html"
         ],
         "js": ["build/tracker_inject.js"]
       },
       {
         "matches": [
-          "https://kamwithk.github.io/CharTracker/stats.html",
-          "file:///*/CharTracker/*/stats.html"
+          "https://kamwithk.github.io/exSTATic/stats.html",
+          "file:///*/exSTATic/*/stats.html"
         ],
         "js": ["build/stats_inject.js"]
       }

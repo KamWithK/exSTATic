@@ -1,4 +1,4 @@
-console.log("CharTracker")
+console.log("exSTATic")
 
 import { message_action } from "./which/messaging_action"
 import { dataFetched } from "./which/socket_action"

@@ -16,6 +16,6 @@ export function dateNowString() {
 }
 
 export function timeNowSeconds() {
-    rn = new Date()
+    let rn = new Date()
     return rn.getTime() / 1000
 }

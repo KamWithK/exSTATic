@@ -1,8 +1,11 @@
 console.log("Injected")
 
-import { previousGameEntry, safeDeleteLine, todayGameEntry } from "./storage"
-import { isGameEntry, isGameDateEntry, isLineEntry } from "./check_entry_type"
-import { exportStats } from "./stats"
+var browser = require("webextension-polyfill")
+
+import { previousGameEntry, todayGameEntry } from "./storage/fetch_storage"
+import { safeDeleteLine } from "./storage/update_storage"
+import { isGameEntry, isGameDateEntry, isLineEntry } from "./which/storage_type"
+import { exportStats } from "./data_wrangling/data_extraction"
 import { timeNowSeconds } from "./calculations"
 
 var SECS_TO_HOURS = 60 * 60
@@ -19,17 +22,16 @@ var chars_read
 var time_read
 var idle_time_added = true
 
-function gameNameChanged(event) {
-    chrome.storage.local.get(previous_game, function(game_entry) {
-        game_entry[previous_game]["name"] = event["target"].value
+async function gameNameChanged(event) {
+    let game_entry = await browser.storage.local.get(previous_game)
+    game_entry[previous_game]["name"] = event["target"].value
 
-        chrome.storage.local.set(game_entry)
-    })
+    browser.storage.local.set(game_entry)
 }
 document.getElementById("game_name").onchange = gameNameChanged
 
-async function showNameTitle(game_name) {
-    game_name_heading = document.getElementById("game_name")
+function showNameTitle(game_name) {
+    let game_name_heading = document.getElementById("game_name")
 
     // Disable editing of name until the previous value has been set
     game_name_heading.disabled = true
@@ -46,10 +48,10 @@ function deleteLine(event) {
     )
 
     if (confirmed) {
-        element_div = event["target"].parentNode
+        let element_div = event["target"].parentNode
         
-        line_id = Number.parseInt(element_div.dataset.line_id)
-        line = element_div.querySelector(".sentence").textContent
+        let line_id = Number.parseInt(element_div.dataset.line_id)
+        let line = element_div.querySelector(".sentence").textContent
 
         safeDeleteLine(previous_game, line_id, line)
         element_div.remove()
@@ -57,10 +59,10 @@ function deleteLine(event) {
 }
 
 function newLineDiv(line, line_id) {
-    container_div = document.createElement("div")
-    new_svg = document.createElement("svg")
-    new_p = document.createElement("p")
-    new_button = document.createElement("button")
+    let container_div = document.createElement("div")
+    let new_svg = document.createElement("svg")
+    let new_p = document.createElement("p")
+    let new_button = document.createElement("button")
     
     container_div.classList.add("sentence-entry")
     new_svg.classList.add("circle-bullet-point")
@@ -82,26 +84,23 @@ function newLineDiv(line, line_id) {
 }
 
 function insertLine(line, line_id) {
-    entry_holder = document.getElementById("entry_holder")
-    new_div = newLineDiv(line, line_id)
-    entry_holder.appendChild(new_div)
+    let entry_holder = document.getElementById("entry_holder")
+    entry_holder.appendChild(newLineDiv(line, line_id))
 }
 
 async function bulkLineAdd(game_entry, game_name) {
-    max_line_id = game_entry["last_line_added"]
+    let max_line_id = game_entry["last_line_added"]
 
-    id_queries = [...Array(max_line_id + 1).keys()].map(id => JSON.stringify([game_name, id]))
+    let id_queries = [...Array(max_line_id + 1).keys()].map(
+        id => JSON.stringify([game_name, id])
+    )
 
-    chrome.storage.local.get(id_queries, function(game_date_entries) {
-        line_divs = []
+    let game_date_entries = await browser.storage.local.get(id_queries)
+    let line_divs = Object.entries(game_date_entries).map(
+        ([_, line], index) => newLineDiv(line, index + max_line_id + 1)
+    )
 
-        for (let [key, line] of Object.entries(game_date_entries)) {
-            line_id = JSON.parse(key)[1]
-            line_divs.push(newLineDiv(line, line_id))
-        }
-
-        document.getElementById("entry_holder").replaceChildren(...line_divs)
-    })
+    document.getElementById("entry_holder").replaceChildren(...line_divs)
 }
 
 function setStats(chars_read, time_read) {
@@ -109,71 +108,70 @@ function setStats(chars_read, time_read) {
     document.getElementById("chars_read").innerHTML = chars_read.toLocaleString()
 
     // Set speed
-    average = Math.round(chars_read / (time_read / SECS_TO_HOURS))
+    let average = Math.round(chars_read / (time_read / SECS_TO_HOURS))
     document.getElementById("chars_per_hour").innerHTML = average.toLocaleString()
 
     // Set elapsed time
-    date = new Date(0)
+    let date = new Date(0)
     date.setSeconds(time_read)
     document.getElementById("elapsed_time").innerHTML = date.toISOString().substr(11, 8)
 }
 
-document.getElementById("font").onchange = function(event) {
-    chrome.storage.local.set({
-        "font": event["target"].value
-    })
-    document.documentElement.style.setProperty("--default-jp-font", event["target"].value)
+function setProperty(event) {
+    let property = {}
+    property[event["target"].class] = event["target"].value
+
+    browser.storage.local.set(property)
 }
 
-document.getElementById("font_size").onchange = function(event) {
-    chrome.storage.local.set({
-        "font_size": event["target"].value
-    })
+document.getElementById("font").onchange = (event) => {
+    setProperty(event)
+    document.documentElement.style.setProperty("--default-jp-font", event["target"].value)
+}
+document.getElementById("font_size").onchange = (event) => {
+    setProperty(event)
     document.documentElement.style.setProperty("--default-jp-font-size", event["target"].value + "rem")
 }
 
-document.getElementById("afk_max_time").onchange = function(event) {
-    chrome.storage.local.set({"afk_max_time": event["target"].value})
-}
+document.getElementById("afk_max_time").onchange = setProperty
 
-document.getElementById("view_stats").onclick = function(event) {
-    url = chrome.runtime.getURL("docs/stats.html")
-
+document.getElementById("view_stats").onclick = (_) => {
     chrome.runtime.sendMessage({
         "action": "open_tab",
         "url": "https://kamwithk.github.io/CharTracker/stats.html"
     })
 }
+document.getElementById("export_stats").onclick = exportStats
 
 // Initialise empty windows when a previous game is found
 async function startup() {
     document.getElementById("entry_holder").replaceChildren()
+
     try {
         // Set the UI properties
-        chrome.storage.local.get(["font", "font_size", "afk_max_time"], function(property_entries) {
-            if (property_entries.hasOwnProperty("font")) {
-                document.getElementById("font").value = property_entries["font"]
-                document.documentElement.style.setProperty("--default-jp-font", property_entries["font"])
-            }
+        let property_entries = await browser.storage.local.get(["font", "font_size", "afk_max_time"])
+        if (property_entries.hasOwnProperty("font")) {
+            document.getElementById("font").value = property_entries["font"]
+            document.documentElement.style.setProperty("--default-jp-font", property_entries["font"])
+        }
 
-            if (property_entries.hasOwnProperty("font_size")) {
-                document.getElementById("font_size").value = property_entries["font_size"]
-                document.documentElement.style.setProperty("--default-jp-font-size", property_entries["font_size"] + "rem")
-            }
+        if (property_entries.hasOwnProperty("font_size")) {
+            document.getElementById("font_size").value = property_entries["font_size"]
+            document.documentElement.style.setProperty("--default-jp-font-size", property_entries["font_size"] + "rem")
+        }
 
-            if (property_entries.hasOwnProperty("afk_max_time")) {
-                MAX_TIME_AWAY = property_entries["afk_max_time"]
-                document.getElementById("afk_max_time").value = property_entries["afk_max_time"]
-            }
-        })
+        if (property_entries.hasOwnProperty("afk_max_time")) {
+            MAX_TIME_AWAY = property_entries["afk_max_time"]
+            document.getElementById("afk_max_time").value = property_entries["afk_max_time"]
+        }
 
         // Preload entries and set window title
-        game_entry = await previousGameEntry()
+        let game_entry = await previousGameEntry()
         previous_game = Object.keys(game_entry)[0]
         bulkLineAdd(game_entry[previous_game], previous_game)
         showNameTitle(game_entry[previous_game]["name"])
 
-        today_previous_game = await todayGameEntry()
+        let today_previous_game = await todayGameEntry()
         today_previous_game = today_previous_game[Object.keys(today_previous_game)[0]]
 
         // Preset required properties for statistics
@@ -187,59 +185,72 @@ async function startup() {
 startup()
 
 // Update the statistics live
-setInterval(async function() {
-    time_now = timeNowSeconds()
-    time_between_lines = time_now - previous_time
-
+async function updateStatsLive() {
+    let time_now = timeNowSeconds()
+    let time_between_lines = time_now - previous_time
+    
     // Keep incrementing the timer whilst no break greater than allowed has been taken
     if (time_between_lines <= MAX_TIME_AWAY) {
         idle_time_added = false
-        time_so_far = time_read + time_between_lines
-
+        let time_so_far = time_read + time_between_lines
+    
         setStats(chars_read, time_so_far)
     } else {
         // Change the total time read
         if (!idle_time_added) {
             time_read += MAX_TIME_AWAY
             setStats(chars_read, time_read)
-
-            game_entry = await todayGameEntry()
+    
+            let game_entry = await todayGameEntry()
             game_entry[Object.keys(game_entry)[0]]["time_read"] = time_read
-
-            chrome.storage.local.set(game_entry)
+    
+            browser.storage.local.set(game_entry)
             idle_time_added = true
         }
     }
-}, REFRESH_STATS_INTERVAL)
+}
+setInterval(updateStatsLive, REFRESH_STATS_INTERVAL)
 
-chrome.storage.local.onChanged.addListener(function (changes, _) {
+function gameDateEntryChanged(key, old_value, new_value) {
+    previous_time = new_value["last_line_recieved"]
+    chars_read = new_value["chars_read"]
+    time_read = new_value["time_read"]
+}
+
+function gameEntryChanged(key, old_value, new_value) {
+    // Change games
+    if (key != previous_game) {
+        previous_game = key
+        showNameTitle(new_value["name"])
+        bulkLineAdd(new_value, key)
+    }
+}
+
+function lineFound(key, old_value, new_value) {
+    let process_path = key[0]
+    let line_id = key[1]
+    let line = new_value
+
+    // Only add lines where batch insertion doesn't occur
+    // This is when the game hasn't changed
+    if (process_path == previous_game) {
+        insertLine(line, line_id)
+    }
+}
+
+chrome.storage.local.onChanged.addListener((changes, _) => {
     for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
-        if (isGameEntry(key, newValue)) {
-            // Change games
-            if (key != previous_game) {
-                previous_game = key
-                showNameTitle(newValue["name"])
-                bulkLineAdd(newValue, key)
-            }
+        let line_key = isLineEntry(key, oldValue, newValue)
+        if (line_key) {
+            lineFound(line_key, oldValue, newValue)
+        }
+
+        else if (isGameEntry(key, newValue)) {
+            gameEntryChanged(key, oldValue, newValue)
         }
         
-        if (isGameDateEntry(key, newValue)) {
-            previous_time = newValue["last_line_recieved"]
-            chars_read = newValue["chars_read"]
-            time_read = newValue["time_read"]
-        }
-        
-        key = isLineEntry(key, oldValue, newValue)        
-        if (key) {
-            process_path = key[0]
-            line_id = key[1]
-            line = newValue
-            
-            if (process_path == previous_game) {
-                insertLine(line, line_id)
-            }
+        else if (isGameDateEntry(key, newValue)) {
+            gameDateEntryChanged(key, oldValue, newValue)
         }
     }
 })
-
-document.getElementById("export_stats").onclick = exportStats

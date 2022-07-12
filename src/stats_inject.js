@@ -1,9 +1,9 @@
 console.log("Injected")
 
-import { getData } from "./stats";
+import { getData } from "./data_wrangling/data_extraction";
 require("chart.js");
 
-export const CHART_COLORS = {
+const CHART_COLORS = {
     red: "rgb(255, 99, 132)",
     orange: "rgb(255, 159, 64)",
     yellow: "rgb(255, 205, 86)",
@@ -14,10 +14,10 @@ export const CHART_COLORS = {
 }
 
 async function startup() {
-    game_json_data = await getData()
+    let game_json_data = await getData()
 
-    context = document.getElementById("average_speed_over_time").getContext("2d")
-    chart = new Chart(context, {
+    let context = document.getElementById("average_speed_over_time").getContext("2d")
+    let chart = new Chart(context, {
         "type": "line",
         "data": {
             "datasets": [{

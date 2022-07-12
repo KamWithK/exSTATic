@@ -20,16 +20,15 @@ export async function getGameData(process_path) {
 }
 
 export async function getData() {
-    games = (await browser.storage.local.get("games"))["games"]
-    game_data = games.map(game => getGameData(game))
+    let games = (await browser.storage.local.get("games"))["games"]
+    let game_data = games.map(game => getGameData(game))
     
     return (await Promise.all(game_data)).flat()
 }
 
 export async function exportStats() {
-    data = await getData()
-    console.log(data.map(entry => entry))
-    csv_string = Object.keys(data[0]).join(",") + "\r\n"
+    let data = await getData()
+    let csv_string = Object.keys(data[0]).join(",") + "\r\n"
         + data.map(entry => Object.values(entry).join(",")).join("\r\n")
 
     chrome.runtime.sendMessage({

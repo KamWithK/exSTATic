@@ -1058,11 +1058,11 @@
             this._running = false;
             this._lastDate = void 0;
           }
-          _notify(chart2, anims, date, type) {
+          _notify(chart, anims, date, type) {
             const callbacks = anims.listeners[type];
             const numSteps = anims.duration;
             callbacks.forEach((fn) => fn({
-              chart: chart2,
+              chart,
               initial: anims.initial,
               numSteps,
               currentStep: Math.min(date - anims.start, numSteps)
@@ -1083,7 +1083,7 @@
           }
           _update(date = Date.now()) {
             let remaining = 0;
-            this._charts.forEach((anims, chart2) => {
+            this._charts.forEach((anims, chart) => {
               if (!anims.running || !anims.items.length) {
                 return;
               }
@@ -1105,12 +1105,12 @@
                 }
               }
               if (draw2) {
-                chart2.draw();
-                this._notify(chart2, anims, date, "progress");
+                chart.draw();
+                this._notify(chart, anims, date, "progress");
               }
               if (!items.length) {
                 anims.running = false;
-                this._notify(chart2, anims, date, "complete");
+                this._notify(chart, anims, date, "complete");
                 anims.initial = false;
               }
               remaining += items.length;
@@ -1120,9 +1120,9 @@
               this._running = false;
             }
           }
-          _getAnims(chart2) {
+          _getAnims(chart) {
             const charts = this._charts;
-            let anims = charts.get(chart2);
+            let anims = charts.get(chart);
             if (!anims) {
               anims = {
                 running: false,
@@ -1133,24 +1133,24 @@
                   progress: []
                 }
               };
-              charts.set(chart2, anims);
+              charts.set(chart, anims);
             }
             return anims;
           }
-          listen(chart2, event, cb) {
-            this._getAnims(chart2).listeners[event].push(cb);
+          listen(chart, event, cb) {
+            this._getAnims(chart).listeners[event].push(cb);
           }
-          add(chart2, items) {
+          add(chart, items) {
             if (!items || !items.length) {
               return;
             }
-            this._getAnims(chart2).items.push(...items);
+            this._getAnims(chart).items.push(...items);
           }
-          has(chart2) {
-            return this._getAnims(chart2).items.length > 0;
+          has(chart) {
+            return this._getAnims(chart).items.length > 0;
           }
-          start(chart2) {
-            const anims = this._charts.get(chart2);
+          start(chart) {
+            const anims = this._charts.get(chart);
             if (!anims) {
               return;
             }
@@ -1159,18 +1159,18 @@
             anims.duration = anims.items.reduce((acc, cur) => Math.max(acc, cur._duration), 0);
             this._refresh();
           }
-          running(chart2) {
+          running(chart) {
             if (!this._running) {
               return false;
             }
-            const anims = this._charts.get(chart2);
+            const anims = this._charts.get(chart);
             if (!anims || !anims.running || !anims.items.length) {
               return false;
             }
             return true;
           }
-          stop(chart2) {
-            const anims = this._charts.get(chart2);
+          stop(chart) {
+            const anims = this._charts.get(chart);
             if (!anims || !anims.items.length) {
               return;
             }
@@ -1180,10 +1180,10 @@
               items[i].cancel();
             }
             anims.items = [];
-            this._notify(chart2, anims, Date.now(), "complete");
+            this._notify(chart, anims, Date.now(), "complete");
           }
-          remove(chart2) {
-            return this._charts.delete(chart2);
+          remove(chart) {
+            return this._charts.delete(chart);
           }
         }
         var animator = new Animator();
@@ -1966,7 +1966,7 @@
             this.borderColor = "rgba(0,0,0,0.1)";
             this.color = "#666";
             this.datasets = {};
-            this.devicePixelRatio = (context2) => context2.chart.platform.getDevicePixelRatio();
+            this.devicePixelRatio = (context) => context.chart.platform.getDevicePixelRatio();
             this.elements = {};
             this.events = [
               "mousemove",
@@ -2310,11 +2310,11 @@
           }
           return { x, y, box };
         }
-        function getRelativePosition(evt, chart2) {
+        function getRelativePosition(evt, chart) {
           if ("native" in evt) {
             return evt;
           }
-          const { canvas, currentDevicePixelRatio } = chart2;
+          const { canvas, currentDevicePixelRatio } = chart;
           const style = getComputedStyle(canvas);
           const borderBox = style.boxSizing === "border-box";
           const paddings = getPositionedStyle(style, "padding");
@@ -2322,7 +2322,7 @@
           const { x, y, box } = getCanvasPosition(evt, canvas);
           const xOffset = paddings.left + (box && borders.left);
           const yOffset = paddings.top + (box && borders.top);
-          let { width, height } = chart2;
+          let { width, height } = chart;
           if (borderBox) {
             width -= paddings.width + borders.width;
             height -= paddings.height + borders.height;
@@ -2383,22 +2383,22 @@
             height
           };
         }
-        function retinaScale(chart2, forceRatio, forceStyle) {
+        function retinaScale(chart, forceRatio, forceStyle) {
           const pixelRatio = forceRatio || 1;
-          const deviceHeight = Math.floor(chart2.height * pixelRatio);
-          const deviceWidth = Math.floor(chart2.width * pixelRatio);
-          chart2.height = deviceHeight / pixelRatio;
-          chart2.width = deviceWidth / pixelRatio;
-          const canvas = chart2.canvas;
+          const deviceHeight = Math.floor(chart.height * pixelRatio);
+          const deviceWidth = Math.floor(chart.width * pixelRatio);
+          chart.height = deviceHeight / pixelRatio;
+          chart.width = deviceWidth / pixelRatio;
+          const canvas = chart.canvas;
           if (canvas.style && (forceStyle || !canvas.style.height && !canvas.style.width)) {
-            canvas.style.height = `${chart2.height}px`;
-            canvas.style.width = `${chart2.width}px`;
+            canvas.style.height = `${chart.height}px`;
+            canvas.style.width = `${chart.width}px`;
           }
-          if (chart2.currentDevicePixelRatio !== pixelRatio || canvas.height !== deviceHeight || canvas.width !== deviceWidth) {
-            chart2.currentDevicePixelRatio = pixelRatio;
+          if (chart.currentDevicePixelRatio !== pixelRatio || canvas.height !== deviceHeight || canvas.width !== deviceWidth) {
+            chart.currentDevicePixelRatio = pixelRatio;
             canvas.height = deviceHeight;
             canvas.width = deviceWidth;
-            chart2.ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+            chart.ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
             return true;
           }
           return false;
@@ -2429,10 +2429,10 @@
           }
           return (font.style ? font.style + " " : "") + (font.weight ? font.weight + " " : "") + font.size + "px " + font.family;
         }
-        function _measureText(ctx, data2, gc, longest, string) {
-          let textWidth = data2[string];
+        function _measureText(ctx, data, gc, longest, string) {
+          let textWidth = data[string];
           if (!textWidth) {
-            textWidth = data2[string] = ctx.measureText(string).width;
+            textWidth = data[string] = ctx.measureText(string).width;
             gc.push(string);
           }
           if (textWidth > longest) {
@@ -2442,10 +2442,10 @@
         }
         function _longestText(ctx, font, arrayOfThings, cache) {
           cache = cache || {};
-          let data2 = cache.data = cache.data || {};
+          let data = cache.data = cache.data || {};
           let gc = cache.garbageCollect = cache.garbageCollect || [];
           if (cache.font !== font) {
-            data2 = cache.data = {};
+            data = cache.data = {};
             gc = cache.garbageCollect = [];
             cache.font = font;
           }
@@ -2457,12 +2457,12 @@
           for (i = 0; i < ilen; i++) {
             thing = arrayOfThings[i];
             if (thing !== void 0 && thing !== null && isArray(thing) !== true) {
-              longest = _measureText(ctx, data2, gc, longest, thing);
+              longest = _measureText(ctx, data, gc, longest, thing);
             } else if (isArray(thing)) {
               for (j = 0, jlen = thing.length; j < jlen; j++) {
                 nestedThing = thing[j];
                 if (nestedThing !== void 0 && nestedThing !== null && !isArray(nestedThing)) {
-                  longest = _measureText(ctx, data2, gc, longest, nestedThing);
+                  longest = _measureText(ctx, data, gc, longest, nestedThing);
                 }
               }
             }
@@ -2471,14 +2471,14 @@
           const gcLen = gc.length / 2;
           if (gcLen > arrayOfThings.length) {
             for (i = 0; i < gcLen; i++) {
-              delete data2[gc[i]];
+              delete data[gc[i]];
             }
             gc.splice(0, gcLen);
           }
           return longest;
         }
-        function _alignPixel(chart2, pixel, width) {
-          const devicePixelRatio = chart2.currentDevicePixelRatio;
+        function _alignPixel(chart, pixel, width) {
+          const devicePixelRatio = chart.currentDevicePixelRatio;
           const halfWidth = width !== 0 ? Math.max(width / 2, 0.5) : 0;
           return Math.round((pixel - halfWidth) * devicePixelRatio) / devicePixelRatio + halfWidth;
         }
@@ -2736,16 +2736,16 @@
             }
           });
         }
-        function _attachContext(proxy, context2, subProxy, descriptorDefaults) {
+        function _attachContext(proxy, context, subProxy, descriptorDefaults) {
           const cache = {
             _cacheable: false,
             _proxy: proxy,
-            _context: context2,
+            _context: context,
             _subProxy: subProxy,
             _stack: /* @__PURE__ */ new Set(),
             _descriptors: _descriptors(proxy, descriptorDefaults),
             setContext: (ctx) => _attachContext(proxy, ctx, subProxy, descriptorDefaults),
-            override: (scope) => _attachContext(proxy.override(scope), context2, subProxy, descriptorDefaults)
+            override: (scope) => _attachContext(proxy.override(scope), context, subProxy, descriptorDefaults)
           };
           return new Proxy(cache, {
             deleteProperty(target, prop) {
@@ -2927,14 +2927,14 @@
           }
           return Array.from(set2);
         }
-        function _parseObjectDataRadialScale(meta, data2, start, count) {
+        function _parseObjectDataRadialScale(meta, data, start, count) {
           const { iScale } = meta;
           const { key = "r" } = this._parsing;
           const parsed = new Array(count);
           let i, ilen, index2, item;
           for (i = 0, ilen = count; i < ilen; ++i) {
             index2 = i + start;
-            item = data2[index2];
+            item = data[index2];
             parsed[i] = {
               r: iScale.parse(resolveObjectKey(item, key), index2)
             };
@@ -3252,7 +3252,7 @@
           font.string = toFontString(font);
           return font;
         }
-        function resolve(inputs, context2, index2, info) {
+        function resolve(inputs, context, index2, info) {
           let cacheable = true;
           let i, ilen, value;
           for (i = 0, ilen = inputs.length; i < ilen; ++i) {
@@ -3260,8 +3260,8 @@
             if (value === void 0) {
               continue;
             }
-            if (context2 !== void 0 && typeof value === "function") {
-              value = value(context2);
+            if (context !== void 0 && typeof value === "function") {
+              value = value(context);
               cacheable = false;
             }
             if (index2 !== void 0 && isArray(value)) {
@@ -3285,8 +3285,8 @@
             max: keepZero(max, change)
           };
         }
-        function createContext(parentContext, context2) {
-          return Object.assign(Object.create(parentContext), context2);
+        function createContext(parentContext, context) {
+          return Object.assign(Object.create(parentContext), context);
         }
         const getRightToLeftAdapter = function(rectX, width) {
           return {
@@ -3705,32 +3705,32 @@
           _computeSegments
         });
         function binarySearch(metaset, axis, value, intersect) {
-          const { controller, data: data2, _sorted } = metaset;
+          const { controller, data, _sorted } = metaset;
           const iScale = controller._cachedMeta.iScale;
-          if (iScale && axis === iScale.axis && axis !== "r" && _sorted && data2.length) {
+          if (iScale && axis === iScale.axis && axis !== "r" && _sorted && data.length) {
             const lookupMethod = iScale._reversePixels ? _rlookupByKey : _lookupByKey;
             if (!intersect) {
-              return lookupMethod(data2, axis, value);
+              return lookupMethod(data, axis, value);
             } else if (controller._sharedOptions) {
-              const el = data2[0];
+              const el = data[0];
               const range = typeof el.getRange === "function" && el.getRange(axis);
               if (range) {
-                const start = lookupMethod(data2, axis, value - range);
-                const end = lookupMethod(data2, axis, value + range);
+                const start = lookupMethod(data, axis, value - range);
+                const end = lookupMethod(data, axis, value + range);
                 return { lo: start.lo, hi: end.hi };
               }
             }
           }
-          return { lo: 0, hi: data2.length - 1 };
+          return { lo: 0, hi: data.length - 1 };
         }
-        function evaluateInteractionItems(chart2, axis, position, handler, intersect) {
-          const metasets = chart2.getSortedVisibleDatasetMetas();
+        function evaluateInteractionItems(chart, axis, position, handler, intersect) {
+          const metasets = chart.getSortedVisibleDatasetMetas();
           const value = position[axis];
           for (let i = 0, ilen = metasets.length; i < ilen; ++i) {
-            const { index: index2, data: data2 } = metasets[i];
+            const { index: index2, data } = metasets[i];
             const { lo, hi } = binarySearch(metasets[i], axis, value, intersect);
             for (let j = lo; j <= hi; ++j) {
-              const element = data2[j];
+              const element = data[j];
               if (!element.skip) {
                 handler(element, index2, j);
               }
@@ -3746,23 +3746,23 @@
             return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
           };
         }
-        function getIntersectItems(chart2, position, axis, useFinalPosition, includeInvisible) {
+        function getIntersectItems(chart, position, axis, useFinalPosition, includeInvisible) {
           const items = [];
-          if (!includeInvisible && !chart2.isPointInArea(position)) {
+          if (!includeInvisible && !chart.isPointInArea(position)) {
             return items;
           }
           const evaluationFunc = function(element, datasetIndex, index2) {
-            if (!includeInvisible && !_isPointInArea(element, chart2.chartArea, 0)) {
+            if (!includeInvisible && !_isPointInArea(element, chart.chartArea, 0)) {
               return;
             }
             if (element.inRange(position.x, position.y, useFinalPosition)) {
               items.push({ element, datasetIndex, index: index2 });
             }
           };
-          evaluateInteractionItems(chart2, axis, position, evaluationFunc, true);
+          evaluateInteractionItems(chart, axis, position, evaluationFunc, true);
           return items;
         }
-        function getNearestRadialItems(chart2, position, axis, useFinalPosition) {
+        function getNearestRadialItems(chart, position, axis, useFinalPosition) {
           let items = [];
           function evaluationFunc(element, datasetIndex, index2) {
             const { startAngle, endAngle } = element.getProps(["startAngle", "endAngle"], useFinalPosition);
@@ -3771,10 +3771,10 @@
               items.push({ element, datasetIndex, index: index2 });
             }
           }
-          evaluateInteractionItems(chart2, axis, position, evaluationFunc);
+          evaluateInteractionItems(chart, axis, position, evaluationFunc);
           return items;
         }
-        function getNearestCartesianItems(chart2, position, axis, intersect, useFinalPosition, includeInvisible) {
+        function getNearestCartesianItems(chart, position, axis, intersect, useFinalPosition, includeInvisible) {
           let items = [];
           const distanceMetric = getDistanceMetricForAxis(axis);
           let minDistance = Number.POSITIVE_INFINITY;
@@ -3784,7 +3784,7 @@
               return;
             }
             const center = element.getCenterPoint(useFinalPosition);
-            const pointInArea = !!includeInvisible || chart2.isPointInArea(center);
+            const pointInArea = !!includeInvisible || chart.isPointInArea(center);
             if (!pointInArea && !inRange2) {
               return;
             }
@@ -3796,20 +3796,20 @@
               items.push({ element, datasetIndex, index: index2 });
             }
           }
-          evaluateInteractionItems(chart2, axis, position, evaluationFunc);
+          evaluateInteractionItems(chart, axis, position, evaluationFunc);
           return items;
         }
-        function getNearestItems(chart2, position, axis, intersect, useFinalPosition, includeInvisible) {
-          if (!includeInvisible && !chart2.isPointInArea(position)) {
+        function getNearestItems(chart, position, axis, intersect, useFinalPosition, includeInvisible) {
+          if (!includeInvisible && !chart.isPointInArea(position)) {
             return [];
           }
-          return axis === "r" && !intersect ? getNearestRadialItems(chart2, position, axis, useFinalPosition) : getNearestCartesianItems(chart2, position, axis, intersect, useFinalPosition, includeInvisible);
+          return axis === "r" && !intersect ? getNearestRadialItems(chart, position, axis, useFinalPosition) : getNearestCartesianItems(chart, position, axis, intersect, useFinalPosition, includeInvisible);
         }
-        function getAxisItems(chart2, position, axis, intersect, useFinalPosition) {
+        function getAxisItems(chart, position, axis, intersect, useFinalPosition) {
           const items = [];
           const rangeMethod = axis === "x" ? "inXRange" : "inYRange";
           let intersectsItem = false;
-          evaluateInteractionItems(chart2, axis, position, (element, datasetIndex, index2) => {
+          evaluateInteractionItems(chart, axis, position, (element, datasetIndex, index2) => {
             if (element[rangeMethod](position[axis], useFinalPosition)) {
               items.push({ element, datasetIndex, index: index2 });
               intersectsItem = intersectsItem || element.inRange(position.x, position.y, useFinalPosition);
@@ -3823,16 +3823,16 @@
         var Interaction = {
           evaluateInteractionItems,
           modes: {
-            index(chart2, e, options, useFinalPosition) {
-              const position = getRelativePosition(e, chart2);
+            index(chart, e, options, useFinalPosition) {
+              const position = getRelativePosition(e, chart);
               const axis = options.axis || "x";
               const includeInvisible = options.includeInvisible || false;
-              const items = options.intersect ? getIntersectItems(chart2, position, axis, useFinalPosition, includeInvisible) : getNearestItems(chart2, position, axis, false, useFinalPosition, includeInvisible);
+              const items = options.intersect ? getIntersectItems(chart, position, axis, useFinalPosition, includeInvisible) : getNearestItems(chart, position, axis, false, useFinalPosition, includeInvisible);
               const elements2 = [];
               if (!items.length) {
                 return [];
               }
-              chart2.getSortedVisibleDatasetMetas().forEach((meta) => {
+              chart.getSortedVisibleDatasetMetas().forEach((meta) => {
                 const index2 = items[0].index;
                 const element = meta.data[index2];
                 if (element && !element.skip) {
@@ -3841,40 +3841,40 @@
               });
               return elements2;
             },
-            dataset(chart2, e, options, useFinalPosition) {
-              const position = getRelativePosition(e, chart2);
+            dataset(chart, e, options, useFinalPosition) {
+              const position = getRelativePosition(e, chart);
               const axis = options.axis || "xy";
               const includeInvisible = options.includeInvisible || false;
-              let items = options.intersect ? getIntersectItems(chart2, position, axis, useFinalPosition, includeInvisible) : getNearestItems(chart2, position, axis, false, useFinalPosition, includeInvisible);
+              let items = options.intersect ? getIntersectItems(chart, position, axis, useFinalPosition, includeInvisible) : getNearestItems(chart, position, axis, false, useFinalPosition, includeInvisible);
               if (items.length > 0) {
                 const datasetIndex = items[0].datasetIndex;
-                const data2 = chart2.getDatasetMeta(datasetIndex).data;
+                const data = chart.getDatasetMeta(datasetIndex).data;
                 items = [];
-                for (let i = 0; i < data2.length; ++i) {
-                  items.push({ element: data2[i], datasetIndex, index: i });
+                for (let i = 0; i < data.length; ++i) {
+                  items.push({ element: data[i], datasetIndex, index: i });
                 }
               }
               return items;
             },
-            point(chart2, e, options, useFinalPosition) {
-              const position = getRelativePosition(e, chart2);
+            point(chart, e, options, useFinalPosition) {
+              const position = getRelativePosition(e, chart);
               const axis = options.axis || "xy";
               const includeInvisible = options.includeInvisible || false;
-              return getIntersectItems(chart2, position, axis, useFinalPosition, includeInvisible);
+              return getIntersectItems(chart, position, axis, useFinalPosition, includeInvisible);
             },
-            nearest(chart2, e, options, useFinalPosition) {
-              const position = getRelativePosition(e, chart2);
+            nearest(chart, e, options, useFinalPosition) {
+              const position = getRelativePosition(e, chart);
               const axis = options.axis || "xy";
               const includeInvisible = options.includeInvisible || false;
-              return getNearestItems(chart2, position, axis, options.intersect, useFinalPosition, includeInvisible);
+              return getNearestItems(chart, position, axis, options.intersect, useFinalPosition, includeInvisible);
             },
-            x(chart2, e, options, useFinalPosition) {
-              const position = getRelativePosition(e, chart2);
-              return getAxisItems(chart2, position, "x", options.intersect, useFinalPosition);
+            x(chart, e, options, useFinalPosition) {
+              const position = getRelativePosition(e, chart);
+              return getAxisItems(chart, position, "x", options.intersect, useFinalPosition);
             },
-            y(chart2, e, options, useFinalPosition) {
-              const position = getRelativePosition(e, chart2);
-              return getAxisItems(chart2, position, "y", options.intersect, useFinalPosition);
+            y(chart, e, options, useFinalPosition) {
+              const position = getRelativePosition(e, chart);
+              return getAxisItems(chart, position, "y", options.intersect, useFinalPosition);
             }
           }
         };
@@ -4089,9 +4089,9 @@
           }
         });
         var layouts = {
-          addBox(chart2, item) {
-            if (!chart2.boxes) {
-              chart2.boxes = [];
+          addBox(chart, item) {
+            if (!chart.boxes) {
+              chart.boxes = [];
             }
             item.fullSize = item.fullSize || false;
             item.position = item.position || "top";
@@ -4104,30 +4104,30 @@
                 }
               }];
             };
-            chart2.boxes.push(item);
+            chart.boxes.push(item);
           },
-          removeBox(chart2, layoutItem) {
-            const index2 = chart2.boxes ? chart2.boxes.indexOf(layoutItem) : -1;
+          removeBox(chart, layoutItem) {
+            const index2 = chart.boxes ? chart.boxes.indexOf(layoutItem) : -1;
             if (index2 !== -1) {
-              chart2.boxes.splice(index2, 1);
+              chart.boxes.splice(index2, 1);
             }
           },
-          configure(chart2, item, options) {
+          configure(chart, item, options) {
             item.fullSize = options.fullSize;
             item.position = options.position;
             item.weight = options.weight;
           },
-          update(chart2, width, height, minPadding) {
-            if (!chart2) {
+          update(chart, width, height, minPadding) {
+            if (!chart) {
               return;
             }
-            const padding = toPadding(chart2.options.layout.padding);
+            const padding = toPadding(chart.options.layout.padding);
             const availableWidth = Math.max(width - padding.width, 0);
             const availableHeight = Math.max(height - padding.height, 0);
-            const boxes = buildLayoutBoxes(chart2.boxes);
+            const boxes = buildLayoutBoxes(chart.boxes);
             const verticalBoxes = boxes.vertical;
             const horizontalBoxes = boxes.horizontal;
-            each(chart2.boxes, (box) => {
+            each(chart.boxes, (box) => {
               if (typeof box.beforeLayout === "function") {
                 box.beforeLayout();
               }
@@ -4162,7 +4162,7 @@
             chartArea.x += chartArea.w;
             chartArea.y += chartArea.h;
             placeBoxes(boxes.rightAndBottom, chartArea, params, stacks);
-            chart2.chartArea = {
+            chart.chartArea = {
               left: chartArea.left,
               top: chartArea.top,
               right: chartArea.left + chartArea.w,
@@ -4172,7 +4172,7 @@
             };
             each(boxes.chartArea, (layout) => {
               const box = layout.box;
-              Object.assign(box, chart2.chartArea);
+              Object.assign(box, chart.chartArea);
               box.update(chartArea.w, chartArea.h, { left: 0, top: 0, right: 0, bottom: 0 });
             });
           }
@@ -4180,12 +4180,12 @@
         class BasePlatform {
           acquireContext(canvas, aspectRatio) {
           }
-          releaseContext(context2) {
+          releaseContext(context) {
             return false;
           }
-          addEventListener(chart2, type, listener) {
+          addEventListener(chart, type, listener) {
           }
-          removeEventListener(chart2, type, listener) {
+          removeEventListener(chart, type, listener) {
           }
           getDevicePixelRatio() {
             return 1;
@@ -4264,15 +4264,15 @@
         function addListener(node, type, listener) {
           node.addEventListener(type, listener, eventListenerOptions);
         }
-        function removeListener(chart2, type, listener) {
-          chart2.canvas.removeEventListener(type, listener, eventListenerOptions);
+        function removeListener(chart, type, listener) {
+          chart.canvas.removeEventListener(type, listener, eventListenerOptions);
         }
-        function fromNativeEvent(event, chart2) {
+        function fromNativeEvent(event, chart) {
           const type = EVENT_TYPES[event.type] || event.type;
-          const { x, y } = getRelativePosition(event, chart2);
+          const { x, y } = getRelativePosition(event, chart);
           return {
             type,
-            chart: chart2,
+            chart,
             native: event,
             x: x !== void 0 ? x : null,
             y: y !== void 0 ? y : null
@@ -4285,8 +4285,8 @@
             }
           }
         }
-        function createAttachObserver(chart2, type, listener) {
-          const canvas = chart2.canvas;
+        function createAttachObserver(chart, type, listener) {
+          const canvas = chart.canvas;
           const observer = new MutationObserver((entries) => {
             let trigger = false;
             for (const entry of entries) {
@@ -4300,8 +4300,8 @@
           observer.observe(document, { childList: true, subtree: true });
           return observer;
         }
-        function createDetachObserver(chart2, type, listener) {
-          const canvas = chart2.canvas;
+        function createDetachObserver(chart, type, listener) {
+          const canvas = chart.canvas;
           const observer = new MutationObserver((entries) => {
             let trigger = false;
             for (const entry of entries) {
@@ -4323,26 +4323,26 @@
             return;
           }
           oldDevicePixelRatio = dpr;
-          drpListeningCharts.forEach((resize, chart2) => {
-            if (chart2.currentDevicePixelRatio !== dpr) {
+          drpListeningCharts.forEach((resize, chart) => {
+            if (chart.currentDevicePixelRatio !== dpr) {
               resize();
             }
           });
         }
-        function listenDevicePixelRatioChanges(chart2, resize) {
+        function listenDevicePixelRatioChanges(chart, resize) {
           if (!drpListeningCharts.size) {
             window.addEventListener("resize", onWindowResize);
           }
-          drpListeningCharts.set(chart2, resize);
+          drpListeningCharts.set(chart, resize);
         }
-        function unlistenDevicePixelRatioChanges(chart2) {
-          drpListeningCharts.delete(chart2);
+        function unlistenDevicePixelRatioChanges(chart) {
+          drpListeningCharts.delete(chart);
           if (!drpListeningCharts.size) {
             window.removeEventListener("resize", onWindowResize);
           }
         }
-        function createResizeObserver(chart2, type, listener) {
-          const canvas = chart2.canvas;
+        function createResizeObserver(chart, type, listener) {
+          const canvas = chart.canvas;
           const container = canvas && _getParentNode(canvas);
           if (!container) {
             return;
@@ -4364,24 +4364,24 @@
             resize(width, height);
           });
           observer.observe(container);
-          listenDevicePixelRatioChanges(chart2, resize);
+          listenDevicePixelRatioChanges(chart, resize);
           return observer;
         }
-        function releaseObserver(chart2, type, observer) {
+        function releaseObserver(chart, type, observer) {
           if (observer) {
             observer.disconnect();
           }
           if (type === "resize") {
-            unlistenDevicePixelRatioChanges(chart2);
+            unlistenDevicePixelRatioChanges(chart);
           }
         }
-        function createProxyAndListen(chart2, type, listener) {
-          const canvas = chart2.canvas;
+        function createProxyAndListen(chart, type, listener) {
+          const canvas = chart.canvas;
           const proxy = throttled((event) => {
-            if (chart2.ctx !== null) {
-              listener(fromNativeEvent(event, chart2));
+            if (chart.ctx !== null) {
+              listener(fromNativeEvent(event, chart));
             }
-          }, chart2, (args) => {
+          }, chart, (args) => {
             const event = args[0];
             return [event, event.offsetX, event.offsetY];
           });
@@ -4390,15 +4390,15 @@
         }
         class DomPlatform extends BasePlatform {
           acquireContext(canvas, aspectRatio) {
-            const context2 = canvas && canvas.getContext && canvas.getContext("2d");
-            if (context2 && context2.canvas === canvas) {
+            const context = canvas && canvas.getContext && canvas.getContext("2d");
+            if (context && context.canvas === canvas) {
               initCanvas(canvas, aspectRatio);
-              return context2;
+              return context;
             }
             return null;
           }
-          releaseContext(context2) {
-            const canvas = context2.canvas;
+          releaseContext(context) {
+            const canvas = context.canvas;
             if (!canvas[EXPANDO_KEY]) {
               return false;
             }
@@ -4419,19 +4419,19 @@
             delete canvas[EXPANDO_KEY];
             return true;
           }
-          addEventListener(chart2, type, listener) {
-            this.removeEventListener(chart2, type);
-            const proxies = chart2.$proxies || (chart2.$proxies = {});
+          addEventListener(chart, type, listener) {
+            this.removeEventListener(chart, type);
+            const proxies = chart.$proxies || (chart.$proxies = {});
             const handlers = {
               attach: createAttachObserver,
               detach: createDetachObserver,
               resize: createResizeObserver
             };
             const handler = handlers[type] || createProxyAndListen;
-            proxies[type] = handler(chart2, type, listener);
+            proxies[type] = handler(chart, type, listener);
           }
-          removeEventListener(chart2, type) {
-            const proxies = chart2.$proxies || (chart2.$proxies = {});
+          removeEventListener(chart, type) {
+            const proxies = chart.$proxies || (chart.$proxies = {});
             const proxy = proxies[type];
             if (!proxy) {
               return;
@@ -4442,7 +4442,7 @@
               resize: releaseObserver
             };
             const handler = handlers[type] || removeListener;
-            handler(chart2, type, proxy);
+            handler(chart, type, proxy);
             proxies[type] = void 0;
           }
           getDevicePixelRatio() {
@@ -4628,8 +4628,8 @@
           }
         });
         class Animations {
-          constructor(chart2, config) {
-            this._chart = chart2;
+          constructor(chart, config) {
+            this._chart = chart;
             this._properties = /* @__PURE__ */ new Map();
             this.configure(config);
           }
@@ -4783,9 +4783,9 @@
             disabled: value === false
           };
         }
-        function getSortedDatasetIndices(chart2, filterVisible) {
+        function getSortedDatasetIndices(chart, filterVisible) {
           const keys = [];
-          const metasets = chart2._getSortedDatasetMetas(filterVisible);
+          const metasets = chart._getSortedDatasetMetas(filterVisible);
           let i, ilen;
           for (i = 0, ilen = metasets.length; i < ilen; ++i) {
             keys.push(metasets[i].index);
@@ -4814,15 +4814,15 @@
           }
           return value;
         }
-        function convertObjectDataToArray(data2) {
-          const keys = Object.keys(data2);
+        function convertObjectDataToArray(data) {
+          const keys = Object.keys(data);
           const adata = new Array(keys.length);
           let i, ilen, key;
           for (i = 0, ilen = keys.length; i < ilen; ++i) {
             key = keys[i];
             adata[i] = {
               x: key,
-              y: data2[key]
+              y: data[key]
             };
           }
           return adata;
@@ -4855,8 +4855,8 @@
           return null;
         }
         function updateStacks(controller, parsed) {
-          const { chart: chart2, _cachedMeta: meta } = controller;
-          const stacks = chart2._stacks || (chart2._stacks = {});
+          const { chart, _cachedMeta: meta } = controller;
+          const stacks = chart._stacks || (chart._stacks = {});
           const { iScale, vScale, index: datasetIndex } = meta;
           const iAxis = iScale.axis;
           const vAxis = vScale.axis;
@@ -4873,8 +4873,8 @@
             stack._bottom = getLastIndexInStack(stack, vScale, false, meta.type);
           }
         }
-        function getFirstScaleId(chart2, axis) {
-          const scales2 = chart2.scales;
+        function getFirstScaleId(chart, axis) {
+          const scales2 = chart.scales;
           return Object.keys(scales2).filter((key) => scales2[key].axis === axis).shift();
         }
         function createDatasetContext(parent, index2) {
@@ -4916,11 +4916,11 @@
         }
         const isDirectUpdateMode = (mode) => mode === "reset" || mode === "none";
         const cloneIfNotShared = (cached, shared) => shared ? cached : Object.assign({}, cached);
-        const createStack = (canStack, meta, chart2) => canStack && !meta.hidden && meta._stacked && { keys: getSortedDatasetIndices(chart2, true), values: null };
+        const createStack = (canStack, meta, chart) => canStack && !meta.hidden && meta._stacked && { keys: getSortedDatasetIndices(chart, true), values: null };
         class DatasetController {
-          constructor(chart2, datasetIndex) {
-            this.chart = chart2;
-            this._ctx = chart2.ctx;
+          constructor(chart, datasetIndex) {
+            this.chart = chart;
+            this._ctx = chart.ctx;
             this.index = datasetIndex;
             this._cachedDataOpts = {};
             this._cachedMeta = this.getMeta();
@@ -4952,13 +4952,13 @@
             this.index = datasetIndex;
           }
           linkScales() {
-            const chart2 = this.chart;
+            const chart = this.chart;
             const meta = this._cachedMeta;
             const dataset = this.getDataset();
             const chooseId = (axis, x, y, r) => axis === "x" ? x : axis === "r" ? r : y;
-            const xid = meta.xAxisID = valueOrDefault(dataset.xAxisID, getFirstScaleId(chart2, "x"));
-            const yid = meta.yAxisID = valueOrDefault(dataset.yAxisID, getFirstScaleId(chart2, "y"));
-            const rid = meta.rAxisID = valueOrDefault(dataset.rAxisID, getFirstScaleId(chart2, "r"));
+            const xid = meta.xAxisID = valueOrDefault(dataset.xAxisID, getFirstScaleId(chart, "x"));
+            const yid = meta.yAxisID = valueOrDefault(dataset.yAxisID, getFirstScaleId(chart, "y"));
+            const rid = meta.rAxisID = valueOrDefault(dataset.rAxisID, getFirstScaleId(chart, "r"));
             const indexAxis = meta.indexAxis;
             const iid = meta.iAxisID = chooseId(indexAxis, xid, yid, rid);
             const vid = meta.vAxisID = chooseId(indexAxis, yid, xid, rid);
@@ -4995,22 +4995,22 @@
           }
           _dataCheck() {
             const dataset = this.getDataset();
-            const data2 = dataset.data || (dataset.data = []);
+            const data = dataset.data || (dataset.data = []);
             const _data = this._data;
-            if (isObject(data2)) {
-              this._data = convertObjectDataToArray(data2);
-            } else if (_data !== data2) {
+            if (isObject(data)) {
+              this._data = convertObjectDataToArray(data);
+            } else if (_data !== data) {
               if (_data) {
                 unlistenArrayEvents(_data, this);
                 const meta = this._cachedMeta;
                 clearStacks(meta);
                 meta._parsed = [];
               }
-              if (data2 && Object.isExtensible(data2)) {
-                listenArrayEvents(data2, this);
+              if (data && Object.isExtensible(data)) {
+                listenArrayEvents(data, this);
               }
               this._syncList = [];
-              this._data = data2;
+              this._data = data;
             }
           }
           addElements() {
@@ -5046,23 +5046,23 @@
             this._cachedDataOpts = {};
           }
           parse(start, count) {
-            const { _cachedMeta: meta, _data: data2 } = this;
+            const { _cachedMeta: meta, _data: data } = this;
             const { iScale, _stacked } = meta;
             const iAxis = iScale.axis;
-            let sorted = start === 0 && count === data2.length ? true : meta._sorted;
+            let sorted = start === 0 && count === data.length ? true : meta._sorted;
             let prev = start > 0 && meta._parsed[start - 1];
             let i, cur, parsed;
             if (this._parsing === false) {
-              meta._parsed = data2;
+              meta._parsed = data;
               meta._sorted = true;
-              parsed = data2;
+              parsed = data;
             } else {
-              if (isArray(data2[start])) {
-                parsed = this.parseArrayData(meta, data2, start, count);
-              } else if (isObject(data2[start])) {
-                parsed = this.parseObjectData(meta, data2, start, count);
+              if (isArray(data[start])) {
+                parsed = this.parseArrayData(meta, data, start, count);
+              } else if (isObject(data[start])) {
+                parsed = this.parseObjectData(meta, data, start, count);
               } else {
-                parsed = this.parsePrimitiveData(meta, data2, start, count);
+                parsed = this.parsePrimitiveData(meta, data, start, count);
               }
               const isNotInOrderComparedToPrev = () => cur[iAxis] === null || prev && cur[iAxis] < prev[iAxis];
               for (i = 0; i < count; ++i) {
@@ -5080,7 +5080,7 @@
               updateStacks(this, parsed);
             }
           }
-          parsePrimitiveData(meta, data2, start, count) {
+          parsePrimitiveData(meta, data, start, count) {
             const { iScale, vScale } = meta;
             const iAxis = iScale.axis;
             const vAxis = vScale.axis;
@@ -5092,18 +5092,18 @@
               index2 = i + start;
               parsed[i] = {
                 [iAxis]: singleScale || iScale.parse(labels[index2], index2),
-                [vAxis]: vScale.parse(data2[index2], index2)
+                [vAxis]: vScale.parse(data[index2], index2)
               };
             }
             return parsed;
           }
-          parseArrayData(meta, data2, start, count) {
+          parseArrayData(meta, data, start, count) {
             const { xScale, yScale } = meta;
             const parsed = new Array(count);
             let i, ilen, index2, item;
             for (i = 0, ilen = count; i < ilen; ++i) {
               index2 = i + start;
-              item = data2[index2];
+              item = data[index2];
               parsed[i] = {
                 x: xScale.parse(item[0], index2),
                 y: yScale.parse(item[1], index2)
@@ -5111,14 +5111,14 @@
             }
             return parsed;
           }
-          parseObjectData(meta, data2, start, count) {
+          parseObjectData(meta, data, start, count) {
             const { xScale, yScale } = meta;
             const { xAxisKey = "x", yAxisKey = "y" } = this._parsing;
             const parsed = new Array(count);
             let i, ilen, index2, item;
             for (i = 0, ilen = count; i < ilen; ++i) {
               index2 = i + start;
-              item = data2[index2];
+              item = data[index2];
               parsed[i] = {
                 x: xScale.parse(resolveObjectKey(item, xAxisKey), index2),
                 y: yScale.parse(resolveObjectKey(item, yAxisKey), index2)
@@ -5133,11 +5133,11 @@
             return this._cachedMeta.data[index2];
           }
           applyStack(scale, parsed, mode) {
-            const chart2 = this.chart;
+            const chart = this.chart;
             const meta = this._cachedMeta;
             const value = parsed[scale.axis];
             const stack = {
-              keys: getSortedDatasetIndices(chart2, true),
+              keys: getSortedDatasetIndices(chart, true),
               values: parsed._stacks[scale.axis]
             };
             return applyStack(stack, value, meta.index, { mode });
@@ -5222,10 +5222,10 @@
           }
           draw() {
             const ctx = this._ctx;
-            const chart2 = this.chart;
+            const chart = this.chart;
             const meta = this._cachedMeta;
             const elements2 = meta.data || [];
-            const area = chart2.chartArea;
+            const area = chart.chartArea;
             const active = [];
             const start = this._drawStart || 0;
             const count = this._drawCount || elements2.length - start;
@@ -5255,21 +5255,21 @@
           }
           getContext(index2, active, mode) {
             const dataset = this.getDataset();
-            let context2;
+            let context;
             if (index2 >= 0 && index2 < this._cachedMeta.data.length) {
               const element = this._cachedMeta.data[index2];
-              context2 = element.$context || (element.$context = createDataContext(this.getContext(), index2, element));
-              context2.parsed = this.getParsed(index2);
-              context2.raw = dataset.data[index2];
-              context2.index = context2.dataIndex = index2;
+              context = element.$context || (element.$context = createDataContext(this.getContext(), index2, element));
+              context.parsed = this.getParsed(index2);
+              context.raw = dataset.data[index2];
+              context.index = context.dataIndex = index2;
             } else {
-              context2 = this.$context || (this.$context = createDatasetContext(this.chart.getContext(), this.index));
-              context2.dataset = dataset;
-              context2.index = context2.datasetIndex = this.index;
+              context = this.$context || (this.$context = createDatasetContext(this.chart.getContext(), this.index));
+              context.dataset = dataset;
+              context.index = context.datasetIndex = this.index;
             }
-            context2.active = !!active;
-            context2.mode = mode;
-            return context2;
+            context.active = !!active;
+            context.mode = mode;
+            return context;
           }
           resolveDatasetElementOptions(mode) {
             return this._resolveElementOptions(this.datasetElementType.id, mode);
@@ -5291,8 +5291,8 @@
             const prefixes = active ? [`${elementType}Hover`, "hover", elementType, ""] : [elementType, ""];
             const scopes = config.getOptionScopes(this.getDataset(), scopeKeys);
             const names2 = Object.keys(defaults.elements[elementType]);
-            const context2 = () => this.getContext(index2, active);
-            const values = config.resolveNamedOptions(scopes, names2, context2, prefixes);
+            const context = () => this.getContext(index2, active);
+            const values = config.resolveNamedOptions(scopes, names2, context, prefixes);
             if (values.$shared) {
               values.$shared = sharing;
               cache[cacheKey] = Object.freeze(cloneIfNotShared(values, sharing));
@@ -5300,7 +5300,7 @@
             return values;
           }
           _resolveAnimations(index2, transition, active) {
-            const chart2 = this.chart;
+            const chart = this.chart;
             const cache = this._cachedDataOpts;
             const cacheKey = `animation-${transition}`;
             const cached = cache[cacheKey];
@@ -5308,13 +5308,13 @@
               return cached;
             }
             let options;
-            if (chart2.options.animation !== false) {
+            if (chart.options.animation !== false) {
               const config = this.chart.config;
               const scopeKeys = config.datasetAnimationScopeKeys(this._type, transition);
               const scopes = config.getOptionScopes(this.getDataset(), scopeKeys);
               options = config.createResolver(scopes, this.getContext(index2, active, transition));
             }
-            const animations = new Animations(chart2, options && options.animations);
+            const animations = new Animations(chart, options && options.animations);
             if (options && options._cacheable) {
               cache[cacheKey] = Object.freeze(animations);
             }
@@ -5367,14 +5367,14 @@
             }
           }
           _resyncElements(resetNewElements) {
-            const data2 = this._data;
+            const data = this._data;
             const elements2 = this._cachedMeta.data;
             for (const [method, arg1, arg2] of this._syncList) {
               this[method](arg1, arg2);
             }
             this._syncList = [];
             const numMeta = elements2.length;
-            const numData = data2.length;
+            const numData = data.length;
             const count = Math.min(numData, numMeta);
             if (count) {
               this.parse(0, count);
@@ -5387,7 +5387,7 @@
           }
           _insertElements(start, count, resetNewElements = true) {
             const meta = this._cachedMeta;
-            const data2 = meta.data;
+            const data = meta.data;
             const end = start + count;
             let i;
             const move = (arr) => {
@@ -5396,16 +5396,16 @@
                 arr[i] = arr[i - count];
               }
             };
-            move(data2);
+            move(data);
             for (i = start; i < end; ++i) {
-              data2[i] = new this.dataElementType();
+              data[i] = new this.dataElementType();
             }
             if (this._parsing) {
               move(meta._parsed);
             }
             this.parse(start, count);
             if (resetNewElements) {
-              this.updateElements(data2, start, count, "reset");
+              this.updateElements(data, start, count, "reset");
             }
           }
           updateElements(element, start, count, mode) {
@@ -5781,8 +5781,8 @@
           return ret;
         }
         function titleArgs(scale, offset, position, align) {
-          const { top, left, bottom, right, chart: chart2 } = scale;
-          const { chartArea, scales: scales2 } = chart2;
+          const { top, left, bottom, right, chart } = scale;
+          const { chartArea, scales: scales2 } = chart;
           let rotation = 0;
           let maxWidth, titleX, titleY;
           const height = bottom - top;
@@ -5924,8 +5924,8 @@
             return this.ticks;
           }
           getLabels() {
-            const data2 = this.chart.data;
-            return this.options.labels || (this.isHorizontal() ? data2.xLabels : data2.yLabels) || data2.labels || [];
+            const data = this.chart.data;
+            return this.options.labels || (this.isHorizontal() ? data.xLabels : data.yLabels) || data.labels || [];
           }
           beforeLayout() {
             this._cache = {};
@@ -6101,11 +6101,11 @@
               width: 0,
               height: 0
             };
-            const { chart: chart2, options: { ticks: tickOpts, title: titleOpts, grid: gridOpts } } = this;
+            const { chart, options: { ticks: tickOpts, title: titleOpts, grid: gridOpts } } = this;
             const display = this._isVisible();
             const isHorizontal = this.isHorizontal();
             if (display) {
-              const titleHeight = getTitleHeight(titleOpts, chart2.options.font);
+              const titleHeight = getTitleHeight(titleOpts, chart.options.font);
               if (isHorizontal) {
                 minSize.width = this.maxWidth;
                 minSize.height = getTickMarkLength(gridOpts) + titleHeight;
@@ -6131,11 +6131,11 @@
             }
             this._handleMargins();
             if (isHorizontal) {
-              this.width = this._length = chart2.width - this._margins.left - this._margins.right;
+              this.width = this._length = chart.width - this._margins.left - this._margins.right;
               this.height = minSize.height;
             } else {
               this.width = minSize.width;
-              this.height = this._length = chart2.height - this._margins.top - this._margins.bottom;
+              this.height = this._length = chart.height - this._margins.top - this._margins.bottom;
             }
           }
           _calculatePadding(first, last, sin, cos) {
@@ -6327,7 +6327,7 @@
           }
           _computeGridLineItems(chartArea) {
             const axis = this.axis;
-            const chart2 = this.chart;
+            const chart = this.chart;
             const options = this.options;
             const { grid, position } = options;
             const offset = grid.offset;
@@ -6340,7 +6340,7 @@
             const axisWidth = borderOpts.drawBorder ? borderOpts.borderWidth : 0;
             const axisHalfWidth = axisWidth / 2;
             const alignBorderValue = function(pixel) {
-              return _alignPixel(chart2, pixel, axisWidth);
+              return _alignPixel(chart, pixel, axisWidth);
             };
             let borderValue, i, lineValue, alignedLineValue;
             let tx1, ty1, tx2, ty2, x1, y1, x2, y2;
@@ -6409,7 +6409,7 @@
               if (lineValue === void 0) {
                 continue;
               }
-              alignedLineValue = _alignPixel(chart2, lineValue, lineWidth);
+              alignedLineValue = _alignPixel(chart, lineValue, lineWidth);
               if (isHorizontal) {
                 tx1 = tx2 = x1 = x2 = alignedLineValue;
               } else {
@@ -6668,13 +6668,13 @@
             if (this.options.ticks.mirror) {
               return;
             }
-            const chart2 = this.chart;
+            const chart = this.chart;
             const position = this.options.position;
             if (position === "left" || position === "right") {
-              return { top: 0, left: this.left, bottom: chart2.height, right: this.right };
+              return { top: 0, left: this.left, bottom: chart.height, right: this.right };
             }
             if (position === "top" || position === "bottom") {
-              return { top: this.top, left: 0, bottom: this.bottom, right: chart2.width };
+              return { top: this.top, left: 0, bottom: this.bottom, right: chart.width };
             }
           }
           drawBackground() {
@@ -6737,7 +6737,7 @@
             }
           }
           drawBorder() {
-            const { chart: chart2, ctx, options: { grid } } = this;
+            const { chart, ctx, options: { grid } } = this;
             const borderOpts = grid.setContext(this.getContext());
             const axisWidth = grid.drawBorder ? borderOpts.borderWidth : 0;
             if (!axisWidth) {
@@ -6747,12 +6747,12 @@
             const borderValue = this._borderValue;
             let x1, x2, y1, y2;
             if (this.isHorizontal()) {
-              x1 = _alignPixel(chart2, this.left, axisWidth) - axisWidth / 2;
-              x2 = _alignPixel(chart2, this.right, lastLineWidth) + lastLineWidth / 2;
+              x1 = _alignPixel(chart, this.left, axisWidth) - axisWidth / 2;
+              x2 = _alignPixel(chart, this.right, lastLineWidth) + lastLineWidth / 2;
               y1 = y2 = borderValue;
             } else {
-              y1 = _alignPixel(chart2, this.top, axisWidth) - axisWidth / 2;
-              y2 = _alignPixel(chart2, this.bottom, lastLineWidth) + lastLineWidth / 2;
+              y1 = _alignPixel(chart, this.top, axisWidth) - axisWidth / 2;
+              y2 = _alignPixel(chart, this.bottom, lastLineWidth) + lastLineWidth / 2;
               x1 = x2 = borderValue;
             }
             ctx.save();
@@ -7050,25 +7050,25 @@
           constructor() {
             this._init = [];
           }
-          notify(chart2, hook, args, filter) {
+          notify(chart, hook, args, filter) {
             if (hook === "beforeInit") {
-              this._init = this._createDescriptors(chart2, true);
-              this._notify(this._init, chart2, "install");
+              this._init = this._createDescriptors(chart, true);
+              this._notify(this._init, chart, "install");
             }
-            const descriptors2 = filter ? this._descriptors(chart2).filter(filter) : this._descriptors(chart2);
-            const result = this._notify(descriptors2, chart2, hook, args);
+            const descriptors2 = filter ? this._descriptors(chart).filter(filter) : this._descriptors(chart);
+            const result = this._notify(descriptors2, chart, hook, args);
             if (hook === "afterDestroy") {
-              this._notify(descriptors2, chart2, "stop");
-              this._notify(this._init, chart2, "uninstall");
+              this._notify(descriptors2, chart, "stop");
+              this._notify(this._init, chart, "uninstall");
             }
             return result;
           }
-          _notify(descriptors2, chart2, hook, args) {
+          _notify(descriptors2, chart, hook, args) {
             args = args || {};
             for (const descriptor of descriptors2) {
               const plugin = descriptor.plugin;
               const method = plugin[hook];
-              const params = [chart2, args, descriptor.options];
+              const params = [chart, args, descriptor.options];
               if (callback(method, params, plugin) === false && args.cancelable) {
                 return false;
               }
@@ -7081,26 +7081,26 @@
               this._cache = void 0;
             }
           }
-          _descriptors(chart2) {
+          _descriptors(chart) {
             if (this._cache) {
               return this._cache;
             }
-            const descriptors2 = this._cache = this._createDescriptors(chart2);
-            this._notifyStateChanges(chart2);
+            const descriptors2 = this._cache = this._createDescriptors(chart);
+            this._notifyStateChanges(chart);
             return descriptors2;
           }
-          _createDescriptors(chart2, all) {
-            const config = chart2 && chart2.config;
+          _createDescriptors(chart, all) {
+            const config = chart && chart.config;
             const options = valueOrDefault(config.options && config.options.plugins, {});
             const plugins2 = allPlugins(config);
-            return options === false && !all ? [] : createDescriptors(chart2, plugins2, options, all);
+            return options === false && !all ? [] : createDescriptors(chart, plugins2, options, all);
           }
-          _notifyStateChanges(chart2) {
+          _notifyStateChanges(chart) {
             const previousDescriptors = this._oldCache || [];
             const descriptors2 = this._cache;
             const diff = (a, b) => a.filter((x) => !b.some((y) => x.plugin.id === y.plugin.id));
-            this._notify(diff(previousDescriptors, descriptors2), chart2, "stop");
-            this._notify(diff(descriptors2, previousDescriptors), chart2, "start");
+            this._notify(diff(previousDescriptors, descriptors2), chart, "stop");
+            this._notify(diff(descriptors2, previousDescriptors), chart, "start");
           }
         }
         function allPlugins(config) {
@@ -7127,9 +7127,9 @@
           }
           return options;
         }
-        function createDescriptors(chart2, plugins2, options, all) {
+        function createDescriptors(chart, plugins2, options, all) {
           const result = [];
-          const context2 = chart2.getContext();
+          const context = chart.getContext();
           for (let i = 0; i < plugins2.length; i++) {
             const plugin = plugins2[i];
             const id = plugin.id;
@@ -7139,15 +7139,15 @@
             }
             result.push({
               plugin,
-              options: pluginOpts(chart2.config, plugin, opts, context2)
+              options: pluginOpts(chart.config, plugin, opts, context)
             });
           }
           return result;
         }
-        function pluginOpts(config, plugin, opts, context2) {
+        function pluginOpts(config, plugin, opts, context) {
           const keys = config.pluginScopeKeys(plugin);
           const scopes = config.getOptionScopes(opts, keys);
-          return config.createResolver(scopes, context2, [""], { scriptable: false, indexable: false, allKeys: true });
+          return config.createResolver(scopes, context, [""], { scriptable: false, indexable: false, allKeys: true });
         }
         function getIndexAxis(type, options) {
           const datasetDefaults = defaults.datasets[type] || {};
@@ -7223,11 +7223,11 @@
           options.plugins = valueOrDefault(options.plugins, {});
           options.scales = mergeScaleConfig(config, options);
         }
-        function initData(data2) {
-          data2 = data2 || {};
-          data2.datasets = data2.datasets || [];
-          data2.labels = data2.labels || [];
-          return data2;
+        function initData(data) {
+          data = data || {};
+          data.datasets = data.datasets || [];
+          data.labels = data.labels || [];
+          return data;
         }
         function initConfig(config) {
           config = config || {};
@@ -7270,8 +7270,8 @@
           get data() {
             return this._config.data;
           }
-          set data(data2) {
-            this._config.data = initData(data2);
+          set data(data) {
+            this._config.data = initData(data);
           }
           get options() {
             return this._config.options;
@@ -7372,24 +7372,24 @@
               descriptors
             ];
           }
-          resolveNamedOptions(scopes, names2, context2, prefixes = [""]) {
+          resolveNamedOptions(scopes, names2, context, prefixes = [""]) {
             const result = { $shared: true };
             const { resolver, subPrefixes } = getResolver(this._resolverCache, scopes, prefixes);
             let options = resolver;
             if (needContext(resolver, names2)) {
               result.$shared = false;
-              context2 = isFunction(context2) ? context2() : context2;
-              const subResolver = this.createResolver(scopes, context2, subPrefixes);
-              options = _attachContext(resolver, context2, subResolver);
+              context = isFunction(context) ? context() : context;
+              const subResolver = this.createResolver(scopes, context, subPrefixes);
+              options = _attachContext(resolver, context, subResolver);
             }
             for (const prop of names2) {
               result[prop] = options[prop];
             }
             return result;
           }
-          createResolver(scopes, context2, prefixes = [""], descriptorDefaults) {
+          createResolver(scopes, context, prefixes = [""], descriptorDefaults) {
             const { resolver } = getResolver(this._resolverCache, scopes, prefixes);
-            return isObject(context2) ? _attachContext(resolver, context2, void 0, descriptorDefaults) : resolver;
+            return isObject(context) ? _attachContext(resolver, context, void 0, descriptorDefaults) : resolver;
           }
         }
         function getResolver(resolverCache, scopes, prefixes) {
@@ -7433,16 +7433,16 @@
             return a[l1] === b[l1] ? a[l2] - b[l2] : a[l1] - b[l1];
           };
         }
-        function onAnimationsComplete(context2) {
-          const chart2 = context2.chart;
-          const animationOptions2 = chart2.options.animation;
-          chart2.notifyPlugins("afterRender");
-          callback(animationOptions2 && animationOptions2.onComplete, [context2], chart2);
+        function onAnimationsComplete(context) {
+          const chart = context.chart;
+          const animationOptions2 = chart.options.animation;
+          chart.notifyPlugins("afterRender");
+          callback(animationOptions2 && animationOptions2.onComplete, [context], chart);
         }
-        function onAnimationProgress(context2) {
-          const chart2 = context2.chart;
-          const animationOptions2 = chart2.options.animation;
-          callback(animationOptions2 && animationOptions2.onProgress, [context2], chart2);
+        function onAnimationProgress(context) {
+          const chart = context.chart;
+          const animationOptions2 = chart.options.animation;
+          callback(animationOptions2 && animationOptions2.onProgress, [context], chart);
         }
         function getCanvas(item) {
           if (_isDomSupported() && typeof item === "string") {
@@ -7493,12 +7493,12 @@
             const options = config.createResolver(config.chartOptionScopes(), this.getContext());
             this.platform = new (config.platform || _detectPlatform(initialCanvas))();
             this.platform.updateConfig(config);
-            const context2 = this.platform.acquireContext(initialCanvas, options.aspectRatio);
-            const canvas = context2 && context2.canvas;
+            const context = this.platform.acquireContext(initialCanvas, options.aspectRatio);
+            const canvas = context && context.canvas;
             const height = canvas && canvas.height;
             const width = canvas && canvas.width;
             this.id = uid();
-            this.ctx = context2;
+            this.ctx = context;
             this.canvas = canvas;
             this.width = width;
             this.height = height;
@@ -7525,7 +7525,7 @@
             this._doResize = debounce((mode) => this.update(mode), options.resizeDelay || 0);
             this._dataChanges = [];
             instances[this.id] = this;
-            if (!context2 || !canvas) {
+            if (!context || !canvas) {
               console.error("Failed to create chart: can't acquire context from the given item");
               return;
             }
@@ -7549,8 +7549,8 @@
           get data() {
             return this.config.data;
           }
-          set data(data2) {
-            this.config.data = data2;
+          set data(data) {
+            this.config.data = data;
           }
           get options() {
             return this._options;
@@ -8238,7 +8238,7 @@
             return this.getElementsAtEventForMode(e, hoverOptions.mode, hoverOptions, useFinalPosition);
           }
         }
-        const invalidatePlugins = () => each(Chart2.instances, (chart2) => chart2._plugins.invalidate());
+        const invalidatePlugins = () => each(Chart2.instances, (chart) => chart._plugins.invalidate());
         const enumerable = true;
         Object.defineProperties(Chart2, {
           defaults: {
@@ -8416,7 +8416,7 @@
           }
           return item;
         }
-        function parseArrayOrPrimitive(meta, data2, start, count) {
+        function parseArrayOrPrimitive(meta, data, start, count) {
           const iScale = meta.iScale;
           const vScale = meta.vScale;
           const labels = iScale.getLabels();
@@ -8424,7 +8424,7 @@
           const parsed = [];
           let i, ilen, item, entry;
           for (i = start, ilen = start + count; i < ilen; ++i) {
-            entry = data2[i];
+            entry = data[i];
             item = {};
             item[iScale.axis] = singleScale || iScale.parse(labels[i], i);
             parsed.push(parseValue(entry, item, vScale, i));
@@ -8501,13 +8501,13 @@
           properties.inflateAmount = inflateAmount === "auto" ? ratio === 1 ? 0.33 : 0 : inflateAmount;
         }
         class BarController extends DatasetController {
-          parsePrimitiveData(meta, data2, start, count) {
-            return parseArrayOrPrimitive(meta, data2, start, count);
+          parsePrimitiveData(meta, data, start, count) {
+            return parseArrayOrPrimitive(meta, data, start, count);
           }
-          parseArrayData(meta, data2, start, count) {
-            return parseArrayOrPrimitive(meta, data2, start, count);
+          parseArrayData(meta, data, start, count) {
+            return parseArrayOrPrimitive(meta, data, start, count);
           }
-          parseObjectData(meta, data2, start, count) {
+          parseObjectData(meta, data, start, count) {
             const { iScale, vScale } = meta;
             const { xAxisKey = "x", yAxisKey = "y" } = this._parsing;
             const iAxisKey = iScale.axis === "x" ? xAxisKey : yAxisKey;
@@ -8515,7 +8515,7 @@
             const parsed = [];
             let i, ilen, item, obj;
             for (i = start, ilen = start + count; i < ilen; ++i) {
-              obj = data2[i];
+              obj = data[i];
               item = {};
               item[iScale.axis] = iScale.parse(resolveObjectKey(obj, iAxisKey), i);
               parsed.push(parseValue(resolveObjectKey(obj, vAxisKey), item, vScale, i));
@@ -8772,34 +8772,34 @@
             this.enableOptionSharing = true;
             super.initialize();
           }
-          parsePrimitiveData(meta, data2, start, count) {
-            const parsed = super.parsePrimitiveData(meta, data2, start, count);
+          parsePrimitiveData(meta, data, start, count) {
+            const parsed = super.parsePrimitiveData(meta, data, start, count);
             for (let i = 0; i < parsed.length; i++) {
               parsed[i]._custom = this.resolveDataElementOptions(i + start).radius;
             }
             return parsed;
           }
-          parseArrayData(meta, data2, start, count) {
-            const parsed = super.parseArrayData(meta, data2, start, count);
+          parseArrayData(meta, data, start, count) {
+            const parsed = super.parseArrayData(meta, data, start, count);
             for (let i = 0; i < parsed.length; i++) {
-              const item = data2[start + i];
+              const item = data[start + i];
               parsed[i]._custom = valueOrDefault(item[2], this.resolveDataElementOptions(i + start).radius);
             }
             return parsed;
           }
-          parseObjectData(meta, data2, start, count) {
-            const parsed = super.parseObjectData(meta, data2, start, count);
+          parseObjectData(meta, data, start, count) {
+            const parsed = super.parseObjectData(meta, data, start, count);
             for (let i = 0; i < parsed.length; i++) {
-              const item = data2[start + i];
+              const item = data[start + i];
               parsed[i]._custom = valueOrDefault(item && item.r && +item.r, this.resolveDataElementOptions(i + start).radius);
             }
             return parsed;
           }
           getMaxOverflow() {
-            const data2 = this._cachedMeta.data;
+            const data = this._cachedMeta.data;
             let max = 0;
-            for (let i = data2.length - 1; i >= 0; --i) {
-              max = Math.max(max, data2[i].size(this.resolveDataElementOptions(i)) / 2);
+            for (let i = data.length - 1; i >= 0; --i) {
+              max = Math.max(max, data[i].size(this.resolveDataElementOptions(i)) / 2);
             }
             return max > 0 && max;
           }
@@ -8914,8 +8914,8 @@
           return { ratioX, ratioY, offsetX, offsetY };
         }
         class DoughnutController extends DatasetController {
-          constructor(chart2, datasetIndex) {
-            super(chart2, datasetIndex);
+          constructor(chart, datasetIndex) {
+            super(chart, datasetIndex);
             this.enableOptionSharing = true;
             this.innerRadius = void 0;
             this.outerRadius = void 0;
@@ -8925,15 +8925,15 @@
           linkScales() {
           }
           parse(start, count) {
-            const data2 = this.getDataset().data;
+            const data = this.getDataset().data;
             const meta = this._cachedMeta;
             if (this._parsing === false) {
-              meta._parsed = data2;
+              meta._parsed = data;
             } else {
-              let getter = (i2) => +data2[i2];
-              if (isObject(data2[start])) {
+              let getter = (i2) => +data[i2];
+              if (isObject(data[start])) {
                 const { key = "value" } = this._parsing;
-                getter = (i2) => +resolveObjectKey(data2[i2], key);
+                getter = (i2) => +resolveObjectKey(data[i2], key);
               }
               let i, ilen;
               for (i = start, ilen = start + count; i < ilen; ++i) {
@@ -8965,8 +8965,8 @@
             };
           }
           update(mode) {
-            const chart2 = this.chart;
-            const { chartArea } = chart2;
+            const chart = this.chart;
+            const { chartArea } = chart;
             const meta = this._cachedMeta;
             const arcs = meta.data;
             const spacing = this.getMaxBorderWidth() + this.getMaxOffset(arcs) + this.options.spacing;
@@ -8999,9 +8999,9 @@
           }
           updateElements(arcs, start, count, mode) {
             const reset = mode === "reset";
-            const chart2 = this.chart;
-            const chartArea = chart2.chartArea;
-            const opts = chart2.options;
+            const chart = this.chart;
+            const chartArea = chart.chartArea;
+            const opts = chart.options;
             const animationOpts = opts.animation;
             const centerX = (chartArea.left + chartArea.right) / 2;
             const centerY = (chartArea.top + chartArea.bottom) / 2;
@@ -9058,9 +9058,9 @@
           }
           getLabelAndValue(index2) {
             const meta = this._cachedMeta;
-            const chart2 = this.chart;
-            const labels = chart2.data.labels || [];
-            const value = formatNumber(meta._parsed[index2], chart2.options.locale);
+            const chart = this.chart;
+            const labels = chart.data.labels || [];
+            const value = formatNumber(meta._parsed[index2], chart.options.locale);
             return {
               label: labels[index2] || "",
               value
@@ -9068,12 +9068,12 @@
           }
           getMaxBorderWidth(arcs) {
             let max = 0;
-            const chart2 = this.chart;
+            const chart = this.chart;
             let i, ilen, meta, controller, options;
             if (!arcs) {
-              for (i = 0, ilen = chart2.data.datasets.length; i < ilen; ++i) {
-                if (chart2.isDatasetVisible(i)) {
-                  meta = chart2.getDatasetMeta(i);
+              for (i = 0, ilen = chart.data.datasets.length; i < ilen; ++i) {
+                if (chart.isDatasetVisible(i)) {
+                  meta = chart.getDatasetMeta(i);
                   arcs = meta.data;
                   controller = meta.controller;
                   break;
@@ -9145,12 +9145,12 @@
           plugins: {
             legend: {
               labels: {
-                generateLabels(chart2) {
-                  const data2 = chart2.data;
-                  if (data2.labels.length && data2.datasets.length) {
-                    const { labels: { pointStyle } } = chart2.legend.options;
-                    return data2.labels.map((label, i) => {
-                      const meta = chart2.getDatasetMeta(0);
+                generateLabels(chart) {
+                  const data = chart.data;
+                  if (data.labels.length && data.datasets.length) {
+                    const { labels: { pointStyle } } = chart.legend.options;
+                    return data.labels.map((label, i) => {
+                      const meta = chart.getDatasetMeta(0);
                       const style = meta.controller.getStyle(i);
                       return {
                         text: label,
@@ -9158,7 +9158,7 @@
                         strokeStyle: style.borderColor,
                         lineWidth: style.borderWidth,
                         pointStyle,
-                        hidden: !chart2.getDataVisibility(i),
+                        hidden: !chart.getDataVisibility(i),
                         index: i
                       };
                     });
@@ -9262,12 +9262,12 @@
             const meta = this._cachedMeta;
             const dataset = meta.dataset;
             const border = dataset.options && dataset.options.borderWidth || 0;
-            const data2 = meta.data || [];
-            if (!data2.length) {
+            const data = meta.data || [];
+            if (!data.length) {
               return border;
             }
-            const firstPoint = data2[0].size(this.resolveDataElementOptions(0));
-            const lastPoint = data2[data2.length - 1].size(this.resolveDataElementOptions(data2.length - 1));
+            const firstPoint = data[0].size(this.resolveDataElementOptions(0));
+            const lastPoint = data[data.length - 1].size(this.resolveDataElementOptions(data.length - 1));
             return Math.max(border, firstPoint, lastPoint) / 2;
           }
           draw() {
@@ -9329,23 +9329,23 @@
           return changed;
         }
         class PolarAreaController extends DatasetController {
-          constructor(chart2, datasetIndex) {
-            super(chart2, datasetIndex);
+          constructor(chart, datasetIndex) {
+            super(chart, datasetIndex);
             this.innerRadius = void 0;
             this.outerRadius = void 0;
           }
           getLabelAndValue(index2) {
             const meta = this._cachedMeta;
-            const chart2 = this.chart;
-            const labels = chart2.data.labels || [];
-            const value = formatNumber(meta._parsed[index2].r, chart2.options.locale);
+            const chart = this.chart;
+            const labels = chart.data.labels || [];
+            const value = formatNumber(meta._parsed[index2].r, chart.options.locale);
             return {
               label: labels[index2] || "",
               value
             };
           }
-          parseObjectData(meta, data2, start, count) {
-            return _parseObjectDataRadialScale.bind(this)(meta, data2, start, count);
+          parseObjectData(meta, data, start, count) {
+            return _parseObjectDataRadialScale.bind(this)(meta, data, start, count);
           }
           update(mode) {
             const arcs = this._cachedMeta.data;
@@ -9369,20 +9369,20 @@
             return range;
           }
           _updateRadius() {
-            const chart2 = this.chart;
-            const chartArea = chart2.chartArea;
-            const opts = chart2.options;
+            const chart = this.chart;
+            const chartArea = chart.chartArea;
+            const opts = chart.options;
             const minSize = Math.min(chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
             const outerRadius = Math.max(minSize / 2, 0);
             const innerRadius = Math.max(opts.cutoutPercentage ? outerRadius / 100 * opts.cutoutPercentage : 1, 0);
-            const radiusLength = (outerRadius - innerRadius) / chart2.getVisibleDatasetCount();
+            const radiusLength = (outerRadius - innerRadius) / chart.getVisibleDatasetCount();
             this.outerRadius = outerRadius - radiusLength * this.index;
             this.innerRadius = this.outerRadius - radiusLength;
           }
           updateElements(arcs, start, count, mode) {
             const reset = mode === "reset";
-            const chart2 = this.chart;
-            const opts = chart2.options;
+            const chart = this.chart;
+            const opts = chart.options;
             const animationOpts = opts.animation;
             const scale = this._cachedMeta.rScale;
             const centerX = scale.xCenter;
@@ -9398,7 +9398,7 @@
               const arc = arcs[i];
               let startAngle = angle;
               let endAngle = angle + this._computeAngle(i, mode, defaultAngle);
-              let outerRadius = chart2.getDataVisibility(i) ? scale.getDistanceFromCenterForValue(this.getParsed(i).r) : 0;
+              let outerRadius = chart.getDataVisibility(i) ? scale.getDistanceFromCenterForValue(this.getParsed(i).r) : 0;
               angle = endAngle;
               if (reset) {
                 if (animationOpts.animateScale) {
@@ -9455,12 +9455,12 @@
           plugins: {
             legend: {
               labels: {
-                generateLabels(chart2) {
-                  const data2 = chart2.data;
-                  if (data2.labels.length && data2.datasets.length) {
-                    const { labels: { pointStyle } } = chart2.legend.options;
-                    return data2.labels.map((label, i) => {
-                      const meta = chart2.getDatasetMeta(0);
+                generateLabels(chart) {
+                  const data = chart.data;
+                  if (data.labels.length && data.datasets.length) {
+                    const { labels: { pointStyle } } = chart.legend.options;
+                    return data.labels.map((label, i) => {
+                      const meta = chart.getDatasetMeta(0);
                       const style = meta.controller.getStyle(i);
                       return {
                         text: label,
@@ -9468,7 +9468,7 @@
                         strokeStyle: style.borderColor,
                         lineWidth: style.borderWidth,
                         pointStyle,
-                        hidden: !chart2.getDataVisibility(i),
+                        hidden: !chart.getDataVisibility(i),
                         index: i
                       };
                     });
@@ -9486,8 +9486,8 @@
                 title() {
                   return "";
                 },
-                label(context2) {
-                  return context2.chart.data.labels[context2.dataIndex] + ": " + context2.formattedValue;
+                label(context) {
+                  return context.chart.data.labels[context.dataIndex] + ": " + context.formattedValue;
                 }
               }
             }
@@ -9527,8 +9527,8 @@
               value: "" + vScale.getLabelForValue(parsed[vScale.axis])
             };
           }
-          parseObjectData(meta, data2, start, count) {
-            return _parseObjectDataRadialScale.bind(this)(meta, data2, start, count);
+          parseObjectData(meta, data, start, count) {
+            return _parseObjectDataRadialScale.bind(this)(meta, data, start, count);
           }
           update(mode) {
             const meta = this._cachedMeta;
@@ -10388,10 +10388,10 @@
           PointElement,
           BarElement
         });
-        function lttbDecimation(data2, start, count, availableWidth, options) {
+        function lttbDecimation(data, start, count, availableWidth, options) {
           const samples = options.samples || availableWidth;
           if (samples >= count) {
-            return data2.slice(start, start + count);
+            return data.slice(start, start + count);
           }
           const decimated = [];
           const bucketWidth = (count - 2) / (samples - 2);
@@ -10399,7 +10399,7 @@
           const endIndex = start + count - 1;
           let a = start;
           let i, maxAreaPoint, maxArea, area, nextA;
-          decimated[sampledIndex++] = data2[a];
+          decimated[sampledIndex++] = data[a];
           for (i = 0; i < samples - 2; i++) {
             let avgX = 0;
             let avgY = 0;
@@ -10408,40 +10408,40 @@
             const avgRangeEnd = Math.min(Math.floor((i + 2) * bucketWidth) + 1, count) + start;
             const avgRangeLength = avgRangeEnd - avgRangeStart;
             for (j = avgRangeStart; j < avgRangeEnd; j++) {
-              avgX += data2[j].x;
-              avgY += data2[j].y;
+              avgX += data[j].x;
+              avgY += data[j].y;
             }
             avgX /= avgRangeLength;
             avgY /= avgRangeLength;
             const rangeOffs = Math.floor(i * bucketWidth) + 1 + start;
             const rangeTo = Math.min(Math.floor((i + 1) * bucketWidth) + 1, count) + start;
-            const { x: pointAx, y: pointAy } = data2[a];
+            const { x: pointAx, y: pointAy } = data[a];
             maxArea = area = -1;
             for (j = rangeOffs; j < rangeTo; j++) {
-              area = 0.5 * Math.abs((pointAx - avgX) * (data2[j].y - pointAy) - (pointAx - data2[j].x) * (avgY - pointAy));
+              area = 0.5 * Math.abs((pointAx - avgX) * (data[j].y - pointAy) - (pointAx - data[j].x) * (avgY - pointAy));
               if (area > maxArea) {
                 maxArea = area;
-                maxAreaPoint = data2[j];
+                maxAreaPoint = data[j];
                 nextA = j;
               }
             }
             decimated[sampledIndex++] = maxAreaPoint;
             a = nextA;
           }
-          decimated[sampledIndex++] = data2[endIndex];
+          decimated[sampledIndex++] = data[endIndex];
           return decimated;
         }
-        function minMaxDecimation(data2, start, count, availableWidth) {
+        function minMaxDecimation(data, start, count, availableWidth) {
           let avgX = 0;
           let countX = 0;
           let i, point, x, y, prevX, minIndex, maxIndex, startIndex, minY, maxY;
           const decimated = [];
           const endIndex = start + count - 1;
-          const xMin = data2[start].x;
-          const xMax = data2[endIndex].x;
+          const xMin = data[start].x;
+          const xMax = data[endIndex].x;
           const dx = xMax - xMin;
           for (i = start; i < start + count; ++i) {
-            point = data2[i];
+            point = data[i];
             x = (point.x - xMin) / dx * availableWidth;
             y = point.y;
             const truncX = x | 0;
@@ -10461,19 +10461,19 @@
                 const intermediateIndex2 = Math.max(minIndex, maxIndex);
                 if (intermediateIndex1 !== startIndex && intermediateIndex1 !== lastIndex) {
                   decimated.push({
-                    ...data2[intermediateIndex1],
+                    ...data[intermediateIndex1],
                     x: avgX
                   });
                 }
                 if (intermediateIndex2 !== startIndex && intermediateIndex2 !== lastIndex) {
                   decimated.push({
-                    ...data2[intermediateIndex2],
+                    ...data[intermediateIndex2],
                     x: avgX
                   });
                 }
               }
               if (i > 0 && lastIndex !== startIndex) {
-                decimated.push(data2[lastIndex]);
+                decimated.push(data[lastIndex]);
               }
               decimated.push(point);
               prevX = truncX;
@@ -10486,14 +10486,14 @@
         }
         function cleanDecimatedDataset(dataset) {
           if (dataset._decimated) {
-            const data2 = dataset._data;
+            const data = dataset._data;
             delete dataset._decimated;
             delete dataset._data;
-            Object.defineProperty(dataset, "data", { value: data2 });
+            Object.defineProperty(dataset, "data", { value: data });
           }
         }
-        function cleanDecimatedData(chart2) {
-          chart2.data.datasets.forEach((dataset) => {
+        function cleanDecimatedData(chart) {
+          chart.data.datasets.forEach((dataset) => {
             cleanDecimatedDataset(dataset);
           });
         }
@@ -10519,37 +10519,37 @@
             algorithm: "min-max",
             enabled: false
           },
-          beforeElementsUpdate: (chart2, args, options) => {
+          beforeElementsUpdate: (chart, args, options) => {
             if (!options.enabled) {
-              cleanDecimatedData(chart2);
+              cleanDecimatedData(chart);
               return;
             }
-            const availableWidth = chart2.width;
-            chart2.data.datasets.forEach((dataset, datasetIndex) => {
+            const availableWidth = chart.width;
+            chart.data.datasets.forEach((dataset, datasetIndex) => {
               const { _data, indexAxis } = dataset;
-              const meta = chart2.getDatasetMeta(datasetIndex);
-              const data2 = _data || dataset.data;
-              if (resolve([indexAxis, chart2.options.indexAxis]) === "y") {
+              const meta = chart.getDatasetMeta(datasetIndex);
+              const data = _data || dataset.data;
+              if (resolve([indexAxis, chart.options.indexAxis]) === "y") {
                 return;
               }
               if (!meta.controller.supportsDecimation) {
                 return;
               }
-              const xAxis = chart2.scales[meta.xAxisID];
+              const xAxis = chart.scales[meta.xAxisID];
               if (xAxis.type !== "linear" && xAxis.type !== "time") {
                 return;
               }
-              if (chart2.options.parsing) {
+              if (chart.options.parsing) {
                 return;
               }
-              let { start, count } = getStartAndCountOfVisiblePointsSimplified(meta, data2);
+              let { start, count } = getStartAndCountOfVisiblePointsSimplified(meta, data);
               const threshold = options.threshold || 4 * availableWidth;
               if (count <= threshold) {
                 cleanDecimatedDataset(dataset);
                 return;
               }
               if (isNullOrUndef(_data)) {
-                dataset._data = data2;
+                dataset._data = data;
                 delete dataset.data;
                 Object.defineProperty(dataset, "data", {
                   configurable: true,
@@ -10565,10 +10565,10 @@
               let decimated;
               switch (options.algorithm) {
                 case "lttb":
-                  decimated = lttbDecimation(data2, start, count, availableWidth, options);
+                  decimated = lttbDecimation(data, start, count, availableWidth, options);
                   break;
                 case "min-max":
-                  decimated = minMaxDecimation(data2, start, count, availableWidth);
+                  decimated = minMaxDecimation(data, start, count, availableWidth);
                   break;
                 default:
                   throw new Error(`Unsupported decimation algorithm '${options.algorithm}'`);
@@ -10576,8 +10576,8 @@
               dataset._decimated = decimated;
             });
           },
-          destroy(chart2) {
-            cleanDecimatedData(chart2);
+          destroy(chart) {
+            cleanDecimatedData(chart);
           }
         };
         function _segments(line, target, property) {
@@ -10857,9 +10857,9 @@
           }
         }
         function _getTarget(source) {
-          const { chart: chart2, fill: fill2, line } = source;
+          const { chart, fill: fill2, line } = source;
           if (isNumberFinite(fill2)) {
-            return getLineByIndex(chart2, fill2);
+            return getLineByIndex(chart, fill2);
           }
           if (fill2 === "stack") {
             return _buildStackLine(source);
@@ -10873,9 +10873,9 @@
           }
           return _createBoundaryLine(boundary, line);
         }
-        function getLineByIndex(chart2, index2) {
-          const meta = chart2.getDatasetMeta(index2);
-          const visible = meta && chart2.isDatasetVisible(index2);
+        function getLineByIndex(chart, index2) {
+          const meta = chart.getDatasetMeta(index2);
+          const visible = meta && chart.isDatasetVisible(index2);
           return visible ? meta.dataset : null;
         }
         function computeBoundary(source) {
@@ -11017,20 +11017,20 @@
         }
         var index = {
           id: "filler",
-          afterDatasetsUpdate(chart2, _args, options) {
-            const count = (chart2.data.datasets || []).length;
+          afterDatasetsUpdate(chart, _args, options) {
+            const count = (chart.data.datasets || []).length;
             const sources = [];
             let meta, i, line, source;
             for (i = 0; i < count; ++i) {
-              meta = chart2.getDatasetMeta(i);
+              meta = chart.getDatasetMeta(i);
               line = meta.dataset;
               source = null;
               if (line && line.options && line instanceof LineElement) {
                 source = {
-                  visible: chart2.isDatasetVisible(i),
+                  visible: chart.isDatasetVisible(i),
                   index: i,
                   fill: _decodeFill(line, i, count),
-                  chart: chart2,
+                  chart,
                   axis: meta.controller.options.indexAxis,
                   scale: meta.vScale,
                   line
@@ -11047,10 +11047,10 @@
               source.fill = _resolveTarget(sources, i, options.propagate);
             }
           },
-          beforeDraw(chart2, _args, options) {
+          beforeDraw(chart, _args, options) {
             const draw2 = options.drawTime === "beforeDraw";
-            const metasets = chart2.getSortedVisibleDatasetMetas();
-            const area = chart2.chartArea;
+            const metasets = chart.getSortedVisibleDatasetMetas();
+            const area = chart.chartArea;
             for (let i = metasets.length - 1; i >= 0; --i) {
               const source = metasets[i].$filler;
               if (!source) {
@@ -11058,28 +11058,28 @@
               }
               source.line.updateControlPoints(area, source.axis);
               if (draw2) {
-                _drawfill(chart2.ctx, source, area);
+                _drawfill(chart.ctx, source, area);
               }
             }
           },
-          beforeDatasetsDraw(chart2, _args, options) {
+          beforeDatasetsDraw(chart, _args, options) {
             if (options.drawTime !== "beforeDatasetsDraw") {
               return;
             }
-            const metasets = chart2.getSortedVisibleDatasetMetas();
+            const metasets = chart.getSortedVisibleDatasetMetas();
             for (let i = metasets.length - 1; i >= 0; --i) {
               const source = metasets[i].$filler;
               if (source) {
-                _drawfill(chart2.ctx, source, chart2.chartArea);
+                _drawfill(chart.ctx, source, chart.chartArea);
               }
             }
           },
-          beforeDatasetDraw(chart2, args, options) {
+          beforeDatasetDraw(chart, args, options) {
             const source = args.meta.$filler;
             if (!source || source.fill === false || options.drawTime !== "beforeDatasetDraw") {
               return;
             }
-            _drawfill(chart2.ctx, source, chart2.chartArea);
+            _drawfill(chart.ctx, source, chart.chartArea);
           },
           defaults: {
             propagate: true,
@@ -11477,28 +11477,28 @@
         var plugin_legend = {
           id: "legend",
           _element: Legend,
-          start(chart2, _args, options) {
-            const legend = chart2.legend = new Legend({ ctx: chart2.ctx, options, chart: chart2 });
-            layouts.configure(chart2, legend, options);
-            layouts.addBox(chart2, legend);
+          start(chart, _args, options) {
+            const legend = chart.legend = new Legend({ ctx: chart.ctx, options, chart });
+            layouts.configure(chart, legend, options);
+            layouts.addBox(chart, legend);
           },
-          stop(chart2) {
-            layouts.removeBox(chart2, chart2.legend);
-            delete chart2.legend;
+          stop(chart) {
+            layouts.removeBox(chart, chart.legend);
+            delete chart.legend;
           },
-          beforeUpdate(chart2, _args, options) {
-            const legend = chart2.legend;
-            layouts.configure(chart2, legend, options);
+          beforeUpdate(chart, _args, options) {
+            const legend = chart.legend;
+            layouts.configure(chart, legend, options);
             legend.options = options;
           },
-          afterUpdate(chart2) {
-            const legend = chart2.legend;
+          afterUpdate(chart) {
+            const legend = chart.legend;
             legend.buildLabels();
             legend.adjustHitBoxes();
           },
-          afterEvent(chart2, args) {
+          afterEvent(chart, args) {
             if (!args.replay) {
-              chart2.legend.handleEvent(args.event);
+              chart.legend.handleEvent(args.event);
             }
           },
           defaults: {
@@ -11525,10 +11525,10 @@
               color: (ctx) => ctx.chart.options.color,
               boxWidth: 40,
               padding: 10,
-              generateLabels(chart2) {
-                const datasets = chart2.data.datasets;
-                const { labels: { usePointStyle, pointStyle, textAlign, color: color2 } } = chart2.legend.options;
-                return chart2._getSortedDatasetMetas().map((meta) => {
+              generateLabels(chart) {
+                const datasets = chart.data.datasets;
+                const { labels: { usePointStyle, pointStyle, textAlign, color: color2 } } = chart.legend.options;
+                return chart._getSortedDatasetMetas().map((meta) => {
                   const style = meta.controller.getStyle(usePointStyle ? 0 : void 0);
                   const borderWidth = toPadding(style.borderWidth);
                   return {
@@ -11648,30 +11648,30 @@
             });
           }
         }
-        function createTitle(chart2, titleOpts) {
+        function createTitle(chart, titleOpts) {
           const title = new Title({
-            ctx: chart2.ctx,
+            ctx: chart.ctx,
             options: titleOpts,
-            chart: chart2
+            chart
           });
-          layouts.configure(chart2, title, titleOpts);
-          layouts.addBox(chart2, title);
-          chart2.titleBlock = title;
+          layouts.configure(chart, title, titleOpts);
+          layouts.addBox(chart, title);
+          chart.titleBlock = title;
         }
         var plugin_title = {
           id: "title",
           _element: Title,
-          start(chart2, _args, options) {
-            createTitle(chart2, options);
+          start(chart, _args, options) {
+            createTitle(chart, options);
           },
-          stop(chart2) {
-            const titleBlock = chart2.titleBlock;
-            layouts.removeBox(chart2, titleBlock);
-            delete chart2.titleBlock;
+          stop(chart) {
+            const titleBlock = chart.titleBlock;
+            layouts.removeBox(chart, titleBlock);
+            delete chart.titleBlock;
           },
-          beforeUpdate(chart2, _args, options) {
-            const title = chart2.titleBlock;
-            layouts.configure(chart2, title, options);
+          beforeUpdate(chart, _args, options) {
+            const title = chart.titleBlock;
+            layouts.configure(chart, title, options);
             title.options = options;
           },
           defaults: {
@@ -11697,23 +11697,23 @@
         const map = /* @__PURE__ */ new WeakMap();
         var plugin_subtitle = {
           id: "subtitle",
-          start(chart2, _args, options) {
+          start(chart, _args, options) {
             const title = new Title({
-              ctx: chart2.ctx,
+              ctx: chart.ctx,
               options,
-              chart: chart2
+              chart
             });
-            layouts.configure(chart2, title, options);
-            layouts.addBox(chart2, title);
-            map.set(chart2, title);
+            layouts.configure(chart, title, options);
+            layouts.addBox(chart, title);
+            map.set(chart, title);
           },
-          stop(chart2) {
-            layouts.removeBox(chart2, map.get(chart2));
-            map.delete(chart2);
+          stop(chart) {
+            layouts.removeBox(chart, map.get(chart));
+            map.delete(chart);
           },
-          beforeUpdate(chart2, _args, options) {
-            const title = map.get(chart2);
-            layouts.configure(chart2, title, options);
+          beforeUpdate(chart, _args, options) {
+            const title = map.get(chart);
+            layouts.configure(chart, title, options);
             title.options = options;
           },
           defaults: {
@@ -11805,15 +11805,15 @@
           }
           return str;
         }
-        function createTooltipItem(chart2, item) {
+        function createTooltipItem(chart, item) {
           const { element, datasetIndex, index: index2 } = item;
-          const controller = chart2.getDatasetMeta(datasetIndex).controller;
+          const controller = chart.getDatasetMeta(datasetIndex).controller;
           const { label, value } = controller.getLabelAndValue(index2);
           return {
-            chart: chart2,
+            chart,
             label,
             parsed: controller.getParsed(index2),
-            raw: chart2.data.datasets[datasetIndex].data[index2],
+            raw: chart.data.datasets[datasetIndex].data[index2],
             formattedValue: value,
             dataset: controller.getDataset(),
             dataIndex: index2,
@@ -11868,28 +11868,28 @@
           width += padding.width;
           return { width, height };
         }
-        function determineYAlign(chart2, size) {
+        function determineYAlign(chart, size) {
           const { y, height } = size;
           if (y < height / 2) {
             return "top";
-          } else if (y > chart2.height - height / 2) {
+          } else if (y > chart.height - height / 2) {
             return "bottom";
           }
           return "center";
         }
-        function doesNotFitWithAlign(xAlign, chart2, options, size) {
+        function doesNotFitWithAlign(xAlign, chart, options, size) {
           const { x, width } = size;
           const caret = options.caretSize + options.caretPadding;
-          if (xAlign === "left" && x + width + caret > chart2.width) {
+          if (xAlign === "left" && x + width + caret > chart.width) {
             return true;
           }
           if (xAlign === "right" && x - width - caret < 0) {
             return true;
           }
         }
-        function determineXAlign(chart2, options, size, yAlign) {
+        function determineXAlign(chart, options, size, yAlign) {
           const { x, width } = size;
-          const { width: chartWidth, chartArea: { left, right } } = chart2;
+          const { width: chartWidth, chartArea: { left, right } } = chart;
           let xAlign = "center";
           if (yAlign === "center") {
             xAlign = x <= (left + right) / 2 ? "left" : "right";
@@ -11898,15 +11898,15 @@
           } else if (x >= chartWidth - width / 2) {
             xAlign = "right";
           }
-          if (doesNotFitWithAlign(xAlign, chart2, options, size)) {
+          if (doesNotFitWithAlign(xAlign, chart, options, size)) {
             xAlign = "center";
           }
           return xAlign;
         }
-        function determineAlignment(chart2, options, size) {
-          const yAlign = size.yAlign || options.yAlign || determineYAlign(chart2, size);
+        function determineAlignment(chart, options, size) {
+          const yAlign = size.yAlign || options.yAlign || determineYAlign(chart, size);
           return {
-            xAlign: size.xAlign || options.xAlign || determineXAlign(chart2, options, size, yAlign),
+            xAlign: size.xAlign || options.xAlign || determineXAlign(chart, options, size, yAlign),
             yAlign
           };
         }
@@ -11930,7 +11930,7 @@
           }
           return y;
         }
-        function getBackgroundPoint(options, size, alignment, chart2) {
+        function getBackgroundPoint(options, size, alignment, chart) {
           const { caretSize, caretPadding, cornerRadius } = options;
           const { xAlign, yAlign } = alignment;
           const paddingAndSize = caretSize + caretPadding;
@@ -11949,8 +11949,8 @@
             x += Math.max(topRight, bottomRight) + caretSize;
           }
           return {
-            x: _limitValue(x, 0, chart2.width - size.width),
-            y: _limitValue(y, 0, chart2.height - size.height)
+            x: _limitValue(x, 0, chart.width - size.width),
+            y: _limitValue(y, 0, chart.height - size.height)
           };
         }
         function getAlignedX(tooltip, align, options) {
@@ -11967,8 +11967,8 @@
             type: "tooltip"
           });
         }
-        function overrideCallbacks(callbacks, context2) {
-          const override = context2 && context2.dataset && context2.dataset.tooltip && context2.dataset.tooltip.callbacks;
+        function overrideCallbacks(callbacks, context) {
+          const override = context && context.dataset && context.dataset.tooltip && context.dataset.tooltip.callbacks;
           return override ? callbacks.override(override) : callbacks;
         }
         class Tooltip extends Element {
@@ -12013,9 +12013,9 @@
             if (cached) {
               return cached;
             }
-            const chart2 = this.chart;
+            const chart = this.chart;
             const options = this.options.setContext(this.getContext());
-            const opts = options.enabled && chart2.options.animation && options.animations;
+            const opts = options.enabled && chart.options.animation && options.animations;
             const animations = new Animations(this.chart, opts);
             if (opts._cacheable) {
               this._cachedAnimations = Object.freeze(animations);
@@ -12025,11 +12025,11 @@
           getContext() {
             return this.$context || (this.$context = createTooltipContext(this.chart.getContext(), this, this._tooltipItems));
           }
-          getTitle(context2, options) {
+          getTitle(context, options) {
             const { callbacks } = options;
-            const beforeTitle = callbacks.beforeTitle.apply(this, [context2]);
-            const title = callbacks.title.apply(this, [context2]);
-            const afterTitle = callbacks.afterTitle.apply(this, [context2]);
+            const beforeTitle = callbacks.beforeTitle.apply(this, [context]);
+            const title = callbacks.title.apply(this, [context]);
+            const afterTitle = callbacks.afterTitle.apply(this, [context]);
             let lines = [];
             lines = pushOrConcat(lines, splitNewlines(beforeTitle));
             lines = pushOrConcat(lines, splitNewlines(title));
@@ -12042,16 +12042,16 @@
           getBody(tooltipItems, options) {
             const { callbacks } = options;
             const bodyItems = [];
-            each(tooltipItems, (context2) => {
+            each(tooltipItems, (context) => {
               const bodyItem = {
                 before: [],
                 lines: [],
                 after: []
               };
-              const scoped = overrideCallbacks(callbacks, context2);
-              pushOrConcat(bodyItem.before, splitNewlines(scoped.beforeLabel.call(this, context2)));
-              pushOrConcat(bodyItem.lines, scoped.label.call(this, context2));
-              pushOrConcat(bodyItem.after, splitNewlines(scoped.afterLabel.call(this, context2)));
+              const scoped = overrideCallbacks(callbacks, context);
+              pushOrConcat(bodyItem.before, splitNewlines(scoped.beforeLabel.call(this, context)));
+              pushOrConcat(bodyItem.lines, scoped.label.call(this, context));
+              pushOrConcat(bodyItem.after, splitNewlines(scoped.afterLabel.call(this, context)));
               bodyItems.push(bodyItem);
             });
             return bodyItems;
@@ -12072,7 +12072,7 @@
           }
           _createItems(options) {
             const active = this._active;
-            const data2 = this.chart.data;
+            const data = this.chart.data;
             const labelColors = [];
             const labelPointStyles = [];
             const labelTextColors = [];
@@ -12082,16 +12082,16 @@
               tooltipItems.push(createTooltipItem(this.chart, active[i]));
             }
             if (options.filter) {
-              tooltipItems = tooltipItems.filter((element, index2, array) => options.filter(element, index2, array, data2));
+              tooltipItems = tooltipItems.filter((element, index2, array) => options.filter(element, index2, array, data));
             }
             if (options.itemSort) {
-              tooltipItems = tooltipItems.sort((a, b) => options.itemSort(a, b, data2));
+              tooltipItems = tooltipItems.sort((a, b) => options.itemSort(a, b, data));
             }
-            each(tooltipItems, (context2) => {
-              const scoped = overrideCallbacks(options.callbacks, context2);
-              labelColors.push(scoped.labelColor.call(this, context2));
-              labelPointStyles.push(scoped.labelPointStyle.call(this, context2));
-              labelTextColors.push(scoped.labelTextColor.call(this, context2));
+            each(tooltipItems, (context) => {
+              const scoped = overrideCallbacks(options.callbacks, context);
+              labelColors.push(scoped.labelColor.call(this, context));
+              labelPointStyles.push(scoped.labelPointStyle.call(this, context));
+              labelTextColors.push(scoped.labelTextColor.call(this, context));
             });
             this.labelColors = labelColors;
             this.labelPointStyles = labelPointStyles;
@@ -12376,7 +12376,7 @@
             }
           }
           _updateAnimationTarget(options) {
-            const chart2 = this.chart;
+            const chart = this.chart;
             const anims = this.$animations;
             const animX = anims && anims.x;
             const animY = anims && anims.y;
@@ -12387,8 +12387,8 @@
               }
               const size = this._size = getTooltipSize(this, options);
               const positionAndSize = Object.assign({}, position, this._size);
-              const alignment = determineAlignment(chart2, options, positionAndSize);
-              const point = getBackgroundPoint(options, positionAndSize, alignment, chart2);
+              const alignment = determineAlignment(chart, options, positionAndSize);
+              const point = getBackgroundPoint(options, positionAndSize, alignment, chart);
               if (animX._to !== point.x || animY._to !== point.y) {
                 this.xAlign = alignment.xAlign;
                 this.yAlign = alignment.yAlign;
@@ -12506,38 +12506,38 @@
           id: "tooltip",
           _element: Tooltip,
           positioners,
-          afterInit(chart2, _args, options) {
+          afterInit(chart, _args, options) {
             if (options) {
-              chart2.tooltip = new Tooltip({ chart: chart2, options });
+              chart.tooltip = new Tooltip({ chart, options });
             }
           },
-          beforeUpdate(chart2, _args, options) {
-            if (chart2.tooltip) {
-              chart2.tooltip.initialize(options);
+          beforeUpdate(chart, _args, options) {
+            if (chart.tooltip) {
+              chart.tooltip.initialize(options);
             }
           },
-          reset(chart2, _args, options) {
-            if (chart2.tooltip) {
-              chart2.tooltip.initialize(options);
+          reset(chart, _args, options) {
+            if (chart.tooltip) {
+              chart.tooltip.initialize(options);
             }
           },
-          afterDraw(chart2) {
-            const tooltip = chart2.tooltip;
+          afterDraw(chart) {
+            const tooltip = chart.tooltip;
             if (tooltip && tooltip._willRender()) {
               const args = {
                 tooltip
               };
-              if (chart2.notifyPlugins("beforeTooltipDraw", args) === false) {
+              if (chart.notifyPlugins("beforeTooltipDraw", args) === false) {
                 return;
               }
-              tooltip.draw(chart2.ctx);
-              chart2.notifyPlugins("afterTooltipDraw", args);
+              tooltip.draw(chart.ctx);
+              chart.notifyPlugins("afterTooltipDraw", args);
             }
           },
-          afterEvent(chart2, args) {
-            if (chart2.tooltip) {
+          afterEvent(chart, args) {
+            if (chart.tooltip) {
               const useFinalPosition = args.replay;
-              if (chart2.tooltip.handleEvent(args.event, useFinalPosition, args.inChartArea)) {
+              if (chart.tooltip.handleEvent(args.event, useFinalPosition, args.inChartArea)) {
                 args.changed = true;
               }
             }
@@ -14029,12 +14029,12 @@
             if (timestamps.length) {
               return timestamps;
             }
-            const data2 = this.getDataTimestamps();
+            const data = this.getDataTimestamps();
             const label = this.getLabelTimestamps();
-            if (data2.length && label.length) {
-              timestamps = this.normalize(data2.concat(label));
+            if (data.length && label.length) {
+              timestamps = this.normalize(data.concat(label));
             } else {
-              timestamps = data2.length ? data2 : label;
+              timestamps = data.length ? data : label;
             }
             timestamps = this._cache.all = timestamps;
             return timestamps;
@@ -14084,7 +14084,7 @@
     }
   });
 
-  // src/stats.js
+  // src/data_wrangling/data_extraction.js
   var browser = require_browser_polyfill();
   var SECS_TO_HRS = 60 * 60;
   async function getGameData(process_path) {
@@ -14102,8 +14102,8 @@
     });
   }
   async function getData() {
-    games = (await browser.storage.local.get("games"))["games"];
-    game_data = games.map((game) => getGameData(game));
+    let games = (await browser.storage.local.get("games"))["games"];
+    let game_data = games.map((game) => getGameData(game));
     return (await Promise.all(game_data)).flat();
   }
 
@@ -14120,9 +14120,9 @@
     grey: "rgb(201, 203, 207)"
   };
   async function startup() {
-    game_json_data = await getData();
-    context = document.getElementById("average_speed_over_time").getContext("2d");
-    chart = new Chart(context, {
+    let game_json_data = await getData();
+    let context = document.getElementById("average_speed_over_time").getContext("2d");
+    let chart = new Chart(context, {
       "type": "line",
       "data": {
         "datasets": [{

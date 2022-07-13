@@ -95,10 +95,13 @@ async function startup() {
     let game_json_data = await getData()
     rn = new Date()
 
+    game_divided_config = configureDividedDataset(game_json_data, "process_path")
+    date_combined_config = configureCombinedDataset(game_json_data, "date")
+
     // One Month Progress Graphs
     createDateChart(
         "average_speed_one_month",
-        configureDividedDataset(game_json_data, "process_path"),
+        game_divided_config,
         "x",
         subMonths(rn, 1),
         undefined,
@@ -109,7 +112,7 @@ async function startup() {
 
     createDateChart(
         "chars_read_one_month",
-        configureCombinedDataset(game_json_data, "date"),
+        date_combined_config,
         "x",
         subMonths(rn, 1),
         undefined,
@@ -120,7 +123,7 @@ async function startup() {
 
     createDateChart(
         "hours_read_one_month",
-        configureCombinedDataset(game_json_data, "date"),
+        date_combined_config,
         "x",
         subMonths(rn, 1),
         undefined,
@@ -132,7 +135,7 @@ async function startup() {
     // Six Month Progress Graphs
     createDateChart(
         "average_speed_six_months",
-        configureDividedDataset(game_json_data, "process_path"),
+        game_divided_config,
         "x",
         subMonths(rn, 6),
         undefined,
@@ -143,7 +146,7 @@ async function startup() {
 
     createDateChart(
         "chars_read_six_months",
-        configureCombinedDataset(game_json_data, "date"),
+        date_combined_config,
         "x",
         subMonths(rn, 6),
         undefined,
@@ -154,7 +157,7 @@ async function startup() {
 
     createDateChart(
         "hours_read_six_months",
-        configureCombinedDataset(game_json_data, "date"),
+        date_combined_config,
         "x",
         subMonths(rn, 6),
         undefined,
@@ -166,7 +169,7 @@ async function startup() {
     // One Year Progress Graphs
     createDateChart(
         "average_speed_twelve_months",
-        configureDividedDataset(game_json_data, "process_path"),
+        game_divided_config,
         "x",
         subMonths(rn, 12),
         undefined,
@@ -177,7 +180,7 @@ async function startup() {
 
     createDateChart(
         "chars_read_twelve_months",
-        configureCombinedDataset(game_json_data, "date"),
+        date_combined_config,
         "x",
         subMonths(rn, 12),
         undefined,
@@ -188,7 +191,7 @@ async function startup() {
 
     createDateChart(
         "hours_read_twelve_months",
-        configureCombinedDataset(game_json_data, "date"),
+        date_combined_config,
         "x",
         subMonths(rn, 12),
         undefined,
@@ -200,7 +203,7 @@ async function startup() {
     // All Time Progress Graphs
     createDateChart(
         "average_speed_all_time",
-        configureDividedDataset(game_json_data, "process_path"),
+        game_divided_config,
         "x",
         undefined,
         undefined,
@@ -211,7 +214,7 @@ async function startup() {
 
     createDateChart(
         "chars_read_all_time",
-        configureCombinedDataset(game_json_data, "date"),
+        date_combined_config,
         "x",
         undefined,
         undefined,
@@ -222,7 +225,7 @@ async function startup() {
 
     createDateChart(
         "hours_read_all_time",
-        configureCombinedDataset(game_json_data, "date"),
+        date_combined_config,
         "x",
         undefined,
         undefined,

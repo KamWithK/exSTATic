@@ -18532,7 +18532,7 @@
     }];
   }
   function parseDates(date_string) {
-    return new Date(date_string);
+    return parseISO(date_string);
   }
   function createChartConfig(element_id, dataset, index_axis, x_min, x_max, type, title, x_key, x_label, y_key, y_label) {
     return {

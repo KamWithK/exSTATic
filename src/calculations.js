@@ -1,3 +1,5 @@
+import { formatISO } from "date-fns"
+
 // Source of information - https://en.wikipedia.org/wiki/List_of_Japanese_typographic_symbols
 var IGNORE = /[〔〕《》〖〗〘〙〚〛【】「」［］『』｛｝\[\]()（）｟｠〈〉≪≫。、.,※＊'：！?？‥…―─ｰ〽～→♪♪ ♫ ♬ ♩\"　\t\n]/g
 var SPLIT = /[\n。.！?？]/g
@@ -12,7 +14,7 @@ export function lineSplitCount(line) {
 
 export function dateNowString() {
     rn = new Date()
-    return rn.getFullYear() + "/" + (rn.getMonth() + 1) + "/" + rn.getDate()
+    return formatISO(rn, {"representation": "date"})
 }
 
 export function timeNowSeconds() {

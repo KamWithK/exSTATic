@@ -3,7 +3,7 @@ console.log("Injected")
 import { getData } from "./data_wrangling/data_extraction"
 import { divideData, combineData } from "./data_wrangling/data_processing"
 require("chart.js")
-import { subMonths } from "date-fns"
+import { parseISO, subMonths } from "date-fns"
 import "chartjs-adapter-date-fns"
 var iwanthue = require('iwanthue')
 
@@ -31,7 +31,7 @@ function configureCombinedDataset(data, field) {
 }
 
 function parseDates(date_string) {
-    return new Date(date_string)
+    return parseISO(date_string)
 }
 
 function createChartConfig(element_id, dataset, index_axis, x_min, x_max, type, title, x_key, x_label, y_key, y_label) {

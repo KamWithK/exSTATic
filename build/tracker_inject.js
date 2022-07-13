@@ -1000,6 +1000,86 @@
     }
   });
 
+  // node_modules/date-fns/esm/_lib/requiredArgs/index.js
+  function requiredArgs(required, args) {
+    if (args.length < required) {
+      throw new TypeError(required + " argument" + (required > 1 ? "s" : "") + " required, but only " + args.length + " present");
+    }
+  }
+
+  // node_modules/date-fns/esm/toDate/index.js
+  function toDate(argument) {
+    requiredArgs(1, arguments);
+    var argStr = Object.prototype.toString.call(argument);
+    if (argument instanceof Date || typeof argument === "object" && argStr === "[object Date]") {
+      return new Date(argument.getTime());
+    } else if (typeof argument === "number" || argStr === "[object Number]") {
+      return new Date(argument);
+    } else {
+      if ((typeof argument === "string" || argStr === "[object String]") && typeof console !== "undefined") {
+        console.warn("Starting with v2.0.0-beta.1 date-fns doesn't accept strings as date arguments. Please use `parseISO` to parse strings. See: https://git.io/fjule");
+        console.warn(new Error().stack);
+      }
+      return new Date(NaN);
+    }
+  }
+
+  // node_modules/date-fns/esm/_lib/addLeadingZeros/index.js
+  function addLeadingZeros(number, targetLength) {
+    var sign = number < 0 ? "-" : "";
+    var output = Math.abs(number).toString();
+    while (output.length < targetLength) {
+      output = "0" + output;
+    }
+    return sign + output;
+  }
+
+  // node_modules/date-fns/esm/formatISO/index.js
+  function formatISO(date, options) {
+    requiredArgs(1, arguments);
+    var originalDate = toDate(date);
+    if (isNaN(originalDate.getTime())) {
+      throw new RangeError("Invalid time value");
+    }
+    var format = !(options !== null && options !== void 0 && options.format) ? "extended" : String(options.format);
+    var representation = !(options !== null && options !== void 0 && options.representation) ? "complete" : String(options.representation);
+    if (format !== "extended" && format !== "basic") {
+      throw new RangeError("format must be 'extended' or 'basic'");
+    }
+    if (representation !== "date" && representation !== "time" && representation !== "complete") {
+      throw new RangeError("representation must be 'date', 'time', or 'complete'");
+    }
+    var result = "";
+    var tzOffset = "";
+    var dateDelimiter = format === "extended" ? "-" : "";
+    var timeDelimiter = format === "extended" ? ":" : "";
+    if (representation !== "time") {
+      var day = addLeadingZeros(originalDate.getDate(), 2);
+      var month = addLeadingZeros(originalDate.getMonth() + 1, 2);
+      var year = addLeadingZeros(originalDate.getFullYear(), 4);
+      result = "".concat(year).concat(dateDelimiter).concat(month).concat(dateDelimiter).concat(day);
+    }
+    if (representation !== "date") {
+      var offset = originalDate.getTimezoneOffset();
+      if (offset !== 0) {
+        var absoluteOffset = Math.abs(offset);
+        var hourOffset = addLeadingZeros(Math.floor(absoluteOffset / 60), 2);
+        var minuteOffset = addLeadingZeros(absoluteOffset % 60, 2);
+        var sign = offset < 0 ? "+" : "-";
+        tzOffset = "".concat(sign).concat(hourOffset, ":").concat(minuteOffset);
+      } else {
+        tzOffset = "Z";
+      }
+      var hour = addLeadingZeros(originalDate.getHours(), 2);
+      var minute = addLeadingZeros(originalDate.getMinutes(), 2);
+      var second = addLeadingZeros(originalDate.getSeconds(), 2);
+      var separator = result === "" ? "" : "T";
+      var time = [hour, minute, second].join(timeDelimiter);
+      result = "".concat(result).concat(separator).concat(time).concat(tzOffset);
+    }
+    return result;
+  }
+
   // src/calculations.js
   var IGNORE = /[〔〕《》〖〗〘〙〚〛【】「」［］『』｛｝\[\]()（）｟｠〈〉≪≫。、.,※＊'：！?？‥…―─ｰ〽～→♪♪ ♫ ♬ ♩\"　\t\n]/g;
   var SPLIT = /[\n。.！?？]/g;
@@ -1011,7 +1091,7 @@
   }
   function dateNowString() {
     rn = new Date();
-    return rn.getFullYear() + "/" + (rn.getMonth() + 1) + "/" + rn.getDate();
+    return formatISO(rn, { "representation": "date" });
   }
   function timeNowSeconds() {
     let rn2 = new Date();

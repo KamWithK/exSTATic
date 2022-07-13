@@ -22,14 +22,78 @@
 
         .jp-text {
           font-family: var(--default-jp-font);
-          font-size: var(--default-jp-font-size)
+          font-size: var(--default-jp-font-size);
+        }
+
+        .subheading {
+          @apply text-3xl text-indigo-300;
+        }
+
+        .graph {
+          @apply bg-slate-900 m-2 rounded-lg max-h-[36rem] flex-initial;
+          /* @apply w-400 h-400; */
+        }
+
+        .two_graphs {
+          @apply flex flex-row w-1/2;
+        }
+
+        .stat_category {
+          @apply flex flex-col;
         }
     }
   </style>
 </head>
 
 <body class="dark:bg-slate-800 px-12">
-  <canvas id="average_speed_over_time" width="400" height="400"></canvas>
+  <h1 class="text-5xl text-indigo-400 text-center">Another Incredibly <p class="italic inline">exSTATic</p> Report...</h1>
+  
+  <h2 class="subheading">This Months Progress</h2>
+  <div class="stat_category">
+    <canvas id="average_speed_one_month" class="graph"></canvas>
+
+    <div class="two_graphs">
+      <canvas id="chars_read_one_month" class="graph"></canvas>
+      <canvas id="hours_read_one_month" class="graph"></canvas>
+    </div>
+  </div>
+  
+  <h2 class="subheading">Six Month Progress</h2>
+  <div class="stat_category">
+    <canvas id="average_speed_six_months" class="graph"></canvas>
+
+    <div class="two_graphs">
+      <canvas id="chars_read_six_months" class="graph"></canvas>
+      <canvas id="hours_read_six_months" class="graph"></canvas>
+    </div>
+  </div>
+  
+  <h2 class="subheading">This Years Progress</h2>
+  <div class="stat_category">
+    <canvas id="average_speed_twelve_months" class="graph"></canvas>
+
+    <div class="two_graphs">
+      <canvas id="chars_read_twelve_months" class="graph"></canvas>
+      <canvas id="hours_read_twelve_months" class="graph"></canvas>
+    </div>
+  </div>
+
+  <h2 class="subheading">All Time</h2>
+  <div class="stat_category">
+    <canvas id="average_speed_all_time" class="graph"></canvas>
+
+    <div class="two_graphs">
+      <canvas id="chars_read_all_time" class="graph"></canvas>
+      <canvas id="hours_read_all_time" class="graph"></canvas>
+    </div>
+
+    <div class="two_graphs">
+      <canvas id="chars_read_per_game" class="graph"></canvas>
+      <canvas id="hours_read_per_game" class="graph"></canvas>
+    </div>
+    
+    <canvas id="average_speed_per_game" class="graph"></canvas>
+  </div>
 </body>
 </html>
 

@@ -14098,6 +14098,639 @@
     }
   });
 
+  // node_modules/iwanthue/rng.js
+  var require_rng = __commonJS({
+    "node_modules/iwanthue/rng.js"(exports, module) {
+      function randomInteger(a, b) {
+        return a + Math.floor(Math.random() * (b - a + 1));
+      }
+      function Random(seed) {
+        if (!seed)
+          seed = randomInteger(0, Math.pow(2, 31) - 1);
+        this.seed = seed % 2147483647;
+        if (this.seed <= 0)
+          this.seed += 2147483646;
+      }
+      Random.prototype.next = function() {
+        this.seed = this.seed * 16807 % 2147483647;
+        return this.seed;
+      };
+      Random.prototype.nextFloat = function() {
+        return (this.next() - 1) / 2147483646;
+      };
+      module.exports = Random;
+    }
+  });
+
+  // node_modules/iwanthue/helpers.js
+  var require_helpers = __commonJS({
+    "node_modules/iwanthue/helpers.js"(exports) {
+      var LAB_CONSTANTS = {
+        Kn: 18,
+        Xn: 0.95047,
+        Yn: 1,
+        Zn: 1.08883,
+        t0: 0.137931034,
+        t1: 0.206896552,
+        t2: 0.12841855,
+        t3: 8856452e-9
+      };
+      function xyzToRgb(r) {
+        return Math.round(255 * (r <= 304e-5 ? 12.92 * r : 1.055 * Math.pow(r, 1 / 2.4) - 0.055));
+      }
+      function rgbToXyzHelper(r) {
+        if ((r /= 255) <= 0.04045)
+          return r / 12.92;
+        return Math.pow((r + 0.055) / 1.055, 2.4);
+      }
+      function xyzToLab(t) {
+        if (t > LAB_CONSTANTS.t3)
+          return Math.pow(t, 1 / 3);
+        return t / LAB_CONSTANTS.t2 + LAB_CONSTANTS.t0;
+      }
+      function rgbToXyz(rgb) {
+        var r = rgb[0], g = rgb[1], b = rgb[2];
+        r = rgbToXyzHelper(r);
+        g = rgbToXyzHelper(g);
+        b = rgbToXyzHelper(b);
+        var x = xyzToLab((0.4124564 * r + 0.3575761 * g + 0.1804375 * b) / LAB_CONSTANTS.Xn), y = xyzToLab((0.2126729 * r + 0.7151522 * g + 0.072175 * b) / LAB_CONSTANTS.Yn), z = xyzToLab((0.0193339 * r + 0.119192 * g + 0.9503041 * b) / LAB_CONSTANTS.Zn);
+        return [x, y, z];
+      }
+      function labToXyz(t) {
+        return t > LAB_CONSTANTS.t1 ? t * t * t : LAB_CONSTANTS.t2 * (t - LAB_CONSTANTS.t0);
+      }
+      function labToRgb(lab) {
+        var l = lab[0];
+        var a = lab[1];
+        var b = lab[2];
+        var y = (l + 16) / 116;
+        var x = isNaN(a) ? y : y + a / 500;
+        var z = isNaN(b) ? y : y - b / 200;
+        y = LAB_CONSTANTS.Yn * labToXyz(y);
+        x = LAB_CONSTANTS.Xn * labToXyz(x);
+        z = LAB_CONSTANTS.Zn * labToXyz(z);
+        var r = xyzToRgb(3.2404542 * x - 1.5371385 * y - 0.4985314 * z);
+        var g = xyzToRgb(-0.969266 * x + 1.8760108 * y + 0.041556 * z);
+        b = xyzToRgb(0.0556434 * x - 0.2040259 * y + 1.0572252 * z);
+        return [r, g, b];
+      }
+      function rgbToLab(rgb) {
+        var xyz = rgbToXyz(rgb);
+        var x = xyz[0], y = xyz[1], z = xyz[2];
+        var l = 116 * y - 16;
+        return [l < 0 ? 0 : l, 500 * (x - y), 200 * (y - z)];
+      }
+      function validateRgb(rgb) {
+        var r = rgb[0];
+        var g = rgb[1];
+        var b = rgb[2];
+        return r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255;
+      }
+      function hexPad(x) {
+        return ("0" + x.toString(16)).slice(-2);
+      }
+      function labToRgbHex(lab) {
+        var rgb = labToRgb(lab);
+        return "#" + hexPad(rgb[0]) + hexPad(rgb[1]) + hexPad(rgb[2]);
+      }
+      var RAD_TO_DEG = 180 / Math.PI;
+      function labToHcl(lab) {
+        var l = lab[0];
+        var a = lab[1];
+        var b = lab[2];
+        var c = Math.sqrt(a * a + b * b);
+        var h = (Math.atan2(b, a) * RAD_TO_DEG + 360) % 360;
+        if (Math.round(c * 1e4) === 0)
+          h = NaN;
+        return [h, c, l];
+      }
+      function diffSort(distance, colors) {
+        colors = colors.slice();
+        var diffColors = [colors.shift()];
+        var index, maxDistance, candidateIndex;
+        var A, B, d, i;
+        while (colors.length > 0) {
+          index = -1;
+          maxDistance = -Infinity;
+          for (candidateIndex = 0; candidateIndex < colors.length; candidateIndex++) {
+            A = colors[candidateIndex];
+            for (i = 0; i < diffColors.length; i++) {
+              B = diffColors[i];
+              d = distance(A, B);
+              if (d > maxDistance) {
+                maxDistance = d;
+                index = candidateIndex;
+              }
+            }
+          }
+          diffColors.push(colors[index]);
+          colors.splice(index, 1);
+        }
+        return diffColors;
+      }
+      function computeQualityMetrics(distance, colors) {
+        var i, j, l;
+        var min = Infinity, d;
+        var S = 0, t = 0;
+        for (i = 0, l = colors.length; i < l; i++) {
+          for (j = i + 1; j < l; j++) {
+            d = distance(colors[i], colors[j]);
+            if (d < min)
+              min = d;
+            S += d;
+            t++;
+          }
+        }
+        return { min, mean: S / t };
+      }
+      exports.validateRgb = validateRgb;
+      exports.labToRgb = labToRgb;
+      exports.labToRgbHex = labToRgbHex;
+      exports.rgbToLab = rgbToLab;
+      exports.labToHcl = labToHcl;
+      exports.diffSort = diffSort;
+      exports.computeQualityMetrics = computeQualityMetrics;
+    }
+  });
+
+  // node_modules/iwanthue/distances.js
+  var require_distances = __commonJS({
+    "node_modules/iwanthue/distances.js"(exports, module) {
+      var helpers = require_helpers();
+      var CONFUSION_LINES = {
+        protanope: {
+          x: 0.7465,
+          y: 0.2535,
+          m: 1.273463,
+          yint: -0.073894
+        },
+        deuteranope: {
+          x: 1.4,
+          y: -0.4,
+          m: 0.968437,
+          yint: 3331e-6
+        },
+        tritanope: {
+          x: 0.1748,
+          y: 0,
+          m: 0.062921,
+          yint: 0.292119
+        }
+      };
+      function euclidean(lab1, lab2) {
+        return Math.sqrt(Math.pow(lab1[0] - lab2[0], 2) + Math.pow(lab1[1] - lab2[1], 2) + Math.pow(lab1[2] - lab2[2], 2));
+      }
+      function cmc(l, c, lab1, lab2) {
+        var L1 = lab1[0];
+        var L2 = lab2[0];
+        var a1 = lab1[1];
+        var a2 = lab2[1];
+        var b1 = lab1[2];
+        var b2 = lab2[2];
+        var C1 = Math.sqrt(Math.pow(a1, 2) + Math.pow(b1, 2));
+        var C2 = Math.sqrt(Math.pow(a2, 2) + Math.pow(b2, 2));
+        var deltaC = C1 - C2;
+        var deltaL = L1 - L2;
+        var deltaa = a1 - a2;
+        var deltab = b1 - b2;
+        var deltaH = Math.sqrt(Math.pow(deltaa, 2) + Math.pow(deltab, 2) + Math.pow(deltaC, 2));
+        var H1 = Math.atan2(b1, a1) * (180 / Math.PI);
+        while (H1 < 0) {
+          H1 += 360;
+        }
+        var F = Math.sqrt(Math.pow(C1, 4) / (Math.pow(C1, 4) + 1900));
+        var T = H1 >= 164 && H1 <= 345 ? 0.56 + Math.abs(0.2 * Math.cos(H1 + 168)) : 0.36 + Math.abs(0.4 * Math.cos(H1 + 35));
+        var S_L = lab1[0] < 16 ? 0.511 : 0.040975 * L1 / (1 + 0.01765 * L1);
+        var S_C = 0.0638 * C1 / (1 + 0.0131 * C1) + 0.638;
+        var S_H = S_C * (F * T + 1 - F);
+        var result = Math.sqrt(Math.pow(deltaL / (l * S_L), 2) + Math.pow(deltaC / (c * S_C), 2) + Math.pow(deltaH / S_H, 2));
+        return result;
+      }
+      function CachedDistances() {
+        this.cache = {};
+      }
+      CachedDistances.prototype.simulate = function(lab, type, amount) {
+        amount = amount || 1;
+        var key = lab.join("-") + "-" + type + "-" + amount;
+        var cache = this.cache[key];
+        if (cache)
+          return cache;
+        var confuseX = CONFUSION_LINES[type].x;
+        var confuseY = CONFUSION_LINES[type].y;
+        var confuseM = CONFUSION_LINES[type].m;
+        var confuseYint = CONFUSION_LINES[type].yint;
+        var color = helpers.labToRgb(lab);
+        var sr = color[0];
+        var sg = color[1];
+        var sb = color[2];
+        var dr = sr;
+        var dg = sg;
+        var db = sb;
+        var powR = Math.pow(sr, 2.2);
+        var powG = Math.pow(sg, 2.2);
+        var powB = Math.pow(sb, 2.2);
+        var X = powR * 0.412424 + powG * 0.357579 + powB * 0.180464;
+        var Y = powR * 0.212656 + powG * 0.715158 + powB * 0.0721856;
+        var Z = powR * 0.0193324 + powG * 0.119193 + powB * 0.950444;
+        var chromaX = X / (X + Y + Z);
+        var chromaY = Y / (X + Y + Z);
+        var m = (chromaY - confuseY) / (chromaX - confuseX);
+        var yint = chromaY - chromaX * m;
+        var deviateX = (confuseYint - yint) / (m - confuseM);
+        var deviateY = m * deviateX + yint;
+        X = deviateX * Y / deviateY;
+        Z = (1 - (deviateX + deviateY)) * Y / deviateY;
+        var neutralX = 0.312713 * Y / 0.329016;
+        var neutralZ = 0.358271 * Y / 0.329016;
+        var diffX = neutralX - X;
+        var diffZ = neutralZ - Z;
+        var diffR = diffX * 3.24071 + diffZ * -0.498571;
+        var diffG = diffX * -0.969258 + diffZ * 0.0415557;
+        var diffB = diffX * 0.0556352 + diffZ * 1.05707;
+        dr = X * 3.24071 + Y * -1.53726 + Z * -0.498571;
+        dg = X * -0.969258 + Y * 1.87599 + Z * 0.0415557;
+        db = X * 0.0556352 + Y * -0.203996 + Z * 1.05707;
+        var fitR = ((dr < 0 ? 0 : 1) - dr) / diffR;
+        var fitG = ((dg < 0 ? 0 : 1) - dg) / diffG;
+        var fitB = ((db < 0 ? 0 : 1) - db) / diffB;
+        var adjust = Math.max(fitR > 1 || fitR < 0 ? 0 : fitR, fitG > 1 || fitG < 0 ? 0 : fitG, fitB > 1 || fitB < 0 ? 0 : fitB);
+        dr = dr + adjust * diffR;
+        dg = dg + adjust * diffG;
+        db = db + adjust * diffB;
+        dr = Math.pow(dr, 1 / 2.2);
+        dg = Math.pow(dg, 1 / 2.2);
+        db = Math.pow(db, 1 / 2.2);
+        dr = sr * (1 - amount) + dr * amount;
+        dg = sg * (1 - amount) + dg * amount;
+        db = sb * (1 - amount) + db * amount;
+        var dcolor = [dr, dg, db];
+        var result = helpers.rgbToLab(dcolor);
+        this.cache[key] = result;
+        return result;
+      };
+      CachedDistances.prototype.euclidean = euclidean;
+      CachedDistances.prototype.cmc = cmc.bind(null, 2, 1);
+      CachedDistances.prototype.colorblind = function(type, lab1, lab2) {
+        lab1 = this.simulate(lab1, type);
+        lab2 = this.simulate(lab2, type);
+        return this.cmc(lab1, lab2);
+      };
+      Object.keys(CONFUSION_LINES).forEach(function(type) {
+        CachedDistances.prototype[type] = function(lab1, lab2) {
+          return this.colorblind(type, lab1, lab2);
+        };
+      });
+      var COMPROMISE_COUNT = 1e3 + 100 + 500 + 1;
+      CachedDistances.prototype.compromise = function(lab1, lab2) {
+        var total = 0;
+        var d = this.cmc(lab1, lab2);
+        total += d * 1e3;
+        d = this.colorblind("protanope", lab1, lab2);
+        if (!isNaN(d))
+          total += d * 100;
+        d = this.colorblind("deuteranope", lab1, lab2);
+        if (!isNaN(d))
+          total += d * 500;
+        d = this.colorblind("tritanope", lab1, lab2);
+        if (!isNaN(d))
+          total += d * 1;
+        return total / COMPROMISE_COUNT;
+      };
+      CachedDistances.prototype.get = function(name) {
+        if (name in CONFUSION_LINES)
+          return this.colorblind.bind(this, name);
+        return this[name].bind(this);
+      };
+      module.exports = CachedDistances;
+    }
+  });
+
+  // node_modules/iwanthue/presets.js
+  var require_presets = __commonJS({
+    "node_modules/iwanthue/presets.js"(exports, module) {
+      var presets = {
+        "all": [0, 360, 0, 100, 0, 100],
+        "default": [0, 360, 30, 80, 35, 80],
+        "sensible": [0, 360, 25.59, 55.59, 60.94, 90.94],
+        "colorblind": [0, 360, 40, 70, 15, 85],
+        "fancy-light": [0, 360, 15, 40, 70, 100],
+        "fancy-dark": [0, 360, 8, 40, 7, 40],
+        "shades": [0, 240, 0, 15, 0, 100],
+        "tarnish": [0, 360, 0, 15, 30, 70],
+        "pastel": [0, 360, 0, 30, 70, 100],
+        "pimp": [0, 360, 30, 100, 25, 70],
+        "intense": [0, 360, 20, 100, 15, 80],
+        "fluo": [0, 300, 35, 100, 75, 100],
+        "red-roses": [330, 20, 10, 100, 35, 100],
+        "ochre-sand": [20, 60, 20, 50, 35, 100],
+        "yellow-lime": [60, 90, 10, 100, 35, 100],
+        "green-mint": [90, 150, 10, 100, 35, 100],
+        "ice-cube": [150, 200, 0, 100, 35, 100],
+        "blue-ocean": [220, 260, 8, 80, 0, 50],
+        "indigo-night": [260, 290, 40, 100, 35, 100],
+        "purple-wine": [290, 330, 0, 100, 0, 40]
+      };
+      module.exports = presets;
+    }
+  });
+
+  // node_modules/iwanthue/index.js
+  var require_iwanthue = __commonJS({
+    "node_modules/iwanthue/index.js"(exports, module) {
+      var Random = require_rng();
+      var CachedDistances = require_distances();
+      var helpers = require_helpers();
+      var presets = require_presets();
+      var validateRgb = helpers.validateRgb;
+      var labToRgb = helpers.labToRgb;
+      var labToRgbHex = helpers.labToRgbHex;
+      var labToHcl = helpers.labToHcl;
+      var diffSort = helpers.diffSort;
+      var DEFAULT_SETTINGS = {
+        attempts: 1,
+        colorFilter: null,
+        colorSpace: "default",
+        clustering: "k-means",
+        quality: 50,
+        ultraPrecision: false,
+        distance: "euclidean",
+        seed: null
+      };
+      var VALID_CLUSTERINGS = /* @__PURE__ */ new Set(["force-vector", "k-means"]);
+      var VALID_DISTANCES = /* @__PURE__ */ new Set([
+        "euclidean",
+        "cmc",
+        "compromise",
+        "protanope",
+        "deuteranope",
+        "tritanope"
+      ]);
+      var VALID_PRESETS = new Set(Object.keys(presets));
+      function stringSum(string) {
+        var sum = 0;
+        for (var i = 0, l = string.length; i < l; i++)
+          sum += string.charCodeAt(i);
+        return sum;
+      }
+      function resolveAndValidateSettings(userSettings) {
+        var settings = Object.assign({}, DEFAULT_SETTINGS, userSettings);
+        if (typeof settings.attempts !== "number" || settings.attempts <= 0)
+          throw new Error("iwanthue: invalid `attempts` setting. Expecting a positive number.");
+        if (settings.colorFilter && typeof settings.colorFilter !== "function")
+          throw new Error("iwanthue: invalid `colorFilter` setting. Expecting a function.");
+        if (!VALID_CLUSTERINGS.has(settings.clustering))
+          throw new Error('iwanthue: unknown `clustering` "' + settings.clustering + '".');
+        if (typeof settings.quality !== "number" || isNaN(settings.quality) || settings.quality < 1)
+          throw new Error("iwanthue: invalid `quality`. Expecting a number > 0.");
+        if (typeof settings.ultraPrecision !== "boolean")
+          throw new Error("iwanthue: invalid `ultraPrecision`. Expecting a boolean.");
+        if (!VALID_DISTANCES.has(settings.distance))
+          throw new Error('iwanthue: unknown `distance` "' + settings.distance + '".');
+        if (typeof settings.seed === "string")
+          settings.seed = stringSum(settings.seed);
+        if (settings.seed !== null && typeof settings.seed !== "number")
+          throw new Error("iwanthue: invalid `seed`. Expecting an integer or a string.");
+        if (!settings.colorFilter) {
+          if (settings.colorSpace && settings.colorSpace !== "all") {
+            var preset;
+            if (typeof settings.colorSpace === "string") {
+              if (!VALID_PRESETS.has(settings.colorSpace))
+                throw new Error('iwanthue: unknown `colorSpace` "' + settings.colorSpace + '".');
+              preset = presets[settings.colorSpace];
+            } else if (Array.isArray(settings.colorSpace)) {
+              if (settings.colorSpace.length !== 6)
+                throw new Error("iwanthue: expecting a `colorSpace` array of length 6 ([hmin, hmax, cmin, cmax, lmin, lmax]).");
+              preset = settings.colorSpace;
+            } else {
+              preset = [
+                settings.colorSpace.hmin || 0,
+                settings.colorSpace.hmax || 360,
+                settings.colorSpace.cmin || 0,
+                settings.colorSpace.cmax || 100,
+                settings.colorSpace.lmin || 0,
+                settings.colorSpace.lmax || 100
+              ];
+            }
+            if (preset[0] < preset[1])
+              settings.colorFilter = function(rgb, lab) {
+                var hcl = labToHcl(lab);
+                return hcl[0] >= preset[0] && hcl[0] <= preset[1] && hcl[1] >= preset[2] && hcl[1] <= preset[3] && hcl[2] >= preset[4] && hcl[2] <= preset[5];
+              };
+            else
+              settings.colorFilter = function(rgb, lab) {
+                var hcl = labToHcl(lab);
+                return (hcl[0] >= preset[0] || hcl[0] <= preset[1]) && hcl[1] >= preset[2] && hcl[1] <= preset[3] && hcl[2] >= preset[4] && hcl[2] <= preset[5];
+              };
+          }
+        }
+        return settings;
+      }
+      function sampleLabColors(rng, count, validColor) {
+        var colors = new Array(count), lab, rgb;
+        for (var i = 0; i < count; i++) {
+          do {
+            lab = [
+              100 * rng(),
+              100 * (2 * rng() - 1),
+              100 * (2 * rng() - 1)
+            ];
+            rgb = labToRgb(lab);
+          } while (!validColor(rgb, lab));
+          colors[i] = lab;
+        }
+        return colors;
+      }
+      var REPULSION = 100;
+      var SPEED = 100;
+      function forceVector(rng, distance, validColor, colors, settings) {
+        var vectors = new Array(colors.length);
+        var steps = settings.quality * 20;
+        var i, j, l = colors.length;
+        var A, B;
+        var d, dl, da, db, force, candidateLab, color, ratio, displacement, rgb;
+        while (steps-- > 0) {
+          for (i = 0; i < l; i++)
+            vectors[i] = { dl: 0, da: 0, db: 0 };
+          for (i = 0; i < l; i++) {
+            A = colors[i];
+            for (j = 0; j < i; j++) {
+              B = colors[j];
+              d = distance(A, B);
+              if (d > 0) {
+                dl = A[0] - B[0];
+                da = A[1] - B[1];
+                db = A[2] - B[2];
+                force = REPULSION / Math.pow(d, 2);
+                vectors[i].dl += dl * force / d;
+                vectors[i].da += da * force / d;
+                vectors[i].db += db * force / d;
+                vectors[j].dl -= dl * force / d;
+                vectors[j].da -= da * force / d;
+                vectors[j].db -= db * force / d;
+              } else {
+                vectors[j].dl += 2 - 4 * rng();
+                vectors[j].da += 2 - 4 * rng();
+                vectors[j].db += 2 - 4 * rng();
+              }
+            }
+          }
+          for (i = 0; i < l; i++) {
+            color = colors[i];
+            displacement = SPEED * Math.sqrt(Math.pow(vectors[i].dl, 2) + Math.pow(vectors[i].da, 2) + Math.pow(vectors[i].db, 2));
+            if (displacement > 0) {
+              ratio = SPEED * Math.min(0.1, displacement) / displacement;
+              candidateLab = [
+                color[0] + vectors[i].dl * ratio,
+                color[1] + vectors[i].da * ratio,
+                color[2] + vectors[i].db * ratio
+              ];
+              rgb = labToRgb(candidateLab);
+              if (validColor(rgb, candidateLab))
+                colors[i] = candidateLab;
+            }
+          }
+        }
+      }
+      function kMeans(distance, validColor, colors, settings) {
+        var colorSamples = [];
+        var samplesClosest = [];
+        var l, a, b;
+        var lab, rgb;
+        var linc = 5, ainc = 10, binc = 10;
+        if (settings.ultraPrecision) {
+          linc = 1;
+          ainc = 5;
+          binc = 5;
+        }
+        for (l = 0; l <= 100; l += linc) {
+          for (a = -100; a <= 100; a += ainc) {
+            for (b = -100; b <= 100; b += binc) {
+              lab = [l, a, b];
+              rgb = labToRgb(lab);
+              if (!validColor(rgb, lab))
+                continue;
+              colorSamples.push(lab);
+              samplesClosest.push(null);
+            }
+          }
+        }
+        var steps = settings.quality;
+        var i, j;
+        var A, B;
+        var li = colorSamples.length, lj = colors.length;
+        var d, minDistance, freeColorSamples, count, candidate, closest;
+        while (steps-- > 0) {
+          for (i = 0; i < li; i++) {
+            B = colorSamples[i];
+            minDistance = Infinity;
+            for (j = 0; j < lj; j++) {
+              A = colors[j];
+              d = distance(A, B);
+              if (d < minDistance) {
+                minDistance = d;
+                samplesClosest[i] = j;
+              }
+            }
+          }
+          freeColorSamples = colorSamples.slice();
+          for (j = 0; j < lj; j++) {
+            count = 0;
+            candidate = [0, 0, 0];
+            for (i = 0; i < li; i++) {
+              if (samplesClosest[i] === j) {
+                count++;
+                candidate[0] += colorSamples[i][0];
+                candidate[1] += colorSamples[i][1];
+                candidate[2] += colorSamples[i][2];
+              }
+            }
+            if (count !== 0) {
+              candidate[0] /= count;
+              candidate[1] /= count;
+              candidate[2] /= count;
+              rgb = labToRgb(candidate);
+              if (validColor(rgb, candidate)) {
+                colors[j] = candidate;
+              } else {
+                if (freeColorSamples.length > 0) {
+                  minDistance = Infinity;
+                  closest = -1;
+                  for (i = 0; i < freeColorSamples.length; i++) {
+                    d = distance(freeColorSamples[i], candidate);
+                    if (d < minDistance) {
+                      minDistance = d;
+                      closest = i;
+                    }
+                  }
+                  colors[j] = colorSamples[closest];
+                } else {
+                  minDistance = Infinity;
+                  closest = -1;
+                  for (i = 0; i < colorSamples.length; i++) {
+                    d = distance(colorSamples[i], candidate);
+                    if (d < minDistance) {
+                      minDistance = d;
+                      closest = i;
+                    }
+                  }
+                  colors[j] = colorSamples[closest];
+                }
+                freeColorSamples = freeColorSamples.filter(function(color) {
+                  return color[0] !== colors[j][0] || color[1] !== colors[j][1] || color[2] !== colors[j][2];
+                });
+              }
+            }
+          }
+        }
+        return colors;
+      }
+      module.exports = function generatePalette(count, settings) {
+        if (typeof count !== "number" || count < 1)
+          throw new Error("iwanthue: expecting a color count > 1.");
+        settings = resolveAndValidateSettings(settings);
+        var random = new Random(settings.seed);
+        var rng = function() {
+          return random.nextFloat();
+        };
+        var distances = new CachedDistances();
+        var distance = distances.get(settings.distance);
+        var validColor = function(rgb, lab) {
+          if (!validateRgb(rgb))
+            return false;
+          if (!settings.colorFilter)
+            return true;
+          if (!settings.colorFilter(rgb, lab))
+            return false;
+          return true;
+        };
+        var colors;
+        if (count === 1) {
+          colors = sampleLabColors(rng, count, validColor);
+          return [labToRgbHex(colors[0])];
+        }
+        var attempts = settings.attempts;
+        var metrics;
+        var bestMetric = -Infinity, best;
+        while (attempts > 0) {
+          colors = sampleLabColors(rng, count, validColor);
+          if (settings.clustering === "force-vector")
+            forceVector(rng, distance, validColor, colors, settings);
+          else
+            kMeans(distance, validColor, colors, settings);
+          metrics = helpers.computeQualityMetrics(distance, colors);
+          if (metrics.min > bestMetric) {
+            bestMetric = metrics.min;
+            best = colors;
+          }
+          attempts--;
+        }
+        colors = best;
+        colors = diffSort(distance, colors);
+        return colors.map(labToRgbHex);
+      };
+    }
+  });
+
   // src/data_wrangling/data_extraction.js
   var browser = require_browser_polyfill();
   var SECS_TO_HRS = 60 * 60;
@@ -17877,25 +18510,25 @@
   // src/stats_inject.js
   console.log("Injected");
   require_chart();
-  function configureDividedDataset(data, field) {
-    return divideData(data, field).map((entry, _) => {
-      let color = "hsl(" + Math.random() * 360 + ", 100%, 75%)";
+  var iwanthue = require_iwanthue();
+  var palette;
+  function configureDividedDataset(divided_data) {
+    return divided_data.map((entry, index) => {
       return {
         "label": entry[0]["name"],
         "data": entry,
         "barPercentage": 0.1,
-        "backgroundColor": color,
-        "borderColor": color
+        "backgroundColor": palette[index],
+        "borderColor": palette[index]
       };
     });
   }
   function configureCombinedDataset(data, field) {
-    let color = "hsl(" + Math.random() * 360 + ", 100%, 75%)";
     return [{
       "label": "Data",
       "data": combineData(data, field),
-      "backgroundColor": color,
-      "borderColor": color
+      "backgroundColor": palette[0],
+      "borderColor": palette[0]
     }];
   }
   function parseDates(date_string) {
@@ -17957,7 +18590,13 @@
   async function startup() {
     let game_json_data = await getData();
     rn = new Date();
-    game_divided_config = configureDividedDataset(game_json_data, "process_path");
+    game_divided_data = divideData(game_json_data, "process_path");
+    palette = iwanthue(game_divided_data.length, {
+      "colorSpace": [0, 360, 0, 100, 50, 100],
+      "clustering": "force-vector",
+      "seed": "exSTATic!"
+    });
+    game_divided_config = configureDividedDataset(game_divided_data);
     date_combined_config = configureCombinedDataset(game_json_data, "date");
     createDateChart("average_speed_one_month", game_divided_config, "x", subMonths(rn, 1), void 0, "line", "Average Reading Speed", "date", "Time", "read_speed", "Reading Speed (Chars per Hour)");
     createDateChart("chars_read_one_month", date_combined_config, "x", subMonths(rn, 1), void 0, "bar", "Chars Read", "date", "Time", "chars_read", "Chars Read");

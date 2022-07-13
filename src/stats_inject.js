@@ -5,29 +5,28 @@ import { divideData, combineData } from "./data_wrangling/data_processing"
 require("chart.js")
 import { subMonths } from "date-fns"
 import "chartjs-adapter-date-fns"
+var iwanthue = require('iwanthue')
 
-function configureDividedDataset(data, field) {
-    return divideData(data, field).map((entry, _) => {
-        let color = "hsl(" + Math.random() * 360 + ", 100%, 75%)"
+var palette
 
+function configureDividedDataset(divided_data) {
+    return divided_data.map((entry, index) => {
         return {
             "label": entry[0]["name"],
             "data": entry,
             "barPercentage": 0.1,
-            "backgroundColor": color,
-            "borderColor": color
+            "backgroundColor": palette[index],
+            "borderColor": palette[index]
         }
     })
 }
 
 function configureCombinedDataset(data, field) {
-    let color = "hsl(" + Math.random() * 360 + ", 100%, 75%)"
-
     return [{
         "label": "Data",
         "data": combineData(data, field),
-        "backgroundColor": color,
-        "borderColor": color
+        "backgroundColor": palette[0],
+        "borderColor": palette[0]
     }]
 }
 
@@ -95,7 +94,14 @@ async function startup() {
     let game_json_data = await getData()
     rn = new Date()
 
-    game_divided_config = configureDividedDataset(game_json_data, "process_path")
+    game_divided_data = divideData(game_json_data, "process_path")
+    palette = iwanthue(game_divided_data.length, {
+        "colorSpace": [0, 360, 0, 100, 50, 100],
+        "clustering": "force-vector",
+        "seed": "exSTATic!"
+    })
+
+    game_divided_config = configureDividedDataset(game_divided_data)
     date_combined_config = configureCombinedDataset(game_json_data, "date")
 
     // One Month Progress Graphs

@@ -14731,57 +14731,6 @@
     }
   });
 
-  // src/data_wrangling/data_extraction.js
-  var browser = require_browser_polyfill();
-  var SECS_TO_HRS = 60 * 60;
-  async function getGameData(process_path) {
-    let game_entry = (await browser.storage.local.get(process_path))[process_path];
-    let game_date_keys = game_entry["dates_read_on"].map((date) => process_path + "_" + date);
-    let game_date_entries = await browser.storage.local.get(game_date_keys);
-    return Object.values(game_date_entries).map((game_date_entry, index) => {
-      delete game_date_entry["last_line_recieved"];
-      game_date_entry["time_read"] = game_date_entry["time_read"] / SECS_TO_HRS;
-      game_date_entry["read_speed"] = game_date_entry["chars_read"] / game_date_entry["time_read"];
-      game_date_entry["date"] = game_entry["dates_read_on"][index];
-      game_date_entry["process_path"] = process_path;
-      game_date_entry["name"] = game_entry["name"];
-      return game_date_entry;
-    });
-  }
-  async function getData() {
-    let games = (await browser.storage.local.get("games"))["games"];
-    let game_data = games.map((game) => getGameData(game));
-    return (await Promise.all(game_data)).flat();
-  }
-
-  // src/data_wrangling/data_processing.js
-  function divideData(data, field) {
-    let game_data = {};
-    data.forEach((element) => {
-      if (element[field] in game_data) {
-        game_data[element[field]].push(element);
-      } else {
-        game_data[element[field]] = [element];
-      }
-    });
-    return Object.values(game_data);
-  }
-  function combineData(data, field) {
-    let date_data = {};
-    data.forEach((element) => {
-      if (element[field] in date_data) {
-        let old_element = date_data[element[field]];
-        old_element["lines_read"] += element["lines_read"];
-        old_element["chars_read"] += element["chars_read"];
-        old_element["time_read"] += element["time_read"];
-        old_element["read_speed"] = old_element["chars_read"] / old_element["time_read"];
-      } else {
-        date_data[element[field]] = structuredClone(element);
-      }
-    });
-    return Object.values(date_data);
-  }
-
   // node_modules/date-fns/esm/_lib/toInteger/index.js
   function toInteger(dirtyNumber) {
     if (dirtyNumber === null || dirtyNumber === true || dirtyNumber === false) {
@@ -18373,6 +18322,59 @@
     return minutes >= 0 && minutes <= 59;
   }
 
+  // src/data_wrangling/data_extraction.js
+  var browser = require_browser_polyfill();
+  var SECS_TO_HRS = 60 * 60;
+  async function getGameData(process_path) {
+    let game_entry = (await browser.storage.local.get(process_path))[process_path];
+    let game_date_keys = game_entry["dates_read_on"].map((date) => process_path + "_" + date);
+    let game_date_entries = await browser.storage.local.get(game_date_keys);
+    return Object.values(game_date_entries).map((game_date_entry, index) => {
+      delete game_date_entry["last_line_recieved"];
+      game_date_entry["time_read"] = game_date_entry["time_read"] / SECS_TO_HRS;
+      game_date_entry["read_speed"] = game_date_entry["chars_read"] / game_date_entry["time_read"];
+      game_date_entry["date"] = game_entry["dates_read_on"][index];
+      game_date_entry["process_path"] = process_path;
+      game_date_entry["name"] = game_entry["name"];
+      return game_date_entry;
+    });
+  }
+  async function getData() {
+    let games = (await browser.storage.local.get("games"))["games"];
+    let game_data = games.map((game) => getGameData(game));
+    let data = (await Promise.all(game_data)).flat();
+    data.sort((first, second) => parseISO(first.date) - parseISO(second.date));
+    return data;
+  }
+
+  // src/data_wrangling/data_processing.js
+  function divideData(data, field) {
+    let game_data = {};
+    data.forEach((element) => {
+      if (element[field] in game_data) {
+        game_data[element[field]].push(element);
+      } else {
+        game_data[element[field]] = [element];
+      }
+    });
+    return Object.values(game_data);
+  }
+  function combineData(data, field) {
+    let date_data = {};
+    data.forEach((element) => {
+      if (element[field] in date_data) {
+        let old_element = date_data[element[field]];
+        old_element["lines_read"] += element["lines_read"];
+        old_element["chars_read"] += element["chars_read"];
+        old_element["time_read"] += element["time_read"];
+        old_element["read_speed"] = old_element["chars_read"] / old_element["time_read"];
+      } else {
+        date_data[element[field]] = structuredClone(element);
+      }
+    });
+    return Object.values(date_data);
+  }
+
   // node_modules/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.esm.js
   var import_chart = __toESM(require_chart());
   var FORMATS = {
@@ -18598,15 +18600,15 @@
     });
     game_divided_config = configureDividedDataset(game_divided_data);
     date_combined_config = configureCombinedDataset(game_json_data, "date");
-    createDateChart("average_speed_one_month", game_divided_config, "x", subMonths(rn, 1), void 0, "line", "Average Reading Speed", "date", "Time", "read_speed", "Reading Speed (Chars per Hour)");
-    createDateChart("chars_read_one_month", date_combined_config, "x", subMonths(rn, 1), void 0, "bar", "Chars Read", "date", "Time", "chars_read", "Chars Read");
-    createDateChart("hours_read_one_month", date_combined_config, "x", subMonths(rn, 1), void 0, "bar", "Read Time", "date", "Time", "time_read", "Read Time (Hours)");
-    createDateChart("average_speed_six_months", game_divided_config, "x", subMonths(rn, 6), void 0, "line", "Average Reading Speed", "date", "Time", "read_speed", "Reading Speed (Chars per Hour)");
-    createDateChart("chars_read_six_months", date_combined_config, "x", subMonths(rn, 6), void 0, "bar", "Chars Read", "date", "Time", "chars_read", "Chars Read");
-    createDateChart("hours_read_six_months", date_combined_config, "x", subMonths(rn, 6), void 0, "bar", "Read Time", "date", "Time", "time_read", "Read Time (Hours)");
-    createDateChart("average_speed_twelve_months", game_divided_config, "x", subMonths(rn, 12), void 0, "line", "Average Reading Speed", "date", "Time", "read_speed", "Reading Speed (Chars per Hour)");
-    createDateChart("chars_read_twelve_months", date_combined_config, "x", subMonths(rn, 12), void 0, "bar", "Chars Read", "date", "Time", "chars_read", "Chars Read");
-    createDateChart("hours_read_twelve_months", date_combined_config, "x", subMonths(rn, 12), void 0, "bar", "Read Time", "date", "Time", "time_read", "Read Time (Hours)");
+    createDateChart("average_speed_one_month", game_divided_config, "x", subMonths(rn, 1), rn, "line", "Average Reading Speed", "date", "Time", "read_speed", "Reading Speed (Chars per Hour)");
+    createDateChart("chars_read_one_month", date_combined_config, "x", subMonths(rn, 1), rn, "bar", "Chars Read", "date", "Time", "chars_read", "Chars Read");
+    createDateChart("hours_read_one_month", date_combined_config, "x", subMonths(rn, 1), rn, "bar", "Read Time", "date", "Time", "time_read", "Read Time (Hours)");
+    createDateChart("average_speed_six_months", game_divided_config, "x", subMonths(rn, 6), rn, "line", "Average Reading Speed", "date", "Time", "read_speed", "Reading Speed (Chars per Hour)");
+    createDateChart("chars_read_six_months", date_combined_config, "x", subMonths(rn, 6), rn, "bar", "Chars Read", "date", "Time", "chars_read", "Chars Read");
+    createDateChart("hours_read_six_months", date_combined_config, "x", subMonths(rn, 6), rn, "bar", "Read Time", "date", "Time", "time_read", "Read Time (Hours)");
+    createDateChart("average_speed_twelve_months", game_divided_config, "x", subMonths(rn, 12), rn, "line", "Average Reading Speed", "date", "Time", "read_speed", "Reading Speed (Chars per Hour)");
+    createDateChart("chars_read_twelve_months", date_combined_config, "x", subMonths(rn, 12), rn, "bar", "Chars Read", "date", "Time", "chars_read", "Chars Read");
+    createDateChart("hours_read_twelve_months", date_combined_config, "x", subMonths(rn, 12), rn, "bar", "Read Time", "date", "Time", "time_read", "Read Time (Hours)");
     createDateChart("average_speed_all_time", game_divided_config, "x", void 0, void 0, "line", "Average Reading Speed", "date", "Time", "read_speed", "Reading Speed (Chars per Hour)");
     createDateChart("chars_read_all_time", date_combined_config, "x", void 0, void 0, "bar", "Chars Read", "date", "Time", "chars_read", "Chars Read");
     createDateChart("hours_read_all_time", date_combined_config, "x", void 0, void 0, "bar", "Read Time", "date", "Time", "time_read", "Read Time (Hours)");

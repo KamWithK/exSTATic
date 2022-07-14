@@ -110,7 +110,7 @@ async function startup() {
         game_divided_config,
         "x",
         subMonths(rn, 1),
-        undefined,
+        rn,
         "line",
         "Average Reading Speed",
         "date", "Time", "read_speed", "Reading Speed (Chars per Hour)"
@@ -121,7 +121,7 @@ async function startup() {
         date_combined_config,
         "x",
         subMonths(rn, 1),
-        undefined,
+        rn,
         "bar",
         "Chars Read",
         "date", "Time", "chars_read", "Chars Read"
@@ -132,7 +132,7 @@ async function startup() {
         date_combined_config,
         "x",
         subMonths(rn, 1),
-        undefined,
+        rn,
         "bar",
         "Read Time",
         "date", "Time", "time_read", "Read Time (Hours)"
@@ -144,7 +144,7 @@ async function startup() {
         game_divided_config,
         "x",
         subMonths(rn, 6),
-        undefined,
+        rn,
         "line",
         "Average Reading Speed",
         "date", "Time", "read_speed", "Reading Speed (Chars per Hour)"
@@ -155,7 +155,7 @@ async function startup() {
         date_combined_config,
         "x",
         subMonths(rn, 6),
-        undefined,
+        rn,
         "bar",
         "Chars Read",
         "date", "Time", "chars_read", "Chars Read"
@@ -166,7 +166,7 @@ async function startup() {
         date_combined_config,
         "x",
         subMonths(rn, 6),
-        undefined,
+        rn,
         "bar",
         "Read Time",
         "date", "Time", "time_read", "Read Time (Hours)"
@@ -178,7 +178,7 @@ async function startup() {
         game_divided_config,
         "x",
         subMonths(rn, 12),
-        undefined,
+        rn,
         "line",
         "Average Reading Speed",
         "date", "Time", "read_speed", "Reading Speed (Chars per Hour)"
@@ -189,7 +189,7 @@ async function startup() {
         date_combined_config,
         "x",
         subMonths(rn, 12),
-        undefined,
+        rn,
         "bar",
         "Chars Read",
         "date", "Time", "chars_read", "Chars Read"
@@ -200,7 +200,7 @@ async function startup() {
         date_combined_config,
         "x",
         subMonths(rn, 12),
-        undefined,
+        rn,
         "bar",
         "Read Time",
         "date", "Time", "time_read", "Read Time (Hours)"

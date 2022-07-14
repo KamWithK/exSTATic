@@ -1,3 +1,5 @@
+import { parseISO } from "date-fns"
+
 var browser = require("webextension-polyfill")
 
 var SECS_TO_HRS = 60 * 60
@@ -22,8 +24,11 @@ export async function getGameData(process_path) {
 export async function getData() {
     let games = (await browser.storage.local.get("games"))["games"]
     let game_data = games.map(game => getGameData(game))
+
+    let data = (await Promise.all(game_data)).flat()
+    data.sort((first, second) => parseISO(first.date) - parseISO(second.date))
     
-    return (await Promise.all(game_data)).flat()
+    return data
 }
 
 export async function exportStats() {

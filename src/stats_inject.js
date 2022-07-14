@@ -30,10 +30,6 @@ function configureCombinedDataset(data, field) {
     }]
 }
 
-function parseDates(date_string) {
-    return parseISO(date_string)
-}
-
 function createChartConfig(element_id, dataset, index_axis, x_min, x_max, type, title, x_key, x_label, y_key, y_label) {
     return {
         "type": type,
@@ -85,7 +81,7 @@ function createDateChart(element_id, dataset, min_date, max_date, type, title, x
     config["options"]["scales"]["x"]["type"] = "time"
     config["options"]["scales"]["x"]["time"] = {
         "unit": "day",
-        "parser": parseDates
+        "parser": parseISO
     }
     return new Chart(document.getElementById(element_id).getContext("2d"), config)
 }

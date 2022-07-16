@@ -98,7 +98,7 @@ async function bulkLineAdd(game_entry, game_name) {
     let game_date_entries = await browser.storage.local.get(id_queries)
     let line_divs = Object.entries(game_date_entries).map(
         ([key, line]) => newLineDiv(line, JSON.parse(key)[1])
-    )
+    ).sort((first, second) => first.dataset.line_id - second.dataset.line_id)
 
     document.getElementById("entry_holder").replaceChildren(...line_divs)
 }

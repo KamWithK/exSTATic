@@ -1458,7 +1458,7 @@
     let max_line_id = game_entry["last_line_added"];
     let id_queries = [...Array(max_line_id + 1).keys()].map((id) => JSON.stringify([game_name, id]));
     let game_date_entries = await browser4.storage.local.get(id_queries);
-    let line_divs = Object.entries(game_date_entries).map(([key, line]) => newLineDiv(line, JSON.parse(key)[1]));
+    let line_divs = Object.entries(game_date_entries).map(([key, line]) => newLineDiv(line, JSON.parse(key)[1])).sort((first, second) => first.dataset.line_id - second.dataset.line_id);
     document.getElementById("entry_holder").replaceChildren(...line_divs);
   }
   function setStats(char_progress, time_taken) {

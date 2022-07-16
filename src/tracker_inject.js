@@ -97,7 +97,7 @@ async function bulkLineAdd(game_entry, game_name) {
 
     let game_date_entries = await browser.storage.local.get(id_queries)
     let line_divs = Object.entries(game_date_entries).map(
-        ([_, line], index) => newLineDiv(line, index + max_line_id + 1)
+        ([key, line]) => newLineDiv(line, JSON.parse(key)[1])
     )
 
     document.getElementById("entry_holder").replaceChildren(...line_divs)

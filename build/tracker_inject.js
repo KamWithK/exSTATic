@@ -1471,7 +1471,7 @@
   }
   function setProperty(event) {
     let property = {};
-    property[event["target"].class] = event["target"].value;
+    property[event["target"].id] = event["target"].value;
     browser4.storage.local.set(property);
   }
   document.getElementById("font").onchange = (event) => {

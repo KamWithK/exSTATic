@@ -119,7 +119,7 @@ function setStats(char_progress, time_taken) {
 
 function setProperty(event) {
     let property = {}
-    property[event["target"].class] = event["target"].value
+    property[event["target"].id] = event["target"].value
 
     browser.storage.local.set(property)
 }

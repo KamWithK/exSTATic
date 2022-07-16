@@ -133,21 +133,21 @@ async function startup() {
     createCategoryGraph(
         "average_speed_per_game",
         speed_per_game,
-        "Speed per Game",
+        "Average Speed per Game",
         "Speed (Chars per Hours)"
     )
 
     createCategoryGraph(
         "average_time_per_game",
         time_per_game,
-        "Time per Game",
+        "Total Time per Game",
         "Reading Time (Hours)"
     )
 
     createCategoryGraph(
         "average_chars_per_game",
         chars_per_game,
-        "Chars per Game",
+        "Total Chars per Game",
         "Chars"
     )
 }

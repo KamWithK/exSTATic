@@ -1316,7 +1316,7 @@
 
   // src/storage/update_storage.js
   var browser2 = require_browser_polyfill();
-  var MAX_TIME_AWAY;
+  var MAX_TIME_AWAY = 60;
   async function setProperties() {
     property_entries = await browser2.storage.local.get("afk_max_time");
     if (property_entries.hasOwnProperty("afk_max_time")) {
@@ -1461,12 +1461,12 @@
     let line_divs = Object.entries(game_date_entries).map(([key, line]) => newLineDiv(line, JSON.parse(key)[1]));
     document.getElementById("entry_holder").replaceChildren(...line_divs);
   }
-  function setStats(chars_read2, time_read2) {
-    document.getElementById("chars_read").innerHTML = chars_read2.toLocaleString();
-    let average = Math.round(chars_read2 / (time_read2 / SECS_TO_HOURS));
+  function setStats(char_progress, time_taken) {
+    document.getElementById("chars_read").innerHTML = char_progress.toLocaleString();
+    let average = Math.round(char_progress / (time_taken / SECS_TO_HOURS));
     document.getElementById("chars_per_hour").innerHTML = average.toLocaleString();
     let date = new Date(0);
-    date.setSeconds(time_read2);
+    date.setSeconds(time_taken);
     document.getElementById("elapsed_time").innerHTML = date.toISOString().substr(11, 8);
   }
   function setProperty(event) {

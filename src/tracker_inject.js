@@ -103,17 +103,17 @@ async function bulkLineAdd(game_entry, game_name) {
     document.getElementById("entry_holder").replaceChildren(...line_divs)
 }
 
-function setStats(chars_read, time_read) {
+function setStats(char_progress, time_taken) {
     // Set char counter
-    document.getElementById("chars_read").innerHTML = chars_read.toLocaleString()
+    document.getElementById("chars_read").innerHTML = char_progress.toLocaleString()
 
     // Set speed
-    let average = Math.round(chars_read / (time_read / SECS_TO_HOURS))
+    let average = Math.round(char_progress / (time_taken / SECS_TO_HOURS))
     document.getElementById("chars_per_hour").innerHTML = average.toLocaleString()
 
     // Set elapsed time
     let date = new Date(0)
-    date.setSeconds(time_read)
+    date.setSeconds(time_taken)
     document.getElementById("elapsed_time").innerHTML = date.toISOString().substr(11, 8)
 }
 

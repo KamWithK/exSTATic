@@ -2,7 +2,7 @@ var browser = require("webextension-polyfill")
 
 import { charsInLine, lineSplitCount } from "../calculations"
 
-var MAX_TIME_AWAY
+var MAX_TIME_AWAY = 60
 
 async function setProperties() {
     property_entries = await browser.storage.local.get("afk_max_time")

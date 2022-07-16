@@ -30,3 +30,19 @@ export function combineData(data, field) {
 
     return Object.values(date_data)
 }
+
+export function getSeries(data, x_field, y_field, z_field, mode, type) {
+    // Check for one subarray per game or not
+    return data.map((sub_array, _) => {
+        return {
+            "name": sub_array[0]["name"],
+            "x": sub_array.map(entry => entry[x_field]),
+            "y": sub_array.map(entry => entry[y_field]),
+            "mode": mode,
+            "type": type,
+            "marker": {
+                "size": sub_array.map(entry => entry[z_field] / 2000)
+            }
+        }
+    })
+}

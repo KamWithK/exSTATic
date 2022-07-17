@@ -134,6 +134,14 @@ document.getElementById("font_size").onchange = (event) => {
 }
 
 document.getElementById("afk_max_time").onchange = setProperty
+document.getElementById("inactivity_blur").onchange = setProperty
+
+document.getElementById("entry_holder").onclick = () => {
+    if (idle_time_added == true) {
+        document.documentElement.style.setProperty("--default-inactivity-blur", 0)
+        previous_time = timeNowSeconds()
+    }
+}
 
 document.getElementById("view_stats").onclick = (_) => {
     chrome.runtime.sendMessage({
@@ -149,7 +157,7 @@ async function startup() {
 
     try {
         // Set the UI properties
-        let property_entries = await browser.storage.local.get(["font", "font_size", "afk_max_time"])
+        let property_entries = await browser.storage.local.get(["font", "font_size", "afk_max_time", "inactivity_blur"])
         if (property_entries.hasOwnProperty("font")) {
             document.getElementById("font").value = property_entries["font"]
             document.documentElement.style.setProperty("--default-jp-font", property_entries["font"])
@@ -164,6 +172,14 @@ async function startup() {
             MAX_TIME_AWAY = property_entries["afk_max_time"]
             document.getElementById("afk_max_time").value = property_entries["afk_max_time"]
         }
+
+        if (!property_entries.hasOwnProperty("inactivity_blur")) {
+            property_entries["inactivity_blur"] = document.getElementById("inactivity_blur").value
+            browser.storage.local.set({
+                "inactivity_blur": property_entries["inactivity_blur"]
+            })
+        }
+        document.getElementById("inactivity_blur").value = property_entries["inactivity_blur"]
 
         // Preload entries and set window title
         let game_entry = await previousGameEntry()
@@ -191,9 +207,16 @@ async function updateStatsLive() {
     
     // Keep incrementing the timer whilst no break greater than allowed has been taken
     if (time_between_lines <= MAX_TIME_AWAY) {
-        idle_time_added = false
+        if (idle_time_added) {
+            document.getElementById("activity_symbol").innerHTML = "hourglass_bottom"
+            document.documentElement.style.setProperty(
+                "--default-inactivity-blur",
+                0
+            )
+            idle_time_added = false
+        }
+
         let time_so_far = time_read + time_between_lines
-    
         setStats(chars_read, time_so_far)
     } else {
         // Change the total time read
@@ -205,6 +228,12 @@ async function updateStatsLive() {
             game_entry[Object.keys(game_entry)[0]]["time_read"] = time_read
     
             browser.storage.local.set(game_entry)
+            document.getElementById("activity_symbol").innerHTML = "bedtime"
+            document.documentElement.style.setProperty(
+                "--default-inactivity-blur",
+                (await browser.storage.local.get("inactivity_blur"))["inactivity_blur"] + "px"
+            )
+
             idle_time_added = true
         }
     }

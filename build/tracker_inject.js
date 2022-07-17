@@ -1483,6 +1483,13 @@
     document.documentElement.style.setProperty("--default-jp-font-size", event["target"].value + "rem");
   };
   document.getElementById("afk_max_time").onchange = setProperty;
+  document.getElementById("inactivity_blur").onchange = setProperty;
+  document.getElementById("entry_holder").onclick = () => {
+    if (idle_time_added == true) {
+      document.documentElement.style.setProperty("--default-inactivity-blur", 0);
+      previous_time = timeNowSeconds();
+    }
+  };
   document.getElementById("view_stats").onclick = (_) => {
     chrome.runtime.sendMessage({
       "action": "open_tab",
@@ -1493,7 +1500,7 @@
   async function startup() {
     document.getElementById("entry_holder").replaceChildren();
     try {
-      let property_entries2 = await browser4.storage.local.get(["font", "font_size", "afk_max_time"]);
+      let property_entries2 = await browser4.storage.local.get(["font", "font_size", "afk_max_time", "inactivity_blur"]);
       if (property_entries2.hasOwnProperty("font")) {
         document.getElementById("font").value = property_entries2["font"];
         document.documentElement.style.setProperty("--default-jp-font", property_entries2["font"]);
@@ -1506,6 +1513,13 @@
         MAX_TIME_AWAY2 = property_entries2["afk_max_time"];
         document.getElementById("afk_max_time").value = property_entries2["afk_max_time"];
       }
+      if (!property_entries2.hasOwnProperty("inactivity_blur")) {
+        property_entries2["inactivity_blur"] = document.getElementById("inactivity_blur").value;
+        browser4.storage.local.set({
+          "inactivity_blur": property_entries2["inactivity_blur"]
+        });
+      }
+      document.getElementById("inactivity_blur").value = property_entries2["inactivity_blur"];
       let game_entry = await previousGameEntry();
       previous_game = Object.keys(game_entry)[0];
       bulkLineAdd(game_entry[previous_game], previous_game);
@@ -1524,7 +1538,11 @@
     let time_now = timeNowSeconds();
     let time_between_lines = time_now - previous_time;
     if (time_between_lines <= MAX_TIME_AWAY2) {
-      idle_time_added = false;
+      if (idle_time_added) {
+        document.getElementById("activity_symbol").innerHTML = "hourglass_bottom";
+        document.documentElement.style.setProperty("--default-inactivity-blur", 0);
+        idle_time_added = false;
+      }
       let time_so_far = time_read + time_between_lines;
       setStats(chars_read, time_so_far);
     } else {
@@ -1534,6 +1552,8 @@
         let game_entry = await todayGameEntry();
         game_entry[Object.keys(game_entry)[0]]["time_read"] = time_read;
         browser4.storage.local.set(game_entry);
+        document.getElementById("activity_symbol").innerHTML = "bedtime";
+        document.documentElement.style.setProperty("--default-inactivity-blur", (await browser4.storage.local.get("inactivity_blur"))["inactivity_blur"] + "px");
         idle_time_added = true;
       }
     }

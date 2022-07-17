@@ -16,6 +16,7 @@
           --default-jp-font: "Klee One";
           /* --default-jp-font: "Noto Sans JP"; */
           --default-jp-font-size: 2rem;
+          --default-inactivity-blur: 0px;
         }
 
         .jp-text {
@@ -24,6 +25,7 @@
         }
         .sentence-entry {
             @apply flex items-center dark:bg-slate-900 jp-text p-4 gap-4;
+            filter: blur(var(--default-inactivity-blur));
         }
         .circle-bullet-point {
             @apply rounded-full h-2 w-2 bg-indigo-500 m-1 flex-none;
@@ -57,7 +59,7 @@
 </head>
 
 <body class="dark:bg-slate-800 px-12">
-  <div class="flex py-3 bg-slate-800 items-start sticky top-0 justify-between">
+  <div class="flex z-50 py-3 bg-slate-800 items-start sticky top-0 justify-between">
     <input id="game_name" class="w-20 shrink grow justify-self-start text-5xl jp-text bg-transparent text-indigo-400" type="text" value="Game" disabled="true"> <!-- REPLACE WITH GAME NAME -->
 
     <div class="place-self-center relative dropdown">
@@ -70,7 +72,7 @@
         <span class="material-icons">timer</span>
         <div id="chars_per_hour" class="stat-numbers">00,000</div>
         <div class="stat-annotation">Chars / Hour</div>
-        <span class="material-icons">hourglass_bottom</span> <!-- bedtime off, hourglass_bottom on -->
+        <span id="activity_symbol" class="material-icons">bedtime</span> <!-- bedtime off, hourglass_bottom on -->
         <span class="material-icons rounded">more_vert</span>
       </div>
 
@@ -83,6 +85,9 @@
         
         <div class="menu-label">Max AFK Time (secs)</div>
         <input id="afk_max_time" class="menu-input" type="number" value=60>
+
+        <div class="menu-label">Inactivity Blur (px)</div>
+        <input id="inactivity_blur" class="menu-input" type="number" value=2>
         
         <button id="export_stats" class="menu-buttons">Export Stats</button>
         <button id="view_stats" class="menu-buttons">View Stats</button>

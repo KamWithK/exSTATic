@@ -17,6 +17,7 @@
           /* --default-jp-font: "Noto Sans JP"; */
           --default-jp-font-size: 2rem;
           --default-inactivity-blur: 0px;
+          --default-text-align: 20%;
         }
 
         .jp-text {
@@ -58,6 +59,7 @@
   </style>
 </head>
 
+<!-- <body class="dark:bg-slate-800 px-120" style="margin-bottom: 25%;"> -->
 <body class="dark:bg-slate-800 px-12">
   <div class="flex z-50 py-3 bg-slate-800 items-start sticky top-0 justify-between">
     <input id="game_name" class="w-20 shrink grow justify-self-start text-5xl jp-text bg-transparent text-indigo-400" type="text" value="Game" disabled="true"> <!-- REPLACE WITH GAME NAME -->
@@ -82,6 +84,9 @@
 
         <div class="menu-label">Font Size (rem)</div>
         <input id="font_size" onchange="fontSizeChanged(this.value)" class="menu-input" type="number" value=2>
+
+        <div class="menu-label">Bottom Pushback (%)</div>
+        <input id="bottom_line_padding" class="menu-input" type="number" value=20>
         
         <div class="menu-label">Max AFK Time (secs)</div>
         <input id="afk_max_time" class="menu-input" type="number" value=60>
@@ -95,7 +100,7 @@
     </div>
   </div>
 
-  <div id="entry_holder" class="flex flex-col gap-2">
+  <div id="entry_holder" class="flex flex-col gap-2" style="padding-bottom: var(--default-text-align)">
   </div>
 </body>
 </html>

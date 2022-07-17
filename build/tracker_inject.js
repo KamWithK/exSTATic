@@ -1482,6 +1482,10 @@
     setProperty(event);
     document.documentElement.style.setProperty("--default-jp-font-size", event["target"].value + "rem");
   };
+  document.getElementById("bottom_line_padding").onchange = (event) => {
+    setProperty(event);
+    document.documentElement.style.setProperty("--default-text-align", event["target"].value + "%");
+  };
   document.getElementById("afk_max_time").onchange = setProperty;
   document.getElementById("inactivity_blur").onchange = setProperty;
   document.getElementById("entry_holder").onclick = () => {
@@ -1500,7 +1504,7 @@
   async function startup() {
     document.getElementById("entry_holder").replaceChildren();
     try {
-      let property_entries2 = await browser4.storage.local.get(["font", "font_size", "afk_max_time", "inactivity_blur"]);
+      let property_entries2 = await browser4.storage.local.get(["font", "font_size", "afk_max_time", "inactivity_blur", "bottom_line_padding"]);
       if (property_entries2.hasOwnProperty("font")) {
         document.getElementById("font").value = property_entries2["font"];
         document.documentElement.style.setProperty("--default-jp-font", property_entries2["font"]);
@@ -1520,6 +1524,13 @@
         });
       }
       document.getElementById("inactivity_blur").value = property_entries2["inactivity_blur"];
+      if (!property_entries2.hasOwnProperty("bottom_line_padding")) {
+        property_entries2["bottom_line_padding"] = document.getElementById("bottom_line_padding").value;
+        browser4.storage.local.set({
+          "bottom_line_padding": property_entries2["bottom_line_padding"]
+        });
+      }
+      document.getElementById("bottom_line_padding").value = property_entries2["bottom_line_padding"];
       let game_entry = await previousGameEntry();
       previous_game = Object.keys(game_entry)[0];
       bulkLineAdd(game_entry[previous_game], previous_game);

@@ -132,6 +132,10 @@ document.getElementById("font_size").onchange = (event) => {
     setProperty(event)
     document.documentElement.style.setProperty("--default-jp-font-size", event["target"].value + "rem")
 }
+document.getElementById("bottom_line_padding").onchange = (event) => {
+    setProperty(event)
+    document.documentElement.style.setProperty("--default-text-align", event["target"].value + "%")
+}
 
 document.getElementById("afk_max_time").onchange = setProperty
 document.getElementById("inactivity_blur").onchange = setProperty
@@ -157,7 +161,7 @@ async function startup() {
 
     try {
         // Set the UI properties
-        let property_entries = await browser.storage.local.get(["font", "font_size", "afk_max_time", "inactivity_blur"])
+        let property_entries = await browser.storage.local.get(["font", "font_size", "afk_max_time", "inactivity_blur", "bottom_line_padding"])
         if (property_entries.hasOwnProperty("font")) {
             document.getElementById("font").value = property_entries["font"]
             document.documentElement.style.setProperty("--default-jp-font", property_entries["font"])
@@ -180,6 +184,14 @@ async function startup() {
             })
         }
         document.getElementById("inactivity_blur").value = property_entries["inactivity_blur"]
+
+        if (!property_entries.hasOwnProperty("bottom_line_padding")) {
+            property_entries["bottom_line_padding"] = document.getElementById("bottom_line_padding").value
+            browser.storage.local.set({
+                "bottom_line_padding": property_entries["bottom_line_padding"]
+            })
+        }
+        document.getElementById("bottom_line_padding").value = property_entries["bottom_line_padding"]
 
         // Preload entries and set window title
         let game_entry = await previousGameEntry()

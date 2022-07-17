@@ -18,7 +18,7 @@ Setup is split into two parts:
 2) Downloading & importing the integrations - from the repositories linked above
 
 Once you download the files simply add them to your addons.
-Start each one up and then navigate to the [main page](https://kamwithk.github.io/exSTATic/char-tracker.html).
+Start each one up and then navigate to the [main page](https://kamwithk.github.io/exSTATic/tracker.html).
 Your stats should from then on be recorded!
 
 **WARNING:** If the main page isn't open your stats might not be recorded correctly, this has not yet been tested

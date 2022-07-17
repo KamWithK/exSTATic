@@ -12,8 +12,8 @@
     "content_scripts": [
       {
         "matches": [
-          "https://kamwithk.github.io/exSTATic/char-tracker.html",
-          "file:///*/exSTATic/*/char-tracker.html"
+          "https://kamwithk.github.io/exSTATic/tracker.html",
+          "file:///*/exSTATic/*/tracker.html"
         ],
         "js": ["build/tracker_inject.js"]
       },

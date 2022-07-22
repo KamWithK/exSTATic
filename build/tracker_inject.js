@@ -1488,10 +1488,13 @@
   };
   document.getElementById("afk_max_time").onchange = setProperty;
   document.getElementById("inactivity_blur").onchange = setProperty;
-  document.getElementById("entry_holder").onclick = () => {
+  document.getElementById("entry_holder").onclick = async () => {
     if (idle_time_added == true) {
       document.documentElement.style.setProperty("--default-inactivity-blur", 0);
       previous_time = timeNowSeconds();
+      let today_previous_game = await todayGameEntry();
+      today_previous_game[Object.keys(today_previous_game)[0]]["last_line_recieved"] = previous_time;
+      browser4.storage.local.set(today_previous_game);
     }
   };
   document.getElementById("view_stats").onclick = (_) => {

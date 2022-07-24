@@ -1302,15 +1302,15 @@
   // src/storage/fetch_storage.js
   var browser = require_browser_polyfill();
   async function previousGameEntry() {
-    let game_entry = await browser.storage.local.get("previously_hooked");
-    if ("previously_hooked" in game_entry) {
-      return browser.storage.local.get(game_entry["previously_hooked"]);
+    let game_entry2 = await browser.storage.local.get("previously_hooked");
+    if ("previously_hooked" in game_entry2) {
+      return browser.storage.local.get(game_entry2["previously_hooked"]);
     }
   }
   async function todayGameEntry() {
-    let game_entry = await browser.storage.local.get("previously_hooked");
-    if ("previously_hooked" in game_entry) {
-      return browser.storage.local.get(game_entry["previously_hooked"] + "_" + dateNowString());
+    let game_entry2 = await browser.storage.local.get("previously_hooked");
+    if ("previously_hooked" in game_entry2) {
+      return browser.storage.local.get(game_entry2["previously_hooked"] + "_" + dateNowString());
     }
   }
 
@@ -1327,13 +1327,13 @@
   async function safeDeleteLine(process_path, line_id, line) {
     let line_key = JSON.stringify([process_path, line_id]);
     browser2.storage.local.remove(line_key);
-    let game_entry = await browser2.storage.local.get(process_path);
-    let last_read_date = game_entry[process_path]["dates_read_on"].at(-1);
+    let game_entry2 = await browser2.storage.local.get(process_path);
+    let last_read_date = game_entry2[process_path]["dates_read_on"].at(-1);
     let game_date_key = process_path + "_" + last_read_date;
-    game_entry = await browser2.storage.local.get(game_date_key);
-    game_entry[game_date_key]["lines_read"] -= lineSplitCount(line);
-    game_entry[game_date_key]["chars_read"] -= charsInLine(line);
-    browser2.storage.local.set(game_entry);
+    game_entry2 = await browser2.storage.local.get(game_date_key);
+    game_entry2[game_date_key]["lines_read"] -= lineSplitCount(line);
+    game_entry2[game_date_key]["chars_read"] -= charsInLine(line);
+    browser2.storage.local.set(game_entry2);
   }
 
   // src/which/storage_type.js
@@ -1366,16 +1366,16 @@
   var browser3 = require_browser_polyfill();
   var SECS_TO_HRS = 60 * 60;
   async function getGameData(process_path) {
-    let game_entry = (await browser3.storage.local.get(process_path))[process_path];
-    let game_date_keys = game_entry["dates_read_on"].map((date) => process_path + "_" + date);
+    let game_entry2 = (await browser3.storage.local.get(process_path))[process_path];
+    let game_date_keys = game_entry2["dates_read_on"].map((date) => process_path + "_" + date);
     let game_date_entries = await browser3.storage.local.get(game_date_keys);
     return Object.values(game_date_entries).map((game_date_entry, index) => {
       delete game_date_entry["last_line_recieved"];
       game_date_entry["time_read"] = game_date_entry["time_read"] / SECS_TO_HRS;
       game_date_entry["read_speed"] = game_date_entry["chars_read"] / game_date_entry["time_read"];
-      game_date_entry["date"] = game_entry["dates_read_on"][index];
+      game_date_entry["date"] = game_entry2["dates_read_on"][index];
       game_date_entry["process_path"] = process_path;
-      game_date_entry["name"] = game_entry["name"];
+      game_date_entry["name"] = game_entry2["name"];
       return game_date_entry;
     });
   }
@@ -1409,9 +1409,9 @@
   var time_read;
   var idle_time_added = true;
   async function gameNameChanged(event) {
-    let game_entry = await browser4.storage.local.get(previous_game);
-    game_entry[previous_game]["name"] = event["target"].value;
-    browser4.storage.local.set(game_entry);
+    let game_entry2 = await browser4.storage.local.get(previous_game);
+    game_entry2[previous_game]["name"] = event["target"].value;
+    browser4.storage.local.set(game_entry2);
   }
   document.getElementById("game_name").onchange = gameNameChanged;
   function showNameTitle(game_name) {
@@ -1454,8 +1454,8 @@
     let entry_holder = document.getElementById("entry_holder");
     entry_holder.appendChild(newLineDiv(line, line_id));
   }
-  async function bulkLineAdd(game_entry, game_name) {
-    let max_line_id = game_entry["last_line_added"];
+  async function bulkLineAdd(game_entry2, game_name) {
+    let max_line_id = game_entry2["last_line_added"];
     let id_queries = [...Array(max_line_id + 1).keys()].map((id) => JSON.stringify([game_name, id]));
     let game_date_entries = await browser4.storage.local.get(id_queries);
     let line_divs = Object.entries(game_date_entries).map(([key, line]) => newLineDiv(line, JSON.parse(key)[1])).sort((first, second) => first.dataset.line_id - second.dataset.line_id);
@@ -1534,10 +1534,10 @@
         });
       }
       document.getElementById("bottom_line_padding").value = property_entries2["bottom_line_padding"];
-      let game_entry = await previousGameEntry();
-      previous_game = Object.keys(game_entry)[0];
-      bulkLineAdd(game_entry[previous_game], previous_game);
-      showNameTitle(game_entry[previous_game]["name"]);
+      let game_entry2 = await previousGameEntry();
+      previous_game = Object.keys(game_entry2)[0];
+      bulkLineAdd(game_entry2[previous_game], previous_game);
+      showNameTitle(game_entry2[previous_game]["name"]);
       let today_previous_game = await todayGameEntry();
       today_previous_game = today_previous_game[Object.keys(today_previous_game)[0]];
       previous_time = today_previous_game["last_line_recieved"];
@@ -1563,9 +1563,9 @@
       if (!idle_time_added) {
         time_read += MAX_TIME_AWAY2;
         setStats(chars_read, time_read);
-        let game_entry = await todayGameEntry();
-        game_entry[Object.keys(game_entry)[0]]["time_read"] = time_read;
-        browser4.storage.local.set(game_entry);
+        let game_entry2 = await todayGameEntry();
+        game_entry2[Object.keys(game_entry2)[0]]["time_read"] = time_read;
+        browser4.storage.local.set(game_entry2);
         document.getElementById("activity_symbol").innerHTML = "bedtime";
         document.documentElement.style.setProperty("--default-inactivity-blur", (await browser4.storage.local.get("inactivity_blur"))["inactivity_blur"] + "px");
         idle_time_added = true;

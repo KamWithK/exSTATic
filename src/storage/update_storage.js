@@ -12,16 +12,20 @@ async function setProperties() {
 }
 setProperties()
 
-export async function createGameEntry(process_path, line, date, time) {
-    let games_list = await browser.storage.local.get("games")
+export async function updateGamesList(process_path) {
+    game_entry = await browser.storage.local.get(["games"])
 
     // Add to the list of games
-    if ("games" in games_list) {
-        games_list["games"].push(process_path)
+    if ("games" in game_entry) {
+        game_entry["games"].push(process_path)
     } else {
-        games_list = {"games": [process_path]}
+        game_entry["games"] = {"games": [process_path]}
     }
 
+    browser.storage.local.set(game_entry)
+}
+
+export function createGameEntry(process_path, line, date, time) {
     // Create a new entry with preset values
     let game_entry = {}
     game_entry[process_path] = {
@@ -35,7 +39,7 @@ export async function createGameEntry(process_path, line, date, time) {
     game_entry[JSON.stringify([process_path, 0])] = line
 
     // Update both the games list and this game in storage
-    browser.storage.local.set({...games_list, ...game_entry})
+    browser.storage.local.set(game_entry)
 }
 
 function newDateEntry(line, time) {
@@ -47,7 +51,7 @@ function newDateEntry(line, time) {
     }
 }
 
-export async function updatedGameEntry(game_entry, process_path, line, date, time) {
+export function updatedGameEntry(game_entry, process_path, line, date, time) {
     // Update the main entry
     let game_main_entry = game_entry[process_path]
     if (!game_main_entry["dates_read_on"].includes(date)) {
@@ -76,7 +80,7 @@ export async function updatedGameEntry(game_entry, process_path, line, date, tim
         game_date_entry["chars_read"] += charsInLine(line)
         game_date_entry["last_line_recieved"] = time
     } else {
-        game_entry[process_path + "_" + date] = await newDateEntry(process_path, line, time)
+        game_entry[process_path + "_" + date] = newDateEntry(process_path, line, time)
     }
     
     browser.storage.local.set(game_entry)

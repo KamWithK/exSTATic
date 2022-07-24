@@ -1,7 +1,7 @@
 var browser = require("webextension-polyfill")
 
 import { dateNowString, timeNowSeconds } from "../calculations"
-import { createGameEntry, updatedGameEntry } from "../storage/update_storage"
+import { createGameEntry, updatedGameEntry, updateGamesList } from "../storage/update_storage"
 
 var SPLIT_PATH = /\\|\//g
 
@@ -27,6 +27,9 @@ async function processLine(process_path, line) {
     
     // Set this as last hooked game
     browser.storage.local.set({"previously_hooked": process_path})
+
+    // Make sure this game is on games list
+    updateGamesList(process_path)
     
     // Update or create a game entry
     // Each game is stored as numerous small chunks of data

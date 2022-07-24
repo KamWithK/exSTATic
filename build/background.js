@@ -1127,13 +1127,16 @@
     }
   }
   setProperties();
-  async function createGameEntry(process_path, line, date, time) {
-    let games_list = await browser.storage.local.get("games");
-    if ("games" in games_list) {
-      games_list["games"].push(process_path);
+  async function updateGamesList(process_path) {
+    game_entry = await browser.storage.local.get(["games"]);
+    if ("games" in game_entry) {
+      game_entry["games"].push(process_path);
     } else {
-      games_list = { "games": [process_path] };
+      game_entry["games"] = { "games": [process_path] };
     }
+    browser.storage.local.set(game_entry);
+  }
+  function createGameEntry(process_path, line, date, time) {
     let game_entry2 = {};
     game_entry2[process_path] = {
       "name": process_path,
@@ -1142,7 +1145,7 @@
     };
     game_entry2[process_path + "_" + date] = newDateEntry(line, time);
     game_entry2[JSON.stringify([process_path, 0])] = line;
-    browser.storage.local.set({ ...games_list, ...game_entry2 });
+    browser.storage.local.set(game_entry2);
   }
   function newDateEntry(line, time) {
     return {
@@ -1152,7 +1155,7 @@
       "last_line_recieved": time
     };
   }
-  async function updatedGameEntry(game_entry2, process_path, line, date, time) {
+  function updatedGameEntry(game_entry2, process_path, line, date, time) {
     let game_main_entry = game_entry2[process_path];
     if (!game_main_entry["dates_read_on"].includes(date)) {
       game_main_entry["dates_read_on"].push(date);
@@ -1169,7 +1172,7 @@
       game_date_entry["chars_read"] += charsInLine(line);
       game_date_entry["last_line_recieved"] = time;
     } else {
-      game_entry2[process_path + "_" + date] = await newDateEntry(process_path, line, time);
+      game_entry2[process_path + "_" + date] = newDateEntry(process_path, line, time);
     }
     browser.storage.local.set(game_entry2);
   }
@@ -1190,6 +1193,7 @@
     var path_segments = process_path.split(SPLIT_PATH);
     var process_path = path_segments.slice(Math.max(0, path_segments.length - 3)).join("/");
     browser2.storage.local.set({ "previously_hooked": process_path });
+    updateGamesList(process_path);
     game_entry = await browser2.storage.local.get([process_path, process_path + "_" + date]);
     if (Object.keys(game_entry).length === 0) {
       createGameEntry(process_path, line, date, time);

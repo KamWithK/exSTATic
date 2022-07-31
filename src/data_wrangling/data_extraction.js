@@ -8,8 +8,7 @@ export async function getDateData(date) {
     let uuids = (await browser.storage.local.get(date))[date]
     
     let date_data = uuids.map(async (uuid, _) => {
-        let details = await browser.storage.local.get(uuid)
-        let name = details[uuid]["name"]
+        let details = (await browser.storage.local.get(uuid))[uuid]
 
         let uuid_date_key = JSON.stringify([uuid, date])
         let stats_entry = (await browser.storage.local.get(uuid_date_key))[uuid_date_key]
@@ -25,7 +24,9 @@ export async function getDateData(date) {
 
         return {
             "uuid": uuid,
-            "name": name,
+            "name": details["name"],
+            "given_identifier": details["given_identifier"],
+            "type": details["type"],
             "date": date,
             ...stats_entry
         }

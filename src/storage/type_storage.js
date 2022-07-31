@@ -77,6 +77,8 @@ export class TypeStorage {
             if (!details_entry.hasOwnProperty(uuid)) {
                 media_entries[uuid] = {
                     "name": given_identifier,
+                    "given_identifier": given_identifier,
+                    "type": this.type,
                     "last_line_added": -1
                 }
             }

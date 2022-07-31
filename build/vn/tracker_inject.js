@@ -1238,6 +1238,8 @@
         if (!details_entry.hasOwnProperty(uuid)) {
           media_entries[uuid] = {
             "name": given_identifier,
+            "given_identifier": given_identifier,
+            "type": this.type,
             "last_line_added": -1
           };
         }
@@ -1365,8 +1367,7 @@
   async function getDateData(date) {
     let uuids = (await browser4.storage.local.get(date))[date];
     let date_data = uuids.map(async (uuid, _) => {
-      let details = await browser4.storage.local.get(uuid);
-      let name = details[uuid]["name"];
+      let details = (await browser4.storage.local.get(uuid))[uuid];
       let uuid_date_key = JSON.stringify([uuid, date]);
       let stats_entry = (await browser4.storage.local.get(uuid_date_key))[uuid_date_key];
       if (stats_entry.hasOwnProperty("time_read")) {
@@ -1377,7 +1378,9 @@
       }
       return {
         "uuid": uuid,
-        "name": name,
+        "name": details["name"],
+        "given_identifier": details["given_identifier"],
+        "type": details["type"],
         "date": date,
         ...stats_entry
       };

@@ -110,6 +110,7 @@ export class MediaStorage {
                 "lines_read": lineSplitCount(line),
                 "chars_read": charsInLine(line)
             })
+            await this.instance_storage.addToDates(date)
             await this.instance_storage.addToDate(date)
 
             const event = new CustomEvent("new_line", {

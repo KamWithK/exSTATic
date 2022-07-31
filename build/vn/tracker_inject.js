@@ -1367,6 +1367,16 @@
       let id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map((index) => JSON.stringify([this.uuid, min_line_id + index]));
       return browser2.storage.local.get(id_queries);
     }
+    async addToDates(date) {
+      let day_entries = await browser2.storage.local.get("immersion_dates");
+      if (!day_entries.hasOwnProperty("immersion_dates")) {
+        day_entries["immersion_dates"] = [];
+      }
+      if (!day_entries["immersion_dates"].includes(date)) {
+        day_entries["immersion_dates"].push(date);
+        await browser2.storage.local.set(day_entries);
+      }
+    }
     async addToDate(date) {
       let day_entries = await browser2.storage.local.get(date);
       if (!day_entries.hasOwnProperty(date)) {
@@ -1509,6 +1519,7 @@
           "lines_read": lineSplitCount(line),
           "chars_read": charsInLine(line)
         });
+        await this.instance_storage.addToDates(date);
         await this.instance_storage.addToDate(date);
         const event = new CustomEvent("new_line", {
           "detail": {

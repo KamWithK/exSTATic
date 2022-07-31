@@ -15,7 +15,8 @@ var browser = require("webextension-polyfill")
 //         ...
 //     },
 //     ["uuid", "line_id"]: "line",
-//     "immersion_date": ["uuid"]
+//     "immersion_dates": ["date"],
+//     "date": ["uuid"]
 // }
 
 export class InstanceStorage {
@@ -109,6 +110,19 @@ export class InstanceStorage {
             index => JSON.stringify([this.uuid, min_line_id + index])
         )
         return browser.storage.local.get(id_queries)
+    }
+
+    async addToDates(date) {
+        let day_entries = await browser.storage.local.get("immersion_dates")
+
+        if (!day_entries.hasOwnProperty("immersion_dates")) {
+            day_entries["immersion_dates"] = []
+        }
+
+        if (!day_entries["immersion_dates"].includes(date)) {
+            day_entries["immersion_dates"].push(date)
+            await browser.storage.local.set(day_entries)
+        }
     }
 
     async addToDate(date) {

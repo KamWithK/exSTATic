@@ -1586,11 +1586,13 @@
 
   // src/vn/ui_properties.js
   var browser5 = require_browser_polyfill();
+  var media_storage;
   var type_storage;
   var instance_storage;
-  function setStorage(media_storage2) {
-    type_storage = media_storage2.type_storage;
-    instance_storage = media_storage2.instance_storage;
+  function setStorage(media_storage_) {
+    media_storage = media_storage_;
+    type_storage = media_storage_.type_storage;
+    instance_storage = media_storage_.instance_storage;
   }
   function useProperty(element_id, global_css_property = false, units = "") {
     let element = document.getElementById(element_id);
@@ -1619,8 +1621,10 @@
     });
     showNameTitle(event["target"].value);
   }
-  function userActive() {
-    instance_storage.updateDetails({ "last_active_at": timeNowSeconds() });
+  async function userActive() {
+    let time = timeNowSeconds();
+    await instance_storage.updateDetails({ "last_active_at": time });
+    media_storage.previous_time = time;
   }
   function openStats() {
     browser5.runtime.sendMessage({
@@ -1644,15 +1648,15 @@
   console.log("Injected");
   var browser6 = require_browser_polyfill();
   var SECS_TO_HOURS = 60 * 60;
-  var media_storage;
+  var media_storage2;
   async function setup() {
-    media_storage = await MediaStorage.build("vn", true);
+    media_storage2 = await MediaStorage.build("vn", true);
     var port = browser6.runtime.connect({ "name": "vn_lines" });
     port.onMessage.addListener(async (data) => {
-      await media_storage.changeInstance(void 0, data["process_path"]);
-      await media_storage.addLine(data["line"], data["date"], data["time"]);
+      await media_storage2.changeInstance(void 0, data["process_path"]);
+      await media_storage2.addLine(data["line"], data["date"], data["time"]);
     });
-    setStorage(media_storage);
+    setStorage(media_storage2);
     setupProperties();
     setStats();
   }
@@ -1665,7 +1669,7 @@
   document.addEventListener("status_active", setActive);
   async function setInactive() {
     document.getElementById("activity_symbol").innerHTML = "bedtime";
-    document.documentElement.style.setProperty("--default-inactivity-blur", media_storage.properties["inactivity_blur"] + "px");
+    document.documentElement.style.setProperty("--default-inactivity-blur", media_storage2.properties["inactivity_blur"] + "px");
     setStats();
   }
   document.addEventListener("status_inactive", setInactive);
@@ -1675,7 +1679,7 @@
       let element_div = event["target"].parentNode;
       let line_id = Number.parseInt(element_div.dataset.line_id);
       let line = element_div.querySelector(".sentence").textContent;
-      media_storage.deleteLine(line_id, line, dateNowString());
+      media_storage2.deleteLine(line_id, line, dateNowString());
       element_div.remove();
     }
   }
@@ -1706,11 +1710,11 @@
     document.title = "exSTATic | " + name;
   }
   function setStats() {
-    if (media_storage.instance_storage == void 0 || media_storage.instance_storage.today_stats == void 0) {
+    if (media_storage2.instance_storage == void 0 || media_storage2.instance_storage.today_stats == void 0) {
       return;
     }
-    let chars_read = media_storage.instance_storage.today_stats["chars_read"];
-    let time_read = media_storage.instance_storage.today_stats["time_read"];
+    let chars_read = media_storage2.instance_storage.today_stats["chars_read"];
+    let time_read = media_storage2.instance_storage.today_stats["time_read"];
     if (chars_read !== void 0) {
       document.getElementById("chars_read").innerHTML = chars_read.toLocaleString();
     }

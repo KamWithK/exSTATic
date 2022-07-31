@@ -4,12 +4,14 @@ import { showNameTitle } from "./tracker_inject"
 
 var browser = require("webextension-polyfill")
 
+var media_storage
 var type_storage
 var instance_storage
 
-export function setStorage(media_storage) {
-    type_storage = media_storage.type_storage
-    instance_storage = media_storage.instance_storage
+export function setStorage(media_storage_) {
+    media_storage = media_storage_
+    type_storage = media_storage_.type_storage
+    instance_storage = media_storage_.instance_storage
 }
 
 function useProperty(element_id, global_css_property=false, units="") {
@@ -55,8 +57,10 @@ function gameNameModified(event) {
     showNameTitle(event["target"].value)
 }
 
-function userActive() {
-    instance_storage.updateDetails({"last_active_at": timeNowSeconds()})
+async function userActive() {
+    let time = timeNowSeconds()
+    await instance_storage.updateDetails({"last_active_at": time})
+    media_storage.previous_time = time
 }
 
 function openStats() {

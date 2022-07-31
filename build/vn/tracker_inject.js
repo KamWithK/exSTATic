@@ -1252,9 +1252,9 @@
   // src/storage/media_storage.js
   var REFRESH_STATS_INTERVAL = 100;
   var MediaStorage = class {
-    constructor(type_storage2, instance_storage2, live_stat_update = false) {
-      this.type_storage = type_storage2;
-      this.instance_storage = instance_storage2;
+    constructor(type_storage, instance_storage, live_stat_update = false) {
+      this.type_storage = type_storage;
+      this.instance_storage = instance_storage;
       this.properties = this.type_storage.properties;
       if (this.instance_storage !== void 0) {
         this.details = this.instance_storage.details;
@@ -1266,24 +1266,24 @@
       }
     }
     static async build(type, live_stat_update) {
-      let type_storage2 = new TypeStorage(type);
-      await type_storage2.setup();
-      let instance_storage2;
-      if (type_storage2.properties.hasOwnProperty("previous_uuid")) {
-        instance_storage2 = new InstanceStorage(type_storage2.properties["previous_uuid"]);
-        await instance_storage2.setup();
+      let type_storage = new TypeStorage(type);
+      await type_storage.setup();
+      let instance_storage;
+      if (type_storage.properties.hasOwnProperty("previous_uuid")) {
+        instance_storage = new InstanceStorage(type_storage.properties["previous_uuid"]);
+        await instance_storage.setup();
         const event = new CustomEvent("media_changed", {
           "detail": {
-            "uuid": instance_storage2.uuid,
-            "name": instance_storage2.details["name"],
-            "lines": await instance_storage2.getLines()
+            "uuid": instance_storage.uuid,
+            "name": instance_storage.details["name"],
+            "lines": await instance_storage.getLines()
           }
         });
         document.dispatchEvent(event);
       } else {
-        instance_storage2 = void 0;
+        instance_storage = void 0;
       }
-      return new MediaStorage(type_storage2, instance_storage2, live_stat_update);
+      return new MediaStorage(type_storage, instance_storage, live_stat_update);
     }
     async changeInstance(new_uuid, given_identifier = void 0) {
       if (new_uuid == void 0 && given_identifier !== void 0) {
@@ -1346,7 +1346,6 @@
       let time_between_lines = this.details["last_active_at"] !== void 0 ? time_now - this.details["last_active_at"] : 0;
       let time_between_ticks = time_now - this.previous_time;
       this.previous_time = time_now;
-      console.log(time_between_lines, time_between_ticks);
       let event;
       if (time_between_lines <= this.type_storage.properties["afk_max_time"]) {
         await this.instance_storage.addDailyStats(dateNowString(), {
@@ -1409,26 +1408,22 @@
   // src/vn/ui_properties.js
   var browser5 = require_browser_polyfill();
   var media_storage;
-  var type_storage;
-  var instance_storage;
   function setStorage(media_storage_) {
     media_storage = media_storage_;
-    type_storage = media_storage_.type_storage;
-    instance_storage = media_storage_.instance_storage;
   }
   function useProperty(element_id, global_css_property = false, units = "") {
     let element = document.getElementById(element_id);
     let properties = {};
     properties[element_id] = element.value;
-    type_storage.updateProperties(properties);
+    media_storage.type_storage.updateProperties(properties);
     if (global_css_property) {
       document.documentElement.style.setProperty(global_css_property, element.value + units);
     }
   }
   function setupProperty(element_id, event_type, global_css_property = false, units = "") {
     let element = document.getElementById(element_id);
-    if (type_storage.properties.hasOwnProperty(element_id)) {
-      element.value = type_storage.properties[element_id];
+    if (media_storage.type_storage.properties.hasOwnProperty(element_id)) {
+      element.value = media_storage.type_storage.properties[element_id];
     }
     useProperty(element_id, global_css_property, units);
     if (event_type) {
@@ -1438,14 +1433,14 @@
     }
   }
   function gameNameModified(event) {
-    instance_storage.updateDetails({
+    media_storage.instance_storage.updateDetails({
       "name": event["target"].value
     });
     showNameTitle(event["target"].value);
   }
   async function userActive() {
     let time = timeNowSeconds();
-    await instance_storage.updateDetails({ "last_active_at": time });
+    await media_storage.instance_storage.updateDetails({ "last_active_at": time });
     media_storage.previous_time = time;
   }
   function openStats() {

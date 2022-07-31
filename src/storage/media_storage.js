@@ -142,7 +142,6 @@ export class MediaStorage {
         let time_between_ticks = time_now - this.previous_time
         
         this.previous_time = time_now
-        console.log(time_between_lines, time_between_ticks)
         
         // Keep incrementing the time time read counter whilst the max afk time isn't exceeded
         let event

@@ -5,13 +5,9 @@ import { showNameTitle } from "./tracker_inject"
 var browser = require("webextension-polyfill")
 
 var media_storage
-var type_storage
-var instance_storage
 
 export function setStorage(media_storage_) {
     media_storage = media_storage_
-    type_storage = media_storage_.type_storage
-    instance_storage = media_storage_.instance_storage
 }
 
 function useProperty(element_id, global_css_property=false, units="") {
@@ -20,7 +16,7 @@ function useProperty(element_id, global_css_property=false, units="") {
     // Update storage property
     let properties = {}
     properties[element_id] = element.value
-    type_storage.updateProperties(properties)
+    media_storage.type_storage.updateProperties(properties)
 
     // If possible set the global css property
     if (global_css_property) {
@@ -32,8 +28,8 @@ function setupProperty(element_id, event_type, global_css_property=false, units=
     let element = document.getElementById(element_id)
     
     // If storage contains this property then use it
-    if (type_storage.properties.hasOwnProperty(element_id)) {
-        element.value = type_storage.properties[element_id]
+    if (media_storage.type_storage.properties.hasOwnProperty(element_id)) {
+        element.value = media_storage.type_storage.properties[element_id]
     }
     
     // Set the storage value andd global css property
@@ -51,7 +47,7 @@ function setupProperty(element_id, event_type, global_css_property=false, units=
 }
 
 function gameNameModified(event) {
-    instance_storage.updateDetails({
+    media_storage.instance_storage.updateDetails({
         "name": event["target"].value
     })
     showNameTitle(event["target"].value)
@@ -59,7 +55,7 @@ function gameNameModified(event) {
 
 async function userActive() {
     let time = timeNowSeconds()
-    await instance_storage.updateDetails({"last_active_at": time})
+    await media_storage.instance_storage.updateDetails({"last_active_at": time})
     media_storage.previous_time = time
 }
 

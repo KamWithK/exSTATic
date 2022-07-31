@@ -4,31 +4,46 @@ var browser = require("webextension-polyfill")
 
 var SECS_TO_HRS = 60 * 60
 
-export async function getGameData(process_path) {
-    let game_entry = (await browser.storage.local.get(process_path))[process_path]
-    let game_date_keys = game_entry["dates_read_on"].map(date => process_path + "_" + date)
-    let game_date_entries = await browser.storage.local.get(game_date_keys)
+export async function getDateData(date) {
+    let uuids = (await browser.storage.local.get(date))[date]
+    
+    let date_data = uuids.map(async (uuid, _) => {
+        let details = await browser.storage.local.get(uuid)
+        let name = details[uuid]["name"]
 
-    return Object.values(game_date_entries).map((game_date_entry, index) => {
-        delete game_date_entry["last_line_recieved"]
-        game_date_entry["time_read"] = game_date_entry["time_read"] / SECS_TO_HRS
-        game_date_entry["read_speed"] = game_date_entry["chars_read"] / game_date_entry["time_read"]
-        game_date_entry["date"] = game_entry["dates_read_on"][index]
-        game_date_entry["process_path"] = process_path
-        game_date_entry["name"] = game_entry["name"]
-        
-        return game_date_entry
+        let uuid_date_key = JSON.stringify([uuid, date])
+        let stats_entry = (await browser.storage.local.get(uuid_date_key))[uuid_date_key]
+
+        // Processed stats
+        if (stats_entry.hasOwnProperty("time_read")) {
+            stats_entry["time_read"] = stats_entry["time_read"] / SECS_TO_HRS
+
+            if (stats_entry.hasOwnProperty("chars_read")) {
+                stats_entry["read_speed"] = stats_entry["chars_read"] / stats_entry["time_read"]
+            }
+        }
+
+        return {
+            "uuid": uuid,
+            "name": name,
+            "date": date,
+            ...stats_entry
+        }
     })
+
+    return Promise.all(date_data)
 }
 
 export async function getData() {
-    let games = (await browser.storage.local.get("games"))["games"]
-    let game_data = games.map(game => getGameData(game))
-
-    let data = (await Promise.all(game_data)).flat()
-    data.sort((first, second) => parseISO(first.date) - parseISO(second.date))
+    let dates = await browser.storage.local.get("immersion_dates")
     
-    return data
+    if (!dates.hasOwnProperty("immersion_dates")) {
+        return
+    }
+
+    let data = await Promise.all(dates["immersion_dates"].map(getDateData))
+    
+    return data.flat()
 }
 
 export async function exportStats() {

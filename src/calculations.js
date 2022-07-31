@@ -9,7 +9,7 @@ export function charsInLine(line) {
 }
 
 export function lineSplitCount(line) {
-    return line.split(SPLIT).length
+    return line.split(SPLIT).filter((value) => value != "").length
 }
 
 export function dateNowString() {

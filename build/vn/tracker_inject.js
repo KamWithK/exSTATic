@@ -1665,7 +1665,7 @@
   document.addEventListener("status_active", setActive);
   async function setInactive() {
     document.getElementById("activity_symbol").innerHTML = "bedtime";
-    document.documentElement.style.setProperty("--default-inactivity-blur", (await browser6.storage.local.get("inactivity_blur"))["inactivity_blur"] + "px");
+    document.documentElement.style.setProperty("--default-inactivity-blur", media_storage.properties["inactivity_blur"] + "px");
     setStats();
   }
   document.addEventListener("status_inactive", setInactive);

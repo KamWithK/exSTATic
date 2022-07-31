@@ -41,7 +41,7 @@ async function setInactive() {
     document.getElementById("activity_symbol").innerHTML = "bedtime"
     document.documentElement.style.setProperty(
         "--default-inactivity-blur",
-        (await browser.storage.local.get("inactivity_blur"))["inactivity_blur"] + "px"
+        media_storage.properties["inactivity_blur"] + "px"
     )
 
     setStats()

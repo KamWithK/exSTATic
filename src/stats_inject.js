@@ -48,8 +48,8 @@ async function startup() {
     let game_json_data = await getData()
     let rn = new Date()
 
-    let game_divided_data = divideData(game_json_data, "process_path")
-    let game_combined_data = combineData(game_json_data, "process_path")
+    let game_divided_data = divideData(game_json_data, "uuid")
+    let game_combined_data = combineData(game_json_data, "uuid")
 
     let speed_improvement_bubble = getSeries(game_divided_data, "date", "read_speed", "chars_read", "markers", undefined)
     let quantity_improvement_bubble = getSeries(game_divided_data, "date", "time_read", "chars_read", "markers", undefined)

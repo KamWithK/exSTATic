@@ -1,4 +1,5 @@
-var browser = require("webextension-polyfill")
+import * as browser from "webextension-polyfill"
+import { unparse } from "papaparse"
 
 export async function getDateData(date) {
     let uuids = (await browser.storage.local.get(date))[date]
@@ -45,8 +46,7 @@ export async function getData() {
 
 export async function exportStats() {
     let data = await getData()
-    let csv_string = Object.keys(data[0]).join(",") + "\r\n"
-        + data.map(entry => Object.values(entry).join(",")).join("\r\n")
+    let csv_string = unparse(data)
 
     chrome.runtime.sendMessage({
         "action": "export_csv",

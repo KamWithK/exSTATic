@@ -2,7 +2,7 @@ import { timeNowSeconds } from "../calculations"
 import { exportStats } from "../data_wrangling/data_extraction"
 import { showNameTitle } from "./tracker_inject"
 
-var browser = require("webextension-polyfill")
+import * as browser from "webextension-polyfill"
 
 var media_storage
 

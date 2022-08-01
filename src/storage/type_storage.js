@@ -1,4 +1,4 @@
-var browser = require("webextension-polyfill")
+import * as browser from "webextension-polyfill"
 
 // STORAGE SPEC
 // {

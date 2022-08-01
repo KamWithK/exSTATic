@@ -3,6 +3,7 @@ console.log("Injected")
 import { getData } from "./data_wrangling/data_extraction"
 import { divideData, combineData, getSeries } from "./data_wrangling/data_processing"
 import { subMonths } from "date-fns"
+
 import Plotly from "plotly.js-dist-min"
 
 var SECS_TO_HRS = 60 * 60

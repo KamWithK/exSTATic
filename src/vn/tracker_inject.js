@@ -4,7 +4,7 @@ import { dateNowString } from "../calculations"
 import { MediaStorage } from "../storage/media_storage"
 import { setStorage, setupProperties } from "./ui_properties"
 
-var browser = require("webextension-polyfill")
+import * as browser from "webextension-polyfill"
 
 var SECS_TO_HOURS = 60 * 60
 

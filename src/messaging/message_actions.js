@@ -1,3 +1,5 @@
+import * as browser from "webextension-polyfill"
+
 export function message_action(args, sender, send_response) {
     if (args["action"] == "export_csv") {
         export_csv(args)
@@ -10,12 +12,12 @@ export function message_action(args, sender, send_response) {
 function export_csv(args) {
     let blob = new Blob(args["csv"], args["blob_options"])
         
-    chrome.downloads.download({
+    browser.downloads.download({
         url: URL.createObjectURL(blob),
         filename: args["filename"]
     })
 }
 
 function open_tab(args) {
-    chrome.tabs.create({"url": args["url"]})
+    browser.tabs.create({"url": args["url"]})
 }

@@ -1362,7 +1362,6 @@
 
   // src/data_wrangling/data_extraction.js
   var browser4 = require_browser_polyfill();
-  var SECS_TO_HRS = 60 * 60;
   async function getDateData(date) {
     let uuids = (await browser4.storage.local.get(date))[date];
     let date_data = uuids.map(async (uuid, _) => {
@@ -1370,7 +1369,7 @@
       let uuid_date_key = JSON.stringify([uuid, date]);
       let stats_entry = (await browser4.storage.local.get(uuid_date_key))[uuid_date_key];
       if (stats_entry.hasOwnProperty("time_read")) {
-        stats_entry["time_read"] = stats_entry["time_read"] / SECS_TO_HRS;
+        stats_entry["time_read"] = stats_entry["time_read"];
         if (stats_entry.hasOwnProperty("chars_read")) {
           stats_entry["read_speed"] = stats_entry["chars_read"] / stats_entry["time_read"];
         }

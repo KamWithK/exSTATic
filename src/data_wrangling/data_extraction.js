@@ -1,7 +1,5 @@
 var browser = require("webextension-polyfill")
 
-var SECS_TO_HRS = 60 * 60
-
 export async function getDateData(date) {
     let uuids = (await browser.storage.local.get(date))[date]
     
@@ -13,7 +11,7 @@ export async function getDateData(date) {
 
         // Processed stats
         if (stats_entry.hasOwnProperty("time_read")) {
-            stats_entry["time_read"] = stats_entry["time_read"] / SECS_TO_HRS
+            stats_entry["time_read"] = stats_entry["time_read"]
 
             if (stats_entry.hasOwnProperty("chars_read")) {
                 stats_entry["read_speed"] = stats_entry["chars_read"] / stats_entry["time_read"]

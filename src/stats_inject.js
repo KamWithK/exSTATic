@@ -5,6 +5,8 @@ import { divideData, combineData, getSeries } from "./data_wrangling/data_proces
 import { subMonths } from "date-fns"
 import Plotly from "plotly.js-dist-min"
 
+var SECS_TO_HRS = 60 * 60
+
 let bg_color = window.getComputedStyle(document.getElementsByClassName("graph")[0])["background-color"]
 
 function createCategoryGraph(element, data, title, y_title) {
@@ -45,7 +47,17 @@ function createDateGraph(element, data, title, x_min, y_title) {
 }
 
 async function startup() {
-    let game_json_data = await getData()
+    let game_json_data = (await getData()).map((data, _) => {
+        if (data.hasOwnProperty("time_read")) {
+            data["time_read"] /= SECS_TO_HRS
+        }
+
+        if (data.hasOwnProperty("read_speed")) {
+            data["read_speed"] *= SECS_TO_HRS
+        }
+
+        return data
+    })
     let rn = new Date()
 
     let game_divided_data = divideData(game_json_data, "uuid")

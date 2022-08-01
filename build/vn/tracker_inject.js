@@ -1960,8 +1960,8 @@
       "filename": "exSTATic_stats.csv"
     });
   }
-  function importStats(data) {
-    data.forEach(async (entry) => {
+  async function importStats(data) {
+    for (const entry of data) {
       if (!entry.hasOwnProperty("type") || !entry.hasOwnProperty("date") || !entry.hasOwnProperty("given_identifier")) {
         return;
       }
@@ -1990,7 +1990,7 @@
       if (Object.keys(stats).length !== 0) {
         await instance_storage.setDailyStats(entry["date"], stats);
       }
-    });
+    }
   }
 
   // src/vn/ui_properties.js

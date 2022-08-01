@@ -58,8 +58,8 @@ export async function exportStats() {
     })
 }
 
-export function importStats(data) {
-    data.forEach(async entry => {
+export async function importStats(data) {
+    for (const entry of data) {
         if (!entry.hasOwnProperty("type") || !entry.hasOwnProperty("date") || !entry.hasOwnProperty("given_identifier")) {
             return
         }
@@ -81,18 +81,18 @@ export function importStats(data) {
 
         let instance_storage = new InstanceStorage(uuid)
         await instance_storage.setup()
-
+    
         if (entry.hasOwnProperty("name")) {
             await instance_storage.updateDetails({
                 "name": entry["name"]
             })
         }
-        
+
         await instance_storage.addToDates(entry["date"])
         await instance_storage.addToDate(entry["date"])
 
         if (Object.keys(stats).length !== 0) {
             await instance_storage.setDailyStats(entry["date"], stats)
         }
-    })
+    }
 }

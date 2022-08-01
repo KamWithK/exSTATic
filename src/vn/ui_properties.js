@@ -92,7 +92,7 @@ export function setupProperties() {
         parse(event["target"].files[0], {
             "header": true,
             "dynamicTyping": true,
-            "complete": (result) => {
+            "complete": result => {
                 importStats(result.data)
             }
         })

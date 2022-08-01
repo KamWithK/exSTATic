@@ -1,5 +1,7 @@
 import * as browser from "webextension-polyfill"
 import { unparse } from "papaparse"
+import { TypeStorage } from "../storage/type_storage"
+import { InstanceStorage } from "../storage/instance_storage"
 
 export async function getDateData(date) {
     let uuids = (await browser.storage.local.get(date))[date]
@@ -53,5 +55,44 @@ export async function exportStats() {
         "csv": [csv_string],
         "blob_options": { "type": "text/csv" },
         "filename": "exSTATic_stats.csv"
+    })
+}
+
+export function importStats(data) {
+    data.forEach(async entry => {
+        if (!entry.hasOwnProperty("type") || !entry.hasOwnProperty("date") || !entry.hasOwnProperty("given_identifier")) {
+            return
+        }
+
+        let type_storage = new TypeStorage(entry["type"])
+        await type_storage.setup()
+        let uuid = await type_storage.addMedia(entry["given_identifier"], entry["uuid"])
+
+        let stats = {}
+        if (entry.hasOwnProperty("chars_read")) {
+            stats["chars_read"] = entry["chars_read"]
+        }
+        if (entry.hasOwnProperty("lines_read")) {
+            stats["lines_read"] = entry["lines_read"]
+        }
+        if (entry.hasOwnProperty("time_read")) {
+            stats["time_read"] = entry["time_read"]
+        }
+
+        let instance_storage = new InstanceStorage(uuid)
+        await instance_storage.setup()
+
+        if (entry.hasOwnProperty("name")) {
+            await instance_storage.updateDetails({
+                "name": entry["name"]
+            })
+        }
+        
+        await instance_storage.addToDates(entry["date"])
+        await instance_storage.addToDate(entry["date"])
+
+        if (Object.keys(stats).length !== 0) {
+            await instance_storage.setDailyStats(entry["date"], stats)
+        }
     })
 }

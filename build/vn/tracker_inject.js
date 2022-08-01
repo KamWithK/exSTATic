@@ -1780,18 +1780,18 @@
         return this.addMedia(given_identifier);
       }
     }
-    async addMedia(given_identifier) {
+    async addMedia(given_identifier, uuid = void 0) {
       let media_entries = await browser2.storage.local.get("media");
       if (!media_entries.hasOwnProperty("media")) {
         media_entries["media"] = {};
       }
       let media_key = JSON.stringify([given_identifier, this.type]);
       if (!media_entries["media"].hasOwnProperty(media_key)) {
-        let uuid = crypto.randomUUID();
-        media_entries["media"][media_key] = uuid;
-        let details_entry = await browser2.storage.local.get(uuid);
-        if (!details_entry.hasOwnProperty(uuid)) {
-          media_entries[uuid] = {
+        let new_uuid = uuid !== void 0 ? uuid : crypto.randomUUID();
+        media_entries["media"][media_key] = new_uuid;
+        let details_entry = await browser2.storage.local.get(new_uuid);
+        if (!details_entry.hasOwnProperty(new_uuid)) {
+          media_entries[new_uuid] = {
             "name": given_identifier,
             "given_identifier": given_identifier,
             "type": this.type,
@@ -1960,8 +1960,41 @@
       "filename": "exSTATic_stats.csv"
     });
   }
+  function importStats(data) {
+    data.forEach(async (entry) => {
+      if (!entry.hasOwnProperty("type") || !entry.hasOwnProperty("date") || !entry.hasOwnProperty("given_identifier")) {
+        return;
+      }
+      let type_storage = new TypeStorage(entry["type"]);
+      await type_storage.setup();
+      let uuid = await type_storage.addMedia(entry["given_identifier"], entry["uuid"]);
+      let stats = {};
+      if (entry.hasOwnProperty("chars_read")) {
+        stats["chars_read"] = entry["chars_read"];
+      }
+      if (entry.hasOwnProperty("lines_read")) {
+        stats["lines_read"] = entry["lines_read"];
+      }
+      if (entry.hasOwnProperty("time_read")) {
+        stats["time_read"] = entry["time_read"];
+      }
+      let instance_storage = new InstanceStorage(uuid);
+      await instance_storage.setup();
+      if (entry.hasOwnProperty("name")) {
+        await instance_storage.updateDetails({
+          "name": entry["name"]
+        });
+      }
+      await instance_storage.addToDates(entry["date"]);
+      await instance_storage.addToDate(entry["date"]);
+      if (Object.keys(stats).length !== 0) {
+        await instance_storage.setDailyStats(entry["date"], stats);
+      }
+    });
+  }
 
   // src/vn/ui_properties.js
+  var import_papaparse2 = __toESM(require_papaparse_min());
   var browser5 = __toESM(require_browser_polyfill());
   var media_storage;
   function setStorage(media_storage_) {
@@ -1996,8 +2029,10 @@
   }
   async function userActive() {
     let time = timeNowSeconds();
-    await media_storage.instance_storage.updateDetails({ "last_active_at": time });
-    media_storage.previous_time = time;
+    if (media_storage.instance_storage !== void 0) {
+      await media_storage.instance_storage.updateDetails({ "last_active_at": time });
+      media_storage.previous_time = time;
+    }
   }
   function openStats() {
     browser5.runtime.sendMessage({
@@ -2015,6 +2050,19 @@
     document.getElementById("entry_holder").addEventListener("click", userActive);
     document.getElementById("view_stats").addEventListener("click", openStats);
     document.getElementById("export_stats").addEventListener("click", exportStats);
+    document.getElementById("import_stats").addEventListener("change", (event) => {
+      confirmed = confirm("Are you sure you'd like to import previous data?\nPrevious stats in storage will be replaced with new values from this data dump (when the type, media and date all collide)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!");
+      if (!confirmed) {
+        return;
+      }
+      (0, import_papaparse2.parse)(event["target"].files[0], {
+        "header": true,
+        "dynamicTyping": true,
+        "complete": (result) => {
+          importStats(result.data);
+        }
+      });
+    });
   }
 
   // src/vn/tracker_inject.js

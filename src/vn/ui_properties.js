@@ -1,6 +1,7 @@
 import { timeNowSeconds } from "../calculations"
-import { exportStats } from "../data_wrangling/data_extraction"
+import { exportStats, importStats } from "../data_wrangling/data_extraction"
 import { showNameTitle } from "./tracker_inject"
+import { parse } from "papaparse"
 
 import * as browser from "webextension-polyfill"
 
@@ -55,8 +56,10 @@ function gameNameModified(event) {
 
 async function userActive() {
     let time = timeNowSeconds()
-    await media_storage.instance_storage.updateDetails({"last_active_at": time})
-    media_storage.previous_time = time
+    if (media_storage.instance_storage !== undefined) {
+        await media_storage.instance_storage.updateDetails({"last_active_at": time})
+        media_storage.previous_time = time
+    }
 }
 
 function openStats() {
@@ -77,4 +80,21 @@ export function setupProperties() {
     document.getElementById("entry_holder").addEventListener("click", userActive)
     document.getElementById("view_stats").addEventListener("click", openStats)
     document.getElementById("export_stats").addEventListener("click", exportStats)
+    document.getElementById("import_stats").addEventListener("change", event => {
+        confirmed = confirm(
+            "Are you sure you'd like to import previous data?\nPrevious stats in storage will be replaced with new values from this data dump (when the type, media and date all collide)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"
+        )
+    
+        if (!confirmed) {
+            return
+        }
+
+        parse(event["target"].files[0], {
+            "header": true,
+            "dynamicTyping": true,
+            "complete": (result) => {
+                importStats(result.data)
+            }
+        })
+    })
 }

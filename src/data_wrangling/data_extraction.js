@@ -1,5 +1,3 @@
-import { parseISO } from "date-fns"
-
 var browser = require("webextension-polyfill")
 
 var SECS_TO_HRS = 60 * 60

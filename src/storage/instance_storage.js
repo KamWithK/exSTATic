@@ -98,13 +98,14 @@ export class InstanceStorage {
         )
     }
 
-    async getLines() {
+    async getLines(max_lines=undefined) {
         if (!this.details.hasOwnProperty("last_line_added")) {
             return
         }
-    
+
+        // NOTE: This doesn't account for deleted lines
         let max_line_id = this.details["last_line_added"]
-        let min_line_id = 0
+        let min_line_id = max_lines <= 0 | max_lines === undefined | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1)
     
         let id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map(
             index => JSON.stringify([this.uuid, min_line_id + index])

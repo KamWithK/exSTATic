@@ -1712,12 +1712,12 @@
     async deleteLine(line_id) {
       await browser.storage.local.remove(JSON.stringify([this.uuid, line_id]));
     }
-    async getLines() {
+    async getLines(max_lines = void 0) {
       if (!this.details.hasOwnProperty("last_line_added")) {
         return;
       }
       let max_line_id = this.details["last_line_added"];
-      let min_line_id = 0;
+      let min_line_id = max_lines <= 0 | max_lines === void 0 | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1);
       let id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map((index) => JSON.stringify([this.uuid, min_line_id + index]));
       return browser.storage.local.get(id_queries);
     }
@@ -1812,30 +1812,24 @@
       this.type_storage = type_storage;
       this.instance_storage = instance_storage;
       this.properties = this.type_storage.properties;
+      this.max_lines = Number.parseInt(this.properties["max_loaded_lines"]);
       if (this.instance_storage !== void 0) {
         this.details = this.instance_storage.details;
         this.uuid = this.properties["previous_uuid"];
+        this.logLines();
       }
       if (live_stat_update) {
         this.previous_time = void 0;
         setInterval(this.#ticker.bind(this), REFRESH_STATS_INTERVAL);
       }
     }
-    static async build(type, live_stat_update) {
+    static async build(type, live_stat_update = false) {
       let type_storage = new TypeStorage(type);
       await type_storage.setup();
       let instance_storage;
       if (type_storage.properties.hasOwnProperty("previous_uuid")) {
         instance_storage = new InstanceStorage(type_storage.properties["previous_uuid"]);
         await instance_storage.setup();
-        const event = new CustomEvent("media_changed", {
-          "detail": {
-            "uuid": instance_storage.uuid,
-            "name": instance_storage.details["name"],
-            "lines": await instance_storage.getLines()
-          }
-        });
-        document.dispatchEvent(event);
       } else {
         instance_storage = void 0;
       }
@@ -1848,18 +1842,21 @@
       if (this.uuid == new_uuid) {
         return;
       }
-      if (this.type_storage.properties["previous_uuid"] != new_uuid) {
+      if (this.properties["previous_uuid"] != new_uuid) {
         this.type_storage.updateProperties({ "previous_uuid": new_uuid });
       }
       this.instance_storage = new InstanceStorage(new_uuid);
       await this.instance_storage.setup();
       this.uuid = this.instance_storage.uuid;
       this.details = this.instance_storage.details;
+      this.logLines();
+    }
+    async logLines() {
       const event = new CustomEvent("media_changed", {
         "detail": {
           "uuid": this.uuid,
-          "name": this.instance_storage.details["name"],
-          "lines": await this.instance_storage.getLines()
+          "name": this.details["name"],
+          "lines": await this.instance_storage.getLines(this.max_lines)
         }
       });
       document.dispatchEvent(event);
@@ -1903,7 +1900,7 @@
       let time_between_ticks = time_now - this.previous_time;
       this.previous_time = time_now;
       let event;
-      if (time_between_lines <= this.type_storage.properties["afk_max_time"]) {
+      if (time_between_lines <= this.properties["afk_max_time"]) {
         await this.instance_storage.addDailyStats(dateNowString(), {
           "time_read": time_between_ticks
         });
@@ -2011,8 +2008,8 @@
   }
   function setupProperty(element_id, event_type, global_css_property = false, units = "") {
     let element = document.getElementById(element_id);
-    if (media_storage.type_storage.properties.hasOwnProperty(element_id)) {
-      element.value = media_storage.type_storage.properties[element_id];
+    if (media_storage.properties.hasOwnProperty(element_id)) {
+      element.value = media_storage.properties[element_id];
     }
     useProperty(element_id, global_css_property, units);
     if (event_type) {
@@ -2044,6 +2041,7 @@
     setupProperty("font", "change", "--default-jp-font");
     setupProperty("font_size", "change", "--default-jp-font-size", "rem");
     setupProperty("afk_max_time", "change");
+    setupProperty("max_loaded_lines", "change");
     setupProperty("inactivity_blur", "change");
     setupProperty("bottom_line_padding", "change");
     document.getElementById("game_name").addEventListener("change", gameNameModified);

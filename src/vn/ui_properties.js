@@ -29,8 +29,8 @@ function setupProperty(element_id, event_type, global_css_property=false, units=
     let element = document.getElementById(element_id)
     
     // If storage contains this property then use it
-    if (media_storage.type_storage.properties.hasOwnProperty(element_id)) {
-        element.value = media_storage.type_storage.properties[element_id]
+    if (media_storage.properties.hasOwnProperty(element_id)) {
+        element.value = media_storage.properties[element_id]
     }
     
     // Set the storage value andd global css property
@@ -73,6 +73,7 @@ export function setupProperties() {
     setupProperty("font", "change", "--default-jp-font")
     setupProperty("font_size", "change", "--default-jp-font-size", "rem")
     setupProperty("afk_max_time", "change")
+    setupProperty("max_loaded_lines", "change")
     setupProperty("inactivity_blur", "change")
     setupProperty("bottom_line_padding", "change")
 

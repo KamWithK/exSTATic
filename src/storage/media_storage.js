@@ -25,9 +25,15 @@ export class MediaStorage {
         this.instance_storage = instance_storage
 
         this.properties = this.type_storage.properties
+
+        this.max_lines = Number.parseInt(this.properties["max_loaded_lines"])
+
         if (this.instance_storage !== undefined) {
             this.details = this.instance_storage.details
             this.uuid = this.properties["previous_uuid"]
+
+            // Dispatch an event
+            this.logLines()
         }
 
         if (live_stat_update) {
@@ -36,7 +42,7 @@ export class MediaStorage {
         }
     }
 
-    static async build(type, live_stat_update) {
+    static async build(type, live_stat_update=false) {
         let type_storage = new TypeStorage(type)
         await type_storage.setup()
         
@@ -44,16 +50,6 @@ export class MediaStorage {
         if (type_storage.properties.hasOwnProperty("previous_uuid")) {
             instance_storage = new InstanceStorage(type_storage.properties["previous_uuid"])
             await instance_storage.setup()
-
-            // Dispatch an event
-            const event = new CustomEvent("media_changed", {
-                "detail": {
-                    "uuid": instance_storage.uuid,
-                    "name": instance_storage.details["name"],
-                    "lines": await instance_storage.getLines()
-                }
-            })
-            document.dispatchEvent(event)
         } else {
             instance_storage = undefined
         }
@@ -74,7 +70,7 @@ export class MediaStorage {
         }
         
         // Ensure the previous UUID is correctly set
-        if (this.type_storage.properties["previous_uuid"] != new_uuid) {
+        if (this.properties["previous_uuid"] != new_uuid) {
             this.type_storage.updateProperties({"previous_uuid": new_uuid})
         }
 
@@ -87,11 +83,15 @@ export class MediaStorage {
         this.details = this.instance_storage.details
 
         // Dispatch an event
+        this.logLines()
+    }
+
+    async logLines() {
         const event = new CustomEvent("media_changed", {
             "detail": {
                 "uuid": this.uuid,
-                "name": this.instance_storage.details["name"],
-                "lines": await this.instance_storage.getLines()
+                "name": this.details["name"],
+                "lines": await this.instance_storage.getLines(this.max_lines)
             }
         })
         document.dispatchEvent(event)
@@ -147,7 +147,7 @@ export class MediaStorage {
         
         // Keep incrementing the time time read counter whilst the max afk time isn't exceeded
         let event
-        if (time_between_lines <= this.type_storage.properties["afk_max_time"]) {
+        if (time_between_lines <= this.properties["afk_max_time"]) {
             await this.instance_storage.addDailyStats(dateNowString(), {
                 "time_read": time_between_ticks
             })

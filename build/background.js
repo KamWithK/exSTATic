@@ -1016,6 +1016,7 @@
 
   // src/messaging/message_actions.js
   var browser = __toESM(require_browser_polyfill());
+  var BOM_CODE = "\uFEFF";
   function message_action(args, sender, send_response) {
     if (args["action"] == "export_csv") {
       export_csv(args);
@@ -1024,6 +1025,9 @@
     }
   }
   function export_csv(args) {
+    if (args["csv"][0].substring(0, 5) != BOM_CODE) {
+      args["csv"][0] = BOM_CODE + args["csv"][0];
+    }
     let blob = new Blob(args["csv"], args["blob_options"]);
     browser.downloads.download({
       url: URL.createObjectURL(blob),

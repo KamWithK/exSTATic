@@ -48,13 +48,49 @@ export async function getData() {
 
 export async function exportStats() {
     let data = await getData()
-    let csv_string = unparse(data)
 
     chrome.runtime.sendMessage({
         "action": "export_csv",
-        "csv": [csv_string],
+        "csv": [unparse(data)],
         "blob_options": { "type": "text/csv" },
         "filename": "exSTATic_stats.csv"
+    })
+}
+
+async function getInstanceData([uuid, details]) {
+    if (!details.hasOwnProperty("last_line_added")) {
+        return
+    }
+
+    let id_queries = [...Array(details["last_line_added"] + 1).keys()].map(
+        index => JSON.stringify([uuid, index])
+    )
+    let lines = await browser.storage.local.get(id_queries)
+
+    return Object.values(lines).map(line => {
+        return {
+            "uuid": uuid,
+            "given_identifier": details["given_identifier"],
+            "name": details["name"],
+            "line": line
+        }
+    })
+}
+
+export async function exportLines() {
+    let media = await browser.storage.local.get("media")
+    if (!media.hasOwnProperty("media")) {
+        return
+    }
+
+    let detail_entries = await browser.storage.local.get(Object.values(media["media"]))
+    let data = await Promise.all(Object.entries(detail_entries).map(getInstanceData))
+
+    chrome.runtime.sendMessage({
+        "action": "export_csv",
+        "csv": [unparse(data.flat())],
+        "blob_options": { "type": "text/csv;charset=utf-8" },
+        "filename": "exSTATic_lines.csv"
     })
 }
 

@@ -1949,12 +1949,40 @@
   }
   async function exportStats() {
     let data = await getData();
-    let csv_string = (0, import_papaparse.unparse)(data);
     chrome.runtime.sendMessage({
       "action": "export_csv",
-      "csv": [csv_string],
+      "csv": [(0, import_papaparse.unparse)(data)],
       "blob_options": { "type": "text/csv" },
       "filename": "exSTATic_stats.csv"
+    });
+  }
+  async function getInstanceData([uuid, details]) {
+    if (!details.hasOwnProperty("last_line_added")) {
+      return;
+    }
+    let id_queries = [...Array(details["last_line_added"] + 1).keys()].map((index) => JSON.stringify([uuid, index]));
+    let lines = await browser5.storage.local.get(id_queries);
+    return Object.values(lines).map((line) => {
+      return {
+        "uuid": uuid,
+        "given_identifier": details["given_identifier"],
+        "name": details["name"],
+        "line": line
+      };
+    });
+  }
+  async function exportLines() {
+    let media = await browser5.storage.local.get("media");
+    if (!media.hasOwnProperty("media")) {
+      return;
+    }
+    let detail_entries = await browser5.storage.local.get(Object.values(media["media"]));
+    let data = await Promise.all(Object.entries(detail_entries).map(getInstanceData));
+    chrome.runtime.sendMessage({
+      "action": "export_csv",
+      "csv": [(0, import_papaparse.unparse)(data.flat())],
+      "blob_options": { "type": "text/csv;charset=utf-8" },
+      "filename": "exSTATic_lines.csv"
     });
   }
   async function importStats(data) {
@@ -2048,6 +2076,7 @@
     document.getElementById("entry_holder").addEventListener("click", userActive);
     document.getElementById("view_stats").addEventListener("click", openStats);
     document.getElementById("export_stats").addEventListener("click", exportStats);
+    document.getElementById("export_lines").addEventListener("click", exportLines);
     document.getElementById("import_stats").addEventListener("change", (event) => {
       confirmed = confirm("Are you sure you'd like to import previous data?\nPrevious stats in storage will be replaced with new values from this data dump (when the type, media and date all collide)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!");
       if (!confirmed) {

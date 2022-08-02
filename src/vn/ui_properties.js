@@ -1,5 +1,5 @@
 import { timeNowSeconds } from "../calculations"
-import { exportStats, importStats } from "../data_wrangling/data_extraction"
+import { exportLines, exportStats, importStats } from "../data_wrangling/data_extraction"
 import { showNameTitle } from "./tracker_inject"
 import { parse } from "papaparse"
 
@@ -81,6 +81,8 @@ export function setupProperties() {
     document.getElementById("entry_holder").addEventListener("click", userActive)
     document.getElementById("view_stats").addEventListener("click", openStats)
     document.getElementById("export_stats").addEventListener("click", exportStats)
+    document.getElementById("export_lines").addEventListener("click", exportLines)
+
     document.getElementById("import_stats").addEventListener("change", event => {
         confirmed = confirm(
             "Are you sure you'd like to import previous data?\nPrevious stats in storage will be replaced with new values from this data dump (when the type, media and date all collide)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"

@@ -3,7 +3,7 @@ console.log("Injected")
 import { dateNowString } from "../calculations"
 import { MediaStorage } from "../storage/media_storage"
 import { setStorage, setupProperties } from "./ui_properties"
-import { linesStressTest } from "../storage/stress_storage"
+import { linesStressTest } from "../storage/stress_test"
 
 import * as browser from "webextension-polyfill"
 

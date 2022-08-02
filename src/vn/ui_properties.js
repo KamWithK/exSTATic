@@ -3,7 +3,7 @@ import { exportLines, exportStats, importStats } from "../data_wrangling/data_ex
 import { showNameTitle } from "./tracker_inject"
 import { parse } from "papaparse"
 
-import * as browser from "webextension-polyfill"
+var browser = require("webextension-polyfill")
 
 var media_storage
 

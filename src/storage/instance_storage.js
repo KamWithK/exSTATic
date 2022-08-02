@@ -1,6 +1,6 @@
 import { dateNowString } from "../calculations"
 
-import * as browser from "webextension-polyfill"
+var browser = require("webextension-polyfill")
 
 // STORAGE SPEC
 // {

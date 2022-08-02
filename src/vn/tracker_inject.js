@@ -5,7 +5,7 @@ import { MediaStorage } from "../storage/media_storage"
 import { setStorage, setupProperties } from "./ui_properties"
 import { linesStressTest } from "../storage/stress_test"
 
-import * as browser from "webextension-polyfill"
+var browser = require("webextension-polyfill")
 
 var SECS_TO_HOURS = 60 * 60
 

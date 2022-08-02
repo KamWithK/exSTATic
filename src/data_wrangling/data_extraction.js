@@ -1,7 +1,8 @@
-import * as browser from "webextension-polyfill"
-import { unparse } from "papaparse"
 import { TypeStorage } from "../storage/type_storage"
 import { InstanceStorage } from "../storage/instance_storage"
+
+import { unparse } from "papaparse"
+var browser = require("webextension-polyfill")
 
 export async function getDateData(date) {
     let uuids = (await browser.storage.local.get(date))[date]

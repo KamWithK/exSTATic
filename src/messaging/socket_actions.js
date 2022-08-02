@@ -1,6 +1,6 @@
 import { dateNowString, timeNowSeconds } from "../calculations"
 
-import * as browser from "webextension-polyfill"
+var browser = require("webextension-polyfill")
 
 var SPLIT_PATH = /\\|\//g
 var socket

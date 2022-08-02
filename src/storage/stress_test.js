@@ -1,5 +1,7 @@
 import { timeNowSeconds } from "../calculations"
 
+var browser = require("webextension-polyfill")
+
 export async function linesStressTest(media_storage, add_lines) {
     let uuid = await media_storage.type_storage.addMedia(undefined, "0000000000")
     await media_storage.changeInstance(uuid)

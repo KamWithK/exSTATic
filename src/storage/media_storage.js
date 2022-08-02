@@ -2,7 +2,7 @@ import { charsInLine, dateNowString, lineSplitCount, timeNowSeconds } from "../c
 import { InstanceStorage } from "./instance_storage"
 import { TypeStorage } from "./type_storage"
 
-import * as browser from "webextension-polyfill"
+var browser = require("webextension-polyfill")
 
 var REFRESH_STATS_INTERVAL = 100 // in milliseconds
 

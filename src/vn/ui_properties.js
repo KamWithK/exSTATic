@@ -103,8 +103,9 @@ export function setupProperties() {
         parse(event["target"].files[0], {
             "header": true,
             "dynamicTyping": true,
-            "complete": result => {
-                importStats(result.data)
+            "complete": async result => {
+                await importStats(result.data)
+                alert("Finished importing stats successfully, refresh all pages now...")
             }
         })
     })

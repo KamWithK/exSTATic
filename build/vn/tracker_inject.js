@@ -2090,8 +2090,9 @@
       (0, import_papaparse2.parse)(event["target"].files[0], {
         "header": true,
         "dynamicTyping": true,
-        "complete": (result) => {
-          importStats(result.data);
+        "complete": async (result) => {
+          await importStats(result.data);
+          alert("Finished importing stats, refresh all pages now...");
         }
       });
     });

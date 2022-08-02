@@ -1179,14 +1179,20 @@
     let listen_status = (await browser3.storage.local.get("listen_status"))["listen_status"];
     if (listen_status == true || listen_status === void 0) {
       await browser3.browserAction.setIcon({
-        "path": "docs/disabled.png"
+        "path": {
+          "100": "docs/disabled_100x100.png",
+          "500": "docs/disabled.png"
+        }
       });
       await browser3.storage.local.set({
         "listen_status": false
       });
     } else {
       await browser3.browserAction.setIcon({
-        "path": "docs/favicon.png"
+        "path": {
+          "100": "docs/favicon_100x100.png",
+          "500": "docs/favicon.png"
+        }
       });
       await browser3.storage.local.set({
         "listen_status": true

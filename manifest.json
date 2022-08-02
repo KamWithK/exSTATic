@@ -27,7 +27,10 @@
     ],
 
     "browser_action": {
-      "default_icon": "docs/favicon.png"
+      "default_icon": {
+          "100": "docs/favicon_100x100.png",
+          "500": "docs/favicon.png"
+      }
     },
 
     "permissions": [

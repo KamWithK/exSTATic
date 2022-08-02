@@ -13,7 +13,10 @@ browser.browserAction.onClicked.addListener(async _ => {
 
     if (listen_status == true || listen_status === undefined) {
         await browser.browserAction.setIcon({
-            "path": "docs/disabled.png"
+            "path": {
+                "100": "docs/disabled_100x100.png",
+                "500": "docs/disabled.png"
+            }
         })
 
         await browser.storage.local.set({
@@ -21,7 +24,10 @@ browser.browserAction.onClicked.addListener(async _ => {
         })
     } else {
         await browser.browserAction.setIcon({
-            "path": "docs/favicon.png"
+            "path": {
+                "100": "docs/favicon_100x100.png",
+                "500": "docs/favicon.png"
+            }
         })
 
         await browser.storage.local.set({

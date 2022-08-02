@@ -3,7 +3,10 @@ console.log("Injected")
 import { getData } from "./data_wrangling/data_extraction"
 import { divideData, combineData, getSeries } from "./data_wrangling/data_processing"
 import { subMonths } from "date-fns"
+
 import Plotly from "plotly.js-dist-min"
+
+var SECS_TO_HRS = 60 * 60
 
 let bg_color = window.getComputedStyle(document.getElementsByClassName("graph")[0])["background-color"]
 
@@ -45,11 +48,21 @@ function createDateGraph(element, data, title, x_min, y_title) {
 }
 
 async function startup() {
-    let game_json_data = await getData()
+    let game_json_data = (await getData()).map((data, _) => {
+        if (data.hasOwnProperty("time_read")) {
+            data["time_read"] /= SECS_TO_HRS
+        }
+
+        if (data.hasOwnProperty("read_speed")) {
+            data["read_speed"] *= SECS_TO_HRS
+        }
+
+        return data
+    })
     let rn = new Date()
 
-    let game_divided_data = divideData(game_json_data, "process_path")
-    let game_combined_data = combineData(game_json_data, "process_path")
+    let game_divided_data = divideData(game_json_data, "uuid")
+    let game_combined_data = combineData(game_json_data, "uuid")
 
     let speed_improvement_bubble = getSeries(game_divided_data, "date", "read_speed", "chars_read", "markers", undefined)
     let quantity_improvement_bubble = getSeries(game_divided_data, "date", "time_read", "chars_read", "markers", undefined)

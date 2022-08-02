@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <link rel="icon" href="favicon.png">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -91,10 +92,18 @@
         <div class="menu-label">Max AFK Time (secs)</div>
         <input id="afk_max_time" class="menu-input" type="number" value=60>
 
+        <div class="menu-label">Max Loaded Lines (UI)</div>
+        <input id="max_loaded_lines" class="menu-input" type="number" value=100000>
+
         <div class="menu-label">Inactivity Blur (px)</div>
         <input id="inactivity_blur" class="menu-input" type="number" value=2>
         
         <button id="export_stats" class="menu-buttons">Export Stats</button>
+        <button id="export_lines" class="menu-buttons">Export Lines</button>
+        <button class="menu-buttons" onclick="document.getElementById('import_stats').click()">
+          Import Stats
+          <input id="import_stats" class="hidden" type="file"></input>
+        </button>
         <button id="view_stats" class="menu-buttons">View Stats</button>
       </div>
     </div>

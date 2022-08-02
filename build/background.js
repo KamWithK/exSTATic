@@ -1,8 +1,22 @@
 (() => {
+  var __create = Object.create;
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
   var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getProtoOf = Object.getPrototypeOf;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
   var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target, mod));
 
   // node_modules/webextension-polyfill/dist/browser-polyfill.js
   var require_browser_polyfill = __commonJS({
@@ -1000,7 +1014,9 @@
     }
   });
 
-  // src/which/messaging_action.js
+  // src/messaging/message_actions.js
+  var browser = __toESM(require_browser_polyfill());
+  var BOM_CODE = "\uFEFF";
   function message_action(args, sender, send_response) {
     if (args["action"] == "export_csv") {
       export_csv(args);
@@ -1009,14 +1025,17 @@
     }
   }
   function export_csv(args) {
+    if (args["csv"][0].substring(0, 5) != BOM_CODE) {
+      args["csv"][0] = BOM_CODE + args["csv"][0];
+    }
     let blob = new Blob(args["csv"], args["blob_options"]);
-    chrome.downloads.download({
+    browser.downloads.download({
       url: URL.createObjectURL(blob),
       filename: args["filename"]
     });
   }
   function open_tab(args) {
-    chrome.tabs.create({ "url": args["url"] });
+    browser.tabs.create({ "url": args["url"] });
   }
 
   // node_modules/date-fns/esm/_lib/requiredArgs/index.js
@@ -1100,14 +1119,6 @@
   }
 
   // src/calculations.js
-  var IGNORE = /[〔〕《》〖〗〘〙〚〛【】「」［］『』｛｝\[\]()（）｟｠〈〉≪≫。、.,※＊'：！?？‥…―─ｰ〽～→♪♪ ♫ ♬ ♩\"　\t\n]/g;
-  var SPLIT = /[\n。.！?？]/g;
-  function charsInLine(line) {
-    return line.replaceAll(IGNORE, "").length;
-  }
-  function lineSplitCount(line) {
-    return line.split(SPLIT).length;
-  }
   function dateNowString() {
     rn = new Date();
     return formatISO(rn, { "representation": "date" });
@@ -1117,102 +1128,84 @@
     return rn2.getTime() / 1e3;
   }
 
-  // src/storage/update_storage.js
-  var browser = require_browser_polyfill();
-  var MAX_TIME_AWAY = 60;
-  async function setProperties() {
-    property_entries = await browser.storage.local.get("afk_max_time");
-    if (property_entries.hasOwnProperty("afk_max_time")) {
-      MAX_TIME_AWAY = property_entries["afk_max_time"];
-    }
-  }
-  setProperties();
-  async function updateGamesList(process_path) {
-    game_entry = await browser.storage.local.get(["games"]);
-    if ("games" in game_entry) {
-      game_entry["games"].push(process_path);
-    } else {
-      game_entry["games"] = { "games": [process_path] };
-    }
-    browser.storage.local.set(game_entry);
-  }
-  function createGameEntry(process_path, line, date, time) {
-    let game_entry2 = {};
-    game_entry2[process_path] = {
-      "name": process_path,
-      "dates_read_on": [date],
-      "last_line_added": 0
-    };
-    game_entry2[process_path + "_" + date] = newDateEntry(line, time);
-    game_entry2[JSON.stringify([process_path, 0])] = line;
-    browser.storage.local.set(game_entry2);
-  }
-  function newDateEntry(line, time) {
-    return {
-      "lines_read": lineSplitCount(line),
-      "chars_read": charsInLine(line),
-      "time_read": 0,
-      "last_line_recieved": time
-    };
-  }
-  function updatedGameEntry(game_entry2, process_path, line, date, time) {
-    let game_main_entry = game_entry2[process_path];
-    if (!game_main_entry["dates_read_on"].includes(date)) {
-      game_main_entry["dates_read_on"].push(date);
-    }
-    game_main_entry["last_line_added"] += 1;
-    game_entry2[JSON.stringify([process_path, game_main_entry["last_line_added"]])] = line;
-    if (process_path + "_" + date in game_entry2) {
-      let game_date_entry = game_entry2[process_path + "_" + date];
-      let elapsed_time = time - game_date_entry["last_line_recieved"];
-      if (elapsed_time <= MAX_TIME_AWAY) {
-        game_date_entry["time_read"] += elapsed_time;
-      }
-      game_date_entry["lines_read"] += lineSplitCount(line);
-      game_date_entry["chars_read"] += charsInLine(line);
-      game_date_entry["last_line_recieved"] = time;
-    } else {
-      game_entry2[process_path + "_" + date] = newDateEntry(process_path, line, time);
-    }
-    browser.storage.local.set(game_entry2);
-  }
-
-  // src/which/socket_action.js
-  var browser2 = require_browser_polyfill();
+  // src/messaging/socket_actions.js
+  var browser2 = __toESM(require_browser_polyfill());
   var SPLIT_PATH = /\\|\//g;
-  function dataFetched(event) {
-    data = JSON.parse(event.data);
-    console.log("Recieved Socket Data: ", data);
-    if ("process_path" in data && "sentence" in data) {
-      processLine(data["process_path"], data["sentence"]);
+  var socket;
+  var SocketManager = class {
+    constructor(url) {
+      this.url = url;
+      this.port = void 0;
+      browser2.runtime.onConnect.addListener(this.messagingConnected.bind(this));
+      this.connectToWebSocket();
     }
-  }
-  async function processLine(process_path, line) {
-    let time = timeNowSeconds();
-    let date = dateNowString();
-    var path_segments = process_path.split(SPLIT_PATH);
-    var process_path = path_segments.slice(Math.max(0, path_segments.length - 3)).join("/");
-    browser2.storage.local.set({ "previously_hooked": process_path });
-    updateGamesList(process_path);
-    game_entry = await browser2.storage.local.get([process_path, process_path + "_" + date]);
-    if (Object.keys(game_entry).length === 0) {
-      createGameEntry(process_path, line, date, time);
-    } else {
-      updatedGameEntry(game_entry, process_path, line, date, time);
+    messagingConnected(port) {
+      console.log("Messaging Connected: ", port);
+      this.port = port;
+      this.port.onDisconnect.addListener(this.messagingDisconnected.bind(this));
     }
-  }
+    messagingDisconnected(port) {
+      console.log("Messaging Disconnected: ", port);
+      if (port == this.port) {
+        this.port = void 0;
+      }
+    }
+    connectToWebSocket() {
+      socket = new WebSocket(this.url);
+      socket.addEventListener("open", this.connectionOpened.bind(this));
+      socket.addEventListener("close", this.connectToWebSocket.bind(this));
+      socket.addEventListener("error", this.connectToWebSocket.bind(this));
+      socket.addEventListener("message", this.dataFetched.bind(this));
+    }
+    connectionOpened() {
+      console.log("Connected");
+    }
+    async dataFetched(event) {
+      let listen_status = (await browser2.storage.local.get("listen_status"))["listen_status"];
+      if (listen_status === false) {
+        return;
+      }
+      let time = timeNowSeconds();
+      let date = dateNowString();
+      let data = JSON.parse(event.data);
+      console.log("Recieved Socket Data: ", data);
+      if (!data.hasOwnProperty("process_path") || !data.hasOwnProperty("sentence")) {
+        return;
+      }
+      let process_path = data["process_path"];
+      let line = data["sentence"];
+      let path_segments = process_path.split(SPLIT_PATH);
+      process_path = path_segments.slice(Math.max(0, path_segments.length - 3)).join("/");
+      this.port.postMessage({
+        "line": line,
+        "process_path": process_path,
+        "date": date,
+        "time": time
+      });
+    }
+  };
 
   // src/background.js
+  var browser3 = __toESM(require_browser_polyfill());
   console.log("exSTATic");
-  function connectToWebSocket(_) {
-    const socket = new WebSocket("ws://localhost:9001");
-    socket.onmessage = dataFetched;
-    socket.onopen = connectionOpened;
-    socket.onclose = connectToWebSocket;
-  }
-  function connectionOpened(event) {
-    console.log("Connected");
-  }
-  connectToWebSocket();
-  chrome.runtime.onMessage.addListener(message_action);
+  browser3.runtime.onMessage.addListener(message_action);
+  browser3.browserAction.onClicked.addListener(async (_) => {
+    let listen_status = (await browser3.storage.local.get("listen_status"))["listen_status"];
+    if (listen_status == true || listen_status === void 0) {
+      await browser3.browserAction.setIcon({
+        "path": "docs/disabled.png"
+      });
+      await browser3.storage.local.set({
+        "listen_status": false
+      });
+    } else {
+      await browser3.browserAction.setIcon({
+        "path": "docs/favicon.png"
+      });
+      await browser3.storage.local.set({
+        "listen_status": true
+      });
+    }
+  });
+  new SocketManager("ws://localhost:9001");
 })();

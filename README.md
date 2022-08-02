@@ -1,4 +1,6 @@
-# exSTATic - Zero effort language learning IMMERSION statistic collection and visualisation!
+![exSTATic](docs/cover.png)
+
+# Zero effort language learning IMMERSION statistic collection and visualisation!
 
 exSTATic aims to make it easy for language learners to immerse in their target language without sacrificing high quality progress tracking.
 exSTATic is a new project currently in its early stages and so is currently focused on smoothening out the Visual Novel (VN) reading experience.

@@ -4,7 +4,7 @@ esbuild
   .build({
     entryPoints: [
       "src/background.js",
-      "src/tracker_inject.js",
+      "src/vn/tracker_inject.js",
       "src/stats_inject.js"
     ],
     bundle: true,

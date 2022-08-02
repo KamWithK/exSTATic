@@ -15,7 +15,7 @@
           "https://kamwithk.github.io/exSTATic/tracker.html",
           "file:///*/exSTATic/*/tracker.html"
         ],
-        "js": ["build/tracker_inject.js"]
+        "js": ["build/vn/tracker_inject.js"]
       },
       {
         "matches": [
@@ -25,6 +25,10 @@
         "js": ["build/stats_inject.js"]
       }
     ],
+
+    "browser_action": {
+      "default_icon": "docs/favicon.png"
+    },
 
     "permissions": [
       "storage",

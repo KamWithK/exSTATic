@@ -3,6 +3,7 @@ console.log("Injected")
 import { dateNowString } from "../calculations"
 import { MediaStorage } from "../storage/media_storage"
 import { setStorage, setupProperties } from "./ui_properties"
+import { linesStressTest } from "../storage/stress_storage"
 
 import * as browser from "webextension-polyfill"
 
@@ -23,6 +24,8 @@ async function setup() {
     setupProperties()
 
     setStats()
+
+    // linesStressTest(media_storage, 100000)
 }
 setup()
 

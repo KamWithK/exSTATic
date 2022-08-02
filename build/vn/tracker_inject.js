@@ -1654,34 +1654,34 @@
   }
 
   // src/storage/instance_storage.js
-  var browser = __toESM(require_browser_polyfill());
+  var browser2 = __toESM(require_browser_polyfill());
   var InstanceStorage = class {
     constructor(uuid) {
       this.uuid = uuid;
     }
     async setup() {
-      this.details = (await browser.storage.local.get(this.uuid))[this.uuid];
+      this.details = (await browser2.storage.local.get(this.uuid))[this.uuid];
       let uuid_date_key = JSON.stringify([this.uuid, dateNowString()]);
-      this.today_stats = (await browser.storage.local.get(uuid_date_key))[uuid_date_key];
+      this.today_stats = (await browser2.storage.local.get(uuid_date_key))[uuid_date_key];
     }
     async updateDetails(details) {
       Object.assign(this.details, details);
       let detail_entries = {};
       detail_entries[this.uuid] = this.details;
-      await browser.storage.local.set(detail_entries);
+      await browser2.storage.local.set(detail_entries);
     }
     async setDailyStats(date, values) {
       let uuid_date_key = JSON.stringify([this.uuid, date]);
-      let daily_stats_entry = await browser.storage.local.get(uuid_date_key);
+      let daily_stats_entry = await browser2.storage.local.get(uuid_date_key);
       daily_stats_entry[uuid_date_key] = values;
       if (date == dateNowString()) {
         this.today_stats = daily_stats_entry[uuid_date_key];
       }
-      await browser.storage.local.set(daily_stats_entry);
+      await browser2.storage.local.set(daily_stats_entry);
     }
     async addDailyStats(date, values, multiple = 1) {
       let uuid_date_key = JSON.stringify([this.uuid, date]);
-      let daily_stats_entry = await browser.storage.local.get(uuid_date_key);
+      let daily_stats_entry = await browser2.storage.local.get(uuid_date_key);
       if (!daily_stats_entry.hasOwnProperty(uuid_date_key)) {
         daily_stats_entry[uuid_date_key] = {};
       }
@@ -1694,7 +1694,7 @@
       if (date == dateNowString()) {
         this.today_stats = daily_stats_entry[uuid_date_key];
       }
-      await browser.storage.local.set(daily_stats_entry);
+      await browser2.storage.local.set(daily_stats_entry);
     }
     async subDailyStats(date, values, multiple = 1) {
       await this.addDailyStats(date, values, -1 * multiple);
@@ -1707,10 +1707,10 @@
         "last_line_added": this.details["last_line_added"] + 1,
         "last_active_at": time
       });
-      await browser.storage.local.set(line_entry);
+      await browser2.storage.local.set(line_entry);
     }
     async deleteLine(line_id) {
-      await browser.storage.local.remove(JSON.stringify([this.uuid, line_id]));
+      await browser2.storage.local.remove(JSON.stringify([this.uuid, line_id]));
     }
     async getLines(max_lines = void 0) {
       if (!this.details.hasOwnProperty("last_line_added")) {
@@ -1719,60 +1719,60 @@
       let max_line_id = this.details["last_line_added"];
       let min_line_id = max_lines <= 0 | max_lines === void 0 | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1);
       let id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map((index) => JSON.stringify([this.uuid, min_line_id + index]));
-      return browser.storage.local.get(id_queries);
+      return browser2.storage.local.get(id_queries);
     }
     async addToDates(date) {
-      let day_entries = await browser.storage.local.get("immersion_dates");
+      let day_entries = await browser2.storage.local.get("immersion_dates");
       if (!day_entries.hasOwnProperty("immersion_dates")) {
         day_entries["immersion_dates"] = [];
       }
       if (!day_entries["immersion_dates"].includes(date)) {
         day_entries["immersion_dates"].push(date);
-        await browser.storage.local.set(day_entries);
+        await browser2.storage.local.set(day_entries);
       }
     }
     async addToDate(date) {
-      let day_entries = await browser.storage.local.get(date);
+      let day_entries = await browser2.storage.local.get(date);
       if (!day_entries.hasOwnProperty(date)) {
         day_entries[date] = [];
       }
       if (!day_entries[date].includes(this.uuid)) {
         day_entries[date].push(this.uuid);
-        await browser.storage.local.set(day_entries);
+        await browser2.storage.local.set(day_entries);
       }
     }
   };
 
   // src/storage/type_storage.js
-  var browser2 = __toESM(require_browser_polyfill());
+  var browser3 = __toESM(require_browser_polyfill());
   var TypeStorage = class {
     constructor(type) {
       this.type = type;
     }
     async setup() {
-      let types_list = await browser2.storage.local.get("types");
+      let types_list = await browser3.storage.local.get("types");
       if (!types_list.hasOwnProperty("types")) {
         types_list["types"] = [];
       }
       if (!types_list["types"].includes(this.type)) {
         types_list["types"].push(this.type);
       }
-      await browser2.storage.local.set(types_list);
-      let type_dict = await browser2.storage.local.get(this.type);
+      await browser3.storage.local.set(types_list);
+      let type_dict = await browser3.storage.local.get(this.type);
       if (!type_dict.hasOwnProperty(this.type)) {
         type_dict[this.type] = {};
       }
       this.properties = type_dict[this.type];
-      await browser2.storage.local.set(type_dict);
+      await browser3.storage.local.set(type_dict);
     }
     async updateProperties(properties) {
       Object.assign(this.properties, properties);
       let properties_entry = {};
       properties_entry[this.type] = this.properties;
-      await browser2.storage.local.set(properties_entry);
+      await browser3.storage.local.set(properties_entry);
     }
     async getMedia(given_identifier) {
-      let media_entries = await browser2.storage.local.get("media");
+      let media_entries = await browser3.storage.local.get("media");
       let media_key = JSON.stringify([given_identifier, this.type]);
       if (media_entries.hasOwnProperty("media") && media_entries["media"].hasOwnProperty(media_key)) {
         return media_entries["media"][media_key];
@@ -1781,7 +1781,7 @@
       }
     }
     async addMedia(given_identifier, uuid = void 0) {
-      let media_entries = await browser2.storage.local.get("media");
+      let media_entries = await browser3.storage.local.get("media");
       if (!media_entries.hasOwnProperty("media")) {
         media_entries["media"] = {};
       }
@@ -1789,7 +1789,7 @@
       if (!media_entries["media"].hasOwnProperty(media_key)) {
         let new_uuid = uuid !== void 0 ? uuid : crypto.randomUUID();
         media_entries["media"][media_key] = new_uuid;
-        let details_entry = await browser2.storage.local.get(new_uuid);
+        let details_entry = await browser3.storage.local.get(new_uuid);
         if (!details_entry.hasOwnProperty(new_uuid)) {
           media_entries[new_uuid] = {
             "name": given_identifier,
@@ -1798,14 +1798,14 @@
             "last_line_added": -1
           };
         }
-        await browser2.storage.local.set(media_entries);
+        await browser3.storage.local.set(media_entries);
       }
       return media_entries["media"][media_key];
     }
   };
 
   // src/storage/media_storage.js
-  var browser3 = __toESM(require_browser_polyfill());
+  var browser4 = __toESM(require_browser_polyfill());
   var REFRESH_STATS_INTERVAL = 100;
   var MediaStorage = class {
     constructor(type_storage, instance_storage, live_stat_update = false) {
@@ -1863,7 +1863,7 @@
     }
     async addLine(line, date, time) {
       let previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]]);
-      let previous_line = (await browser3.storage.local.get(previous_line_key))[previous_line_key];
+      let previous_line = (await browser4.storage.local.get(previous_line_key))[previous_line_key];
       if (line != previous_line) {
         if (this.previous_time == void 0) {
           this.previous_time = timeNowSeconds();
@@ -1914,14 +1914,14 @@
   };
 
   // src/data_wrangling/data_extraction.js
-  var browser4 = __toESM(require_browser_polyfill());
+  var browser5 = __toESM(require_browser_polyfill());
   var import_papaparse = __toESM(require_papaparse_min());
   async function getDateData(date) {
-    let uuids = (await browser4.storage.local.get(date))[date];
+    let uuids = (await browser5.storage.local.get(date))[date];
     let date_data = uuids.map(async (uuid, _) => {
-      let details = (await browser4.storage.local.get(uuid))[uuid];
+      let details = (await browser5.storage.local.get(uuid))[uuid];
       let uuid_date_key = JSON.stringify([uuid, date]);
-      let stats_entry = (await browser4.storage.local.get(uuid_date_key))[uuid_date_key];
+      let stats_entry = (await browser5.storage.local.get(uuid_date_key))[uuid_date_key];
       if (stats_entry.hasOwnProperty("time_read")) {
         stats_entry["time_read"] = stats_entry["time_read"];
         if (stats_entry.hasOwnProperty("chars_read")) {
@@ -1940,7 +1940,7 @@
     return Promise.all(date_data);
   }
   async function getData() {
-    let dates = await browser4.storage.local.get("immersion_dates");
+    let dates = await browser5.storage.local.get("immersion_dates");
     if (!dates.hasOwnProperty("immersion_dates")) {
       return;
     }
@@ -1992,7 +1992,7 @@
 
   // src/vn/ui_properties.js
   var import_papaparse2 = __toESM(require_papaparse_min());
-  var browser5 = __toESM(require_browser_polyfill());
+  var browser6 = __toESM(require_browser_polyfill());
   var media_storage;
   function setStorage(media_storage_) {
     media_storage = media_storage_;
@@ -2032,7 +2032,7 @@
     }
   }
   function openStats() {
-    browser5.runtime.sendMessage({
+    browser6.runtime.sendMessage({
       "action": "open_tab",
       "url": "https://kamwithk.github.io/exSTATic/stats.html"
     });
@@ -2064,13 +2064,13 @@
   }
 
   // src/vn/tracker_inject.js
-  var browser6 = __toESM(require_browser_polyfill());
+  var browser7 = __toESM(require_browser_polyfill());
   console.log("Injected");
   var SECS_TO_HOURS = 60 * 60;
   var media_storage2;
   async function setup() {
     media_storage2 = await MediaStorage.build("vn", true);
-    var port = browser6.runtime.connect({ "name": "vn_lines" });
+    var port = browser7.runtime.connect({ "name": "vn_lines" });
     port.onMessage.addListener(async (data) => {
       await media_storage2.changeInstance(void 0, data["process_path"]);
       await media_storage2.addLine(data["line"], data["date"], data["time"]);

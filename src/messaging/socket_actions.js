@@ -43,6 +43,11 @@ export class SocketManager {
     }
     
     async dataFetched(event) {
+        let listen_status = (await browser.storage.local.get("listen_status"))["listen_status"]
+        if (listen_status === false) {
+            return
+        }
+
         // Start by getting a timestamp for accuracy
         let time = timeNowSeconds()
         let date = dateNowString()

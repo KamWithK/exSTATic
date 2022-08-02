@@ -1161,6 +1161,10 @@
       console.log("Connected");
     }
     async dataFetched(event) {
+      let listen_status = (await browser2.storage.local.get("listen_status"))["listen_status"];
+      if (listen_status === false) {
+        return;
+      }
       let time = timeNowSeconds();
       let date = dateNowString();
       let data = JSON.parse(event.data);
@@ -1185,5 +1189,23 @@
   var browser3 = __toESM(require_browser_polyfill());
   console.log("exSTATic");
   browser3.runtime.onMessage.addListener(message_action);
+  browser3.browserAction.onClicked.addListener(async (_) => {
+    let listen_status = (await browser3.storage.local.get("listen_status"))["listen_status"];
+    if (listen_status == true || listen_status === void 0) {
+      await browser3.browserAction.setIcon({
+        "path": "docs/disabled.png"
+      });
+      await browser3.storage.local.set({
+        "listen_status": false
+      });
+    } else {
+      await browser3.browserAction.setIcon({
+        "path": "docs/favicon.png"
+      });
+      await browser3.storage.local.set({
+        "listen_status": true
+      });
+    }
+  });
   new SocketManager("ws://localhost:9001");
 })();

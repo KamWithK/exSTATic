@@ -2076,7 +2076,12 @@
     document.getElementById("entry_holder").addEventListener("click", userActive);
     document.getElementById("view_stats").addEventListener("click", openStats);
     document.getElementById("export_stats").addEventListener("click", exportStats);
-    document.getElementById("export_lines").addEventListener("click", exportLines);
+    document.getElementById("export_lines").addEventListener("click", (_) => {
+      confirmed = confirm("Are you sure you'd like to export lines?\nExporting large numbers of lines can take a long time, please wait and do not retry whilst the operation takes place...");
+      if (confirmed) {
+        exportLines();
+      }
+    });
     document.getElementById("import_stats").addEventListener("change", (event) => {
       confirmed = confirm("Are you sure you'd like to import previous data?\nPrevious stats in storage will be replaced with new values from this data dump (when the type, media and date all collide)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!");
       if (!confirmed) {

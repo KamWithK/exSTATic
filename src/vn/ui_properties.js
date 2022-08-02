@@ -81,7 +81,15 @@ export function setupProperties() {
     document.getElementById("entry_holder").addEventListener("click", userActive)
     document.getElementById("view_stats").addEventListener("click", openStats)
     document.getElementById("export_stats").addEventListener("click", exportStats)
-    document.getElementById("export_lines").addEventListener("click", exportLines)
+    document.getElementById("export_lines").addEventListener("click", _ => {
+        confirmed = confirm(
+            "Are you sure you'd like to export lines?\nExporting large numbers of lines can take a long time, please wait and do not retry whilst the operation takes place..."
+        )
+    
+        if (confirmed) {
+            exportLines()
+        }
+    })
 
     document.getElementById("import_stats").addEventListener("change", event => {
         confirmed = confirm(

@@ -1885,8 +1885,8 @@
       }
     }
     async deleteLine(line_id, line, date) {
-      this.instance_storage.deleteLine(line_id);
-      this.instance_storage.subDailyStats(this.uuid, date, {
+      await this.instance_storage.deleteLine(line_id);
+      await this.instance_storage.subDailyStats(date, {
         "lines_read": lineSplitCount(line),
         "chars_read": charsInLine(line)
       });
@@ -2092,7 +2092,7 @@
         "dynamicTyping": true,
         "complete": async (result) => {
           await importStats(result.data);
-          alert("Finished importing stats, refresh all pages now...");
+          alert("Finished importing stats successfully, refresh all pages now...");
         }
       });
     });

@@ -126,8 +126,8 @@ export class MediaStorage {
     }
 
     async deleteLine(line_id, line, date) {
-        this.instance_storage.deleteLine(line_id)
-        this.instance_storage.subDailyStats(this.uuid, date, {
+        await this.instance_storage.deleteLine(line_id)
+        await this.instance_storage.subDailyStats(date, {
             "lines_read": lineSplitCount(line),
             "chars_read": charsInLine(line)
         })

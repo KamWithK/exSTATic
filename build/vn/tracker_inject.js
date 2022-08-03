@@ -2066,9 +2066,13 @@
   }
   async function userActive() {
     let time = timeNowSeconds();
-    if (media_storage.instance_storage !== void 0) {
+    if (media_storage.instance_storage === void 0)
+      return;
+    if (media_storage.previous_time === void 0) {
       await media_storage.instance_storage.updateDetails({ "last_active_at": time });
       media_storage.previous_time = time;
+    } else {
+      media_storage.previous_time = void 0;
     }
   }
   function openStats() {

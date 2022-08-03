@@ -56,9 +56,13 @@ function gameNameModified(event) {
 
 async function userActive() {
     let time = timeNowSeconds()
-    if (media_storage.instance_storage !== undefined) {
+    if (media_storage.instance_storage === undefined) return
+    
+    if (media_storage.previous_time === undefined) {
         await media_storage.instance_storage.updateDetails({"last_active_at": time})
         media_storage.previous_time = time
+    } else {
+        media_storage.previous_time = undefined
     }
 }
 

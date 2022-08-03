@@ -26,7 +26,7 @@
           font-size: var(--default-jp-font-size)
         }
         .sentence-entry {
-            @apply flex items-center dark:bg-slate-900 jp-text p-4 gap-4;
+            @apply flex flex-col items-center dark:bg-slate-900 jp-text p-4 gap-4;
             filter: blur(var(--default-inactivity-blur));
         }
         .circle-bullet-point {
@@ -34,6 +34,7 @@
         }
         .sentence {
             @apply grow inline-block text-left dark:text-slate-400 jp-text;
+            writing-mode: vertical-rl;
         }
         .delete-button {
           @apply self-center rounded-full inline-flex dark:text-indigo-500 dark:border-indigo-500 p-2 hover:bg-indigo-700 hover:text-white;
@@ -58,6 +59,9 @@
         }
         .menu-label {
           @apply p-4 dark:bg-slate-900 text-white;
+        }
+        #entry_holder {
+          @apply flex-row gap-2;
         }
     }
   </style>

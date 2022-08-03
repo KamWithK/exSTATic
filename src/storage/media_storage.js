@@ -133,6 +133,18 @@ export class MediaStorage {
         })
     }
 
+    async deleteLines(line_ids, lines, date) {
+        await this.instance_storage.deleteLines(line_ids)
+
+        let lines_read = lines.reduce((total, line) => total + lineSplitCount(line), 0)
+        let chars_read = lines.reduce((total, line) => total + charsInLine(line), 0)
+
+        await this.instance_storage.subDailyStats(date, {
+            "lines_read": lines_read,
+            "chars_read": chars_read
+        })
+    }
+
     async #ticker() {
         let time_now = timeNowSeconds()
 

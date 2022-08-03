@@ -36,7 +36,10 @@
             @apply grow inline-block text-left dark:text-slate-400 jp-text;
         }
         .delete-button {
-          @apply rounded-full inline-flex dark:text-indigo-500 dark:border-indigo-500 p-2 hover:bg-indigo-700 hover:text-white;
+          @apply self-center rounded-full inline-flex dark:text-indigo-500 dark:border-indigo-500 p-2 hover:bg-indigo-700 hover:text-white;
+        }
+        .line-select {
+          @apply w-7 h-7 shrink-0 accent-indigo-500;
         }
         .stat-numbers {
           @apply font-mono text-base whitespace-nowrap;
@@ -107,6 +110,7 @@
         <button id="view_stats" class="menu-buttons">View Stats</button>
       </div>
     </div>
+    <button id="delete-selection" class="material-icons delete-button">delete</button>
   </div>
 
   <div id="entry_holder" class="flex flex-col gap-2" style="padding-bottom: var(--default-text-align)">

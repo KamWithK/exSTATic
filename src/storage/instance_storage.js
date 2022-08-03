@@ -98,6 +98,12 @@ export class InstanceStorage {
         )
     }
 
+    async deleteLines(line_ids) {
+        await browser.storage.local.remove(
+            line_ids.map(line_id => JSON.stringify([this.uuid, line_id]))
+        )
+    }
+
     async getLines(max_lines=undefined) {
         if (!this.details.hasOwnProperty("last_line_added")) {
             return

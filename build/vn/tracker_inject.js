@@ -1712,6 +1712,9 @@
     async deleteLine(line_id) {
       await browser.storage.local.remove(JSON.stringify([this.uuid, line_id]));
     }
+    async deleteLines(line_ids) {
+      await browser.storage.local.remove(line_ids.map((line_id) => JSON.stringify([this.uuid, line_id])));
+    }
     async getLines(max_lines = void 0) {
       if (!this.details.hasOwnProperty("last_line_added")) {
         return;
@@ -1891,6 +1894,15 @@
         "chars_read": charsInLine(line)
       });
     }
+    async deleteLines(line_ids, lines, date) {
+      await this.instance_storage.deleteLines(line_ids);
+      let lines_read = lines.reduce((total, line) => total + lineSplitCount(line), 0);
+      let chars_read = lines.reduce((total, line) => total + charsInLine(line), 0);
+      await this.instance_storage.subDailyStats(date, {
+        "lines_read": lines_read,
+        "chars_read": chars_read
+      });
+    }
     async #ticker() {
       let time_now = timeNowSeconds();
       if (this.instance_storage == void 0 || this.previous_time == void 0) {
@@ -2065,6 +2077,23 @@
       "url": "https://kamwithk.github.io/exSTATic/stats.html"
     });
   }
+  async function deleteLines() {
+    if (media_storage.instance_storage === void 0)
+      return;
+    let checked_boxes = Array.from(document.querySelectorAll(".line-select:checked"));
+    if (checked_boxes.length === 0)
+      return;
+    let plural = checked_boxes.length > 1 ? "lines" : "line";
+    confirmed = confirm(`Are you sure you'd like to delete ${checked_boxes.length} ${plural}?
+Char and line statistics will be modified accordingly (assuming read today) however time read won't change...`);
+    if (!confirmed)
+      return;
+    let parents = checked_boxes.map((checkbox) => checkbox.parentElement);
+    let line_ids = parents.map((element_div) => Number.parseInt(element_div.dataset.line_id));
+    let lines = parents.map((element_div) => element_div.textContent);
+    media_storage.deleteLines(line_ids, lines, dateNowString());
+    parents.forEach((element_div) => element_div.remove());
+  }
   function setupProperties() {
     setupProperty("font", "change", "--default-jp-font");
     setupProperty("font_size", "change", "--default-jp-font-size", "rem");
@@ -2074,6 +2103,7 @@
     setupProperty("bottom_line_padding", "change");
     document.getElementById("game_name").addEventListener("change", gameNameModified);
     document.getElementById("entry_holder").addEventListener("click", userActive);
+    document.getElementById("delete-selection").addEventListener("click", deleteLines);
     document.getElementById("view_stats").addEventListener("click", openStats);
     document.getElementById("export_stats").addEventListener("click", exportStats);
     document.getElementById("export_lines").addEventListener("click", (_) => {
@@ -2084,9 +2114,8 @@
     });
     document.getElementById("import_stats").addEventListener("change", (event) => {
       confirmed = confirm("Are you sure you'd like to import previous data?\nPrevious stats in storage will be replaced with new values from this data dump (when the type, media and date all collide)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!");
-      if (!confirmed) {
+      if (!confirmed)
         return;
-      }
       (0, import_papaparse2.parse)(event["target"].files[0], {
         "header": true,
         "dynamicTyping": true,
@@ -2130,33 +2159,21 @@
     setStats();
   }
   document.addEventListener("status_inactive", setInactive);
-  function deleteLine(event) {
-    confirmed = confirm("Are you sure you'd like to delete this line?\nChar and line statistics will be modified accordingly (assuming read today) however time read won't change...");
-    if (confirmed) {
-      let element_div = event["target"].parentNode;
-      let line_id = Number.parseInt(element_div.dataset.line_id);
-      let line = element_div.querySelector(".sentence").textContent;
-      media_storage2.deleteLine(line_id, line, dateNowString());
-      element_div.remove();
-    }
-  }
   function newLineDiv(line, line_id) {
     let container_div = document.createElement("div");
     let new_svg = document.createElement("svg");
     let new_p = document.createElement("p");
-    let new_button = document.createElement("button");
+    let new_checkbox = document.createElement("input");
+    new_checkbox.type = "checkbox";
     container_div.classList.add("sentence-entry");
     new_svg.classList.add("circle-bullet-point");
     new_p.classList.add("sentence");
-    new_button.classList.add("delete-button");
-    new_button.classList.add("material-icons");
+    new_checkbox.classList.add("line-select");
     container_div.dataset.line_id = line_id;
     new_p.innerHTML = line;
-    new_button.innerHTML = "delete";
-    new_button.onclick = deleteLine;
     container_div.appendChild(new_svg);
     container_div.appendChild(new_p);
-    container_div.appendChild(new_button);
+    container_div.appendChild(new_checkbox);
     return container_div;
   }
   function showNameTitle(name) {

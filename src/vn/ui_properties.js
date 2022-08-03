@@ -1,4 +1,4 @@
-import { timeNowSeconds } from "../calculations"
+import { dateNowString, timeNowSeconds } from "../calculations"
 import { exportLines, exportStats, importStats } from "../data_wrangling/data_extraction"
 import { showNameTitle } from "./tracker_inject"
 import { parse } from "papaparse"
@@ -69,6 +69,29 @@ function openStats() {
     })
 }
 
+async function deleteLines() {
+    if (media_storage.instance_storage === undefined) return
+
+    let checked_boxes = Array.from(document.querySelectorAll(".line-select:checked"))
+
+    if (checked_boxes.length === 0) return
+
+    let plural = checked_boxes.length > 1 ? "lines" : "line"
+
+    confirmed = confirm(
+        `Are you sure you'd like to delete ${checked_boxes.length} ${plural}?\nChar and line statistics will be modified accordingly (assuming read today) however time read won't change...`
+    )
+
+    if (!confirmed) return
+
+    let parents = checked_boxes.map(checkbox => checkbox.parentElement)
+    let line_ids = parents.map(element_div => Number.parseInt(element_div.dataset.line_id))
+    let lines = parents.map(element_div => element_div.textContent)
+
+    media_storage.deleteLines(line_ids, lines, dateNowString())
+    parents.forEach(element_div => element_div.remove())
+}
+
 export function setupProperties() {
     setupProperty("font", "change", "--default-jp-font")
     setupProperty("font_size", "change", "--default-jp-font-size", "rem")
@@ -79,6 +102,7 @@ export function setupProperties() {
 
     document.getElementById("game_name").addEventListener("change", gameNameModified)
     document.getElementById("entry_holder").addEventListener("click", userActive)
+    document.getElementById("delete-selection").addEventListener("click", deleteLines)
     document.getElementById("view_stats").addEventListener("click", openStats)
     document.getElementById("export_stats").addEventListener("click", exportStats)
     document.getElementById("export_lines").addEventListener("click", _ => {
@@ -96,9 +120,7 @@ export function setupProperties() {
             "Are you sure you'd like to import previous data?\nPrevious stats in storage will be replaced with new values from this data dump (when the type, media and date all collide)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"
         )
     
-        if (!confirmed) {
-            return
-        }
+        if (!confirmed) return
 
         parse(event["target"].files[0], {
             "header": true,

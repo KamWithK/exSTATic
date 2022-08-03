@@ -7,10 +7,12 @@
   <link rel="icon" href="favicon.png">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
 
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Noto+Sans+JP&display=swap');
   </style>
+  
   <style type="text/tailwindcss">
     @layer components {
         :root {
@@ -22,6 +24,10 @@
           --default-menu-blur: 8px;
         }
 
+        input {
+          border-style: none;
+        }
+
         .jp-text {
           font-family: var(--default-jp-font);
           font-size: var(--default-jp-font-size)
@@ -30,9 +36,6 @@
             @apply flex items-center dark:bg-slate-900 jp-text p-4 gap-4;
             filter: blur(var(--default-inactivity-blur));
         }
-        .circle-bullet-point {
-            @apply rounded-full h-2 w-2 bg-indigo-500 m-1 flex-none;
-        }
         .sentence {
             @apply grow inline-block text-left dark:text-slate-400 jp-text;
         }
@@ -40,7 +43,7 @@
           @apply self-center rounded-full inline-flex dark:text-indigo-500 dark:border-indigo-500 p-2 hover:bg-indigo-700 hover:text-white;
         }
         .line-select {
-          @apply w-4 h-4 shrink-0 accent-indigo-500 bg-indigo-500;
+          @apply w-4 h-4 shrink-0 rounded-full text-indigo-500 bg-indigo-400;
         }
         .stat-numbers {
           @apply font-mono text-base whitespace-nowrap;
@@ -88,10 +91,9 @@
         <div class="stat-annotation">Chars / Hour</div>
         <span id="activity_symbol" class="material-icons">bedtime</span> <!-- bedtime off, hourglass_bottom on -->
 
-        <button class="material-icons rounded-full hover:bg-indigo-700" onclick="document.getElementById('menu_dropdown').click()">
-          more_vert
-          <input id="menu_dropdown" class="hidden" type="checkbox" onchange="showMenu(this.checked)"></input>
-        </button>
+        <input id="menu_dropdown" class="hidden" type="checkbox" onchange="showMenu(this.checked)">
+          <span class="material-icons rounded-full hover:bg-indigo-700" onclick="document.getElementById('menu_dropdown').click()">more_vert</span>
+        </input>
       </div>
 
       <div id="dropdown_menu" class="hidden absolute left-0 right-0 grid-rows-2">

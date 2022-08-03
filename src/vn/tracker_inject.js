@@ -53,21 +53,18 @@ document.addEventListener("status_inactive", setInactive)
 
 function newLineDiv(line, line_id) {
     let container_div = document.createElement("div")
-    let new_svg = document.createElement("svg")
     let new_p = document.createElement("p")
     let new_checkbox = document.createElement("input")
 
     new_checkbox.type = "checkbox"
     
     container_div.classList.add("sentence-entry")
-    new_svg.classList.add("circle-bullet-point")
     new_p.classList.add("sentence")
     new_checkbox.classList.add("line-select")
 
     container_div.dataset.line_id = line_id    
     new_p.innerHTML = line
     
-    container_div.appendChild(new_svg)
     container_div.appendChild(new_p)
     container_div.appendChild(new_checkbox)
 

@@ -101,7 +101,7 @@ export function setupProperties() {
     setupProperty("bottom_line_padding", "change")
 
     document.getElementById("game_name").addEventListener("change", gameNameModified)
-    document.getElementById("entry_holder").addEventListener("click", userActive)
+    document.getElementById("entry_holder").addEventListener("dblclick", userActive)
     document.getElementById("delete-selection").addEventListener("click", deleteLines)
     document.getElementById("view_stats").addEventListener("click", openStats)
     document.getElementById("export_stats").addEventListener("click", exportStats)

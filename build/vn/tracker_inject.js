@@ -2116,6 +2116,7 @@ Char and line statistics will be modified accordingly (assuming read today) howe
     setupProperty("afk_max_time", "change");
     setupProperty("max_loaded_lines", "change");
     setupProperty("inactivity_blur", "change");
+    setupProperty("menu_blur", "change", "--default-menu-blur", "px");
     setupProperty("bottom_line_padding", "change", "--default-text-align", "%");
     document.getElementById("game_name").addEventListener("change", gameNameModified);
     document.getElementById("entry_holder").addEventListener("dblclick", userActive);

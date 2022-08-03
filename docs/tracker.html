@@ -19,6 +19,7 @@
           --default-jp-font-size: 2rem;
           --default-inactivity-blur: 0px;
           --default-text-align: 20%;
+          --default-menu-blur: 8px;
         }
 
         .jp-text {
@@ -47,6 +48,10 @@
         .stat-annotation {
           @apply text-xs tracking-tighter whitespace-nowrap;
         }
+        .menu-bar {
+          @apply flex items-center h-full p-3 gap-3 bg-indigo-400 bg-opacity-70 hover:filter-none hover:bg-opacity-80;
+          filter: blur(var(--default-menu-blur));
+        }
         .menu-buttons {
           @apply text-left col-span-2 p-4 dark:bg-slate-900 text-white hover:bg-slate-700;
         }
@@ -66,7 +71,7 @@
     <input id="game_name" class="w-20 h-full shrink grow justify-self-start text-5xl jp-text bg-transparent text-indigo-400" type="text" value="Game" disabled="true"> <!-- REPLACE WITH GAME NAME -->
 
     <div class="relative dropdown h-full">
-      <div class="blur flex items-center h-full p-3 gap-3 bg-indigo-400 bg-opacity-70 hover:filter-none hover:bg-opacity-80">
+      <div class="menu-bar">
         <div id="chars_read" class="stat-numbers">000,000</div>
         <div class="stat-annotation">Chars</div>
         <span class="material-icons">auto_stories</span>
@@ -100,6 +105,9 @@
 
         <div class="menu-label">Inactivity Blur (px)</div>
         <input id="inactivity_blur" class="menu-input" type="number" value=2>
+
+        <div class="menu-label">Menu Blur (px)</div>
+        <input id="menu_blur" class="menu-input" type="number" value=8>
         
         <button id="export_stats" class="menu-buttons">Export Stats</button>
         <button id="export_lines" class="menu-buttons">Export Lines</button>

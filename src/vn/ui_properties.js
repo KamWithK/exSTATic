@@ -104,6 +104,7 @@ export function setupProperties() {
     setupProperty("afk_max_time", "change")
     setupProperty("max_loaded_lines", "change")
     setupProperty("inactivity_blur", "change")
+    setupProperty("menu_blur", "change", "--default-menu-blur", "px")
     setupProperty("bottom_line_padding", "change", "--default-text-align", "%")
 
     document.getElementById("game_name").addEventListener("change", gameNameModified)

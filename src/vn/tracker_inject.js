@@ -93,11 +93,17 @@ export function setStats() {
 
     // Get stat values
     let chars_read = media_storage.instance_storage.today_stats["chars_read"]
+    let lines_read = media_storage.instance_storage.today_stats["lines_read"]
     let time_read = media_storage.instance_storage.today_stats["time_read"]
 
     // Set char counter
     if (chars_read !== undefined) {
         document.getElementById("chars_read").innerHTML = chars_read.toLocaleString()
+    }
+
+    // Set lines counter
+    if (lines_read !== undefined) {
+        document.getElementById("lines_read").innerHTML = lines_read.toLocaleString()
     }
 
     // Set speed

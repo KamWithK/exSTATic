@@ -75,12 +75,19 @@
         <div id="chars_read" class="stat-numbers">000,000</div>
         <div class="stat-annotation">Chars</div>
         <span class="material-icons">auto_stories</span>
+
+        <div id="lines_read" class="stat-numbers">00,000</div>
+        <div class="stat-annotation">Lines</div>
+        <span class="material-icons">drive_file_rename_outline</span>
+
         <div id="elapsed_time" class="stat-numbers">00:00:00</div>
         <div class="stat-annotation">Elapsed</div>
         <span class="material-icons">timer</span>
+
         <div id="chars_per_hour" class="stat-numbers">00,000</div>
         <div class="stat-annotation">Chars / Hour</div>
         <span id="activity_symbol" class="material-icons">bedtime</span> <!-- bedtime off, hourglass_bottom on -->
+
         <button class="material-icons rounded-full hover:bg-indigo-700" onclick="document.getElementById('menu_dropdown').click()">
           more_vert
           <input id="menu_dropdown" class="hidden" type="checkbox" onchange="showMenu(this.checked)"></input>

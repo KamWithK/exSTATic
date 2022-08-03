@@ -2205,9 +2205,13 @@ Char and line statistics will be modified accordingly (assuming read today) howe
       return;
     }
     let chars_read = media_storage2.instance_storage.today_stats["chars_read"];
+    let lines_read = media_storage2.instance_storage.today_stats["lines_read"];
     let time_read = media_storage2.instance_storage.today_stats["time_read"];
     if (chars_read !== void 0) {
       document.getElementById("chars_read").innerHTML = chars_read.toLocaleString();
+    }
+    if (lines_read !== void 0) {
+      document.getElementById("lines_read").innerHTML = lines_read.toLocaleString();
     }
     if (chars_read !== void 0 && time_read !== void 0) {
       let average = Math.round(chars_read / (time_read / SECS_TO_HOURS));

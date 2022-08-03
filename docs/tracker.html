@@ -131,11 +131,16 @@
   function mutationScroll(mutation_list, observer) {
     window.scrollTo(0, element_holder.scrollHeight)
   }
-
+  
   let menu = document.getElementById("dropdown_menu")
   function showMenu(checked) {
     menu.style.display = checked ? "grid" : "none"
   }
+  
+  element_holder.addEventListener("click", _ => {
+    menu.checked = false
+    menu.style.display = "none"
+  })
 
   const observer = new MutationObserver(mutationScroll)
   observer.observe(element_holder, {"childList": true, "subtree": true})

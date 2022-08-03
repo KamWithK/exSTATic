@@ -47,9 +47,6 @@
         .stat-annotation {
           @apply text-xs tracking-tighter whitespace-nowrap;
         }
-        .dropdown:hover .dropdown-menu {
-          display: grid;
-        }
         .menu-buttons {
           @apply text-left col-span-2 p-4 dark:bg-slate-900 text-white hover:bg-slate-700;
         }
@@ -79,10 +76,13 @@
         <div id="chars_per_hour" class="stat-numbers">00,000</div>
         <div class="stat-annotation">Chars / Hour</div>
         <span id="activity_symbol" class="material-icons">bedtime</span> <!-- bedtime off, hourglass_bottom on -->
-        <span class="material-icons rounded">more_vert</span>
+        <button class="material-icons rounded-full hover:bg-indigo-700" onclick="document.getElementById('menu_dropdown').click()">
+          more_vert
+          <input id="menu_dropdown" class="hidden" type="checkbox" onchange="showMenu(this.checked)"></input>
+        </button>
       </div>
 
-      <div class="dropdown-menu hidden absolute left-0 right-0 grid-rows-2">
+      <div id="dropdown_menu" class="hidden absolute left-0 right-0 grid-rows-2">
         <div class="menu-label">Font</div>
         <input id="font" onchange="fontChanged(this.value)" class="menu-input" type="text" value="Klee One">
 
@@ -127,9 +127,14 @@
     document.documentElement.style.setProperty("--default-jp-font-size", font_size + "rem")
   }
 
-  element_holder = document.getElementById("entry_holder")
+  let element_holder = document.getElementById("entry_holder")
   function mutationScroll(mutation_list, observer) {
     window.scrollTo(0, element_holder.scrollHeight)
+  }
+
+  let menu = document.getElementById("dropdown_menu")
+  function showMenu(checked) {
+    menu.style.display = checked ? "grid" : "none"
   }
 
   const observer = new MutationObserver(mutationScroll)

@@ -1822,7 +1822,7 @@
         this.logLines();
       }
       if (live_stat_update) {
-        this.previous_time = void 0;
+        this.stop_ticker(false);
         setInterval(this.#ticker.bind(this), REFRESH_STATS_INTERVAL);
       }
     }
@@ -1868,9 +1868,7 @@
       let previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]]);
       let previous_line = (await browser3.storage.local.get(previous_line_key))[previous_line_key];
       if (line != previous_line) {
-        if (this.previous_time == void 0) {
-          this.previous_time = timeNowSeconds();
-        }
+        this.start_ticker(false);
         await this.instance_storage.insertLine(line, time);
         await this.instance_storage.addDailyStats(date, {
           "lines_read": lineSplitCount(line),
@@ -1903,6 +1901,22 @@
         "chars_read": chars_read
       });
     }
+    async start_ticker(event = true) {
+      if (this.previous_time == void 0) {
+        this.previous_time = timeNowSeconds();
+      }
+      if (event) {
+        let event2 = new Event("status_active");
+        document.dispatchEvent(event2);
+      }
+    }
+    async stop_ticker(event = true) {
+      this.previous_time = void 0;
+      if (event) {
+        let event2 = new Event("status_inactive");
+        document.dispatchEvent(event2);
+      }
+    }
     async #ticker() {
       let time_now = timeNowSeconds();
       if (this.instance_storage == void 0 || this.previous_time == void 0) {
@@ -1911,17 +1925,14 @@
       let time_between_lines = this.details["last_active_at"] !== void 0 ? time_now - this.details["last_active_at"] : 0;
       let time_between_ticks = time_now - this.previous_time;
       this.previous_time = time_now;
-      let event;
       if (time_between_lines <= this.properties["afk_max_time"]) {
         await this.instance_storage.addDailyStats(dateNowString(), {
           "time_read": time_between_ticks
         });
-        event = new Event("status_active");
+        this.start_ticker();
       } else {
-        this.previous_time = void 0;
-        event = new Event("status_inactive");
+        this.stop_ticker();
       }
-      document.dispatchEvent(event);
     }
   };
 
@@ -2070,9 +2081,9 @@
       return;
     if (media_storage.previous_time === void 0) {
       await media_storage.instance_storage.updateDetails({ "last_active_at": time });
-      media_storage.previous_time = time;
+      media_storage.start_ticker();
     } else {
-      media_storage.previous_time = void 0;
+      media_storage.stop_ticker();
     }
   }
   function openStats() {

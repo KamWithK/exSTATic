@@ -60,9 +60,9 @@ async function userActive() {
     
     if (media_storage.previous_time === undefined) {
         await media_storage.instance_storage.updateDetails({"last_active_at": time})
-        media_storage.previous_time = time
+        media_storage.start_ticker()
     } else {
-        media_storage.previous_time = undefined
+        media_storage.stop_ticker()
     }
 }
 

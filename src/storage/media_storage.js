@@ -37,7 +37,7 @@ export class MediaStorage {
         }
 
         if (live_stat_update) {
-            this.previous_time = undefined
+            this.stop_ticker(false)
             setInterval(this.#ticker.bind(this), REFRESH_STATS_INTERVAL)
         }
     }
@@ -102,9 +102,7 @@ export class MediaStorage {
         let previous_line = (await browser.storage.local.get(previous_line_key))[previous_line_key]
         
         if (line != previous_line) {
-            if (this.previous_time == undefined) {
-                this.previous_time = timeNowSeconds()
-            }
+            this.start_ticker(false)
 
             await this.instance_storage.insertLine(line, time)
             
@@ -145,6 +143,26 @@ export class MediaStorage {
         })
     }
 
+    async start_ticker(event=true) {
+        if (this.previous_time == undefined) {
+            this.previous_time = timeNowSeconds()
+        }
+
+        if (event) {
+            let event = new Event("status_active")
+            document.dispatchEvent(event)
+        }
+    }
+
+    async stop_ticker(event=true) {
+        this.previous_time = undefined
+
+        if (event) {
+            let event = new Event("status_inactive")
+            document.dispatchEvent(event)
+        }
+    }
+
     async #ticker() {
         let time_now = timeNowSeconds()
 
@@ -158,16 +176,13 @@ export class MediaStorage {
         this.previous_time = time_now
         
         // Keep incrementing the time time read counter whilst the max afk time isn't exceeded
-        let event
         if (time_between_lines <= this.properties["afk_max_time"]) {
             await this.instance_storage.addDailyStats(dateNowString(), {
                 "time_read": time_between_ticks
             })
-            event = new Event("status_active")
+            this.start_ticker()
         } else {
-            this.previous_time = undefined
-            event = new Event("status_inactive")
+            this.stop_ticker()
         }
-        document.dispatchEvent(event)
     }
 }

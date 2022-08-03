@@ -86,7 +86,7 @@ export function showNameTitle(name) {
     document.title = "exSTATic | " + name
 }
 
-function setStats() {
+export function setStats() {
     if (media_storage.instance_storage == undefined || media_storage.instance_storage.today_stats == undefined) {
         return
     }

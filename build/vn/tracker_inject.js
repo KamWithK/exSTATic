@@ -2095,8 +2095,9 @@ Char and line statistics will be modified accordingly (assuming read today) howe
     let parents = checked_boxes.map((checkbox) => checkbox.parentElement);
     let line_ids = parents.map((element_div) => Number.parseInt(element_div.dataset.line_id));
     let lines = parents.map((element_div) => element_div.textContent);
-    media_storage.deleteLines(line_ids, lines, dateNowString());
+    await media_storage.deleteLines(line_ids, lines, dateNowString());
     parents.forEach((element_div) => element_div.remove());
+    setStats();
   }
   function setupProperties() {
     setupProperty("font", "change", "--default-jp-font");

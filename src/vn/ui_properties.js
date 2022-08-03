@@ -1,6 +1,6 @@
 import { dateNowString, timeNowSeconds } from "../calculations"
 import { exportLines, exportStats, importStats } from "../data_wrangling/data_extraction"
-import { showNameTitle } from "./tracker_inject"
+import { setStats, showNameTitle } from "./tracker_inject"
 import { parse } from "papaparse"
 
 var browser = require("webextension-polyfill")
@@ -92,8 +92,10 @@ async function deleteLines() {
     let line_ids = parents.map(element_div => Number.parseInt(element_div.dataset.line_id))
     let lines = parents.map(element_div => element_div.textContent)
 
-    media_storage.deleteLines(line_ids, lines, dateNowString())
+    await media_storage.deleteLines(line_ids, lines, dateNowString())
     parents.forEach(element_div => element_div.remove())
+    
+    setStats()
 }
 
 export function setupProperties() {

@@ -73,7 +73,8 @@ async function getInstanceData([uuid, details]) {
             "uuid": uuid,
             "given_identifier": details["given_identifier"],
             "name": details["name"],
-            "line": line
+            "line": typeof(line) === "string" ? line : line[0],
+            "time": typeof(line) === "string" ? undefined : line[1]
         }
     })
 }

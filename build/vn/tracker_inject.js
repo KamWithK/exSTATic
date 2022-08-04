@@ -1642,11 +1642,18 @@
     return line.replaceAll(IGNORE, "").length;
   }
   function lineSplitCount(line) {
-    return line.split(SPLIT).filter((value) => value != "").length;
+    return line.split(SPLIT).filter((value) => value.replaceAll(IGNORE, "") != "").length;
   }
   function dateNowString() {
     rn = new Date();
     return formatISO(rn, { "representation": "date" });
+  }
+  function timeToDateString(time) {
+    if (time === void 0 || isNaN(time))
+      return;
+    let date = new Date(0);
+    date.setSeconds(time);
+    return formatISO(date, { "representation": "date" });
   }
   function timeNowSeconds() {
     let rn2 = new Date();
@@ -1679,22 +1686,33 @@
       }
       await browser.storage.local.set(daily_stats_entry);
     }
-    async addDailyStats(date, values, multiple = 1) {
-      let uuid_date_key = JSON.stringify([this.uuid, date]);
-      let daily_stats_entry = await browser.storage.local.get(uuid_date_key);
-      if (!daily_stats_entry.hasOwnProperty(uuid_date_key)) {
-        daily_stats_entry[uuid_date_key] = {};
-      }
-      Object.entries(values).forEach(([stat_key, stat_value]) => {
-        if (!daily_stats_entry[uuid_date_key].hasOwnProperty(stat_key)) {
-          daily_stats_entry[uuid_date_key][stat_key] = 0;
+    async addStats(date_stat_adds, multiple = 1) {
+      let date_keys = Object.keys(date_stat_adds).map((date) => JSON.stringify([this.uuid, date]));
+      let date_stats = await browser.storage.local.get(date_keys);
+      date_keys.forEach((key) => {
+        let date = JSON.parse(key)[1];
+        if (!date_stats.hasOwnProperty(key)) {
+          date_stats[key] = {};
         }
-        daily_stats_entry[uuid_date_key][stat_key] += stat_value * multiple;
+        Object.entries(date_stat_adds[date]).forEach(([stat, value]) => {
+          if (!date_stats[key].hasOwnProperty(stat)) {
+            date_stats[key][stat] = 0;
+          }
+          date_stats[key][stat] += value * multiple;
+        });
+        if (date == dateNowString()) {
+          this.today_stats = date_stats[key];
+        }
       });
-      if (date == dateNowString()) {
-        this.today_stats = daily_stats_entry[uuid_date_key];
-      }
-      await browser.storage.local.set(daily_stats_entry);
+      await browser.storage.local.set(date_stats);
+    }
+    async addDailyStats(date, values, multiple = 1) {
+      let date_stat_adds = {};
+      date_stat_adds[date] = values;
+      await this.addStats(date_stat_adds, multiple);
+    }
+    async subStats(date_stat_adds, multiple = 1) {
+      await this.addStats(date_stat_adds, -1 * multiple);
     }
     async subDailyStats(date, values, multiple = 1) {
       await this.addDailyStats(date, values, -1 * multiple);
@@ -1702,8 +1720,8 @@
     async insertLine(line, time) {
       let line_key = JSON.stringify([this.uuid, this.details["last_line_added"] + 1]);
       let line_entry = {};
-      line_entry[line_key] = line;
-      this.updateDetails({
+      line_entry[line_key] = [line, time];
+      await this.updateDetails({
         "last_line_added": this.details["last_line_added"] + 1,
         "last_active_at": time
       });
@@ -1722,7 +1740,13 @@
       let max_line_id = this.details["last_line_added"];
       let min_line_id = max_lines <= 0 | max_lines === void 0 | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1);
       let id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map((index) => JSON.stringify([this.uuid, min_line_id + index]));
-      return browser.storage.local.get(id_queries);
+      let lines = await browser.storage.local.get(id_queries);
+      return Object.entries(lines).map(([key, line_data]) => {
+        let line = typeof line_data === "string" ? line_data : line_data[0];
+        let time = typeof line_data === "string" ? void 0 : line_data[1];
+        let [uuid, id] = JSON.parse(key);
+        return [uuid, id, line, time];
+      });
     }
     async addToDates(date) {
       let day_entries = await browser.storage.local.get("immersion_dates");
@@ -1852,7 +1876,7 @@
       await this.instance_storage.setup();
       this.uuid = this.instance_storage.uuid;
       this.details = this.instance_storage.details;
-      this.logLines();
+      await this.logLines();
     }
     async logLines() {
       const event = new CustomEvent("media_changed", {
@@ -1870,16 +1894,17 @@
       if (line != previous_line) {
         this.start_ticker(false);
         await this.instance_storage.insertLine(line, time);
+        await this.instance_storage.addToDates(date);
+        await this.instance_storage.addToDate(date);
         await this.instance_storage.addDailyStats(date, {
           "lines_read": lineSplitCount(line),
           "chars_read": charsInLine(line)
         });
-        await this.instance_storage.addToDates(date);
-        await this.instance_storage.addToDate(date);
         const event = new CustomEvent("new_line", {
           "detail": {
+            "line_id": this.details["last_line_added"],
             "line": line,
-            "line_id": this.details["last_line_added"]
+            "time": time
           }
         });
         document.dispatchEvent(event);
@@ -1892,14 +1917,22 @@
         "chars_read": charsInLine(line)
       });
     }
-    async deleteLines(line_ids, lines, date) {
-      await this.instance_storage.deleteLines(line_ids);
-      let lines_read = lines.reduce((total, line) => total + lineSplitCount(line), 0);
-      let chars_read = lines.reduce((total, line) => total + charsInLine(line), 0);
-      await this.instance_storage.subDailyStats(date, {
-        "lines_read": lines_read,
-        "chars_read": chars_read
+    async deleteLines(details) {
+      let date_stats = {};
+      details.forEach(([_, line, date]) => {
+        if (date === void 0) {
+          date = dateNowString();
+        }
+        if (!date_stats.hasOwnProperty(date)) {
+          date_stats[date] = {};
+          date_stats[date]["lines_read"] = 0;
+          date_stats[date]["chars_read"] = 0;
+        }
+        date_stats[date]["lines_read"] += lineSplitCount(line);
+        date_stats[date]["chars_read"] += charsInLine(line);
       });
+      await this.instance_storage.deleteLines(details.map(([line_id, _, time]) => line_id));
+      await this.instance_storage.subStats(date_stats);
     }
     async start_ticker(event = true) {
       if (this.previous_time == void 0) {
@@ -1990,7 +2023,8 @@
         "uuid": uuid,
         "given_identifier": details["given_identifier"],
         "name": details["name"],
-        "line": line
+        "line": typeof line === "string" ? line : line[0],
+        "time": typeof line === "string" ? void 0 : line[1]
       };
     });
   }
@@ -2048,25 +2082,23 @@
   function setStorage(media_storage_) {
     media_storage = media_storage_;
   }
-  function useProperty(element_id, global_css_property = false, units = "") {
+  async function useProperty(element_id, global_css_property = false, units = "") {
     let element = document.getElementById(element_id);
     let properties = {};
     properties[element_id] = element.value;
-    media_storage.type_storage.updateProperties(properties);
+    await media_storage.type_storage.updateProperties(properties);
     if (global_css_property) {
       document.documentElement.style.setProperty(global_css_property, element.value + units);
     }
   }
-  function setupProperty(element_id, event_type, global_css_property = false, units = "") {
+  async function setupProperty(element_id, event_type, global_css_property = false, units = "") {
     let element = document.getElementById(element_id);
     if (media_storage.properties.hasOwnProperty(element_id)) {
       element.value = media_storage.properties[element_id];
     }
-    useProperty(element_id, global_css_property, units);
+    await useProperty(element_id, global_css_property, units);
     if (event_type) {
-      element.addEventListener(event_type, (event) => {
-        useProperty(event["target"].id, global_css_property, units);
-      });
+      element.addEventListener(event_type, async (event) => await useProperty(event["target"].id, global_css_property, units));
     }
   }
   function gameNameModified(event) {
@@ -2100,33 +2132,36 @@
       return;
     let plural = checked_boxes.length > 1 ? "lines" : "line";
     confirmed = confirm(`Are you sure you'd like to delete ${checked_boxes.length} ${plural}?
-Char and line statistics will be modified accordingly (assuming read today) however time read won't change...`);
+Char and line statistics will be modified accordingly however time read won't change...`);
     if (!confirmed)
       return;
     let parents = checked_boxes.map((checkbox) => checkbox.parentElement);
-    let line_ids = parents.map((element_div) => Number.parseInt(element_div.dataset.line_id));
-    let lines = parents.map((element_div) => element_div.textContent);
-    await media_storage.deleteLines(line_ids, lines, dateNowString());
+    let details = parents.map((element_div) => [
+      Number.parseInt(element_div.dataset.line_id),
+      element_div.textContent,
+      timeToDateString(Number.parseInt(element_div.dataset.time))
+    ]);
+    await media_storage.deleteLines(details);
     parents.forEach((element_div) => element_div.remove());
     setStats();
   }
-  function setupProperties() {
-    setupProperty("font", "change", "--default-jp-font");
-    setupProperty("font_size", "change", "--default-jp-font-size", "rem");
-    setupProperty("afk_max_time", "change");
-    setupProperty("max_loaded_lines", "change");
-    setupProperty("inactivity_blur", "change");
-    setupProperty("menu_blur", "change", "--default-menu-blur", "px");
-    setupProperty("bottom_line_padding", "change", "--default-text-align", "%");
+  async function setupProperties() {
+    await setupProperty("font", "change", "--default-jp-font");
+    await setupProperty("font_size", "change", "--default-jp-font-size", "rem");
+    await setupProperty("afk_max_time", "change");
+    await setupProperty("max_loaded_lines", "change");
+    await setupProperty("inactivity_blur", "change");
+    await setupProperty("menu_blur", "change", "--default-menu-blur", "px");
+    await setupProperty("bottom_line_padding", "change", "--default-text-align", "%");
     document.getElementById("game_name").addEventListener("change", gameNameModified);
     document.getElementById("entry_holder").addEventListener("dblclick", userActive);
     document.getElementById("delete-selection").addEventListener("click", deleteLines);
     document.getElementById("view_stats").addEventListener("click", openStats);
     document.getElementById("export_stats").addEventListener("click", exportStats);
-    document.getElementById("export_lines").addEventListener("click", (_) => {
+    document.getElementById("export_lines").addEventListener("click", async (_) => {
       confirmed = confirm("Are you sure you'd like to export lines?\nExporting large numbers of lines can take a long time, please wait and do not retry whilst the operation takes place...");
       if (confirmed) {
-        exportLines();
+        await exportLines();
       }
     });
     document.getElementById("import_stats").addEventListener("change", (event) => {
@@ -2160,7 +2195,7 @@ Char and line statistics will be modified accordingly (assuming read today) howe
       await media_storage2.addLine(data["line"], data["date"], data["time"]);
     });
     setStorage(media_storage2);
-    setupProperties();
+    await setupProperties();
     setStats();
   }
   setup();
@@ -2176,7 +2211,7 @@ Char and line statistics will be modified accordingly (assuming read today) howe
     setStats();
   }
   document.addEventListener("status_inactive", setInactive);
-  function newLineDiv(line, line_id) {
+  function newLineDiv(line, line_id, time) {
     let container_div = document.createElement("div");
     let new_p = document.createElement("p");
     let new_checkbox = document.createElement("input");
@@ -2185,6 +2220,7 @@ Char and line statistics will be modified accordingly (assuming read today) howe
     new_p.classList.add("sentence");
     new_checkbox.classList.add("line-select");
     container_div.dataset.line_id = line_id;
+    container_div.dataset.time = time;
     new_p.innerHTML = line;
     container_div.appendChild(new_p);
     container_div.appendChild(new_checkbox);
@@ -2222,12 +2258,12 @@ Char and line statistics will be modified accordingly (assuming read today) howe
   }
   function gameChanged(event) {
     showNameTitle(event.detail["name"]);
-    let line_divs = Object.entries(event.detail["lines"]).map(([key, line]) => newLineDiv(line, JSON.parse(key)[1])).sort((first, second) => first.dataset.line_id - second.dataset.line_id);
+    let line_divs = event.detail["lines"].map(([_, line_id, line, time]) => newLineDiv(line, line_id, time)).sort((first, second) => first.dataset.line_id - second.dataset.line_id);
     document.getElementById("entry_holder").replaceChildren(...line_divs);
   }
   document.addEventListener("media_changed", gameChanged);
   function lineAdded(event) {
-    document.getElementById("entry_holder").appendChild(newLineDiv(event.detail["line"], event.detail["line_id"]));
+    document.getElementById("entry_holder").appendChild(newLineDiv(event.detail["line"], event.detail["line_id"], event.detail["time"]));
   }
   document.addEventListener("new_line", lineAdded);
 })();

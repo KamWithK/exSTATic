@@ -52,27 +52,41 @@ export class InstanceStorage {
         await browser.storage.local.set(daily_stats_entry)
     }
 
-    async addDailyStats(date, values, multiple=1) {
-        let uuid_date_key = JSON.stringify([this.uuid, date])
-        let daily_stats_entry = await browser.storage.local.get(uuid_date_key)
+    async addStats(date_stat_adds, multiple=1) {
+        let date_keys = Object.keys(date_stat_adds).map(date => JSON.stringify([this.uuid, date]))
+        let date_stats = await browser.storage.local.get(date_keys)
 
-        if (!daily_stats_entry.hasOwnProperty(uuid_date_key)) {
-            daily_stats_entry[uuid_date_key] = {}
-        }
-        
-        Object.entries(values).forEach(([stat_key, stat_value]) => {
-            if (!daily_stats_entry[uuid_date_key].hasOwnProperty(stat_key)) {
-                daily_stats_entry[uuid_date_key][stat_key] = 0
+        date_keys.forEach(key => {
+            let date = JSON.parse(key)[1]
+
+            if (!date_stats.hasOwnProperty(key)) {
+                date_stats[key] = {}
             }
-    
-            daily_stats_entry[uuid_date_key][stat_key] += stat_value * multiple
+
+            Object.entries(date_stat_adds[date]).forEach(([stat, value]) => {
+                if (!date_stats[key].hasOwnProperty(stat)) {
+                    date_stats[key][stat] = 0
+                }
+
+                date_stats[key][stat] += value * multiple
+            })
+
+            if (date == dateNowString()) {
+                this.today_stats = date_stats[key]
+            }
         })
 
-        if (date == dateNowString()) {
-            this.today_stats = daily_stats_entry[uuid_date_key]
-        }
+        await browser.storage.local.set(date_stats)
+    }
 
-        await browser.storage.local.set(daily_stats_entry)
+    async addDailyStats(date, values, multiple=1) {
+        let date_stat_adds = {}
+        date_stat_adds[date] = values
+        await this.addStats(date_stat_adds, multiple)
+    }
+
+    async subStats(date_stat_adds, multiple=1) {
+        await this.addStats(date_stat_adds, -1 * multiple)
     }
 
     async subDailyStats(date, values, multiple=1) {
@@ -82,9 +96,9 @@ export class InstanceStorage {
     async insertLine(line, time) {
         let line_key = JSON.stringify([this.uuid, this.details["last_line_added"] + 1])
         let line_entry = {}
-        line_entry[line_key] = line
+        line_entry[line_key] = [line, time]
 
-        this.updateDetails({
+        await this.updateDetails({
             "last_line_added": this.details["last_line_added"] + 1,
             "last_active_at": time
         })
@@ -116,7 +130,17 @@ export class InstanceStorage {
         let id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map(
             index => JSON.stringify([this.uuid, min_line_id + index])
         )
-        return browser.storage.local.get(id_queries)
+        let lines = await browser.storage.local.get(id_queries)
+
+        return Object.entries(lines).map(
+            ([key, line_data]) => {
+                let line = typeof(line_data) === "string" ? line_data : line_data[0]
+                let time = typeof(line_data) === "string" ? undefined : line_data[1]
+                let [uuid, id] = JSON.parse(key)
+
+                return [uuid, id, line, time]
+            }
+        )
     }
 
     async addToDates(date) {

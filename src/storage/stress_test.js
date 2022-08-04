@@ -14,7 +14,7 @@ export async function linesStressTest(media_storage, add_lines) {
     let changes = {}
     let _ = [...Array(add_lines).keys()].forEach(index => {
         let line_key = JSON.stringify([uuid, media_storage.details["last_line_added"] + index + 1])
-        changes[line_key] = crypto.randomUUID()
+        changes[line_key] = [crypto.randomUUID(), timeNowSeconds()]
     })
 
     await browser.storage.local.set(changes)

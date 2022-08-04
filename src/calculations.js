@@ -9,12 +9,20 @@ export function charsInLine(line) {
 }
 
 export function lineSplitCount(line) {
-    return line.split(SPLIT).filter((value) => value != "").length
+    return line.split(SPLIT).filter((value) => value.replaceAll(IGNORE, "") != "").length
 }
 
 export function dateNowString() {
     rn = new Date()
     return formatISO(rn, {"representation": "date"})
+}
+
+export function timeToDateString(time) {
+    if (time === undefined || isNaN(time)) return
+
+    let date = new Date(0)
+    date.setSeconds(time)
+    return formatISO(date, {"representation": "date"})
 }
 
 export function timeNowSeconds() {

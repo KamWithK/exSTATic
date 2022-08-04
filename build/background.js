@@ -1003,25 +1003,25 @@
   // src/messaging/message_actions.js
   var browser = require_browser_polyfill();
   var BOM_CODE = "\uFEFF";
-  function message_action(args, sender, send_response) {
+  async function message_action(args, sender, send_response) {
     if (args["action"] == "export_csv") {
-      export_csv(args);
+      await export_csv(args);
     } else if (args["action"] == "open_tab") {
-      open_tab(args);
+      await open_tab(args);
     }
   }
-  function export_csv(args) {
+  async function export_csv(args) {
     if (args["csv"][0].substring(0, 5) != BOM_CODE) {
       args["csv"][0] = BOM_CODE + args["csv"][0];
     }
     let blob = new Blob(args["csv"], args["blob_options"]);
-    browser.downloads.download({
+    await browser.downloads.download({
       url: URL.createObjectURL(blob),
       filename: args["filename"]
     });
   }
-  function open_tab(args) {
-    browser.tabs.create({ "url": args["url"] });
+  async function open_tab(args) {
+    await browser.tabs.create({ "url": args["url"] });
   }
 
   // node_modules/date-fns/esm/_lib/requiredArgs/index.js
@@ -1162,7 +1162,7 @@
       let line = data["sentence"];
       let path_segments = process_path.split(SPLIT_PATH);
       process_path = path_segments.slice(Math.max(0, path_segments.length - 3)).join("/");
-      this.port.postMessage({
+      await this.port.postMessage({
         "line": line,
         "process_path": process_path,
         "date": date,

@@ -83,7 +83,7 @@ export class MediaStorage {
         this.details = this.instance_storage.details
 
         // Dispatch an event
-        this.logLines()
+        await this.logLines()
     }
 
     async logLines() {
@@ -106,17 +106,18 @@ export class MediaStorage {
 
             await this.instance_storage.insertLine(line, time)
             
-            await this.instance_storage.addDailyStats(date, {
-                "lines_read": lineSplitCount(line),
-                "chars_read": charsInLine(line)
-            })
             await this.instance_storage.addToDates(date)
             await this.instance_storage.addToDate(date)
+            await this.instance_storage.addDailyStats(date, {
+                "lines_read": lineSplitCount(line),
+                "chars_read": charsInLine(line),
+            })
 
             const event = new CustomEvent("new_line", {
                 "detail": {
-                    "line": line,
                     "line_id": this.details["last_line_added"],
+                    "line": line,
+                    "time": time
                 }
             })
             document.dispatchEvent(event)
@@ -131,16 +132,26 @@ export class MediaStorage {
         })
     }
 
-    async deleteLines(line_ids, lines, date) {
-        await this.instance_storage.deleteLines(line_ids)
+    async deleteLines(details) {
+        let date_stats = {}
+        
+        details.forEach(([_, line, date]) => {
+            if (date === undefined) {
+                date = dateNowString()
+            }
 
-        let lines_read = lines.reduce((total, line) => total + lineSplitCount(line), 0)
-        let chars_read = lines.reduce((total, line) => total + charsInLine(line), 0)
+            if (!date_stats.hasOwnProperty(date)) {
+                date_stats[date] = {}
+                date_stats[date]["lines_read"] = 0
+                date_stats[date]["chars_read"] = 0
+            }
 
-        await this.instance_storage.subDailyStats(date, {
-            "lines_read": lines_read,
-            "chars_read": chars_read
+            date_stats[date]["lines_read"] += lineSplitCount(line)
+            date_stats[date]["chars_read"] += charsInLine(line)
         })
+
+        await this.instance_storage.deleteLines(details.map(([line_id, _, time]) => line_id))
+        await this.instance_storage.subStats(date_stats)
     }
 
     async start_ticker(event=true) {

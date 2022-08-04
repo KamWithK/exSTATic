@@ -1,4 +1,4 @@
-import { dateNowString, timeNowSeconds } from "../calculations"
+import { timeNowSeconds, timeToDateString } from "../calculations"
 import { exportLines, exportStats, importStats } from "../data_wrangling/data_extraction"
 import { setStats, showNameTitle } from "./tracker_inject"
 import { parse } from "papaparse"
@@ -11,13 +11,13 @@ export function setStorage(media_storage_) {
     media_storage = media_storage_
 }
 
-function useProperty(element_id, global_css_property=false, units="") {
+async function useProperty(element_id, global_css_property=false, units="") {
     let element = document.getElementById(element_id)
 
     // Update storage property
     let properties = {}
     properties[element_id] = element.value
-    media_storage.type_storage.updateProperties(properties)
+    await media_storage.type_storage.updateProperties(properties)
 
     // If possible set the global css property
     if (global_css_property) {
@@ -25,7 +25,7 @@ function useProperty(element_id, global_css_property=false, units="") {
     }
 }
 
-function setupProperty(element_id, event_type, global_css_property=false, units="") {
+async function setupProperty(element_id, event_type, global_css_property=false, units="") {
     let element = document.getElementById(element_id)
     
     // If storage contains this property then use it
@@ -34,15 +34,13 @@ function setupProperty(element_id, event_type, global_css_property=false, units=
     }
     
     // Set the storage value andd global css property
-    useProperty(element_id, global_css_property, units)
+    await useProperty(element_id, global_css_property, units)
 
     // Set an event listener if it can be set
     if (event_type) {
         element.addEventListener(
             event_type,
-            (event) => {
-                useProperty(event["target"].id, global_css_property, units)
-            }
+            async event => await useProperty(event["target"].id, global_css_property, units)
         )
     }
 }
@@ -83,42 +81,45 @@ async function deleteLines() {
     let plural = checked_boxes.length > 1 ? "lines" : "line"
 
     confirmed = confirm(
-        `Are you sure you'd like to delete ${checked_boxes.length} ${plural}?\nChar and line statistics will be modified accordingly (assuming read today) however time read won't change...`
+        `Are you sure you'd like to delete ${checked_boxes.length} ${plural}?\nChar and line statistics will be modified accordingly however time read won't change...`
     )
 
     if (!confirmed) return
 
     let parents = checked_boxes.map(checkbox => checkbox.parentElement)
-    let line_ids = parents.map(element_div => Number.parseInt(element_div.dataset.line_id))
-    let lines = parents.map(element_div => element_div.textContent)
+    let details = parents.map(element_div => [
+        Number.parseInt(element_div.dataset.line_id),
+        element_div.textContent,
+        timeToDateString(Number.parseInt(element_div.dataset.time))
+    ])
 
-    await media_storage.deleteLines(line_ids, lines, dateNowString())
+    await media_storage.deleteLines(details)
     parents.forEach(element_div => element_div.remove())
     
     setStats()
 }
 
-export function setupProperties() {
-    setupProperty("font", "change", "--default-jp-font")
-    setupProperty("font_size", "change", "--default-jp-font-size", "rem")
-    setupProperty("afk_max_time", "change")
-    setupProperty("max_loaded_lines", "change")
-    setupProperty("inactivity_blur", "change")
-    setupProperty("menu_blur", "change", "--default-menu-blur", "px")
-    setupProperty("bottom_line_padding", "change", "--default-text-align", "%")
+export async function setupProperties() {
+    await setupProperty("font", "change", "--default-jp-font")
+    await setupProperty("font_size", "change", "--default-jp-font-size", "rem")
+    await setupProperty("afk_max_time", "change")
+    await setupProperty("max_loaded_lines", "change")
+    await setupProperty("inactivity_blur", "change")
+    await setupProperty("menu_blur", "change", "--default-menu-blur", "px")
+    await setupProperty("bottom_line_padding", "change", "--default-text-align", "%")
 
     document.getElementById("game_name").addEventListener("change", gameNameModified)
     document.getElementById("entry_holder").addEventListener("dblclick", userActive)
     document.getElementById("delete-selection").addEventListener("click", deleteLines)
     document.getElementById("view_stats").addEventListener("click", openStats)
     document.getElementById("export_stats").addEventListener("click", exportStats)
-    document.getElementById("export_lines").addEventListener("click", _ => {
+    document.getElementById("export_lines").addEventListener("click", async _ => {
         confirmed = confirm(
             "Are you sure you'd like to export lines?\nExporting large numbers of lines can take a long time, please wait and do not retry whilst the operation takes place..."
         )
     
         if (confirmed) {
-            exportLines()
+            await exportLines()
         }
     })
 

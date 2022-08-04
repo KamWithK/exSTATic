@@ -68,7 +68,7 @@ export class SocketManager {
         let path_segments = process_path.split(SPLIT_PATH)
         process_path = path_segments.slice(Math.max(0, path_segments.length - 3)).join("\/")
 
-        this.port.postMessage({
+        await this.port.postMessage({
             "line": line,
             "process_path": process_path,
             "date": date,

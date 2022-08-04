@@ -1,6 +1,5 @@
 console.log("Injected")
 
-import { dateNowString } from "../calculations"
 import { MediaStorage } from "../storage/media_storage"
 import { setStorage, setupProperties } from "./ui_properties"
 import { linesStressTest } from "../storage/stress_test"
@@ -21,7 +20,7 @@ async function setup() {
     })
 
     setStorage(media_storage)
-    setupProperties()
+    await setupProperties()
 
     setStats()
 
@@ -51,7 +50,7 @@ async function setInactive() {
 }
 document.addEventListener("status_inactive", setInactive)
 
-function newLineDiv(line, line_id) {
+function newLineDiv(line, line_id, time) {
     let container_div = document.createElement("div")
     let new_p = document.createElement("p")
     let new_checkbox = document.createElement("input")
@@ -62,7 +61,8 @@ function newLineDiv(line, line_id) {
     new_p.classList.add("sentence")
     new_checkbox.classList.add("line-select")
 
-    container_div.dataset.line_id = line_id    
+    container_div.dataset.line_id = line_id
+    container_div.dataset.time = time
     new_p.innerHTML = line
     
     container_div.appendChild(new_p)
@@ -122,9 +122,9 @@ function gameChanged(event) {
     showNameTitle(event.detail["name"])
 
     // Show lines
-    let line_divs = Object.entries(event.detail["lines"]).map(
-        ([key, line]) => newLineDiv(line, JSON.parse(key)[1])
-    ).sort((first, second) => first.dataset.line_id - second.dataset.line_id)
+    let line_divs = event.detail["lines"]
+        .map(([_, line_id, line, time]) => newLineDiv(line, line_id, time))
+        .sort((first, second) => first.dataset.line_id - second.dataset.line_id)
 
     document.getElementById("entry_holder").replaceChildren(...line_divs)
 }
@@ -132,7 +132,7 @@ document.addEventListener("media_changed", gameChanged)
 
 function lineAdded(event) {
     document.getElementById("entry_holder").appendChild(newLineDiv(
-        event.detail["line"], event.detail["line_id"]
+        event.detail["line"], event.detail["line_id"], event.detail["time"]
     ))
 }
 document.addEventListener("new_line", lineAdded)

@@ -2,7 +2,7 @@ console.log("Injected")
 
 import { MediaStorage } from "../storage/media_storage"
 import { setStorage, setupProperties } from "./ui_properties"
-import { linesStressTest } from "../storage/stress_test"
+import { linesStressTest, testLines } from "../storage/stress_test"
 
 var browser = require("webextension-polyfill")
 
@@ -24,7 +24,7 @@ async function setup() {
 
     setStats()
 
-    // linesStressTest(media_storage, 100000)
+    // await linesStressTest(media_storage, 100000)
 }
 setup()
 

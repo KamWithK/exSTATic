@@ -3,6 +3,7 @@
     "build": "node esbuild.js"
   },
   "dependencies": {
+    "async-mutex": "^0.3.2",
     "date-fns": "^2.28.0",
     "esbuild": "^0.14.48",
     "papaparse": "^5.3.2",

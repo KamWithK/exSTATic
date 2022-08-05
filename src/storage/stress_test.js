@@ -1,4 +1,4 @@
-import { timeNowSeconds } from "../calculations"
+import { dateNowString, timeNowSeconds } from "../calculations"
 
 var browser = require("webextension-polyfill")
 
@@ -25,4 +25,11 @@ export async function linesStressTest(media_storage, add_lines) {
     })
 
     console.log(`There are ${media_storage.details["last_line_added"] + 1} lines in test ${uuid}\nRefresh the page to see the new lines`)
+}
+
+export async function testLines(media_storage, lines)  {
+    let uuid = await media_storage.type_storage.addMedia(undefined, "0000000000")
+    await media_storage.changeInstance(uuid)
+
+    await Promise.all(lines.map(async line => await media_storage.addLine(line, dateNowString(), timeNowSeconds())))
 }

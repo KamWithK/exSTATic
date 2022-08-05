@@ -1,5 +1,6 @@
 import { dateNowString } from "../calculations"
 
+import {Mutex} from 'async-mutex';
 var browser = require("webextension-polyfill")
 
 // STORAGE SPEC
@@ -22,6 +23,7 @@ var browser = require("webextension-polyfill")
 export class InstanceStorage {
     constructor (uuid) {
         this.uuid = uuid
+        this.mutex = new Mutex()
     }
 
     async setup() {
@@ -53,6 +55,10 @@ export class InstanceStorage {
     }
 
     async addStats(date_stat_adds, multiple=1) {
+        return this.mutex.runExclusive(async () => this.#addStats(date_stat_adds, multiple))
+    }
+
+    async #addStats(date_stat_adds, multiple=1) {
         let date_keys = Object.keys(date_stat_adds).map(date => JSON.stringify([this.uuid, date]))
         let date_stats = await browser.storage.local.get(date_keys)
 

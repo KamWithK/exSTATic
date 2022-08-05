@@ -11,7 +11,7 @@ var SECS_TO_HOURS = 60 * 60
 var vn_storage
 
 async function setup() {
-    vn_storage = await VNStorage.build("vn", true)
+    vn_storage = await VNStorage.build(true)
 
     var port = browser.runtime.connect({"name": "vn_lines"})
     port.onMessage.addListener(async (data) => {

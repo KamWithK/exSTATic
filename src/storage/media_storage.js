@@ -123,7 +123,7 @@ export class MediaStorage {
         
         this.previous_time = time_now
         
-        // Keep incrementing the time time read counter whilst the max afk time isn't exceeded
+        // Keep incrementing the time read counter whilst the max afk time isn't exceeded
         if (time_between_lines <= this.properties["afk_max_time"]) {
             await this.instance_storage.addDailyStats(dateNowString(), {
                 "time_read": time_between_ticks

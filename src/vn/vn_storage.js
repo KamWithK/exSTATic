@@ -15,8 +15,8 @@ export class VNStorage extends MediaStorage {
         this.max_lines = Number.parseInt(type_storage.properties["max_loaded_lines"])
     }
 
-    static async build(type, live_stat_update=false) {
-        let [type_storage, instance_storage] = await super.build(type)
+    static async build(live_stat_update=false) {
+        let [type_storage, instance_storage] = await super.build("vn")
         return new VNStorage(type_storage, instance_storage, live_stat_update)
     }
 

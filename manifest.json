@@ -19,6 +19,13 @@
       },
       {
         "matches": [
+          "https://*/Manga/**.html",
+          "file:///*/Manga/**.html"
+        ],
+        "js": ["build/mokuro/mokuro_inject.js"]
+      },
+      {
+        "matches": [
           "https://kamwithk.github.io/exSTATic/stats.html",
           "file:///*/exSTATic/*/stats.html"
         ],

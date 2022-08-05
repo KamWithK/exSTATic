@@ -113,7 +113,7 @@ export class MediaStorage {
 
     async #ticker() {
         let time_now = timeNowSeconds()
-
+        
         if (this.instance_storage == undefined || this.previous_time == undefined) {
             return
         }

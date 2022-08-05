@@ -20,6 +20,7 @@ export class MokuroStorage extends MediaStorage {
         let [type_storage, instance_storage] = await super.build("mokuro")
 
         await MokuroStorage.setPages(instance_storage)
+        await type_storage.updateProperties({"afk_max_time": 60})
 
         return new MokuroStorage(type_storage, instance_storage, live_stat_update)
     }
@@ -54,10 +55,18 @@ export class MokuroStorage extends MediaStorage {
         stats["chars_read"] = lines.reduce((total, line) => total + charsInLine(line), 0)
         stats["lines_read"] = lines.reduce((total, line) => total + lineSplitCount(line), 0)
         stats["pages_read"] = Math.abs(page_num - this.details["last_page_read"])
-
-        if (page_num > this.details["last_page_read"]) await this.instance_storage.addDailyStats(date, stats)
-        else if (page_num < this.details["last_page_read"]) await this.instance_storage.subDailyStats(date, stats)
-
+        
+        if (page_num > this.details["last_page_read"]) {
+            await this.instance_storage.addDailyStats(date, stats)
+            this.start_ticker(false)
+        }
+        else if (page_num < this.details["last_page_read"]) {
+            await this.instance_storage.subDailyStats(date, stats)
+            this.stop_ticker()
+        }
+        
         await this.instance_storage.updateDetails({"last_page_read": page_num})
+        await this.instance_storage.addToDates(date)
+        await this.instance_storage.addToDate(date)
     }
 }

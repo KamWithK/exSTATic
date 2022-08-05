@@ -1527,6 +1527,7 @@
     static async build(live_stat_update = false) {
       let [type_storage, instance_storage] = await super.build("mokuro");
       await MokuroStorage.setPages(instance_storage);
+      await type_storage.updateProperties({ "afk_max_time": 60 });
       return new MokuroStorage(type_storage, instance_storage, live_stat_update);
     }
     static async setPages(instance_storage) {
@@ -1555,11 +1556,16 @@
       stats["chars_read"] = lines.reduce((total, line) => total + charsInLine(line), 0);
       stats["lines_read"] = lines.reduce((total, line) => total + lineSplitCount(line), 0);
       stats["pages_read"] = Math.abs(page_num - this.details["last_page_read"]);
-      if (page_num > this.details["last_page_read"])
+      if (page_num > this.details["last_page_read"]) {
         await this.instance_storage.addDailyStats(date, stats);
-      else if (page_num < this.details["last_page_read"])
+        this.start_ticker(false);
+      } else if (page_num < this.details["last_page_read"]) {
         await this.instance_storage.subDailyStats(date, stats);
+        this.stop_ticker();
+      }
       await this.instance_storage.updateDetails({ "last_page_read": page_num });
+      await this.instance_storage.addToDates(date);
+      await this.instance_storage.addToDate(date);
     }
   };
 
@@ -1596,7 +1602,7 @@
     const lines = Array.from(document.getElementById(`page${get_page}`).firstChild.childNodes).map((element) => Array.from(element.childNodes).reduce((so_far, node) => `${so_far}${node.textContent}`, ""));
     await mokuro_storage.changeInstance(void 0, getGivenID(series, volume));
     await mokuro_storage.setDetails(series, total_pages);
-    await mokuro_storage.processPage(current_page, lines);
+    await mokuro_storage.processPage(current_page, lines, dateNowString());
   });
   observer.observe(document.getElementById("pageIdxDisplay"), { "childList": true, "subtree": true });
 })();

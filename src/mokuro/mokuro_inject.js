@@ -1,3 +1,4 @@
+import { dateNowString } from "../calculations"
 import { MokuroStorage } from "./mokuro_storage"
 
 console.log("Injected")
@@ -54,6 +55,6 @@ const observer = new MutationObserver(async _ => {
 
     await mokuro_storage.changeInstance(undefined, getGivenID(series, volume))
     await mokuro_storage.setDetails(series, total_pages)
-    await mokuro_storage.processPage(current_page, lines)
+    await mokuro_storage.processPage(current_page, lines, dateNowString())
 })
 observer.observe(document.getElementById("pageIdxDisplay"), {"childList": true, "subtree": true})

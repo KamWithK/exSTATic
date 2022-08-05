@@ -1,6 +1,6 @@
 console.log("Injected")
 
-import { MediaStorage } from "../storage/media_storage"
+import { VNStorage } from "./vn_storage"
 import { setStorage, setupProperties } from "./ui_properties"
 import { linesStressTest, testLines } from "../storage/stress_test"
 
@@ -8,23 +8,23 @@ var browser = require("webextension-polyfill")
 
 var SECS_TO_HOURS = 60 * 60
 
-var media_storage
+var vn_storage
 
 async function setup() {
-    media_storage = await MediaStorage.build("vn", true)
+    vn_storage = await VNStorage.build("vn", true)
 
     var port = browser.runtime.connect({"name": "vn_lines"})
     port.onMessage.addListener(async (data) => {
-        await media_storage.changeInstance(undefined, data["process_path"])
-        await media_storage.addLine(data["line"], data["date"], data["time"])
+        await vn_storage.changeInstance(undefined, data["process_path"])
+        await vn_storage.addLine(data["line"], data["date"], data["time"])
     })
 
-    setStorage(media_storage)
+    setStorage(vn_storage)
     await setupProperties()
 
     setStats()
 
-    // await linesStressTest(media_storage, 100000)
+    // await linesStressTest(vn_storage, 100000)
 }
 setup()
 
@@ -43,7 +43,7 @@ async function setInactive() {
     document.getElementById("activity_symbol").innerHTML = "bedtime"
     document.documentElement.style.setProperty(
         "--default-inactivity-blur",
-        media_storage.properties["inactivity_blur"] + "px"
+        vn_storage.properties["inactivity_blur"] + "px"
     )
 
     setStats()
@@ -84,14 +84,14 @@ export function showNameTitle(name) {
 }
 
 export function setStats() {
-    if (media_storage.instance_storage == undefined || media_storage.instance_storage.today_stats == undefined) {
+    if (vn_storage.instance_storage == undefined || vn_storage.instance_storage.today_stats == undefined) {
         return
     }
 
     // Get stat values
-    let chars_read = media_storage.instance_storage.today_stats["chars_read"]
-    let lines_read = media_storage.instance_storage.today_stats["lines_read"]
-    let time_read = media_storage.instance_storage.today_stats["time_read"]
+    let chars_read = vn_storage.instance_storage.today_stats["chars_read"]
+    let lines_read = vn_storage.instance_storage.today_stats["lines_read"]
+    let time_read = vn_storage.instance_storage.today_stats["time_read"]
 
     // Set char counter
     if (chars_read !== undefined) {

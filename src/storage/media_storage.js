@@ -1,8 +1,6 @@
-import { charsInLine, dateNowString, lineSplitCount, timeNowSeconds } from "../calculations"
+import { dateNowString, timeNowSeconds } from "../calculations"
 import { InstanceStorage } from "./instance_storage"
 import { TypeStorage } from "./type_storage"
-
-var browser = require("webextension-polyfill")
 
 var REFRESH_STATS_INTERVAL = 100 // in milliseconds
 
@@ -13,7 +11,6 @@ var REFRESH_STATS_INTERVAL = 100 // in milliseconds
 //         ...
 //     },
 //     "uuid": {
-//         "last_line_added": "line_id",
 //         "last_active_at": "secs",
 //         ...
 //     }
@@ -25,8 +22,6 @@ export class MediaStorage {
         this.instance_storage = instance_storage
 
         this.properties = this.type_storage.properties
-
-        this.max_lines = Number.parseInt(this.properties["max_loaded_lines"])
 
         if (this.instance_storage !== undefined) {
             this.details = this.instance_storage.details
@@ -42,7 +37,7 @@ export class MediaStorage {
         }
     }
 
-    static async build(type, live_stat_update=false) {
+    static async build(type) {
         let type_storage = new TypeStorage(type)
         await type_storage.setup()
         
@@ -54,7 +49,7 @@ export class MediaStorage {
             instance_storage = undefined
         }
 
-        return new MediaStorage(type_storage, instance_storage, live_stat_update)
+        return [type_storage, instance_storage]
     }
 
     async changeInstance(new_uuid, given_identifier=undefined) {
@@ -90,71 +85,10 @@ export class MediaStorage {
         const event = new CustomEvent("media_changed", {
             "detail": {
                 "uuid": this.uuid,
-                "name": this.details["name"],
-                "lines": await this.instance_storage.getLines(this.max_lines)
+                "name": this.details["name"]
             }
         })
         document.dispatchEvent(event)
-    }
-
-    async addLine(line, date, time) {
-        let previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]])
-        let previous_line = (await browser.storage.local.get(previous_line_key))[previous_line_key]
-        
-        if (line != previous_line) {
-            let chars_in_line = charsInLine(line)
-            if (chars_in_line === 0) return
-            
-            this.start_ticker(false)
-
-            await this.instance_storage.insertLine(line, time)
-            
-            await this.instance_storage.addToDates(date)
-            await this.instance_storage.addToDate(date)
-            await this.instance_storage.addDailyStats(date, {
-                "lines_read": lineSplitCount(line),
-                "chars_read": chars_in_line,
-            })
-
-            const event = new CustomEvent("new_line", {
-                "detail": {
-                    "line_id": this.details["last_line_added"],
-                    "line": line,
-                    "time": time
-                }
-            })
-            document.dispatchEvent(event)
-        }
-    }
-
-    async deleteLine(line_id, line, date) {
-        await this.instance_storage.deleteLine(line_id)
-        await this.instance_storage.subDailyStats(date, {
-            "lines_read": lineSplitCount(line),
-            "chars_read": charsInLine(line)
-        })
-    }
-
-    async deleteLines(details) {
-        let date_stats = {}
-        
-        details.forEach(([_, line, date]) => {
-            if (date === undefined) {
-                date = dateNowString()
-            }
-
-            if (!date_stats.hasOwnProperty(date)) {
-                date_stats[date] = {}
-                date_stats[date]["lines_read"] = 0
-                date_stats[date]["chars_read"] = 0
-            }
-
-            date_stats[date]["lines_read"] += lineSplitCount(line)
-            date_stats[date]["chars_read"] += charsInLine(line)
-        })
-
-        await this.instance_storage.deleteLines(details.map(([line_id, _, time]) => line_id))
-        await this.instance_storage.subStats(date_stats)
     }
 
     start_ticker(event=true) {

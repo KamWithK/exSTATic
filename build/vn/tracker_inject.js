@@ -1995,14 +1995,12 @@
   };
 
   // src/storage/media_storage.js
-  var browser3 = require_browser_polyfill();
   var REFRESH_STATS_INTERVAL = 100;
   var MediaStorage = class {
     constructor(type_storage, instance_storage, live_stat_update = false) {
       this.type_storage = type_storage;
       this.instance_storage = instance_storage;
       this.properties = this.type_storage.properties;
-      this.max_lines = Number.parseInt(this.properties["max_loaded_lines"]);
       if (this.instance_storage !== void 0) {
         this.details = this.instance_storage.details;
         this.uuid = this.properties["previous_uuid"];
@@ -2013,7 +2011,7 @@
         setInterval(this.#ticker.bind(this), REFRESH_STATS_INTERVAL);
       }
     }
-    static async build(type, live_stat_update = false) {
+    static async build(type) {
       let type_storage = new TypeStorage(type);
       await type_storage.setup();
       let instance_storage;
@@ -2023,7 +2021,7 @@
       } else {
         instance_storage = void 0;
       }
-      return new MediaStorage(type_storage, instance_storage, live_stat_update);
+      return [type_storage, instance_storage];
     }
     async changeInstance(new_uuid, given_identifier = void 0) {
       if (new_uuid == void 0 && given_identifier !== void 0) {
@@ -2040,6 +2038,61 @@
       this.uuid = this.instance_storage.uuid;
       this.details = this.instance_storage.details;
       await this.logLines();
+    }
+    async logLines() {
+      const event = new CustomEvent("media_changed", {
+        "detail": {
+          "uuid": this.uuid,
+          "name": this.details["name"]
+        }
+      });
+      document.dispatchEvent(event);
+    }
+    start_ticker(event = true) {
+      if (this.previous_time == void 0) {
+        this.previous_time = timeNowSeconds();
+      }
+      if (event) {
+        let event2 = new Event("status_active");
+        document.dispatchEvent(event2);
+      }
+    }
+    stop_ticker(event = true) {
+      this.previous_time = void 0;
+      if (event) {
+        let event2 = new Event("status_inactive");
+        document.dispatchEvent(event2);
+      }
+    }
+    async #ticker() {
+      let time_now = timeNowSeconds();
+      if (this.instance_storage == void 0 || this.previous_time == void 0) {
+        return;
+      }
+      let time_between_lines = this.details["last_active_at"] !== void 0 ? time_now - this.details["last_active_at"] : 0;
+      let time_between_ticks = time_now - this.previous_time;
+      this.previous_time = time_now;
+      if (time_between_lines <= this.properties["afk_max_time"]) {
+        await this.instance_storage.addDailyStats(dateNowString(), {
+          "time_read": time_between_ticks
+        });
+        this.start_ticker();
+      } else {
+        this.stop_ticker();
+      }
+    }
+  };
+
+  // src/vn/vn_storage.js
+  var browser3 = require_browser_polyfill();
+  var VNStorage = class extends MediaStorage {
+    constructor(type_storage, instance_storage, live_stat_update = false) {
+      super(type_storage, instance_storage, live_stat_update);
+      this.max_lines = Number.parseInt(type_storage.properties["max_loaded_lines"]);
+    }
+    static async build(type, live_stat_update = false) {
+      let [type_storage, instance_storage] = await super.build(type);
+      return new VNStorage(type_storage, instance_storage, live_stat_update);
     }
     async logLines() {
       const event = new CustomEvent("media_changed", {
@@ -2076,13 +2129,6 @@
         document.dispatchEvent(event);
       }
     }
-    async deleteLine(line_id, line, date) {
-      await this.instance_storage.deleteLine(line_id);
-      await this.instance_storage.subDailyStats(date, {
-        "lines_read": lineSplitCount(line),
-        "chars_read": charsInLine(line)
-      });
-    }
     async deleteLines(details) {
       let date_stats = {};
       details.forEach(([_, line, date]) => {
@@ -2100,38 +2146,12 @@
       await this.instance_storage.deleteLines(details.map(([line_id, _, time]) => line_id));
       await this.instance_storage.subStats(date_stats);
     }
-    start_ticker(event = true) {
-      if (this.previous_time == void 0) {
-        this.previous_time = timeNowSeconds();
-      }
-      if (event) {
-        let event2 = new Event("status_active");
-        document.dispatchEvent(event2);
-      }
-    }
-    stop_ticker(event = true) {
-      this.previous_time = void 0;
-      if (event) {
-        let event2 = new Event("status_inactive");
-        document.dispatchEvent(event2);
-      }
-    }
-    async #ticker() {
-      let time_now = timeNowSeconds();
-      if (this.instance_storage == void 0 || this.previous_time == void 0) {
-        return;
-      }
-      let time_between_lines = this.details["last_active_at"] !== void 0 ? time_now - this.details["last_active_at"] : 0;
-      let time_between_ticks = time_now - this.previous_time;
-      this.previous_time = time_now;
-      if (time_between_lines <= this.properties["afk_max_time"]) {
-        await this.instance_storage.addDailyStats(dateNowString(), {
-          "time_read": time_between_ticks
-        });
-        this.start_ticker();
-      } else {
-        this.stop_ticker();
-      }
+    async deleteLine(line_id, line, date) {
+      await this.instance_storage.deleteLine(line_id);
+      await this.instance_storage.subDailyStats(date, {
+        "lines_read": lineSplitCount(line),
+        "chars_read": charsInLine(line)
+      });
     }
   };
 
@@ -2244,23 +2264,23 @@
   // src/vn/ui_properties.js
   var import_papaparse2 = __toESM(require_papaparse_min());
   var browser5 = require_browser_polyfill();
-  var media_storage;
-  function setStorage(media_storage_) {
-    media_storage = media_storage_;
+  var vn_storage;
+  function setStorage(vn_storage_) {
+    vn_storage = vn_storage_;
   }
   async function useProperty(element_id, global_css_property = false, units = "") {
     let element = document.getElementById(element_id);
     let properties = {};
     properties[element_id] = element.value;
-    await media_storage.type_storage.updateProperties(properties);
+    await vn_storage.type_storage.updateProperties(properties);
     if (global_css_property) {
       document.documentElement.style.setProperty(global_css_property, element.value + units);
     }
   }
   async function setupProperty(element_id, event_type, global_css_property = false, units = "") {
     let element = document.getElementById(element_id);
-    if (media_storage.properties.hasOwnProperty(element_id)) {
-      element.value = media_storage.properties[element_id];
+    if (vn_storage.properties.hasOwnProperty(element_id)) {
+      element.value = vn_storage.properties[element_id];
     }
     await useProperty(element_id, global_css_property, units);
     if (event_type) {
@@ -2268,20 +2288,20 @@
     }
   }
   function gameNameModified(event) {
-    media_storage.instance_storage.updateDetails({
+    vn_storage.instance_storage.updateDetails({
       "name": event["target"].value
     });
     showNameTitle(event["target"].value);
   }
   async function userActive() {
     let time = timeNowSeconds();
-    if (media_storage.instance_storage === void 0)
+    if (vn_storage.instance_storage === void 0)
       return;
-    if (media_storage.previous_time === void 0) {
-      await media_storage.instance_storage.updateDetails({ "last_active_at": time });
-      media_storage.start_ticker();
+    if (vn_storage.previous_time === void 0) {
+      await vn_storage.instance_storage.updateDetails({ "last_active_at": time });
+      vn_storage.start_ticker();
     } else {
-      media_storage.stop_ticker();
+      vn_storage.stop_ticker();
     }
   }
   function openStats() {
@@ -2291,7 +2311,7 @@
     });
   }
   async function deleteLines() {
-    if (media_storage.instance_storage === void 0)
+    if (vn_storage.instance_storage === void 0)
       return;
     let checked_boxes = Array.from(document.querySelectorAll(".line-select:checked"));
     if (checked_boxes.length === 0)
@@ -2307,7 +2327,7 @@ Char and line statistics will be modified accordingly however time read won't ch
       element_div.textContent,
       timeToDateString(Number.parseInt(element_div.dataset.time))
     ]);
-    await media_storage.deleteLines(details);
+    await vn_storage.deleteLines(details);
     parents.forEach((element_div) => element_div.remove());
     setStats();
   }
@@ -2352,15 +2372,15 @@ Char and line statistics will be modified accordingly however time read won't ch
   console.log("Injected");
   var browser7 = require_browser_polyfill();
   var SECS_TO_HOURS = 60 * 60;
-  var media_storage2;
+  var vn_storage2;
   async function setup() {
-    media_storage2 = await MediaStorage.build("vn", true);
+    vn_storage2 = await VNStorage.build("vn", true);
     var port = browser7.runtime.connect({ "name": "vn_lines" });
     port.onMessage.addListener(async (data) => {
-      await media_storage2.changeInstance(void 0, data["process_path"]);
-      await media_storage2.addLine(data["line"], data["date"], data["time"]);
+      await vn_storage2.changeInstance(void 0, data["process_path"]);
+      await vn_storage2.addLine(data["line"], data["date"], data["time"]);
     });
-    setStorage(media_storage2);
+    setStorage(vn_storage2);
     await setupProperties();
     setStats();
   }
@@ -2373,7 +2393,7 @@ Char and line statistics will be modified accordingly however time read won't ch
   document.addEventListener("status_active", setActive);
   async function setInactive() {
     document.getElementById("activity_symbol").innerHTML = "bedtime";
-    document.documentElement.style.setProperty("--default-inactivity-blur", media_storage2.properties["inactivity_blur"] + "px");
+    document.documentElement.style.setProperty("--default-inactivity-blur", vn_storage2.properties["inactivity_blur"] + "px");
     setStats();
   }
   document.addEventListener("status_inactive", setInactive);
@@ -2400,12 +2420,12 @@ Char and line statistics will be modified accordingly however time read won't ch
     document.title = "exSTATic | " + name;
   }
   function setStats() {
-    if (media_storage2.instance_storage == void 0 || media_storage2.instance_storage.today_stats == void 0) {
+    if (vn_storage2.instance_storage == void 0 || vn_storage2.instance_storage.today_stats == void 0) {
       return;
     }
-    let chars_read = media_storage2.instance_storage.today_stats["chars_read"];
-    let lines_read = media_storage2.instance_storage.today_stats["lines_read"];
-    let time_read = media_storage2.instance_storage.today_stats["time_read"];
+    let chars_read = vn_storage2.instance_storage.today_stats["chars_read"];
+    let lines_read = vn_storage2.instance_storage.today_stats["lines_read"];
+    let time_read = vn_storage2.instance_storage.today_stats["time_read"];
     if (chars_read !== void 0) {
       document.getElementById("chars_read").innerHTML = chars_read.toLocaleString();
     }

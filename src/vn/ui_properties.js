@@ -5,10 +5,10 @@ import { parse } from "papaparse"
 
 var browser = require("webextension-polyfill")
 
-var media_storage
+var vn_storage
 
-export function setStorage(media_storage_) {
-    media_storage = media_storage_
+export function setStorage(vn_storage_) {
+    vn_storage = vn_storage_
 }
 
 async function useProperty(element_id, global_css_property=false, units="") {
@@ -17,7 +17,7 @@ async function useProperty(element_id, global_css_property=false, units="") {
     // Update storage property
     let properties = {}
     properties[element_id] = element.value
-    await media_storage.type_storage.updateProperties(properties)
+    await vn_storage.type_storage.updateProperties(properties)
 
     // If possible set the global css property
     if (global_css_property) {
@@ -29,8 +29,8 @@ async function setupProperty(element_id, event_type, global_css_property=false, 
     let element = document.getElementById(element_id)
     
     // If storage contains this property then use it
-    if (media_storage.properties.hasOwnProperty(element_id)) {
-        element.value = media_storage.properties[element_id]
+    if (vn_storage.properties.hasOwnProperty(element_id)) {
+        element.value = vn_storage.properties[element_id]
     }
     
     // Set the storage value andd global css property
@@ -46,7 +46,7 @@ async function setupProperty(element_id, event_type, global_css_property=false, 
 }
 
 function gameNameModified(event) {
-    media_storage.instance_storage.updateDetails({
+    vn_storage.instance_storage.updateDetails({
         "name": event["target"].value
     })
     showNameTitle(event["target"].value)
@@ -54,13 +54,13 @@ function gameNameModified(event) {
 
 async function userActive() {
     let time = timeNowSeconds()
-    if (media_storage.instance_storage === undefined) return
+    if (vn_storage.instance_storage === undefined) return
     
-    if (media_storage.previous_time === undefined) {
-        await media_storage.instance_storage.updateDetails({"last_active_at": time})
-        media_storage.start_ticker()
+    if (vn_storage.previous_time === undefined) {
+        await vn_storage.instance_storage.updateDetails({"last_active_at": time})
+        vn_storage.start_ticker()
     } else {
-        media_storage.stop_ticker()
+        vn_storage.stop_ticker()
     }
 }
 
@@ -72,7 +72,7 @@ function openStats() {
 }
 
 async function deleteLines() {
-    if (media_storage.instance_storage === undefined) return
+    if (vn_storage.instance_storage === undefined) return
 
     let checked_boxes = Array.from(document.querySelectorAll(".line-select:checked"))
 
@@ -93,7 +93,7 @@ async function deleteLines() {
         timeToDateString(Number.parseInt(element_div.dataset.time))
     ])
 
-    await media_storage.deleteLines(details)
+    await vn_storage.deleteLines(details)
     parents.forEach(element_div => element_div.remove())
     
     setStats()

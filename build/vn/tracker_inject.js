@@ -2055,13 +2055,16 @@
       let previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]]);
       let previous_line = (await browser3.storage.local.get(previous_line_key))[previous_line_key];
       if (line != previous_line) {
+        let chars_in_line = charsInLine(line);
+        if (chars_in_line === 0)
+          return;
         this.start_ticker(false);
         await this.instance_storage.insertLine(line, time);
         await this.instance_storage.addToDates(date);
         await this.instance_storage.addToDate(date);
         await this.instance_storage.addDailyStats(date, {
           "lines_read": lineSplitCount(line),
-          "chars_read": charsInLine(line)
+          "chars_read": chars_in_line
         });
         const event = new CustomEvent("new_line", {
           "detail": {

@@ -1934,7 +1934,7 @@
       await this.instance_storage.deleteLines(details.map(([line_id, _, time]) => line_id));
       await this.instance_storage.subStats(date_stats);
     }
-    async start_ticker(event = true) {
+    start_ticker(event = true) {
       if (this.previous_time == void 0) {
         this.previous_time = timeNowSeconds();
       }
@@ -1943,7 +1943,7 @@
         document.dispatchEvent(event2);
       }
     }
-    async stop_ticker(event = true) {
+    stop_ticker(event = true) {
       this.previous_time = void 0;
       if (event) {
         let event2 = new Event("status_inactive");

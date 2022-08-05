@@ -154,7 +154,7 @@ export class MediaStorage {
         await this.instance_storage.subStats(date_stats)
     }
 
-    async start_ticker(event=true) {
+    start_ticker(event=true) {
         if (this.previous_time == undefined) {
             this.previous_time = timeNowSeconds()
         }
@@ -165,7 +165,7 @@ export class MediaStorage {
         }
     }
 
-    async stop_ticker(event=true) {
+    stop_ticker(event=true) {
         this.previous_time = undefined
 
         if (event) {

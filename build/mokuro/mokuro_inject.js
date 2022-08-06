@@ -1433,7 +1433,7 @@
   };
 
   // src/storage/media_storage.js
-  var REFRESH_STATS_INTERVAL = 100;
+  var REFRESH_STATS_INTERVAL = 1e3;
   var MediaStorage = class {
     constructor(type_storage, instance_storage, live_stat_update = false) {
       this.type_storage = type_storage;

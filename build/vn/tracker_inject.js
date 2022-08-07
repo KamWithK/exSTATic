@@ -2057,6 +2057,13 @@
     rn = new Date();
     return formatISO(rn, { "representation": "date" });
   }
+  function timeToDateString(time) {
+    if (time === void 0 || isNaN(time))
+      return;
+    let date = new Date(0);
+    date.setSeconds(time);
+    return formatISO(date, { "representation": "date" });
+  }
   function timeNowSeconds() {
     let rn2 = new Date();
     return rn2.getTime() / 1e3;
@@ -3314,10 +3321,10 @@
         t0 = text(ctx[3]);
         t1 = space();
         input = element("input");
-        attr(p, "class", "sentence h-full");
+        attr(p, "class", "sentence w-full");
         attr(input, "type", "checkbox");
         attr(input, "class", "line-select");
-        attr(div, "class", "sentence-entry h-full");
+        attr(div, "class", "sentence-entry w-full");
         attr(div, "data-line-id", ctx[1]);
         attr(div, "data-time", ctx[2]);
       },
@@ -3571,7 +3578,7 @@
       m(target, anchor) {
         insert(target, button, anchor);
         if (!mounted) {
-          dispose = listen(button, "click", ctx[9]);
+          dispose = listen(button, "click", ctx[10]);
           mounted = true;
         }
       },
@@ -3747,7 +3754,7 @@
             listen(button0, "click", exportStats),
             listen(button1, "click", ctx[4]),
             listen(input, "change", ctx[5]),
-            listen(button2, "click", ctx[10]),
+            listen(button2, "click", ctx[11]),
             listen(button3, "click", ctx[6])
           ];
           mounted = true;
@@ -3878,7 +3885,7 @@
       }
     });
     function lineholder_lines_binding(value) {
-      ctx[11](value);
+      ctx[12](value);
     }
     let lineholder_props = {};
     if (ctx[2] !== void 0) {
@@ -3886,7 +3893,7 @@
     }
     lineholder = new line_holder_default({ props: lineholder_props });
     binding_callbacks.push(() => bind(lineholder, "lines", lineholder_lines_binding));
-    lineholder.$on("click", ctx[12]);
+    lineholder.$on("click", ctx[13]);
     lineholder.$on("dblclick", ctx[7]);
     return {
       c() {
@@ -3929,7 +3936,10 @@
         mount_component(lineholder, body, null);
         current = true;
         if (!mounted) {
-          dispose = listen(input, "input", ctx[8]);
+          dispose = [
+            listen(input, "input", ctx[9]),
+            listen(button, "click", ctx[8])
+          ];
           mounted = true;
         }
       },
@@ -3938,7 +3948,7 @@
           set_input_value(input, ctx2[0]);
         }
         const statbar_changes = {};
-        if (dirty & 131080) {
+        if (dirty & 262152) {
           statbar_changes.$$scope = { dirty, ctx: ctx2 };
         }
         statbar.$set(statbar_changes);
@@ -3947,7 +3957,7 @@
           menubar_changes.show = ctx2[3];
         if (dirty & 2)
           menubar_changes.media_storage = ctx2[1];
-        if (dirty & 131074) {
+        if (dirty & 262146) {
           menubar_changes.$$scope = { dirty, ctx: ctx2 };
         }
         menubar.$set(menubar_changes);
@@ -3980,7 +3990,7 @@
         destroy_component(menubar);
         destroy_component(lineholder);
         mounted = false;
-        dispose();
+        run_all(dispose);
       }
     };
   }
@@ -4082,6 +4092,26 @@
         vn_storage.stop_ticker();
       }
     });
+    const deleteLines = () => __awaiter(void 0, void 0, void 0, function* () {
+      if (vn_storage.instance_storage === void 0)
+        return;
+      let checked_boxes = Array.from(document.querySelectorAll(".line-select:checked"));
+      if (checked_boxes.length === 0)
+        return;
+      let plural = checked_boxes.length > 1 ? "lines" : "line";
+      const confirmed = confirm(`Are you sure you'd like to delete ${checked_boxes.length} ${plural}?
+Char and line statistics will be modified accordingly however time read won't change...`);
+      if (!confirmed)
+        return;
+      let parents = checked_boxes.map((checkbox) => checkbox.parentElement);
+      let details = parents.map((element_div) => [
+        Number.parseInt(element_div.dataset.line_id),
+        element_div.textContent,
+        timeToDateString(Number.parseInt(element_div.dataset.time))
+      ]);
+      yield vn_storage.deleteLines(details);
+      parents.forEach((element_div) => element_div.remove());
+    });
     function input_input_handler() {
       title = this.value;
       $$invalidate(0, title);
@@ -4108,6 +4138,7 @@
       requestImportLines,
       openStats,
       userActive,
+      deleteLines,
       input_input_handler,
       click_handler,
       click_handler_1,

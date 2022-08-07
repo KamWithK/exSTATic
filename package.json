@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "node esbuild.js"
+    "build": "node esbuild.ts"
   },
   "dependencies": {
     "async-mutex": "^0.3.2",

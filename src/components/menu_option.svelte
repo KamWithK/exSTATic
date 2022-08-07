@@ -33,7 +33,9 @@
         ) {
             value = media_storage.properties[id]
             input_element.value = value
-            
+        }
+
+        if (input_element != undefined && input_element.value != undefined) {
             input_element.dispatchEvent(new Event("change"))
         }
     }

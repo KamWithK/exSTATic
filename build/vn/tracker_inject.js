@@ -3079,6 +3079,8 @@
       if (media_storage2 !== void 0 && media_storage2.properties !== void 0 && media_storage2.properties.hasOwnProperty(id)) {
         $$invalidate(0, value = media_storage2.properties[id]);
         $$invalidate(4, input_element.value = value, input_element);
+      }
+      if (input_element != void 0 && input_element.value != void 0) {
         input_element.dispatchEvent(new Event("change"));
       }
     }

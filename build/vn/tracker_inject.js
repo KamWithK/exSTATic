@@ -2704,32 +2704,24 @@
   function create_fragment(ctx) {
     let div8;
     let div0;
-    let t0_value = ctx[0].toLocaleString() + "";
-    let t0;
     let t1;
     let div1;
     let t3;
     let span0;
     let t5;
     let div2;
-    let t6_value = ctx[1].toLocaleString() + "";
-    let t6;
     let t7;
     let div3;
     let t9;
     let span1;
     let t11;
     let div4;
-    let t12_value = formatTime(ctx[2]) + "";
-    let t12;
     let t13;
     let div5;
     let t15;
     let span2;
     let t17;
     let div6;
-    let t18_value = (ctx[0] / ctx[2] * ctx[4]).toLocaleString() + "";
-    let t18;
     let t19;
     let div7;
     let t21;
@@ -2737,19 +2729,19 @@
     let t22;
     let current;
     function select_block_type(ctx2, dirty) {
-      if (ctx2[3])
+      if (ctx2[0])
         return create_if_block;
       return create_else_block;
     }
     let current_block_type = select_block_type(ctx, -1);
     let if_block = current_block_type(ctx);
-    const default_slot_template = ctx[6].default;
-    const default_slot = create_slot(default_slot_template, ctx, ctx[5], null);
+    const default_slot_template = ctx[7].default;
+    const default_slot = create_slot(default_slot_template, ctx, ctx[6], null);
     return {
       c() {
         div8 = element("div");
         div0 = element("div");
-        t0 = text(t0_value);
+        div0.textContent = `${ctx[1]()}`;
         t1 = space();
         div1 = element("div");
         div1.textContent = "Chars";
@@ -2758,7 +2750,7 @@
         span0.textContent = "auto_stories";
         t5 = space();
         div2 = element("div");
-        t6 = text(t6_value);
+        div2.textContent = `${ctx[2]()}`;
         t7 = space();
         div3 = element("div");
         div3.textContent = "Lines";
@@ -2767,7 +2759,7 @@
         span1.textContent = "drive_file_rename_outline";
         t11 = space();
         div4 = element("div");
-        t12 = text(t12_value);
+        div4.textContent = `${ctx[3]()}`;
         t13 = space();
         div5 = element("div");
         div5.textContent = "Elapsed";
@@ -2776,7 +2768,7 @@
         span2.textContent = "timer";
         t17 = space();
         div6 = element("div");
-        t18 = text(t18_value);
+        div6.textContent = `${ctx[4]()}`;
         t19 = space();
         div7 = element("div");
         div7.textContent = "Chars / Hour";
@@ -2808,28 +2800,24 @@
       m(target, anchor) {
         insert(target, div8, anchor);
         append(div8, div0);
-        append(div0, t0);
         append(div8, t1);
         append(div8, div1);
         append(div8, t3);
         append(div8, span0);
         append(div8, t5);
         append(div8, div2);
-        append(div2, t6);
         append(div8, t7);
         append(div8, div3);
         append(div8, t9);
         append(div8, span1);
         append(div8, t11);
         append(div8, div4);
-        append(div4, t12);
         append(div8, t13);
         append(div8, div5);
         append(div8, t15);
         append(div8, span2);
         append(div8, t17);
         append(div8, div6);
-        append(div6, t18);
         append(div8, t19);
         append(div8, div7);
         append(div8, t21);
@@ -2842,14 +2830,6 @@
         current = true;
       },
       p(ctx2, [dirty]) {
-        if ((!current || dirty & 1) && t0_value !== (t0_value = ctx2[0].toLocaleString() + ""))
-          set_data(t0, t0_value);
-        if ((!current || dirty & 2) && t6_value !== (t6_value = ctx2[1].toLocaleString() + ""))
-          set_data(t6, t6_value);
-        if ((!current || dirty & 4) && t12_value !== (t12_value = formatTime(ctx2[2]) + ""))
-          set_data(t12, t12_value);
-        if ((!current || dirty & 5) && t18_value !== (t18_value = (ctx2[0] / ctx2[2] * ctx2[4]).toLocaleString() + ""))
-          set_data(t18, t18_value);
         if (current_block_type !== (current_block_type = select_block_type(ctx2, dirty))) {
           if_block.d(1);
           if_block = current_block_type(ctx2);
@@ -2859,8 +2839,8 @@
           }
         }
         if (default_slot) {
-          if (default_slot.p && (!current || dirty & 32)) {
-            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[5], !current ? get_all_dirty_from_scope(ctx2[5]) : get_slot_changes(default_slot_template, ctx2[5], dirty, null), null);
+          if (default_slot.p && (!current || dirty & 64)) {
+            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[6], !current ? get_all_dirty_from_scope(ctx2[6]) : get_slot_changes(default_slot_template, ctx2[6], dirty, null), null);
           }
         }
       },
@@ -2883,36 +2863,53 @@
       }
     };
   }
-  function formatTime(time_secs) {
-    let date = new Date(0);
-    date.setSeconds(Math.round(time_secs));
-    return date.toISOString().substring(11, 19);
-  }
   function instance($$self, $$props, $$invalidate) {
     let { $$slots: slots = {}, $$scope } = $$props;
     let SECS_TO_HOURS = 60 * 60;
-    let { chars = 0 } = $$props;
-    let { lines = 0 } = $$props;
-    let { time = 0 } = $$props;
+    let { media_storage } = $$props;
     let { active = false } = $$props;
-    $$self.$$set = ($$props2) => {
-      if ("chars" in $$props2)
-        $$invalidate(0, chars = $$props2.chars);
-      if ("lines" in $$props2)
-        $$invalidate(1, lines = $$props2.lines);
-      if ("time" in $$props2)
-        $$invalidate(2, time = $$props2.time);
-      if ("active" in $$props2)
-        $$invalidate(3, active = $$props2.active);
-      if ("$$scope" in $$props2)
-        $$invalidate(5, $$scope = $$props2.$$scope);
+    let stats = { "chars": 0, "lines": 0, "time": 0 };
+    const setStats = (media_storage2) => {
+      if (media_storage2 !== void 0 && media_storage2.instance_storage != void 0) {
+        stats = media_storage2.instance_storage.today_stats;
+      }
     };
-    return [chars, lines, time, active, SECS_TO_HOURS, $$scope, slots];
+    function getChars() {
+      return stats["chars"] !== void 0 ? stats["chars"].toLocaleString() : 0;
+    }
+    function getLines() {
+      return stats["lines"] !== void 0 ? stats["lines"].toLocaleString() : 0;
+    }
+    function getTime() {
+      let date = new Date(0);
+      date.setSeconds(Math.round(stats["time"]));
+      return date.toISOString().substring(11, 19);
+    }
+    function getSpeed() {
+      if (stats["chars"] === void 0 || stats["time"] === void 0)
+        return 0 .toLocaleString();
+      return (stats["chars"] / stats["time"] * SECS_TO_HOURS).toLocaleString();
+    }
+    $$self.$$set = ($$props2) => {
+      if ("media_storage" in $$props2)
+        $$invalidate(5, media_storage = $$props2.media_storage);
+      if ("active" in $$props2)
+        $$invalidate(0, active = $$props2.active);
+      if ("$$scope" in $$props2)
+        $$invalidate(6, $$scope = $$props2.$$scope);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 32) {
+        $:
+          setStats(media_storage);
+      }
+    };
+    return [active, getChars, getLines, getTime, getSpeed, media_storage, $$scope, slots];
   }
   var Stat_bar = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance, create_fragment, safe_not_equal, { chars: 0, lines: 1, time: 2, active: 3 });
+      init(this, options, instance, create_fragment, safe_not_equal, { media_storage: 5, active: 0 });
     }
   };
   var stat_bar_default = Stat_bar;
@@ -3756,7 +3753,7 @@
             listen(button0, "click", exportStats),
             listen(button1, "click", ctx[4]),
             listen(input, "change", ctx[5]),
-            listen(button2, "click", ctx[11]),
+            listen(button2, "click", ctx[12]),
             listen(button3, "click", ctx[6])
           ];
           mounted = true;
@@ -3862,6 +3859,7 @@
     let t0;
     let div0;
     let statbar;
+    let updating_media_storage;
     let t1;
     let menubar;
     let t2;
@@ -3872,12 +3870,18 @@
     let current;
     let mounted;
     let dispose;
-    statbar = new stat_bar_default({
-      props: {
-        $$slots: { default: [create_default_slot_1] },
-        $$scope: { ctx }
-      }
-    });
+    function statbar_media_storage_binding(value) {
+      ctx[11](value);
+    }
+    let statbar_props = {
+      $$slots: { default: [create_default_slot_1] },
+      $$scope: { ctx }
+    };
+    if (ctx[1] !== void 0) {
+      statbar_props.media_storage = ctx[1];
+    }
+    statbar = new stat_bar_default({ props: statbar_props });
+    binding_callbacks.push(() => bind(statbar, "media_storage", statbar_media_storage_binding));
     menubar = new menu_bar_default({
       props: {
         show: ctx[3],
@@ -3887,7 +3891,7 @@
       }
     });
     function lineholder_lines_binding(value) {
-      ctx[12](value);
+      ctx[13](value);
     }
     let lineholder_props = {};
     if (ctx[2] !== void 0) {
@@ -3895,7 +3899,7 @@
     }
     lineholder = new line_holder_default({ props: lineholder_props });
     binding_callbacks.push(() => bind(lineholder, "lines", lineholder_lines_binding));
-    lineholder.$on("click", ctx[13]);
+    lineholder.$on("click", ctx[14]);
     lineholder.$on("dblclick", ctx[7]);
     return {
       c() {
@@ -3950,8 +3954,13 @@
           set_input_value(input, ctx2[0]);
         }
         const statbar_changes = {};
-        if (dirty & 262152) {
+        if (dirty & 524296) {
           statbar_changes.$$scope = { dirty, ctx: ctx2 };
+        }
+        if (!updating_media_storage && dirty & 2) {
+          updating_media_storage = true;
+          statbar_changes.media_storage = ctx2[1];
+          add_flush_callback(() => updating_media_storage = false);
         }
         statbar.$set(statbar_changes);
         const menubar_changes = {};
@@ -3959,7 +3968,7 @@
           menubar_changes.show = ctx2[3];
         if (dirty & 2)
           menubar_changes.media_storage = ctx2[1];
-        if (dirty & 262146) {
+        if (dirty & 524290) {
           menubar_changes.$$scope = { dirty, ctx: ctx2 };
         }
         menubar.$set(menubar_changes);
@@ -4119,6 +4128,10 @@ Char and line statistics will be modified accordingly however time read won't ch
       $$invalidate(0, title);
     }
     const click_handler = () => $$invalidate(3, menu = !menu);
+    function statbar_media_storage_binding(value) {
+      vn_storage = value;
+      $$invalidate(1, vn_storage);
+    }
     const click_handler_1 = () => document.getElementById("import_stats").click();
     function lineholder_lines_binding(value) {
       lines = value;
@@ -4143,6 +4156,7 @@ Char and line statistics will be modified accordingly however time read won't ch
       deleteLines,
       input_input_handler,
       click_handler,
+      statbar_media_storage_binding,
       click_handler_1,
       lineholder_lines_binding,
       click_handler_2

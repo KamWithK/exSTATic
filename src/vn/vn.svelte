@@ -130,7 +130,7 @@
 	<div id="top_bar" class="flex z-50 h-20 items-center justify-between">
 		<input id="game_name" class="w-20 h-full shrink grow justify-self-start jp-text" type="text" bind:value={title}>
 		<div class="relative">
-			<StatBar>
+			<StatBar bind:media_storage={vn_storage}>
 				<button class="material-icons rounded-full hover:bg-indigo-700" on:click={() => menu = !menu}>more_vert</button>
 			</StatBar>
 			<MenuBar show={menu} media_storage={vn_storage}>

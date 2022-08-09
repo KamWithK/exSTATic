@@ -5,12 +5,12 @@ import { unparse } from "papaparse"
 var browser = require("webextension-polyfill")
 
 export async function getDateData(date) {
-    let uuids = (await browser.storage.local.get(date))[date]
+    const uuids = (await browser.storage.local.get(date))[date]
     
-    let date_data = uuids.map(async (uuid, _) => {
-        let details = (await browser.storage.local.get(uuid))[uuid]
+    const date_data = uuids.map(async (uuid, _) => {
+        const details = (await browser.storage.local.get(uuid))[uuid]
 
-        let uuid_date_key = JSON.stringify([uuid, date])
+        const uuid_date_key = JSON.stringify([uuid, date])
         let stats_entry = (await browser.storage.local.get(uuid_date_key))[uuid_date_key]
 
         // Processed stats
@@ -36,19 +36,19 @@ export async function getDateData(date) {
 }
 
 export async function getData() {
-    let dates = await browser.storage.local.get("immersion_dates")
+    const dates = await browser.storage.local.get("immersion_dates")
     
     if (!dates.hasOwnProperty("immersion_dates")) {
         return
     }
 
-    let data = await Promise.all(dates["immersion_dates"].map(getDateData))
+    const data = await Promise.all(dates["immersion_dates"].map(getDateData))
     
     return data.flat()
 }
 
 export async function exportStats() {
-    let data = await getData()
+    const data = await getData()
 
     chrome.runtime.sendMessage({
         "action": "export_csv",
@@ -63,10 +63,10 @@ async function getInstanceData([uuid, details]) {
         return
     }
 
-    let id_queries = [...Array(details["last_line_added"] + 1).keys()].map(
+    const id_queries = [...Array(details["last_line_added"] + 1).keys()].map(
         index => JSON.stringify([uuid, index])
     )
-    let lines = await browser.storage.local.get(id_queries)
+    const lines = await browser.storage.local.get(id_queries)
 
     return Object.values(lines).map(line => {
         return {
@@ -80,13 +80,13 @@ async function getInstanceData([uuid, details]) {
 }
 
 export async function exportLines() {
-    let media = await browser.storage.local.get("media")
+    const media = await browser.storage.local.get("media")
     if (!media.hasOwnProperty("media")) {
         return
     }
 
-    let detail_entries = await browser.storage.local.get(Object.values(media["media"]))
-    let data = await Promise.all(Object.entries(detail_entries).map(getInstanceData))
+    const detail_entries = await browser.storage.local.get(Object.values(media["media"]))
+    const data = await Promise.all(Object.entries(detail_entries).map(getInstanceData))
 
     chrome.runtime.sendMessage({
         "action": "export_csv",
@@ -102,9 +102,9 @@ export async function importStats(data) {
             return
         }
 
-        let type_storage = new TypeStorage(entry["type"])
+        const type_storage = new TypeStorage(entry["type"])
         await type_storage.setup()
-        let uuid = await type_storage.addMedia(entry["given_identifier"], entry["uuid"])
+        const uuid = await type_storage.addMedia(entry["given_identifier"], entry["uuid"])
 
         let stats = {}
         if (entry.hasOwnProperty("chars_read")) {
@@ -117,7 +117,7 @@ export async function importStats(data) {
             stats["time_read"] = entry["time_read"]
         }
 
-        let instance_storage = new InstanceStorage(uuid)
+        const instance_storage = new InstanceStorage(uuid)
         await instance_storage.setup()
     
         if (entry.hasOwnProperty("name")) {

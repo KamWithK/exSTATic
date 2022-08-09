@@ -9,7 +9,7 @@ var browser = require("webextension-polyfill")
 browser.runtime.onMessage.addListener(message_action)
 
 browser.browserAction.onClicked.addListener(async _ => {
-    let listen_status = (await browser.storage.local.get("listen_status"))["listen_status"]
+    const listen_status = (await browser.storage.local.get("listen_status"))["listen_status"]
 
     if (listen_status == true || listen_status === undefined) {
         await browser.browserAction.setIcon({

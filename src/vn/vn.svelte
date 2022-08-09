@@ -20,7 +20,7 @@
 	const setup = async () => {
 		vn_storage = await promise
 
-		let port = browser.runtime.connect({"name": "vn_lines"})
+		const port = browser.runtime.connect({"name": "vn_lines"})
 		port.onMessage.addListener(async data => {
 			await vn_storage.changeInstance(undefined, data["process_path"])
 			await vn_storage.addLine(data["line"], data["date"], data["time"])
@@ -89,7 +89,7 @@
 	}
 
 	const userActive = async () => {
-		let time = timeNowSeconds()
+		const time = timeNowSeconds()
 		if (vn_storage.instance_storage === undefined) return
 		
 		if (vn_storage.previous_time === undefined) {
@@ -103,11 +103,11 @@
 	const deleteLines = async () => {
 		if (vn_storage.instance_storage === undefined) return
 
-		let checked_boxes = Array.from(document.querySelectorAll(".line-select:checked"))
+		const checked_boxes = Array.from(document.querySelectorAll(".line-select:checked"))
 
 		if (checked_boxes.length === 0) return
 
-		let plural = checked_boxes.length > 1 ? "lines" : "line"
+		const plural = checked_boxes.length > 1 ? "lines" : "line"
 
 		const confirmed = confirm(
 			`Are you sure you'd like to delete ${checked_boxes.length} ${plural}?\nChar and line statistics will be modified accordingly however time read won't change...`
@@ -115,8 +115,8 @@
 
 		if (!confirmed) return
 
-		let parents = checked_boxes.map(checkbox => checkbox.parentElement)
-		let details = parents.map(element_div => [
+		const parents = checked_boxes.map(checkbox => checkbox.parentElement)
+		const details = parents.map(element_div => [
 			Number.parseInt(element_div.dataset.lineId),
 			element_div.textContent,
 			timeToDateString(Number.parseInt(element_div.dataset.time))

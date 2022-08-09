@@ -17,7 +17,7 @@
             : 0
 
     const getTime = time_secs => {
-        let date = new Date(0)
+        const date = new Date(0)
         date.setSeconds(Math.round(time_secs))
         return date.toISOString().substring(11, 19)
     }

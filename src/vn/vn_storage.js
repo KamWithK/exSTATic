@@ -16,7 +16,7 @@ export class VNStorage extends MediaStorage {
     }
 
     static async build(live_stat_update=false) {
-        let [type_storage, instance_storage] = await super.build("vn")
+        const [type_storage, instance_storage] = await super.build("vn")
         return new VNStorage(type_storage, instance_storage, live_stat_update)
     }
 
@@ -32,11 +32,11 @@ export class VNStorage extends MediaStorage {
     }
 
     async addLine(line, date, time) {
-        let previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]])
-        let previous_line = (await browser.storage.local.get(previous_line_key))[previous_line_key]
+        const previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]])
+        const previous_line = (await browser.storage.local.get(previous_line_key))[previous_line_key]
         
         if (previous_line == undefined || line != previous_line[0]) {
-            let chars_in_line = charsInLine(line)
+            const chars_in_line = charsInLine(line)
             if (chars_in_line === 0) return
             
             this.start_ticker(false)

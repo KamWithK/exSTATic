@@ -2318,7 +2318,7 @@
     }
     async setup() {
       this.details = (await browser.storage.local.get(this.uuid))[this.uuid];
-      let uuid_date_key = JSON.stringify([this.uuid, dateNowString()]);
+      const uuid_date_key = JSON.stringify([this.uuid, dateNowString()]);
       this.today_stats = (await browser.storage.local.get(uuid_date_key))[uuid_date_key];
     }
     async updateDetails(details) {
@@ -2328,7 +2328,7 @@
       await browser.storage.local.set(detail_entries);
     }
     async setDailyStats(date, values) {
-      let uuid_date_key = JSON.stringify([this.uuid, date]);
+      const uuid_date_key = JSON.stringify([this.uuid, date]);
       let daily_stats_entry = await browser.storage.local.get(uuid_date_key);
       daily_stats_entry[uuid_date_key] = values;
       if (date == dateNowString()) {
@@ -2340,7 +2340,7 @@
       return this.mutex.runExclusive(async () => this.#addStats(date_stat_adds, multiple));
     }
     async #addStats(date_stat_adds, multiple = 1) {
-      let date_keys = Object.keys(date_stat_adds).map((date) => JSON.stringify([this.uuid, date]));
+      const date_keys = Object.keys(date_stat_adds).map((date) => JSON.stringify([this.uuid, date]));
       let date_stats = await browser.storage.local.get(date_keys);
       date_keys.forEach((key) => {
         let date = JSON.parse(key)[1];
@@ -2371,7 +2371,7 @@
       await this.addDailyStats(date, values, -1 * multiple);
     }
     async insertLine(line, time) {
-      let line_key = JSON.stringify([this.uuid, this.details["last_line_added"] + 1]);
+      const line_key = JSON.stringify([this.uuid, this.details["last_line_added"] + 1]);
       let line_entry = {};
       line_entry[line_key] = [line, time];
       await this.updateDetails({
@@ -2390,10 +2390,10 @@
       if (!this.details.hasOwnProperty("last_line_added")) {
         return;
       }
-      let max_line_id = this.details["last_line_added"];
-      let min_line_id = max_lines <= 0 | max_lines === void 0 | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1);
-      let id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map((index) => JSON.stringify([this.uuid, min_line_id + index]));
-      let lines = await browser.storage.local.get(id_queries);
+      const max_line_id = this.details["last_line_added"];
+      const min_line_id = max_lines <= 0 | max_lines === void 0 | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1);
+      const id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map((index) => JSON.stringify([this.uuid, min_line_id + index]));
+      const lines = await browser.storage.local.get(id_queries);
       return Object.entries(lines).map(([key, line_data]) => {
         let line = typeof line_data === "string" ? line_data : line_data[0];
         let time = typeof line_data === "string" ? void 0 : line_data[1];
@@ -2452,8 +2452,8 @@
       await browser2.storage.local.set(properties_entry);
     }
     async getMedia(given_identifier) {
-      let media_entries = await browser2.storage.local.get("media");
-      let media_key = JSON.stringify([given_identifier, this.type]);
+      const media_entries = await browser2.storage.local.get("media");
+      const media_key = JSON.stringify([given_identifier, this.type]);
       if (media_entries.hasOwnProperty("media") && media_entries["media"].hasOwnProperty(media_key)) {
         return media_entries["media"][media_key];
       } else {
@@ -2465,11 +2465,11 @@
       if (!media_entries.hasOwnProperty("media")) {
         media_entries["media"] = {};
       }
-      let media_key = JSON.stringify([given_identifier, this.type]);
+      const media_key = JSON.stringify([given_identifier, this.type]);
       if (!media_entries["media"].hasOwnProperty(media_key)) {
         let new_uuid = uuid !== void 0 ? uuid : crypto.randomUUID();
         media_entries["media"][media_key] = new_uuid;
-        let details_entry = await browser2.storage.local.get(new_uuid);
+        const details_entry = await browser2.storage.local.get(new_uuid);
         if (!details_entry.hasOwnProperty(new_uuid)) {
           media_entries[new_uuid] = {
             "name": given_identifier,
@@ -2502,7 +2502,7 @@
       }
     }
     static async build(type) {
-      let type_storage = new TypeStorage(type);
+      const type_storage = new TypeStorage(type);
       await type_storage.setup();
       let instance_storage;
       if (type_storage.properties.hasOwnProperty("previous_uuid")) {
@@ -2543,24 +2543,24 @@
         this.previous_time = timeNowSeconds();
       }
       if (event) {
-        let event2 = new Event("status_active");
+        const event2 = new Event("status_active");
         document.dispatchEvent(event2);
       }
     }
     stop_ticker(event = true) {
       this.previous_time = void 0;
       if (event) {
-        let event2 = new Event("status_inactive");
+        const event2 = new Event("status_inactive");
         document.dispatchEvent(event2);
       }
     }
     async #ticker() {
-      let time_now = timeNowSeconds();
+      const time_now = timeNowSeconds();
       if (this.instance_storage == void 0 || this.previous_time == void 0) {
         return;
       }
-      let time_between_lines = this.details["last_active_at"] !== void 0 ? time_now - this.details["last_active_at"] : 0;
-      let time_between_ticks = time_now - this.previous_time;
+      const time_between_lines = this.details["last_active_at"] !== void 0 ? time_now - this.details["last_active_at"] : 0;
+      const time_between_ticks = time_now - this.previous_time;
       this.previous_time = time_now;
       if (time_between_lines <= this.properties["afk_max_time"]) {
         await this.instance_storage.addDailyStats(dateNowString(), {
@@ -2581,7 +2581,7 @@
       this.max_lines = Number.parseInt(type_storage.properties["max_loaded_lines"]);
     }
     static async build(live_stat_update = false) {
-      let [type_storage, instance_storage] = await super.build("vn");
+      const [type_storage, instance_storage] = await super.build("vn");
       return new VNStorage(type_storage, instance_storage, live_stat_update);
     }
     async logLines() {
@@ -2595,10 +2595,10 @@
       document.dispatchEvent(event);
     }
     async addLine(line, date, time) {
-      let previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]]);
-      let previous_line = (await browser3.storage.local.get(previous_line_key))[previous_line_key];
+      const previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]]);
+      const previous_line = (await browser3.storage.local.get(previous_line_key))[previous_line_key];
       if (previous_line == void 0 || line != previous_line[0]) {
-        let chars_in_line = charsInLine(line);
+        const chars_in_line = charsInLine(line);
         if (chars_in_line === 0)
           return;
         this.start_ticker(false);
@@ -2649,10 +2649,10 @@
   var import_papaparse = __toESM(require_papaparse_min());
   var browser4 = require_browser_polyfill();
   async function getDateData(date) {
-    let uuids = (await browser4.storage.local.get(date))[date];
-    let date_data = uuids.map(async (uuid, _) => {
-      let details = (await browser4.storage.local.get(uuid))[uuid];
-      let uuid_date_key = JSON.stringify([uuid, date]);
+    const uuids = (await browser4.storage.local.get(date))[date];
+    const date_data = uuids.map(async (uuid, _) => {
+      const details = (await browser4.storage.local.get(uuid))[uuid];
+      const uuid_date_key = JSON.stringify([uuid, date]);
       let stats_entry = (await browser4.storage.local.get(uuid_date_key))[uuid_date_key];
       if (stats_entry.hasOwnProperty("time_read")) {
         stats_entry["time_read"] = stats_entry["time_read"];
@@ -2672,15 +2672,15 @@
     return Promise.all(date_data);
   }
   async function getData() {
-    let dates = await browser4.storage.local.get("immersion_dates");
+    const dates = await browser4.storage.local.get("immersion_dates");
     if (!dates.hasOwnProperty("immersion_dates")) {
       return;
     }
-    let data = await Promise.all(dates["immersion_dates"].map(getDateData));
+    const data = await Promise.all(dates["immersion_dates"].map(getDateData));
     return data.flat();
   }
   async function exportStats() {
-    let data = await getData();
+    const data = await getData();
     chrome.runtime.sendMessage({
       "action": "export_csv",
       "csv": [(0, import_papaparse.unparse)(data)],
@@ -2692,8 +2692,8 @@
     if (!details.hasOwnProperty("last_line_added")) {
       return;
     }
-    let id_queries = [...Array(details["last_line_added"] + 1).keys()].map((index) => JSON.stringify([uuid, index]));
-    let lines = await browser4.storage.local.get(id_queries);
+    const id_queries = [...Array(details["last_line_added"] + 1).keys()].map((index) => JSON.stringify([uuid, index]));
+    const lines = await browser4.storage.local.get(id_queries);
     return Object.values(lines).map((line) => {
       return {
         "uuid": uuid,
@@ -2705,12 +2705,12 @@
     });
   }
   async function exportLines() {
-    let media = await browser4.storage.local.get("media");
+    const media = await browser4.storage.local.get("media");
     if (!media.hasOwnProperty("media")) {
       return;
     }
-    let detail_entries = await browser4.storage.local.get(Object.values(media["media"]));
-    let data = await Promise.all(Object.entries(detail_entries).map(getInstanceData));
+    const detail_entries = await browser4.storage.local.get(Object.values(media["media"]));
+    const data = await Promise.all(Object.entries(detail_entries).map(getInstanceData));
     chrome.runtime.sendMessage({
       "action": "export_csv",
       "csv": [(0, import_papaparse.unparse)(data.flat())],
@@ -2723,9 +2723,9 @@
       if (!entry.hasOwnProperty("type") || !entry.hasOwnProperty("date") || !entry.hasOwnProperty("given_identifier")) {
         return;
       }
-      let type_storage = new TypeStorage(entry["type"]);
+      const type_storage = new TypeStorage(entry["type"]);
       await type_storage.setup();
-      let uuid = await type_storage.addMedia(entry["given_identifier"], entry["uuid"]);
+      const uuid = await type_storage.addMedia(entry["given_identifier"], entry["uuid"]);
       let stats = {};
       if (entry.hasOwnProperty("chars_read")) {
         stats["chars_read"] = entry["chars_read"];
@@ -2736,7 +2736,7 @@
       if (entry.hasOwnProperty("time_read")) {
         stats["time_read"] = entry["time_read"];
       }
-      let instance_storage = new InstanceStorage(uuid);
+      const instance_storage = new InstanceStorage(uuid);
       await instance_storage.setup();
       if (entry.hasOwnProperty("name")) {
         await instance_storage.updateDetails({
@@ -2969,7 +2969,7 @@
     const statsExist = (media_storage2) => media_storage2.instance_storage != void 0 ? media_storage2.instance_storage.today_stats : void 0;
     const getStat = (daily_stats, stat_key) => daily_stats != void 0 && daily_stats.hasOwnProperty(stat_key) ? daily_stats[stat_key] : 0;
     const getTime = (time_secs) => {
-      let date = new Date(0);
+      const date = new Date(0);
       date.setSeconds(Math.round(time_secs));
       return date.toISOString().substring(11, 19);
     };
@@ -3155,7 +3155,7 @@
       if (root_css !== void 0) {
         document.documentElement.style.setProperty(root_css, `${value}${units}`);
       }
-      let properties = {};
+      const properties = {};
       properties[id] = value;
       if (media_storage !== void 0 && media_storage.type_storage !== void 0) {
         yield media_storage.type_storage.updateProperties(properties);
@@ -4153,7 +4153,7 @@
     let menu = false;
     const setup = () => __awaiter(void 0, void 0, void 0, function* () {
       $$invalidate(3, vn_storage = yield promise);
-      let port = browser5.runtime.connect({ "name": "vn_lines" });
+      const port = browser5.runtime.connect({ "name": "vn_lines" });
       port.onMessage.addListener((data) => __awaiter(void 0, void 0, void 0, function* () {
         yield vn_storage.changeInstance(void 0, data["process_path"]);
         yield vn_storage.addLine(data["line"], data["date"], data["time"]);
@@ -4206,7 +4206,7 @@
       });
     };
     const userActive = () => __awaiter(void 0, void 0, void 0, function* () {
-      let time = timeNowSeconds();
+      const time = timeNowSeconds();
       if (vn_storage.instance_storage === void 0)
         return;
       if (vn_storage.previous_time === void 0) {
@@ -4219,16 +4219,16 @@
     const deleteLines = () => __awaiter(void 0, void 0, void 0, function* () {
       if (vn_storage.instance_storage === void 0)
         return;
-      let checked_boxes = Array.from(document.querySelectorAll(".line-select:checked"));
+      const checked_boxes = Array.from(document.querySelectorAll(".line-select:checked"));
       if (checked_boxes.length === 0)
         return;
-      let plural = checked_boxes.length > 1 ? "lines" : "line";
+      const plural = checked_boxes.length > 1 ? "lines" : "line";
       const confirmed = confirm(`Are you sure you'd like to delete ${checked_boxes.length} ${plural}?
 Char and line statistics will be modified accordingly however time read won't change...`);
       if (!confirmed)
         return;
-      let parents = checked_boxes.map((checkbox) => checkbox.parentElement);
-      let details = parents.map((element_div) => [
+      const parents = checked_boxes.map((checkbox) => checkbox.parentElement);
+      const details = parents.map((element_div) => [
         Number.parseInt(element_div.dataset.lineId),
         element_div.textContent,
         timeToDateString(Number.parseInt(element_div.dataset.time))

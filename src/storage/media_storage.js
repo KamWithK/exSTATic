@@ -38,7 +38,7 @@ export class MediaStorage {
     }
 
     static async build(type) {
-        let type_storage = new TypeStorage(type)
+        const type_storage = new TypeStorage(type)
         await type_storage.setup()
         
         let instance_storage
@@ -97,7 +97,7 @@ export class MediaStorage {
         }
 
         if (event) {
-            let event = new Event("status_active")
+            const event = new Event("status_active")
             document.dispatchEvent(event)
         }
     }
@@ -106,20 +106,20 @@ export class MediaStorage {
         this.previous_time = undefined
 
         if (event) {
-            let event = new Event("status_inactive")
+            const event = new Event("status_inactive")
             document.dispatchEvent(event)
         }
     }
 
     async #ticker() {
-        let time_now = timeNowSeconds()
+        const time_now = timeNowSeconds()
         
         if (this.instance_storage == undefined || this.previous_time == undefined) {
             return
         }
         
-        let time_between_lines = this.details["last_active_at"] !== undefined ? time_now - this.details["last_active_at"] : 0
-        let time_between_ticks = time_now - this.previous_time
+        const time_between_lines = this.details["last_active_at"] !== undefined ? time_now - this.details["last_active_at"] : 0
+        const time_between_ticks = time_now - this.previous_time
         
         this.previous_time = time_now
         

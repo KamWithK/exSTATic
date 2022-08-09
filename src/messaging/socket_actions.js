@@ -2,7 +2,7 @@ import { dateNowString, timeNowSeconds } from "../calculations"
 
 var browser = require("webextension-polyfill")
 
-var SPLIT_PATH = /\\|\//g
+export const SPLIT_PATH = /\\|\//g
 var socket
 
 export class SocketManager {
@@ -30,7 +30,7 @@ export class SocketManager {
     }
 
     connectToWebSocket() {
-        socket = new WebSocket(this.url)
+        const socket = new WebSocket(this.url)
 
         socket.addEventListener("open", this.connectionOpened.bind(this))
         socket.addEventListener("close", this.connectToWebSocket.bind(this))
@@ -43,17 +43,17 @@ export class SocketManager {
     }
     
     async dataFetched(event) {
-        let listen_status = (await browser.storage.local.get("listen_status"))["listen_status"]
+        const listen_status = (await browser.storage.local.get("listen_status"))["listen_status"]
         if (listen_status === false) {
             return
         }
 
         // Start by getting a timestamp for accuracy
-        let time = timeNowSeconds()
-        let date = dateNowString()
+        const time = timeNowSeconds()
+        const date = dateNowString()
 
         // Parse provided data
-        let data = JSON.parse(event.data)
+        const data = JSON.parse(event.data)
         console.log("Recieved Socket Data: ", data)
         
         // Lines will have a valid process path and sentence
@@ -62,10 +62,10 @@ export class SocketManager {
         }
 
         let process_path = data["process_path"]
-        let line = data["sentence"]
+        const line = data["sentence"]
 
         // Only consider at max the last three sections of the path
-        let path_segments = process_path.split(SPLIT_PATH)
+        const path_segments = process_path.split(SPLIT_PATH)
         process_path = path_segments.slice(Math.max(0, path_segments.length - 3)).join("\/")
 
         await this.port.postMessage({

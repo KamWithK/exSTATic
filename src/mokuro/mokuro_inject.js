@@ -1,17 +1,16 @@
 import { dateNowString } from "../calculations"
 import { MokuroStorage } from "./mokuro_storage"
+import { SPLIT_PATH } from "../messaging/socket_actions"
 
 console.log("Injected")
-
-var SPLIT_PATH = /\\|\//g
 
 var mokuro_storage
 
 function getVolumeSeries() {
-    let paths = decodeURI(window.location.href).split(SPLIT_PATH)
+    const paths = decodeURI(window.location.href).split(SPLIT_PATH)
 
-    let volume = paths[paths.length - 1].replace(/\.html.*$/, "")
-    let series = paths[paths.length - 2]
+    const volume = paths[paths.length - 1].replace(/\.html.*$/, "")
+    const series = paths[paths.length - 2]
 
     return [volume, series]
 }

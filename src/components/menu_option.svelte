@@ -20,7 +20,7 @@
             document.documentElement.style.setProperty(root_css, `${value}${units}`)
         }
 
-        let properties = {}
+        const properties = {}
         properties[id] = value
         if (media_storage !== undefined && media_storage.type_storage !== undefined) {
             await media_storage.type_storage.updateProperties(properties)

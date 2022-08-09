@@ -1266,7 +1266,7 @@
     }
     async setup() {
       this.details = (await browser.storage.local.get(this.uuid))[this.uuid];
-      let uuid_date_key = JSON.stringify([this.uuid, dateNowString()]);
+      const uuid_date_key = JSON.stringify([this.uuid, dateNowString()]);
       this.today_stats = (await browser.storage.local.get(uuid_date_key))[uuid_date_key];
     }
     async updateDetails(details) {
@@ -1276,7 +1276,7 @@
       await browser.storage.local.set(detail_entries);
     }
     async setDailyStats(date, values) {
-      let uuid_date_key = JSON.stringify([this.uuid, date]);
+      const uuid_date_key = JSON.stringify([this.uuid, date]);
       let daily_stats_entry = await browser.storage.local.get(uuid_date_key);
       daily_stats_entry[uuid_date_key] = values;
       if (date == dateNowString()) {
@@ -1288,7 +1288,7 @@
       return this.mutex.runExclusive(async () => this.#addStats(date_stat_adds, multiple));
     }
     async #addStats(date_stat_adds, multiple = 1) {
-      let date_keys = Object.keys(date_stat_adds).map((date) => JSON.stringify([this.uuid, date]));
+      const date_keys = Object.keys(date_stat_adds).map((date) => JSON.stringify([this.uuid, date]));
       let date_stats = await browser.storage.local.get(date_keys);
       date_keys.forEach((key) => {
         let date = JSON.parse(key)[1];
@@ -1319,7 +1319,7 @@
       await this.addDailyStats(date, values, -1 * multiple);
     }
     async insertLine(line, time) {
-      let line_key = JSON.stringify([this.uuid, this.details["last_line_added"] + 1]);
+      const line_key = JSON.stringify([this.uuid, this.details["last_line_added"] + 1]);
       let line_entry = {};
       line_entry[line_key] = [line, time];
       await this.updateDetails({
@@ -1338,10 +1338,10 @@
       if (!this.details.hasOwnProperty("last_line_added")) {
         return;
       }
-      let max_line_id = this.details["last_line_added"];
-      let min_line_id = max_lines <= 0 | max_lines === void 0 | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1);
-      let id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map((index) => JSON.stringify([this.uuid, min_line_id + index]));
-      let lines = await browser.storage.local.get(id_queries);
+      const max_line_id = this.details["last_line_added"];
+      const min_line_id = max_lines <= 0 | max_lines === void 0 | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1);
+      const id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map((index) => JSON.stringify([this.uuid, min_line_id + index]));
+      const lines = await browser.storage.local.get(id_queries);
       return Object.entries(lines).map(([key, line_data]) => {
         let line = typeof line_data === "string" ? line_data : line_data[0];
         let time = typeof line_data === "string" ? void 0 : line_data[1];
@@ -1400,8 +1400,8 @@
       await browser2.storage.local.set(properties_entry);
     }
     async getMedia(given_identifier) {
-      let media_entries = await browser2.storage.local.get("media");
-      let media_key = JSON.stringify([given_identifier, this.type]);
+      const media_entries = await browser2.storage.local.get("media");
+      const media_key = JSON.stringify([given_identifier, this.type]);
       if (media_entries.hasOwnProperty("media") && media_entries["media"].hasOwnProperty(media_key)) {
         return media_entries["media"][media_key];
       } else {
@@ -1413,11 +1413,11 @@
       if (!media_entries.hasOwnProperty("media")) {
         media_entries["media"] = {};
       }
-      let media_key = JSON.stringify([given_identifier, this.type]);
+      const media_key = JSON.stringify([given_identifier, this.type]);
       if (!media_entries["media"].hasOwnProperty(media_key)) {
         let new_uuid = uuid !== void 0 ? uuid : crypto.randomUUID();
         media_entries["media"][media_key] = new_uuid;
-        let details_entry = await browser2.storage.local.get(new_uuid);
+        const details_entry = await browser2.storage.local.get(new_uuid);
         if (!details_entry.hasOwnProperty(new_uuid)) {
           media_entries[new_uuid] = {
             "name": given_identifier,
@@ -1450,7 +1450,7 @@
       }
     }
     static async build(type) {
-      let type_storage = new TypeStorage(type);
+      const type_storage = new TypeStorage(type);
       await type_storage.setup();
       let instance_storage;
       if (type_storage.properties.hasOwnProperty("previous_uuid")) {
@@ -1491,24 +1491,24 @@
         this.previous_time = timeNowSeconds();
       }
       if (event) {
-        let event2 = new Event("status_active");
+        const event2 = new Event("status_active");
         document.dispatchEvent(event2);
       }
     }
     stop_ticker(event = true) {
       this.previous_time = void 0;
       if (event) {
-        let event2 = new Event("status_inactive");
+        const event2 = new Event("status_inactive");
         document.dispatchEvent(event2);
       }
     }
     async #ticker() {
-      let time_now = timeNowSeconds();
+      const time_now = timeNowSeconds();
       if (this.instance_storage == void 0 || this.previous_time == void 0) {
         return;
       }
-      let time_between_lines = this.details["last_active_at"] !== void 0 ? time_now - this.details["last_active_at"] : 0;
-      let time_between_ticks = time_now - this.previous_time;
+      const time_between_lines = this.details["last_active_at"] !== void 0 ? time_now - this.details["last_active_at"] : 0;
+      const time_between_ticks = time_now - this.previous_time;
       this.previous_time = time_now;
       if (time_between_lines <= this.properties["afk_max_time"]) {
         await this.instance_storage.addDailyStats(dateNowString(), {
@@ -1525,7 +1525,7 @@
   var browser3 = require_browser_polyfill();
   var MokuroStorage = class extends MediaStorage {
     static async build(live_stat_update = false) {
-      let [type_storage, instance_storage] = await super.build("mokuro");
+      const [type_storage, instance_storage] = await super.build("mokuro");
       await MokuroStorage.setPages(instance_storage);
       await type_storage.updateProperties({ "afk_max_time": 60 });
       return new MokuroStorage(type_storage, instance_storage, live_stat_update);
@@ -1569,14 +1569,17 @@
     }
   };
 
+  // src/messaging/socket_actions.js
+  var browser4 = require_browser_polyfill();
+  var SPLIT_PATH = /\\|\//g;
+
   // src/mokuro/mokuro_inject.js
   console.log("Injected");
-  var SPLIT_PATH = /\\|\//g;
   var mokuro_storage;
   function getVolumeSeries() {
-    let paths = decodeURI(window.location.href).split(SPLIT_PATH);
-    let volume = paths[paths.length - 1].replace(/\.html.*$/, "");
-    let series = paths[paths.length - 2];
+    const paths = decodeURI(window.location.href).split(SPLIT_PATH);
+    const volume = paths[paths.length - 1].replace(/\.html.*$/, "");
+    const series = paths[paths.length - 2];
     return [volume, series];
   }
   function getPage() {

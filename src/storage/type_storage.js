@@ -49,8 +49,8 @@ export class TypeStorage {
     }
 
     async getMedia(given_identifier) {
-        let media_entries = await browser.storage.local.get("media")
-        let media_key = JSON.stringify([given_identifier, this.type])
+        const media_entries = await browser.storage.local.get("media")
+        const media_key = JSON.stringify([given_identifier, this.type])
 
         if (media_entries.hasOwnProperty("media") && media_entries["media"].hasOwnProperty(media_key)) {
             return media_entries["media"][media_key]
@@ -66,14 +66,14 @@ export class TypeStorage {
             media_entries["media"] = {}
         }
 
-        let media_key = JSON.stringify([given_identifier, this.type])
+        const media_key = JSON.stringify([given_identifier, this.type])
     
         if (!media_entries["media"].hasOwnProperty(media_key)) {
             let new_uuid = uuid !== undefined ? uuid : crypto.randomUUID()
             media_entries["media"][media_key] = new_uuid
 
             // Add in UUID field if it doesn't exist
-            let details_entry = await browser.storage.local.get(new_uuid)
+            const details_entry = await browser.storage.local.get(new_uuid)
             if (!details_entry.hasOwnProperty(new_uuid)) {
                 media_entries[new_uuid] = {
                     "name": given_identifier,

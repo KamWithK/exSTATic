@@ -17,8 +17,8 @@ async function export_csv(args) {
         args["csv"][0] = BOM_CODE + args["csv"][0]
     }
 
-    let blob = new Blob(args["csv"], args["blob_options"])
-        
+    const blob = new Blob(args["csv"], args["blob_options"])
+
     await browser.downloads.download({
         url: URL.createObjectURL(blob),
         filename: args["filename"]

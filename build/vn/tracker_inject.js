@@ -2913,6 +2913,12 @@
       if ("$$scope" in $$props2)
         $$invalidate(6, $$scope = $$props2.$$scope);
     };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 32) {
+        $:
+          ((media_storage2) => calculateStats())(media_storage);
+      }
+    };
     return [active, chars, lines, time, speed, media_storage, $$scope, slots];
   }
   var Stat_bar = class extends SvelteComponent {

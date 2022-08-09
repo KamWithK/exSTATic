@@ -38,6 +38,7 @@
         time = getTime(time_secs)
         speed = getSpeed(char_count, time_secs)
     }
+    $: (media_storage => calculateStats())(media_storage)
 
     document.addEventListener("status_active", calculateStats)
     document.addEventListener("status_inactive", calculateStats)

@@ -48,7 +48,7 @@
 
 </script>
 
-<div class="menu-bar h-full">
+<div class="flex flex-row menu-bar h-full">
     <div id="chars_read" class="stat-numbers">{chars}</div>
     <div class="stat-annotation">Chars</div>
     <span class="material-icons">auto_stories</span>

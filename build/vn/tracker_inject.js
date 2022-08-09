@@ -2880,7 +2880,7 @@
         attr(div7, "class", "stat-annotation");
         attr(span3, "id", "activity_symbol");
         attr(span3, "class", "material-icons");
-        attr(div8, "class", "menu-bar h-full");
+        attr(div8, "class", "flex flex-row menu-bar h-full");
       },
       m(target, anchor) {
         insert(target, div8, anchor);
@@ -4284,7 +4284,7 @@ Char and line statistics will be modified accordingly however time read won't ch
   new vn_default({
     target: document.documentElement,
     props: {
-      name: "test"
+      name: "vn"
     }
   });
 })();

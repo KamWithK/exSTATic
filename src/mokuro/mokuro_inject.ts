@@ -1,6 +1,21 @@
+// Insert Tailwindcss CDN
+const tailwindcss_cdn = document.createElement("script")
+tailwindcss_cdn.src = "https://cdn.tailwindcss.com?plugins=forms"
+document.head.appendChild(tailwindcss_cdn)
+
+// Insert Google Material Icons CDN
+"https://fonts.googleapis.com/icon?family=Material+Icons"
+
+const material_cdn = document.createElement("link")
+material_cdn.href = "https://fonts.googleapis.com/icon?family=Material+Icons"
+material_cdn.rel="stylesheet"
+document.head.appendChild(material_cdn)
+
 import { dateNowString } from "../calculations"
 import { MokuroStorage } from "./mokuro_storage"
 import { SPLIT_PATH } from "../messaging/socket_actions"
+
+import App from "./mokuro.svelte"
 
 console.log("Injected")
 
@@ -16,11 +31,9 @@ function getVolumeSeries() {
 }
 
 function getPage() {
-    let [current_page, total_pages] = document.getElementById("pageIdxDisplay").innerText.split("/")
-    current_page = Number.parseInt(current_page) - 1
-    total_pages = Number.parseInt(total_pages)
+    const [current_page, total_pages] = document.getElementById("pageIdxDisplay").innerText.split("/")
 
-    return [current_page, total_pages]
+    return [Number.parseInt(current_page) - 1, Number.parseInt(total_pages)]
 }
 
 const getGivenID = (series, volume) => JSON.stringify([series, volume])
@@ -38,6 +51,17 @@ async function setup() {
 
     // Ensure starting partially through doesn't cause everything so far to log in todays stats
     await mokuro_storage.instance_storage.updateDetails({"last_page_read": current_page})
+
+    // Load Svelte for the inserted UI
+    const svelte_div = document.createElement("div")
+    document.body.insertBefore(svelte_div, document.getElementById("showMenuA"))
+    new App({
+        target: svelte_div,
+        props: {
+            name: "vn",
+            mokuro_storage: mokuro_storage
+        }
+    })
 }
 setup()
 

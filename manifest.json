@@ -22,7 +22,8 @@
           "https://*/Manga/**.html",
           "file:///*/Manga/**.html"
         ],
-        "js": ["build/mokuro/mokuro_inject.js"]
+        "js": ["build/mokuro/mokuro_inject.js"],
+        "css": ["docs/style.css"]
       },
       {
         "matches": [

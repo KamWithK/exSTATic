@@ -35,7 +35,7 @@ export class VNStorage extends MediaStorage {
         let previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]])
         let previous_line = (await browser.storage.local.get(previous_line_key))[previous_line_key]
         
-        if (line != previous_line[0]) {
+        if (previous_line == undefined || line != previous_line[0]) {
             let chars_in_line = charsInLine(line)
             if (chars_in_line === 0) return
             

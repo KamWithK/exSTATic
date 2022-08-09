@@ -7,9 +7,10 @@
     let chars, lines, time, speed
     
     const statsExist = media_storage =>
-        media_storage !== undefined && media_storage.instance_storage != undefined
-            && media_storage.instance_storage.today_stats != undefined
-            ? media_storage.instance_storage.today_stats : undefined
+        media_storage.instance_storage != undefined
+            ? media_storage.instance_storage.today_stats
+            : undefined
+    
     const getStat = (daily_stats, stat_key) =>
         daily_stats != undefined && daily_stats.hasOwnProperty(stat_key)
             ? daily_stats[stat_key]
@@ -22,9 +23,11 @@
     }
 
     const getSpeed = (chars, time_secs) =>
-        chars === undefined || time_secs === undefined ?
-            (0).toLocaleString() :
-            ((chars / time_secs) * SECS_TO_HOURS).toLocaleString()
+        chars === undefined || time_secs === undefined
+            || isNaN(chars) || isNaN(time_secs)
+            || chars === 0 || time_secs === 0
+                ? (0).toLocaleString()
+                : ((chars / time_secs) * SECS_TO_HOURS).toLocaleString()
             
     const calculateStats = () => {
         const daily_stats = statsExist(media_storage)
@@ -38,7 +41,7 @@
         time = getTime(time_secs)
         speed = getSpeed(char_count, time_secs)
     }
-    $: (media_storage => calculateStats())(media_storage)
+    calculateStats()
 
     document.addEventListener("status_active", calculateStats)
     document.addEventListener("status_inactive", calculateStats)

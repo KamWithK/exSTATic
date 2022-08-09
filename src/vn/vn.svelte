@@ -10,6 +10,7 @@
 	import { parse } from "papaparse"
 	var browser = require("webextension-polyfill")
 
+	const promise = VNStorage.build(true)
 	let vn_storage
 	let title = "Game"
 	let lines = []
@@ -17,7 +18,7 @@
 
 	// Storage and connection to background setup
 	const setup = async () => {
-		vn_storage = await VNStorage.build(true)
+		vn_storage = await promise
 
 		let port = browser.runtime.connect({"name": "vn_lines"})
 		port.onMessage.addListener(async data => {
@@ -130,26 +131,28 @@
 	<div id="top_bar" class="flex z-50 h-20 items-center justify-between">
 		<input id="game_name" class="w-20 h-full shrink grow justify-self-start jp-text" type="text" bind:value={title}>
 		<div class="relative">
-			<StatBar bind:media_storage={vn_storage}>
-				<button class="material-icons rounded-full hover:bg-indigo-700" on:click={() => menu = !menu}>more_vert</button>
-			</StatBar>
-			<MenuBar show={menu} media_storage={vn_storage}>
-				<MenuOption media_storage={vn_storage} id="font" description="Font" type="text" value="Klee One" root_css="--default-font"/>
-				<MenuOption media_storage={vn_storage} id="font_size" description="Font Size" units="rem" value=2 root_css="--default-font-size"/>
-				<MenuOption media_storage={vn_storage} id="bottom_line_padding" description="Bottom Pushback" units="%" value=20 root_css="--default-text-align"/>
-				<MenuOption media_storage={vn_storage} id="afk_max_time" description="Max AFK Time" units="secs" value=60/>
-				<MenuOption media_storage={vn_storage} id="max_loaded_lines" description="Max Loaded Lines" units="UI" value=5000/>
-				<MenuOption media_storage={vn_storage} id="inactivity_blur" description="Inactivity Blur" units="px" value=2/>
-				<MenuOption media_storage={vn_storage} id="menu_blur" description="Menu Blur" units="px" value=8 root_css="--default-menu-blur"/>
+			{#await promise then vn_storage }
+				<StatBar media_storage={vn_storage}>
+					<button class="material-icons rounded-full hover:bg-indigo-700" on:click={() => menu = !menu}>more_vert</button>
+				</StatBar>
+				<MenuBar show={menu} media_storage={vn_storage}>
+					<MenuOption media_storage={vn_storage} id="font" description="Font" type="text" value="Klee One" root_css="--default-font"/>
+					<MenuOption media_storage={vn_storage} id="font_size" description="Font Size" units="rem" value=2 root_css="--default-font-size"/>
+					<MenuOption media_storage={vn_storage} id="bottom_line_padding" description="Bottom Pushback" units="%" value=20 root_css="--default-text-align"/>
+					<MenuOption media_storage={vn_storage} id="afk_max_time" description="Max AFK Time" units="secs" value=60/>
+					<MenuOption media_storage={vn_storage} id="max_loaded_lines" description="Max Loaded Lines" units="UI" value=5000/>
+					<MenuOption media_storage={vn_storage} id="inactivity_blur" description="Inactivity Blur" units="px" value=2/>
+					<MenuOption media_storage={vn_storage} id="menu_blur" description="Menu Blur" units="px" value=8 root_css="--default-menu-blur"/>
 
-				<button id="export_stats" class="menu-button" on:click={exportStats}>Export Stats</button>
-				<button id="export_lines" class="menu-button" on:click={requestExportLines}>Export Lines</button>
-				<button class="menu-button" on:click="{() => document.getElementById('import_stats').click()}">
-					Import Stats
-					<input id="import_stats" class="hidden" type="file" on:change={requestImportLines}>
-				</button>
-				<button id="view_stats" class="menu-button" on:click={openStats}>View Stats</button>
-			</MenuBar>
+					<button id="export_stats" class="menu-button" on:click={exportStats}>Export Stats</button>
+					<button id="export_lines" class="menu-button" on:click={requestExportLines}>Export Lines</button>
+					<button class="menu-button" on:click="{() => document.getElementById('import_stats').click()}">
+						Import Stats
+						<input id="import_stats" class="hidden" type="file" on:change={requestImportLines}>
+					</button>
+					<button id="view_stats" class="menu-button" on:click={openStats}>View Stats</button>
+				</MenuBar>
+			{/await}
 		</div>
 		<button id="delete-selection" class="material-icons delete-button" on:click={deleteLines}>delete</button>
 	</div>

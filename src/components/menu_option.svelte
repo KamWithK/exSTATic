@@ -1,6 +1,8 @@
 <script lang="ts">
     import { MediaStorage } from "../storage/media_storage"
 
+    import { onMount } from "svelte"
+
     export let media_storage: MediaStorage
     export let id: string
     export let description: string = ""
@@ -11,7 +13,7 @@
 
     let input_element = undefined
     
-    async function update(event) {
+    const update = async event => {
         value = event["target"].value
 
         if (root_css !== undefined) {
@@ -24,22 +26,17 @@
             await media_storage.type_storage.updateProperties(properties)
         }
     }
-
-    function setup(media_storage) {
-        if (
-            media_storage !== undefined
-                && media_storage.properties !== undefined
-                && media_storage.properties.hasOwnProperty(id)
-        ) {
+    
+    onMount(() => {
+        if (media_storage.properties.hasOwnProperty(id)) {
             value = media_storage.properties[id]
             input_element.value = value
         }
 
-        if (input_element != undefined && input_element.value != undefined) {
+        if (input_element.value != undefined) {
             input_element.dispatchEvent(new Event("change"))
         }
-    }
-    $: setup(media_storage)
+    })
 </script>
 
 <div class="menu-label">

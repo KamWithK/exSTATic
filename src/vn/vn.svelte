@@ -116,7 +116,7 @@
 
 		let parents = checked_boxes.map(checkbox => checkbox.parentElement)
 		let details = parents.map(element_div => [
-			Number.parseInt(element_div.dataset.line_id),
+			Number.parseInt(element_div.dataset.lineId),
 			element_div.textContent,
 			timeToDateString(Number.parseInt(element_div.dataset.time))
 		])

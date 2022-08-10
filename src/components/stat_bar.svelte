@@ -48,7 +48,7 @@
 
 </script>
 
-<div class="flex flex-row menu-bar h-full">
+<div class="flex flex-row menu-bar h-full p-3 gap-3 items-center">
     <div id="chars_read" class="stat-numbers">{chars}</div>
     <div class="stat-annotation">Chars</div>
     <span class="material-icons">auto_stories</span>
@@ -88,11 +88,5 @@
         line-height: 1rem;
         letter-spacing: -0.05em;
         white-space: nowrap;
-    }
-
-    .menu-bar {
-        padding: 0.75rem;
-        gap: 0.75rem;
-        align-items: center;
     }
 </style>

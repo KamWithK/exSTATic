@@ -2864,23 +2864,23 @@
         if (default_slot)
           default_slot.c();
         attr(div0, "id", "chars_read");
-        attr(div0, "class", "stat-numbers svelte-s4fbct");
-        attr(div1, "class", "stat-annotation svelte-s4fbct");
+        attr(div0, "class", "stat-numbers svelte-uf80o1");
+        attr(div1, "class", "stat-annotation svelte-uf80o1");
         attr(span0, "class", "material-icons");
         attr(div2, "id", "lines_read");
-        attr(div2, "class", "stat-numbers svelte-s4fbct");
-        attr(div3, "class", "stat-annotation svelte-s4fbct");
+        attr(div2, "class", "stat-numbers svelte-uf80o1");
+        attr(div3, "class", "stat-annotation svelte-uf80o1");
         attr(span1, "class", "material-icons");
         attr(div4, "id", "elapsed_time");
-        attr(div4, "class", "stat-numbers svelte-s4fbct");
-        attr(div5, "class", "stat-annotation svelte-s4fbct");
+        attr(div4, "class", "stat-numbers svelte-uf80o1");
+        attr(div5, "class", "stat-annotation svelte-uf80o1");
         attr(span2, "class", "material-icons");
         attr(div6, "id", "chars_per_hour");
-        attr(div6, "class", "stat-numbers svelte-s4fbct");
-        attr(div7, "class", "stat-annotation svelte-s4fbct");
+        attr(div6, "class", "stat-numbers svelte-uf80o1");
+        attr(div7, "class", "stat-annotation svelte-uf80o1");
         attr(span3, "id", "activity_symbol");
         attr(span3, "class", "material-icons");
-        attr(div8, "class", "flex flex-row menu-bar h-full svelte-s4fbct");
+        attr(div8, "class", "flex flex-row menu-bar h-full p-3 gap-3 items-center");
       },
       m(target, anchor) {
         insert(target, div8, anchor);

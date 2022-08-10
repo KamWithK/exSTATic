@@ -15,6 +15,6 @@ esbuild
     minify: false,
     target: ["chrome102", "firefox102"],
     outdir: "build",
-    plugins: [sveltePlugin({"preprocess": sveltePreprocess()})]
+    plugins: [sveltePlugin({"preprocess": sveltePreprocess({postcss: true})})]
   })
   .catch(() => process.exit(1));

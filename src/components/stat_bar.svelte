@@ -74,3 +74,25 @@
 
     <slot></slot>
 </div>
+
+<style>
+    .stat-numbers {
+        font-family: "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace";
+        font-size: 1rem;
+        line-height: 1.5rem;
+        white-space: nowrap;
+    }
+
+    .stat-annotation {
+        font-size: 0.75rem;
+        line-height: 1rem;
+        letter-spacing: -0.05em;
+        white-space: nowrap;
+    }
+
+    .menu-bar {
+        padding: 0.75rem;
+        gap: 0.75rem;
+        align-items: center;
+    }
+</style>

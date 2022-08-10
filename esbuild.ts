@@ -8,7 +8,8 @@ esbuild
       "src/background.js",
       "src/vn/tracker_inject.ts",
       "src/mokuro/mokuro_inject.ts",
-      "src/stats_inject.js"
+      "src/stats_inject.js",
+      "src/external/material_icons.css"
     ],
     mainFields: ["svelte", "browser", "module", "main"],
     bundle: true,

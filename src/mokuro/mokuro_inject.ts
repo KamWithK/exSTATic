@@ -1,13 +1,8 @@
-// Insert Tailwindcss CDN
-const tailwindcss_cdn = document.createElement("script")
-tailwindcss_cdn.src = "https://cdn.tailwindcss.com?plugins=forms"
-document.head.appendChild(tailwindcss_cdn)
+var browser = require("webextension-polyfill")
 
 // Insert Google Material Icons CDN
-"https://fonts.googleapis.com/icon?family=Material+Icons"
-
 const material_cdn = document.createElement("link")
-material_cdn.href = "https://fonts.googleapis.com/icon?family=Material+Icons"
+material_cdn.href = browser.extension.getURL("build/external/material_icons.css")
 material_cdn.rel="stylesheet"
 document.head.appendChild(material_cdn)
 

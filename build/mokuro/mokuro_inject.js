@@ -1939,6 +1939,260 @@
     }
   };
 
+  // src/components/stat_bar.svelte
+  function create_else_block(ctx) {
+    let t;
+    return {
+      c() {
+        t = text("bedtime");
+      },
+      m(target, anchor) {
+        insert(target, t, anchor);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(t);
+      }
+    };
+  }
+  function create_if_block(ctx) {
+    let t;
+    return {
+      c() {
+        t = text("hourglass_bottom");
+      },
+      m(target, anchor) {
+        insert(target, t, anchor);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(t);
+      }
+    };
+  }
+  function create_fragment(ctx) {
+    let div8;
+    let div0;
+    let t0;
+    let t1;
+    let div1;
+    let t3;
+    let span0;
+    let t5;
+    let div2;
+    let t6;
+    let t7;
+    let div3;
+    let t9;
+    let span1;
+    let t11;
+    let div4;
+    let t12;
+    let t13;
+    let div5;
+    let t15;
+    let span2;
+    let t17;
+    let div6;
+    let t18;
+    let t19;
+    let div7;
+    let t21;
+    let span3;
+    let t22;
+    let current;
+    function select_block_type(ctx2, dirty) {
+      if (ctx2[0])
+        return create_if_block;
+      return create_else_block;
+    }
+    let current_block_type = select_block_type(ctx, -1);
+    let if_block = current_block_type(ctx);
+    const default_slot_template = ctx[7].default;
+    const default_slot = create_slot(default_slot_template, ctx, ctx[6], null);
+    return {
+      c() {
+        div8 = element("div");
+        div0 = element("div");
+        t0 = text(ctx[1]);
+        t1 = space();
+        div1 = element("div");
+        div1.textContent = "Chars";
+        t3 = space();
+        span0 = element("span");
+        span0.textContent = "auto_stories";
+        t5 = space();
+        div2 = element("div");
+        t6 = text(ctx[2]);
+        t7 = space();
+        div3 = element("div");
+        div3.textContent = "Lines";
+        t9 = space();
+        span1 = element("span");
+        span1.textContent = "drive_file_rename_outline";
+        t11 = space();
+        div4 = element("div");
+        t12 = text(ctx[3]);
+        t13 = space();
+        div5 = element("div");
+        div5.textContent = "Elapsed";
+        t15 = space();
+        span2 = element("span");
+        span2.textContent = "timer";
+        t17 = space();
+        div6 = element("div");
+        t18 = text(ctx[4]);
+        t19 = space();
+        div7 = element("div");
+        div7.textContent = "Chars / Hour";
+        t21 = space();
+        span3 = element("span");
+        if_block.c();
+        t22 = space();
+        if (default_slot)
+          default_slot.c();
+        attr(div0, "id", "chars_read");
+        attr(div0, "class", "stat-numbers svelte-1127kl9");
+        attr(div1, "class", "stat-annotation svelte-1127kl9");
+        attr(span0, "class", "material-icons");
+        attr(div2, "id", "lines_read");
+        attr(div2, "class", "stat-numbers svelte-1127kl9");
+        attr(div3, "class", "stat-annotation svelte-1127kl9");
+        attr(span1, "class", "material-icons");
+        attr(div4, "id", "elapsed_time");
+        attr(div4, "class", "stat-numbers svelte-1127kl9");
+        attr(div5, "class", "stat-annotation svelte-1127kl9");
+        attr(span2, "class", "material-icons");
+        attr(div6, "id", "chars_per_hour");
+        attr(div6, "class", "stat-numbers svelte-1127kl9");
+        attr(div7, "class", "stat-annotation svelte-1127kl9");
+        attr(span3, "id", "activity_symbol");
+        attr(span3, "class", "material-icons");
+        attr(div8, "class", "flex flex-row menu-bar h-full p-3 gap-3 items-center");
+      },
+      m(target, anchor) {
+        insert(target, div8, anchor);
+        append(div8, div0);
+        append(div0, t0);
+        append(div8, t1);
+        append(div8, div1);
+        append(div8, t3);
+        append(div8, span0);
+        append(div8, t5);
+        append(div8, div2);
+        append(div2, t6);
+        append(div8, t7);
+        append(div8, div3);
+        append(div8, t9);
+        append(div8, span1);
+        append(div8, t11);
+        append(div8, div4);
+        append(div4, t12);
+        append(div8, t13);
+        append(div8, div5);
+        append(div8, t15);
+        append(div8, span2);
+        append(div8, t17);
+        append(div8, div6);
+        append(div6, t18);
+        append(div8, t19);
+        append(div8, div7);
+        append(div8, t21);
+        append(div8, span3);
+        if_block.m(span3, null);
+        append(div8, t22);
+        if (default_slot) {
+          default_slot.m(div8, null);
+        }
+        current = true;
+      },
+      p(ctx2, [dirty]) {
+        if (!current || dirty & 2)
+          set_data(t0, ctx2[1]);
+        if (!current || dirty & 4)
+          set_data(t6, ctx2[2]);
+        if (!current || dirty & 8)
+          set_data(t12, ctx2[3]);
+        if (!current || dirty & 16)
+          set_data(t18, ctx2[4]);
+        if (current_block_type !== (current_block_type = select_block_type(ctx2, dirty))) {
+          if_block.d(1);
+          if_block = current_block_type(ctx2);
+          if (if_block) {
+            if_block.c();
+            if_block.m(span3, null);
+          }
+        }
+        if (default_slot) {
+          if (default_slot.p && (!current || dirty & 64)) {
+            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[6], !current ? get_all_dirty_from_scope(ctx2[6]) : get_slot_changes(default_slot_template, ctx2[6], dirty, null), null);
+          }
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(default_slot, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(default_slot, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div8);
+        if_block.d();
+        if (default_slot)
+          default_slot.d(detaching);
+      }
+    };
+  }
+  function instance($$self, $$props, $$invalidate) {
+    let { $$slots: slots = {}, $$scope } = $$props;
+    let SECS_TO_HOURS = 60 * 60;
+    let { media_storage } = $$props;
+    let { active = false } = $$props;
+    let chars, lines, time, speed;
+    const statsExist = (media_storage2) => media_storage2.instance_storage != void 0 ? media_storage2.instance_storage.today_stats : void 0;
+    const getStat = (daily_stats, stat_key) => daily_stats != void 0 && daily_stats.hasOwnProperty(stat_key) ? daily_stats[stat_key] : 0;
+    const getTime = (time_secs) => {
+      const date = new Date(0);
+      date.setSeconds(Math.round(time_secs));
+      return date.toISOString().substring(11, 19);
+    };
+    const getSpeed = (chars2, time_secs) => chars2 === void 0 || time_secs === void 0 || isNaN(chars2) || isNaN(time_secs) || chars2 === 0 || time_secs === 0 ? 0 .toLocaleString() : (chars2 / time_secs * SECS_TO_HOURS).toLocaleString();
+    const calculateStats = () => {
+      const daily_stats = statsExist(media_storage);
+      const char_count = getStat(daily_stats, "chars_read");
+      const line_count = getStat(daily_stats, "lines_read");
+      const time_secs = getStat(daily_stats, "time_read");
+      $$invalidate(1, chars = char_count.toLocaleString());
+      $$invalidate(2, lines = line_count.toLocaleString());
+      $$invalidate(3, time = getTime(time_secs));
+      $$invalidate(4, speed = getSpeed(char_count, time_secs));
+    };
+    calculateStats();
+    document.addEventListener("status_active", calculateStats);
+    document.addEventListener("status_inactive", calculateStats);
+    $$self.$$set = ($$props2) => {
+      if ("media_storage" in $$props2)
+        $$invalidate(5, media_storage = $$props2.media_storage);
+      if ("active" in $$props2)
+        $$invalidate(0, active = $$props2.active);
+      if ("$$scope" in $$props2)
+        $$invalidate(6, $$scope = $$props2.$$scope);
+    };
+    return [active, chars, lines, time, speed, media_storage, $$scope, slots];
+  }
+  var Stat_bar = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance, create_fragment, safe_not_equal, { media_storage: 5, active: 0 });
+    }
+  };
+  var stat_bar_default = Stat_bar;
+
   // src/external/tailwindcss.js
   (() => {
     var wy = Object.create;
@@ -11600,260 +11854,6 @@ Check your Browserslist config to be sure that your targets are set up correctly
     }
   })();
 
-  // src/components/stat_bar.svelte
-  function create_else_block(ctx) {
-    let t;
-    return {
-      c() {
-        t = text("bedtime");
-      },
-      m(target, anchor) {
-        insert(target, t, anchor);
-      },
-      d(detaching) {
-        if (detaching)
-          detach(t);
-      }
-    };
-  }
-  function create_if_block(ctx) {
-    let t;
-    return {
-      c() {
-        t = text("hourglass_bottom");
-      },
-      m(target, anchor) {
-        insert(target, t, anchor);
-      },
-      d(detaching) {
-        if (detaching)
-          detach(t);
-      }
-    };
-  }
-  function create_fragment(ctx) {
-    let div8;
-    let div0;
-    let t0;
-    let t1;
-    let div1;
-    let t3;
-    let span0;
-    let t5;
-    let div2;
-    let t6;
-    let t7;
-    let div3;
-    let t9;
-    let span1;
-    let t11;
-    let div4;
-    let t12;
-    let t13;
-    let div5;
-    let t15;
-    let span2;
-    let t17;
-    let div6;
-    let t18;
-    let t19;
-    let div7;
-    let t21;
-    let span3;
-    let t22;
-    let current;
-    function select_block_type(ctx2, dirty) {
-      if (ctx2[0])
-        return create_if_block;
-      return create_else_block;
-    }
-    let current_block_type = select_block_type(ctx, -1);
-    let if_block = current_block_type(ctx);
-    const default_slot_template = ctx[7].default;
-    const default_slot = create_slot(default_slot_template, ctx, ctx[6], null);
-    return {
-      c() {
-        div8 = element("div");
-        div0 = element("div");
-        t0 = text(ctx[1]);
-        t1 = space();
-        div1 = element("div");
-        div1.textContent = "Chars";
-        t3 = space();
-        span0 = element("span");
-        span0.textContent = "auto_stories";
-        t5 = space();
-        div2 = element("div");
-        t6 = text(ctx[2]);
-        t7 = space();
-        div3 = element("div");
-        div3.textContent = "Lines";
-        t9 = space();
-        span1 = element("span");
-        span1.textContent = "drive_file_rename_outline";
-        t11 = space();
-        div4 = element("div");
-        t12 = text(ctx[3]);
-        t13 = space();
-        div5 = element("div");
-        div5.textContent = "Elapsed";
-        t15 = space();
-        span2 = element("span");
-        span2.textContent = "timer";
-        t17 = space();
-        div6 = element("div");
-        t18 = text(ctx[4]);
-        t19 = space();
-        div7 = element("div");
-        div7.textContent = "Chars / Hour";
-        t21 = space();
-        span3 = element("span");
-        if_block.c();
-        t22 = space();
-        if (default_slot)
-          default_slot.c();
-        attr(div0, "id", "chars_read");
-        attr(div0, "class", "stat-numbers svelte-1127kl9");
-        attr(div1, "class", "stat-annotation svelte-1127kl9");
-        attr(span0, "class", "material-icons");
-        attr(div2, "id", "lines_read");
-        attr(div2, "class", "stat-numbers svelte-1127kl9");
-        attr(div3, "class", "stat-annotation svelte-1127kl9");
-        attr(span1, "class", "material-icons");
-        attr(div4, "id", "elapsed_time");
-        attr(div4, "class", "stat-numbers svelte-1127kl9");
-        attr(div5, "class", "stat-annotation svelte-1127kl9");
-        attr(span2, "class", "material-icons");
-        attr(div6, "id", "chars_per_hour");
-        attr(div6, "class", "stat-numbers svelte-1127kl9");
-        attr(div7, "class", "stat-annotation svelte-1127kl9");
-        attr(span3, "id", "activity_symbol");
-        attr(span3, "class", "material-icons");
-        attr(div8, "class", "flex flex-row menu-bar h-full p-3 gap-3 items-center");
-      },
-      m(target, anchor) {
-        insert(target, div8, anchor);
-        append(div8, div0);
-        append(div0, t0);
-        append(div8, t1);
-        append(div8, div1);
-        append(div8, t3);
-        append(div8, span0);
-        append(div8, t5);
-        append(div8, div2);
-        append(div2, t6);
-        append(div8, t7);
-        append(div8, div3);
-        append(div8, t9);
-        append(div8, span1);
-        append(div8, t11);
-        append(div8, div4);
-        append(div4, t12);
-        append(div8, t13);
-        append(div8, div5);
-        append(div8, t15);
-        append(div8, span2);
-        append(div8, t17);
-        append(div8, div6);
-        append(div6, t18);
-        append(div8, t19);
-        append(div8, div7);
-        append(div8, t21);
-        append(div8, span3);
-        if_block.m(span3, null);
-        append(div8, t22);
-        if (default_slot) {
-          default_slot.m(div8, null);
-        }
-        current = true;
-      },
-      p(ctx2, [dirty]) {
-        if (!current || dirty & 2)
-          set_data(t0, ctx2[1]);
-        if (!current || dirty & 4)
-          set_data(t6, ctx2[2]);
-        if (!current || dirty & 8)
-          set_data(t12, ctx2[3]);
-        if (!current || dirty & 16)
-          set_data(t18, ctx2[4]);
-        if (current_block_type !== (current_block_type = select_block_type(ctx2, dirty))) {
-          if_block.d(1);
-          if_block = current_block_type(ctx2);
-          if (if_block) {
-            if_block.c();
-            if_block.m(span3, null);
-          }
-        }
-        if (default_slot) {
-          if (default_slot.p && (!current || dirty & 64)) {
-            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[6], !current ? get_all_dirty_from_scope(ctx2[6]) : get_slot_changes(default_slot_template, ctx2[6], dirty, null), null);
-          }
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(default_slot, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(default_slot, local);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div8);
-        if_block.d();
-        if (default_slot)
-          default_slot.d(detaching);
-      }
-    };
-  }
-  function instance($$self, $$props, $$invalidate) {
-    let { $$slots: slots = {}, $$scope } = $$props;
-    let SECS_TO_HOURS = 60 * 60;
-    let { media_storage } = $$props;
-    let { active = false } = $$props;
-    let chars, lines, time, speed;
-    const statsExist = (media_storage2) => media_storage2.instance_storage != void 0 ? media_storage2.instance_storage.today_stats : void 0;
-    const getStat = (daily_stats, stat_key) => daily_stats != void 0 && daily_stats.hasOwnProperty(stat_key) ? daily_stats[stat_key] : 0;
-    const getTime = (time_secs) => {
-      const date = new Date(0);
-      date.setSeconds(Math.round(time_secs));
-      return date.toISOString().substring(11, 19);
-    };
-    const getSpeed = (chars2, time_secs) => chars2 === void 0 || time_secs === void 0 || isNaN(chars2) || isNaN(time_secs) || chars2 === 0 || time_secs === 0 ? 0 .toLocaleString() : (chars2 / time_secs * SECS_TO_HOURS).toLocaleString();
-    const calculateStats = () => {
-      const daily_stats = statsExist(media_storage);
-      const char_count = getStat(daily_stats, "chars_read");
-      const line_count = getStat(daily_stats, "lines_read");
-      const time_secs = getStat(daily_stats, "time_read");
-      $$invalidate(1, chars = char_count.toLocaleString());
-      $$invalidate(2, lines = line_count.toLocaleString());
-      $$invalidate(3, time = getTime(time_secs));
-      $$invalidate(4, speed = getSpeed(char_count, time_secs));
-    };
-    calculateStats();
-    document.addEventListener("status_active", calculateStats);
-    document.addEventListener("status_inactive", calculateStats);
-    $$self.$$set = ($$props2) => {
-      if ("media_storage" in $$props2)
-        $$invalidate(5, media_storage = $$props2.media_storage);
-      if ("active" in $$props2)
-        $$invalidate(0, active = $$props2.active);
-      if ("$$scope" in $$props2)
-        $$invalidate(6, $$scope = $$props2.$$scope);
-    };
-    return [active, chars, lines, time, speed, media_storage, $$scope, slots];
-  }
-  var Stat_bar = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance, create_fragment, safe_not_equal, { media_storage: 5, active: 0 });
-    }
-  };
-  var stat_bar_default = Stat_bar;
-
   // src/mokuro/mokuro.svelte
   function create_fragment2(ctx) {
     let div1;
@@ -11903,7 +11903,46 @@ Check your Browserslist config to be sure that your targets are set up correctly
     };
   }
   function instance2($$self, $$props, $$invalidate) {
+    var __awaiter = this && this.__awaiter || function(thisArg, _arguments, P, generator) {
+      function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+          resolve(value);
+        });
+      }
+      return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+          try {
+            step(generator.next(value));
+          } catch (e) {
+            reject(e);
+          }
+        }
+        function rejected(value) {
+          try {
+            step(generator["throw"](value));
+          } catch (e) {
+            reject(e);
+          }
+        }
+        function step(result) {
+          result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+      });
+    };
     let { mokuro_storage: mokuro_storage2 } = $$props;
+    const userActive = () => __awaiter(void 0, void 0, void 0, function* () {
+      const time = timeNowSeconds();
+      if (mokuro_storage2.instance_storage === void 0)
+        return;
+      if (mokuro_storage2.previous_time === void 0) {
+        yield mokuro_storage2.instance_storage.updateDetails({ "last_active_at": time });
+        mokuro_storage2.start_ticker();
+      } else {
+        mokuro_storage2.stop_ticker();
+      }
+    });
+    document.getElementById("pagesContainer").addEventListener("dblclick", userActive);
     $$self.$$set = ($$props2) => {
       if ("mokuro_storage" in $$props2)
         $$invalidate(0, mokuro_storage2 = $$props2.mokuro_storage);

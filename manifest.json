@@ -23,8 +23,8 @@
       },
       {
         "matches": [
-          "https://*/Manga/**.html",
-          "file:///*/Manga/**.html"
+          "https://**/Manga/**.html",
+          "file:///**/Manga/**.html"
         ],
         "js": ["build/mokuro/mokuro_inject.js"],
         "css": [

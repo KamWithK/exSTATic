@@ -29,7 +29,7 @@
             || isNaN(chars) || isNaN(time_secs)
             || chars === 0 || time_secs === 0
                 ? (0).toLocaleString()
-                : ((chars / time_secs) * SECS_TO_HOURS).toLocaleString()
+                : (Math.round((chars / time_secs) * SECS_TO_HOURS)).toLocaleString()
             
     const calculateStats = () => {
         const daily_stats = statsExist(media_storage)

@@ -2154,7 +2154,7 @@
       date.setSeconds(Math.round(time_secs));
       return date.toISOString().substring(11, 19);
     };
-    const getSpeed = (chars2, time_secs) => chars2 === void 0 || time_secs === void 0 || isNaN(chars2) || isNaN(time_secs) || chars2 === 0 || time_secs === 0 ? 0 .toLocaleString() : (chars2 / time_secs * SECS_TO_HOURS).toLocaleString();
+    const getSpeed = (chars2, time_secs) => chars2 === void 0 || time_secs === void 0 || isNaN(chars2) || isNaN(time_secs) || chars2 === 0 || time_secs === 0 ? 0 .toLocaleString() : Math.round(chars2 / time_secs * SECS_TO_HOURS).toLocaleString();
     const calculateStats = () => {
       const daily_stats = statsExist(media_storage);
       const char_count = getStat(daily_stats, "chars_read");

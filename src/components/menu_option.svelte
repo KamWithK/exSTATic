@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { MediaStorage } from "../storage/media_storage"
+    import type { MediaStorage } from "../storage/media_storage"
 
     import { onMount } from "svelte"
 

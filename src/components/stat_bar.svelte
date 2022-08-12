@@ -1,7 +1,9 @@
 <script lang="ts">
+    import type { MediaStorage } from "../storage/media_storage"
+
     let SECS_TO_HOURS = 60 * 60
 
-    export let media_storage
+    export let media_storage: MediaStorage
     export let active: boolean = false
 
     let chars, lines, time, speed

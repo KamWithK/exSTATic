@@ -128,8 +128,8 @@
 	}
 </script>
 
-<body class="flex flex-col h-screen w-screen">
-	<div id="top_bar" class="flex z-50 h-20 px-12 items-center justify-between">
+<body class="flex flex-col h-full w-full">
+	<div id="top_bar" class="flex z-50 h-20 px-12 sticky top-0 items-center justify-between">
 		<input id="game_name" class="w-20 h-full shrink grow justify-self-start jp-text" type="text" bind:value={title}>
 		<div class="relative">
 			<StatBar media_storage={vn_storage}>

@@ -7,7 +7,7 @@
     let entry_holder
 
     const observer = new MutationObserver(() => {
-        entry_holder.scrollTo(0, entry_holder.scrollHeight)
+        window.scrollTo(0, entry_holder.scrollHeight)
     })
 
     onMount(() => observer.observe(entry_holder, {"childList": true, "subtree": true}))
@@ -21,7 +21,7 @@
 
 <style>
     #entry_holder {
-        @apply flex flex-col w-full h-full flex-grow overflow-auto gap-2;
+        @apply flex flex-col w-full h-full gap-2;
         padding-bottom: var(--default-text-align);
     }
 </style>

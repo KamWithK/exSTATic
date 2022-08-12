@@ -2792,7 +2792,7 @@
         attr(div7, "class", "stat-annotation svelte-1127kl9");
         attr(span3, "id", "activity_symbol");
         attr(span3, "class", "material-icons");
-        attr(div8, "class", "flex flex-row menu-bar h-full p-3 gap-3 items-center");
+        attr(div8, "class", "flex flex-row menu-bar z-50 h-full p-3 gap-3 items-center");
       },
       m(target, anchor) {
         insert(target, div8, anchor);
@@ -3464,7 +3464,7 @@
           each_blocks[i].c();
         }
         attr(div, "id", "entry_holder");
-        attr(div, "class", "svelte-due56j");
+        attr(div, "class", "svelte-1rkxv40");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -3533,7 +3533,7 @@
     let { lines } = $$props;
     let entry_holder;
     const observer = new MutationObserver(() => {
-      entry_holder.scrollTo(0, entry_holder.scrollHeight);
+      window.scrollTo(0, entry_holder.scrollHeight);
     });
     onMount(() => observer.observe(entry_holder, { "childList": true, "subtree": true }));
     function click_handler(event) {
@@ -3918,9 +3918,9 @@
         attr(button, "id", "delete-selection");
         attr(button, "class", "material-icons delete-button");
         attr(div1, "id", "top_bar");
-        attr(div1, "class", "flex z-50 h-20 px-12 items-center justify-between");
+        attr(div1, "class", "flex z-50 h-20 px-12 sticky top-0 items-center justify-between");
         attr(div2, "class", "px-12");
-        attr(body, "class", "flex flex-col h-screen w-screen");
+        attr(body, "class", "flex flex-col h-full w-full");
       },
       m(target, anchor) {
         insert(target, body, anchor);

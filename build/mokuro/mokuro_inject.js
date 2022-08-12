@@ -2061,7 +2061,7 @@
         attr(div7, "class", "stat-annotation svelte-1127kl9");
         attr(span3, "id", "activity_symbol");
         attr(span3, "class", "material-icons");
-        attr(div8, "class", "flex flex-row menu-bar h-full p-3 gap-3 items-center");
+        attr(div8, "class", "flex flex-row menu-bar z-50 h-full p-3 gap-3 items-center");
       },
       m(target, anchor) {
         insert(target, div8, anchor);

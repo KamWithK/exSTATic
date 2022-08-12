@@ -17,7 +17,7 @@
 		}
 	}
 
-    document.getElementById("pagesContainer").addEventListener("dblclick", userActive)
+    document.body.addEventListener("dblclick", userActive)
 
 	document.addEventListener("status_active", () => {
 		document.getElementById("pagesContainer").style.setProperty(

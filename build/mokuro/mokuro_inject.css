@@ -726,6 +726,10 @@ select {
 .p-1 {
   padding: 0.25rem;
 }
+.px-12 {
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
@@ -785,10 +789,6 @@ select {
   .dark\:border-indigo-500 {
     --tw-border-opacity:1;
     border-color: rgb(99 102 241 / var(--tw-border-opacity));
-  }
-  .dark\:bg-slate-800 {
-    --tw-bg-opacity:1;
-    background-color: rgb(30 41 59 / var(--tw-bg-opacity));
   }
   .dark\:bg-slate-900 {
     --tw-bg-opacity:1;

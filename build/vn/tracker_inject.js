@@ -3864,6 +3864,7 @@
     let t2;
     let button;
     let t4;
+    let div2;
     let lineholder;
     let updating_lines;
     let current;
@@ -3894,7 +3895,6 @@
     lineholder = new line_holder_default({ props: lineholder_props });
     binding_callbacks.push(() => bind(lineholder, "lines", lineholder_lines_binding));
     lineholder.$on("click", ctx[13]);
-    lineholder.$on("dblclick", ctx[7]);
     return {
       c() {
         body = element("body");
@@ -3909,6 +3909,7 @@
         button = element("button");
         button.textContent = "delete";
         t4 = space();
+        div2 = element("div");
         create_component(lineholder.$$.fragment);
         attr(input, "id", "game_name");
         attr(input, "class", "w-20 h-full shrink grow justify-self-start jp-text");
@@ -3917,7 +3918,8 @@
         attr(button, "id", "delete-selection");
         attr(button, "class", "material-icons delete-button");
         attr(div1, "id", "top_bar");
-        attr(div1, "class", "flex z-50 h-20 items-center justify-between");
+        attr(div1, "class", "flex z-50 h-20 px-12 items-center justify-between");
+        attr(div2, "class", "px-12");
         attr(body, "class", "flex flex-col h-screen w-screen");
       },
       m(target, anchor) {
@@ -3933,12 +3935,14 @@
         append(div1, t2);
         append(div1, button);
         append(body, t4);
-        mount_component(lineholder, body, null);
+        append(body, div2);
+        mount_component(lineholder, div2, null);
         current = true;
         if (!mounted) {
           dispose = [
             listen(input, "input", ctx[9]),
-            listen(button, "click", ctx[8])
+            listen(button, "click", ctx[8]),
+            listen(div2, "dblclick", ctx[7])
           ];
           mounted = true;
         }

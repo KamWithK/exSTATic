@@ -129,7 +129,7 @@
 </script>
 
 <body class="flex flex-col h-screen w-screen">
-	<div id="top_bar" class="flex z-50 h-20 items-center justify-between">
+	<div id="top_bar" class="flex z-50 h-20 px-12 items-center justify-between">
 		<input id="game_name" class="w-20 h-full shrink grow justify-self-start jp-text" type="text" bind:value={title}>
 		<div class="relative">
 			<StatBar media_storage={vn_storage}>
@@ -155,8 +155,10 @@
 		</div>
 		<button id="delete-selection" class="material-icons delete-button" on:click={deleteLines}>delete</button>
 	</div>
-	
-	<LineHolder bind:lines={lines} on:click={() => menu = false } on:dblclick={userActive}/>
+
+	<div class="px-12" on:dblclick={userActive}>
+		<LineHolder bind:lines={lines} on:click={() => menu = false }/>
+	</div>
 </body>
 
 <style global>
@@ -169,7 +171,7 @@
 	}
 
 	body {
-		@apply dark:bg-slate-800 px-12;
+		@apply dark:bg-slate-800;
 	}
 
 	.jp-text {

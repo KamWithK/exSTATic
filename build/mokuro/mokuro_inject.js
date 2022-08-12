@@ -2166,8 +2166,14 @@
       $$invalidate(4, speed = getSpeed(char_count, time_secs));
     };
     calculateStats();
-    document.addEventListener("status_active", calculateStats);
-    document.addEventListener("status_inactive", calculateStats);
+    document.addEventListener("status_active", () => {
+      $$invalidate(0, active = true);
+      calculateStats();
+    });
+    document.addEventListener("status_inactive", () => {
+      $$invalidate(0, active = false);
+      calculateStats();
+    });
     $$self.$$set = ($$props2) => {
       if ("media_storage" in $$props2)
         $$invalidate(5, media_storage = $$props2.media_storage);
@@ -2275,6 +2281,12 @@
       }
     });
     document.getElementById("pagesContainer").addEventListener("dblclick", userActive);
+    document.addEventListener("status_active", () => {
+      document.getElementById("pagesContainer").style.setProperty("filter", "");
+    });
+    document.addEventListener("status_inactive", () => {
+      document.getElementById("pagesContainer").style.setProperty("filter", "blur(2px)");
+    });
     $$self.$$set = ($$props2) => {
       if ("mokuro_storage" in $$props2)
         $$invalidate(0, mokuro_storage2 = $$props2.mokuro_storage);

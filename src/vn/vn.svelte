@@ -86,6 +86,20 @@
 		}
 	}
 
+	document.addEventListener("status_active", () => {
+		document.documentElement.style.setProperty(
+			"--default-inactivity-blur",
+			"0"
+		)
+	})
+
+	document.addEventListener("status_inactive", () => {
+		document.documentElement.style.setProperty(
+			"--default-inactivity-blur",
+			vn_storage.properties["inactivity_blur"] + "px"
+		)
+	})
+
 	const deleteLines = async () => {
 		if (vn_storage.instance_storage === undefined) return
 

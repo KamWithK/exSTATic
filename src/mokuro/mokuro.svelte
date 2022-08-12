@@ -17,6 +17,20 @@
 	}
 
     document.getElementById("pagesContainer").addEventListener("dblclick", userActive)
+
+	document.addEventListener("status_active", () => {
+		document.getElementById("pagesContainer").style.setProperty(
+			"filter",
+			""
+		)
+	})
+
+	document.addEventListener("status_inactive", () => {
+		document.getElementById("pagesContainer").style.setProperty(
+			"filter",
+			"blur(2px)"
+		)
+	})
 </script>
 
 <div class="flex flex-col-reverse items-end content-center m-[5px]">

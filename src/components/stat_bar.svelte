@@ -43,8 +43,14 @@
     }
     calculateStats()
 
-    document.addEventListener("status_active", calculateStats)
-    document.addEventListener("status_inactive", calculateStats)
+    document.addEventListener("status_active", () => {
+        active = true
+        calculateStats()
+    })
+    document.addEventListener("status_inactive", () => {
+        active = false
+        calculateStats()
+    })
 
 </script>
 

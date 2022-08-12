@@ -2897,8 +2897,14 @@
       $$invalidate(4, speed = getSpeed(char_count, time_secs));
     };
     calculateStats();
-    document.addEventListener("status_active", calculateStats);
-    document.addEventListener("status_inactive", calculateStats);
+    document.addEventListener("status_active", () => {
+      $$invalidate(0, active = true);
+      calculateStats();
+    });
+    document.addEventListener("status_inactive", () => {
+      $$invalidate(0, active = false);
+      calculateStats();
+    });
     $$self.$$set = ($$props2) => {
       if ("media_storage" in $$props2)
         $$invalidate(5, media_storage = $$props2.media_storage);
@@ -4078,6 +4084,12 @@
       } else {
         vn_storage.stop_ticker();
       }
+    });
+    document.addEventListener("status_active", () => {
+      document.documentElement.style.setProperty("--default-inactivity-blur", "0");
+    });
+    document.addEventListener("status_inactive", () => {
+      document.documentElement.style.setProperty("--default-inactivity-blur", vn_storage.properties["inactivity_blur"] + "px");
     });
     const deleteLines = () => __awaiter(void 0, void 0, void 0, function* () {
       if (vn_storage.instance_storage === void 0)

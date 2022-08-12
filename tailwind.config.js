@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */ 
+/** @type {import("tailwindcss").Config} */ 
 module.exports = {
     content: ["./src/**/*\.{html,css,js,ts,svelte}"],
     theme: {
@@ -7,5 +7,7 @@ module.exports = {
     variants: {
       extend: {}
     },
-    plugins: ["forms"]
+    plugins: [
+      require("@tailwindcss/forms")
+    ]
 }

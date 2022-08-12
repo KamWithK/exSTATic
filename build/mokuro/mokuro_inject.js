@@ -11949,7 +11949,6 @@ Check your Browserslist config to be sure that your targets are set up correctly
     new mokuro_default({
       target: svelte_div,
       props: {
-        name: "vn",
         mokuro_storage
       }
     });

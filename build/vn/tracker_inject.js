@@ -1555,496 +1555,6 @@
     }
   });
 
-  // node_modules/svelte/internal/index.mjs
-  function noop() {
-  }
-  function assign(tar, src) {
-    for (const k in src)
-      tar[k] = src[k];
-    return tar;
-  }
-  function is_promise(value) {
-    return value && typeof value === "object" && typeof value.then === "function";
-  }
-  function run(fn) {
-    return fn();
-  }
-  function blank_object() {
-    return /* @__PURE__ */ Object.create(null);
-  }
-  function run_all(fns) {
-    fns.forEach(run);
-  }
-  function is_function(thing) {
-    return typeof thing === "function";
-  }
-  function safe_not_equal(a, b) {
-    return a != a ? b == b : a !== b || (a && typeof a === "object" || typeof a === "function");
-  }
-  function is_empty(obj) {
-    return Object.keys(obj).length === 0;
-  }
-  function create_slot(definition, ctx, $$scope, fn) {
-    if (definition) {
-      const slot_ctx = get_slot_context(definition, ctx, $$scope, fn);
-      return definition[0](slot_ctx);
-    }
-  }
-  function get_slot_context(definition, ctx, $$scope, fn) {
-    return definition[1] && fn ? assign($$scope.ctx.slice(), definition[1](fn(ctx))) : $$scope.ctx;
-  }
-  function get_slot_changes(definition, $$scope, dirty, fn) {
-    if (definition[2] && fn) {
-      const lets = definition[2](fn(dirty));
-      if ($$scope.dirty === void 0) {
-        return lets;
-      }
-      if (typeof lets === "object") {
-        const merged = [];
-        const len = Math.max($$scope.dirty.length, lets.length);
-        for (let i = 0; i < len; i += 1) {
-          merged[i] = $$scope.dirty[i] | lets[i];
-        }
-        return merged;
-      }
-      return $$scope.dirty | lets;
-    }
-    return $$scope.dirty;
-  }
-  function update_slot_base(slot, slot_definition, ctx, $$scope, slot_changes, get_slot_context_fn) {
-    if (slot_changes) {
-      const slot_context = get_slot_context(slot_definition, ctx, $$scope, get_slot_context_fn);
-      slot.p(slot_context, slot_changes);
-    }
-  }
-  function get_all_dirty_from_scope($$scope) {
-    if ($$scope.ctx.length > 32) {
-      const dirty = [];
-      const length = $$scope.ctx.length / 32;
-      for (let i = 0; i < length; i++) {
-        dirty[i] = -1;
-      }
-      return dirty;
-    }
-    return -1;
-  }
-  var is_hydrating = false;
-  function start_hydrating() {
-    is_hydrating = true;
-  }
-  function end_hydrating() {
-    is_hydrating = false;
-  }
-  function append(target, node) {
-    target.appendChild(node);
-  }
-  function insert(target, node, anchor) {
-    target.insertBefore(node, anchor || null);
-  }
-  function detach(node) {
-    node.parentNode.removeChild(node);
-  }
-  function destroy_each(iterations, detaching) {
-    for (let i = 0; i < iterations.length; i += 1) {
-      if (iterations[i])
-        iterations[i].d(detaching);
-    }
-  }
-  function element(name) {
-    return document.createElement(name);
-  }
-  function text(data) {
-    return document.createTextNode(data);
-  }
-  function space() {
-    return text(" ");
-  }
-  function listen(node, event, handler, options) {
-    node.addEventListener(event, handler, options);
-    return () => node.removeEventListener(event, handler, options);
-  }
-  function attr(node, attribute, value) {
-    if (value == null)
-      node.removeAttribute(attribute);
-    else if (node.getAttribute(attribute) !== value)
-      node.setAttribute(attribute, value);
-  }
-  function children(element2) {
-    return Array.from(element2.childNodes);
-  }
-  function set_data(text2, data) {
-    data = "" + data;
-    if (text2.wholeText !== data)
-      text2.data = data;
-  }
-  function set_input_value(input, value) {
-    input.value = value == null ? "" : value;
-  }
-  function set_style(node, key, value, important) {
-    if (value === null) {
-      node.style.removeProperty(key);
-    } else {
-      node.style.setProperty(key, value, important ? "important" : "");
-    }
-  }
-  var current_component;
-  function set_current_component(component) {
-    current_component = component;
-  }
-  function get_current_component() {
-    if (!current_component)
-      throw new Error("Function called outside component initialization");
-    return current_component;
-  }
-  function onMount(fn) {
-    get_current_component().$$.on_mount.push(fn);
-  }
-  function bubble(component, event) {
-    const callbacks = component.$$.callbacks[event.type];
-    if (callbacks) {
-      callbacks.slice().forEach((fn) => fn.call(this, event));
-    }
-  }
-  var dirty_components = [];
-  var binding_callbacks = [];
-  var render_callbacks = [];
-  var flush_callbacks = [];
-  var resolved_promise = Promise.resolve();
-  var update_scheduled = false;
-  function schedule_update() {
-    if (!update_scheduled) {
-      update_scheduled = true;
-      resolved_promise.then(flush);
-    }
-  }
-  function add_render_callback(fn) {
-    render_callbacks.push(fn);
-  }
-  function add_flush_callback(fn) {
-    flush_callbacks.push(fn);
-  }
-  var seen_callbacks = /* @__PURE__ */ new Set();
-  var flushidx = 0;
-  function flush() {
-    const saved_component = current_component;
-    do {
-      while (flushidx < dirty_components.length) {
-        const component = dirty_components[flushidx];
-        flushidx++;
-        set_current_component(component);
-        update(component.$$);
-      }
-      set_current_component(null);
-      dirty_components.length = 0;
-      flushidx = 0;
-      while (binding_callbacks.length)
-        binding_callbacks.pop()();
-      for (let i = 0; i < render_callbacks.length; i += 1) {
-        const callback = render_callbacks[i];
-        if (!seen_callbacks.has(callback)) {
-          seen_callbacks.add(callback);
-          callback();
-        }
-      }
-      render_callbacks.length = 0;
-    } while (dirty_components.length);
-    while (flush_callbacks.length) {
-      flush_callbacks.pop()();
-    }
-    update_scheduled = false;
-    seen_callbacks.clear();
-    set_current_component(saved_component);
-  }
-  function update($$) {
-    if ($$.fragment !== null) {
-      $$.update();
-      run_all($$.before_update);
-      const dirty = $$.dirty;
-      $$.dirty = [-1];
-      $$.fragment && $$.fragment.p($$.ctx, dirty);
-      $$.after_update.forEach(add_render_callback);
-    }
-  }
-  var outroing = /* @__PURE__ */ new Set();
-  var outros;
-  function group_outros() {
-    outros = {
-      r: 0,
-      c: [],
-      p: outros
-    };
-  }
-  function check_outros() {
-    if (!outros.r) {
-      run_all(outros.c);
-    }
-    outros = outros.p;
-  }
-  function transition_in(block, local) {
-    if (block && block.i) {
-      outroing.delete(block);
-      block.i(local);
-    }
-  }
-  function transition_out(block, local, detach2, callback) {
-    if (block && block.o) {
-      if (outroing.has(block))
-        return;
-      outroing.add(block);
-      outros.c.push(() => {
-        outroing.delete(block);
-        if (callback) {
-          if (detach2)
-            block.d(1);
-          callback();
-        }
-      });
-      block.o(local);
-    } else if (callback) {
-      callback();
-    }
-  }
-  function handle_promise(promise, info) {
-    const token = info.token = {};
-    function update2(type, index, key, value) {
-      if (info.token !== token)
-        return;
-      info.resolved = value;
-      let child_ctx = info.ctx;
-      if (key !== void 0) {
-        child_ctx = child_ctx.slice();
-        child_ctx[key] = value;
-      }
-      const block = type && (info.current = type)(child_ctx);
-      let needs_flush = false;
-      if (info.block) {
-        if (info.blocks) {
-          info.blocks.forEach((block2, i) => {
-            if (i !== index && block2) {
-              group_outros();
-              transition_out(block2, 1, 1, () => {
-                if (info.blocks[i] === block2) {
-                  info.blocks[i] = null;
-                }
-              });
-              check_outros();
-            }
-          });
-        } else {
-          info.block.d(1);
-        }
-        block.c();
-        transition_in(block, 1);
-        block.m(info.mount(), info.anchor);
-        needs_flush = true;
-      }
-      info.block = block;
-      if (info.blocks)
-        info.blocks[index] = block;
-      if (needs_flush) {
-        flush();
-      }
-    }
-    if (is_promise(promise)) {
-      const current_component2 = get_current_component();
-      promise.then((value) => {
-        set_current_component(current_component2);
-        update2(info.then, 1, info.value, value);
-        set_current_component(null);
-      }, (error) => {
-        set_current_component(current_component2);
-        update2(info.catch, 2, info.error, error);
-        set_current_component(null);
-        if (!info.hasCatch) {
-          throw error;
-        }
-      });
-      if (info.current !== info.pending) {
-        update2(info.pending, 0);
-        return true;
-      }
-    } else {
-      if (info.current !== info.then) {
-        update2(info.then, 1, info.value, promise);
-        return true;
-      }
-      info.resolved = promise;
-    }
-  }
-  function update_await_block_branch(info, ctx, dirty) {
-    const child_ctx = ctx.slice();
-    const { resolved } = info;
-    if (info.current === info.then) {
-      child_ctx[info.value] = resolved;
-    }
-    if (info.current === info.catch) {
-      child_ctx[info.error] = resolved;
-    }
-    info.block.p(child_ctx, dirty);
-  }
-  var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
-  function bind(component, name, callback) {
-    const index = component.$$.props[name];
-    if (index !== void 0) {
-      component.$$.bound[index] = callback;
-      callback(component.$$.ctx[index]);
-    }
-  }
-  function create_component(block) {
-    block && block.c();
-  }
-  function mount_component(component, target, anchor, customElement) {
-    const { fragment, on_mount, on_destroy, after_update } = component.$$;
-    fragment && fragment.m(target, anchor);
-    if (!customElement) {
-      add_render_callback(() => {
-        const new_on_destroy = on_mount.map(run).filter(is_function);
-        if (on_destroy) {
-          on_destroy.push(...new_on_destroy);
-        } else {
-          run_all(new_on_destroy);
-        }
-        component.$$.on_mount = [];
-      });
-    }
-    after_update.forEach(add_render_callback);
-  }
-  function destroy_component(component, detaching) {
-    const $$ = component.$$;
-    if ($$.fragment !== null) {
-      run_all($$.on_destroy);
-      $$.fragment && $$.fragment.d(detaching);
-      $$.on_destroy = $$.fragment = null;
-      $$.ctx = [];
-    }
-  }
-  function make_dirty(component, i) {
-    if (component.$$.dirty[0] === -1) {
-      dirty_components.push(component);
-      schedule_update();
-      component.$$.dirty.fill(0);
-    }
-    component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
-  }
-  function init(component, options, instance7, create_fragment7, not_equal, props, append_styles, dirty = [-1]) {
-    const parent_component = current_component;
-    set_current_component(component);
-    const $$ = component.$$ = {
-      fragment: null,
-      ctx: null,
-      props,
-      update: noop,
-      not_equal,
-      bound: blank_object(),
-      on_mount: [],
-      on_destroy: [],
-      on_disconnect: [],
-      before_update: [],
-      after_update: [],
-      context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
-      callbacks: blank_object(),
-      dirty,
-      skip_bound: false,
-      root: options.target || parent_component.$$.root
-    };
-    append_styles && append_styles($$.root);
-    let ready = false;
-    $$.ctx = instance7 ? instance7(component, options.props || {}, (i, ret, ...rest) => {
-      const value = rest.length ? rest[0] : ret;
-      if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
-        if (!$$.skip_bound && $$.bound[i])
-          $$.bound[i](value);
-        if (ready)
-          make_dirty(component, i);
-      }
-      return ret;
-    }) : [];
-    $$.update();
-    ready = true;
-    run_all($$.before_update);
-    $$.fragment = create_fragment7 ? create_fragment7($$.ctx) : false;
-    if (options.target) {
-      if (options.hydrate) {
-        start_hydrating();
-        const nodes = children(options.target);
-        $$.fragment && $$.fragment.l(nodes);
-        nodes.forEach(detach);
-      } else {
-        $$.fragment && $$.fragment.c();
-      }
-      if (options.intro)
-        transition_in(component.$$.fragment);
-      mount_component(component, options.target, options.anchor, options.customElement);
-      end_hydrating();
-      flush();
-    }
-    set_current_component(parent_component);
-  }
-  var SvelteElement;
-  if (typeof HTMLElement === "function") {
-    SvelteElement = class extends HTMLElement {
-      constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
-      }
-      connectedCallback() {
-        const { on_mount } = this.$$;
-        this.$$.on_disconnect = on_mount.map(run).filter(is_function);
-        for (const key in this.$$.slotted) {
-          this.appendChild(this.$$.slotted[key]);
-        }
-      }
-      attributeChangedCallback(attr2, _oldValue, newValue) {
-        this[attr2] = newValue;
-      }
-      disconnectedCallback() {
-        run_all(this.$$.on_disconnect);
-      }
-      $destroy() {
-        destroy_component(this, 1);
-        this.$destroy = noop;
-      }
-      $on(type, callback) {
-        const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
-        callbacks.push(callback);
-        return () => {
-          const index = callbacks.indexOf(callback);
-          if (index !== -1)
-            callbacks.splice(index, 1);
-        };
-      }
-      $set($$props) {
-        if (this.$$set && !is_empty($$props)) {
-          this.$$.skip_bound = true;
-          this.$$set($$props);
-          this.$$.skip_bound = false;
-        }
-      }
-    };
-  }
-  var SvelteComponent = class {
-    $destroy() {
-      destroy_component(this, 1);
-      this.$destroy = noop;
-    }
-    $on(type, callback) {
-      const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
-      callbacks.push(callback);
-      return () => {
-        const index = callbacks.indexOf(callback);
-        if (index !== -1)
-          callbacks.splice(index, 1);
-      };
-    }
-    $set($$props) {
-      if (this.$$set && !is_empty($$props)) {
-        this.$$.skip_bound = true;
-        this.$$set($$props);
-        this.$$.skip_bound = false;
-      }
-    }
-  };
-
   // node_modules/date-fns/esm/_lib/requiredArgs/index.js
   function requiredArgs(required, args) {
     if (args.length < required) {
@@ -2642,6 +2152,415 @@
         "lines_read": lineSplitCount(line),
         "chars_read": charsInLine(line)
       });
+    }
+  };
+
+  // node_modules/svelte/internal/index.mjs
+  function noop() {
+  }
+  function assign(tar, src) {
+    for (const k in src)
+      tar[k] = src[k];
+    return tar;
+  }
+  function run(fn) {
+    return fn();
+  }
+  function blank_object() {
+    return /* @__PURE__ */ Object.create(null);
+  }
+  function run_all(fns) {
+    fns.forEach(run);
+  }
+  function is_function(thing) {
+    return typeof thing === "function";
+  }
+  function safe_not_equal(a, b) {
+    return a != a ? b == b : a !== b || (a && typeof a === "object" || typeof a === "function");
+  }
+  function is_empty(obj) {
+    return Object.keys(obj).length === 0;
+  }
+  function create_slot(definition, ctx, $$scope, fn) {
+    if (definition) {
+      const slot_ctx = get_slot_context(definition, ctx, $$scope, fn);
+      return definition[0](slot_ctx);
+    }
+  }
+  function get_slot_context(definition, ctx, $$scope, fn) {
+    return definition[1] && fn ? assign($$scope.ctx.slice(), definition[1](fn(ctx))) : $$scope.ctx;
+  }
+  function get_slot_changes(definition, $$scope, dirty, fn) {
+    if (definition[2] && fn) {
+      const lets = definition[2](fn(dirty));
+      if ($$scope.dirty === void 0) {
+        return lets;
+      }
+      if (typeof lets === "object") {
+        const merged = [];
+        const len = Math.max($$scope.dirty.length, lets.length);
+        for (let i = 0; i < len; i += 1) {
+          merged[i] = $$scope.dirty[i] | lets[i];
+        }
+        return merged;
+      }
+      return $$scope.dirty | lets;
+    }
+    return $$scope.dirty;
+  }
+  function update_slot_base(slot, slot_definition, ctx, $$scope, slot_changes, get_slot_context_fn) {
+    if (slot_changes) {
+      const slot_context = get_slot_context(slot_definition, ctx, $$scope, get_slot_context_fn);
+      slot.p(slot_context, slot_changes);
+    }
+  }
+  function get_all_dirty_from_scope($$scope) {
+    if ($$scope.ctx.length > 32) {
+      const dirty = [];
+      const length = $$scope.ctx.length / 32;
+      for (let i = 0; i < length; i++) {
+        dirty[i] = -1;
+      }
+      return dirty;
+    }
+    return -1;
+  }
+  var is_hydrating = false;
+  function start_hydrating() {
+    is_hydrating = true;
+  }
+  function end_hydrating() {
+    is_hydrating = false;
+  }
+  function append(target, node) {
+    target.appendChild(node);
+  }
+  function insert(target, node, anchor) {
+    target.insertBefore(node, anchor || null);
+  }
+  function detach(node) {
+    node.parentNode.removeChild(node);
+  }
+  function destroy_each(iterations, detaching) {
+    for (let i = 0; i < iterations.length; i += 1) {
+      if (iterations[i])
+        iterations[i].d(detaching);
+    }
+  }
+  function element(name) {
+    return document.createElement(name);
+  }
+  function text(data) {
+    return document.createTextNode(data);
+  }
+  function space() {
+    return text(" ");
+  }
+  function listen(node, event, handler, options) {
+    node.addEventListener(event, handler, options);
+    return () => node.removeEventListener(event, handler, options);
+  }
+  function attr(node, attribute, value) {
+    if (value == null)
+      node.removeAttribute(attribute);
+    else if (node.getAttribute(attribute) !== value)
+      node.setAttribute(attribute, value);
+  }
+  function children(element2) {
+    return Array.from(element2.childNodes);
+  }
+  function set_data(text2, data) {
+    data = "" + data;
+    if (text2.wholeText !== data)
+      text2.data = data;
+  }
+  function set_input_value(input, value) {
+    input.value = value == null ? "" : value;
+  }
+  function set_style(node, key, value, important) {
+    if (value === null) {
+      node.style.removeProperty(key);
+    } else {
+      node.style.setProperty(key, value, important ? "important" : "");
+    }
+  }
+  var current_component;
+  function set_current_component(component) {
+    current_component = component;
+  }
+  function get_current_component() {
+    if (!current_component)
+      throw new Error("Function called outside component initialization");
+    return current_component;
+  }
+  function onMount(fn) {
+    get_current_component().$$.on_mount.push(fn);
+  }
+  function bubble(component, event) {
+    const callbacks = component.$$.callbacks[event.type];
+    if (callbacks) {
+      callbacks.slice().forEach((fn) => fn.call(this, event));
+    }
+  }
+  var dirty_components = [];
+  var binding_callbacks = [];
+  var render_callbacks = [];
+  var flush_callbacks = [];
+  var resolved_promise = Promise.resolve();
+  var update_scheduled = false;
+  function schedule_update() {
+    if (!update_scheduled) {
+      update_scheduled = true;
+      resolved_promise.then(flush);
+    }
+  }
+  function add_render_callback(fn) {
+    render_callbacks.push(fn);
+  }
+  function add_flush_callback(fn) {
+    flush_callbacks.push(fn);
+  }
+  var seen_callbacks = /* @__PURE__ */ new Set();
+  var flushidx = 0;
+  function flush() {
+    const saved_component = current_component;
+    do {
+      while (flushidx < dirty_components.length) {
+        const component = dirty_components[flushidx];
+        flushidx++;
+        set_current_component(component);
+        update(component.$$);
+      }
+      set_current_component(null);
+      dirty_components.length = 0;
+      flushidx = 0;
+      while (binding_callbacks.length)
+        binding_callbacks.pop()();
+      for (let i = 0; i < render_callbacks.length; i += 1) {
+        const callback = render_callbacks[i];
+        if (!seen_callbacks.has(callback)) {
+          seen_callbacks.add(callback);
+          callback();
+        }
+      }
+      render_callbacks.length = 0;
+    } while (dirty_components.length);
+    while (flush_callbacks.length) {
+      flush_callbacks.pop()();
+    }
+    update_scheduled = false;
+    seen_callbacks.clear();
+    set_current_component(saved_component);
+  }
+  function update($$) {
+    if ($$.fragment !== null) {
+      $$.update();
+      run_all($$.before_update);
+      const dirty = $$.dirty;
+      $$.dirty = [-1];
+      $$.fragment && $$.fragment.p($$.ctx, dirty);
+      $$.after_update.forEach(add_render_callback);
+    }
+  }
+  var outroing = /* @__PURE__ */ new Set();
+  var outros;
+  function group_outros() {
+    outros = {
+      r: 0,
+      c: [],
+      p: outros
+    };
+  }
+  function check_outros() {
+    if (!outros.r) {
+      run_all(outros.c);
+    }
+    outros = outros.p;
+  }
+  function transition_in(block, local) {
+    if (block && block.i) {
+      outroing.delete(block);
+      block.i(local);
+    }
+  }
+  function transition_out(block, local, detach2, callback) {
+    if (block && block.o) {
+      if (outroing.has(block))
+        return;
+      outroing.add(block);
+      outros.c.push(() => {
+        outroing.delete(block);
+        if (callback) {
+          if (detach2)
+            block.d(1);
+          callback();
+        }
+      });
+      block.o(local);
+    } else if (callback) {
+      callback();
+    }
+  }
+  var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
+  function bind(component, name, callback) {
+    const index = component.$$.props[name];
+    if (index !== void 0) {
+      component.$$.bound[index] = callback;
+      callback(component.$$.ctx[index]);
+    }
+  }
+  function create_component(block) {
+    block && block.c();
+  }
+  function mount_component(component, target, anchor, customElement) {
+    const { fragment, on_mount, on_destroy, after_update } = component.$$;
+    fragment && fragment.m(target, anchor);
+    if (!customElement) {
+      add_render_callback(() => {
+        const new_on_destroy = on_mount.map(run).filter(is_function);
+        if (on_destroy) {
+          on_destroy.push(...new_on_destroy);
+        } else {
+          run_all(new_on_destroy);
+        }
+        component.$$.on_mount = [];
+      });
+    }
+    after_update.forEach(add_render_callback);
+  }
+  function destroy_component(component, detaching) {
+    const $$ = component.$$;
+    if ($$.fragment !== null) {
+      run_all($$.on_destroy);
+      $$.fragment && $$.fragment.d(detaching);
+      $$.on_destroy = $$.fragment = null;
+      $$.ctx = [];
+    }
+  }
+  function make_dirty(component, i) {
+    if (component.$$.dirty[0] === -1) {
+      dirty_components.push(component);
+      schedule_update();
+      component.$$.dirty.fill(0);
+    }
+    component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
+  }
+  function init(component, options, instance7, create_fragment7, not_equal, props, append_styles, dirty = [-1]) {
+    const parent_component = current_component;
+    set_current_component(component);
+    const $$ = component.$$ = {
+      fragment: null,
+      ctx: null,
+      props,
+      update: noop,
+      not_equal,
+      bound: blank_object(),
+      on_mount: [],
+      on_destroy: [],
+      on_disconnect: [],
+      before_update: [],
+      after_update: [],
+      context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
+      callbacks: blank_object(),
+      dirty,
+      skip_bound: false,
+      root: options.target || parent_component.$$.root
+    };
+    append_styles && append_styles($$.root);
+    let ready = false;
+    $$.ctx = instance7 ? instance7(component, options.props || {}, (i, ret, ...rest) => {
+      const value = rest.length ? rest[0] : ret;
+      if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
+        if (!$$.skip_bound && $$.bound[i])
+          $$.bound[i](value);
+        if (ready)
+          make_dirty(component, i);
+      }
+      return ret;
+    }) : [];
+    $$.update();
+    ready = true;
+    run_all($$.before_update);
+    $$.fragment = create_fragment7 ? create_fragment7($$.ctx) : false;
+    if (options.target) {
+      if (options.hydrate) {
+        start_hydrating();
+        const nodes = children(options.target);
+        $$.fragment && $$.fragment.l(nodes);
+        nodes.forEach(detach);
+      } else {
+        $$.fragment && $$.fragment.c();
+      }
+      if (options.intro)
+        transition_in(component.$$.fragment);
+      mount_component(component, options.target, options.anchor, options.customElement);
+      end_hydrating();
+      flush();
+    }
+    set_current_component(parent_component);
+  }
+  var SvelteElement;
+  if (typeof HTMLElement === "function") {
+    SvelteElement = class extends HTMLElement {
+      constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+      }
+      connectedCallback() {
+        const { on_mount } = this.$$;
+        this.$$.on_disconnect = on_mount.map(run).filter(is_function);
+        for (const key in this.$$.slotted) {
+          this.appendChild(this.$$.slotted[key]);
+        }
+      }
+      attributeChangedCallback(attr2, _oldValue, newValue) {
+        this[attr2] = newValue;
+      }
+      disconnectedCallback() {
+        run_all(this.$$.on_disconnect);
+      }
+      $destroy() {
+        destroy_component(this, 1);
+        this.$destroy = noop;
+      }
+      $on(type, callback) {
+        const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
+        callbacks.push(callback);
+        return () => {
+          const index = callbacks.indexOf(callback);
+          if (index !== -1)
+            callbacks.splice(index, 1);
+        };
+      }
+      $set($$props) {
+        if (this.$$set && !is_empty($$props)) {
+          this.$$.skip_bound = true;
+          this.$$set($$props);
+          this.$$.skip_bound = false;
+        }
+      }
+    };
+  }
+  var SvelteComponent = class {
+    $destroy() {
+      destroy_component(this, 1);
+      this.$destroy = noop;
+    }
+    $on(type, callback) {
+      const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
+      callbacks.push(callback);
+      return () => {
+        const index = callbacks.indexOf(callback);
+        if (index !== -1)
+          callbacks.splice(index, 1);
+      };
+    }
+    $set($$props) {
+      if (this.$$set && !is_empty($$props)) {
+        this.$$.skip_bound = true;
+        this.$$set($$props);
+        this.$$.skip_bound = false;
+      }
     }
   };
 
@@ -3647,82 +3566,6 @@
 
   // src/vn/vn.svelte
   var import_papaparse2 = __toESM(require_papaparse_min());
-  function create_catch_block(ctx) {
-    return {
-      c: noop,
-      m: noop,
-      p: noop,
-      i: noop,
-      o: noop,
-      d: noop
-    };
-  }
-  function create_then_block(ctx) {
-    let statbar;
-    let t;
-    let menubar;
-    let current;
-    statbar = new stat_bar_default({
-      props: {
-        media_storage: ctx[3],
-        $$slots: { default: [create_default_slot_1] },
-        $$scope: { ctx }
-      }
-    });
-    menubar = new menu_bar_default({
-      props: {
-        show: ctx[2],
-        media_storage: ctx[3],
-        $$slots: { default: [create_default_slot] },
-        $$scope: { ctx }
-      }
-    });
-    return {
-      c() {
-        create_component(statbar.$$.fragment);
-        t = space();
-        create_component(menubar.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(statbar, target, anchor);
-        insert(target, t, anchor);
-        mount_component(menubar, target, anchor);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const statbar_changes = {};
-        if (dirty & 524292) {
-          statbar_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        statbar.$set(statbar_changes);
-        const menubar_changes = {};
-        if (dirty & 4)
-          menubar_changes.show = ctx2[2];
-        if (dirty & 524288) {
-          menubar_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        menubar.$set(menubar_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(statbar.$$.fragment, local);
-        transition_in(menubar.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(statbar.$$.fragment, local);
-        transition_out(menubar.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(statbar, detaching);
-        if (detaching)
-          detach(t);
-        destroy_component(menubar, detaching);
-      }
-    };
-  }
   function create_default_slot_1(ctx) {
     let button;
     let mounted;
@@ -3736,7 +3579,7 @@
       m(target, anchor) {
         insert(target, button, anchor);
         if (!mounted) {
-          dispose = listen(button, "click", ctx[11]);
+          dispose = listen(button, "click", ctx[10]);
           mounted = true;
         }
       },
@@ -3778,7 +3621,7 @@
     let dispose;
     menuoption0 = new menu_option_default({
       props: {
-        media_storage: ctx[3],
+        media_storage: ctx[0],
         id: "font",
         description: "Font",
         type: "text",
@@ -3788,7 +3631,7 @@
     });
     menuoption1 = new menu_option_default({
       props: {
-        media_storage: ctx[3],
+        media_storage: ctx[0],
         id: "font_size",
         description: "Font Size",
         units: "rem",
@@ -3798,7 +3641,7 @@
     });
     menuoption2 = new menu_option_default({
       props: {
-        media_storage: ctx[3],
+        media_storage: ctx[0],
         id: "bottom_line_padding",
         description: "Bottom Pushback",
         units: "%",
@@ -3808,7 +3651,7 @@
     });
     menuoption3 = new menu_option_default({
       props: {
-        media_storage: ctx[3],
+        media_storage: ctx[0],
         id: "afk_max_time",
         description: "Max AFK Time",
         units: "secs",
@@ -3817,7 +3660,7 @@
     });
     menuoption4 = new menu_option_default({
       props: {
-        media_storage: ctx[3],
+        media_storage: ctx[0],
         id: "max_loaded_lines",
         description: "Max Loaded Lines",
         units: "UI",
@@ -3826,7 +3669,7 @@
     });
     menuoption5 = new menu_option_default({
       props: {
-        media_storage: ctx[3],
+        media_storage: ctx[0],
         id: "inactivity_blur",
         description: "Inactivity Blur",
         units: "px",
@@ -3835,7 +3678,7 @@
     });
     menuoption6 = new menu_option_default({
       props: {
-        media_storage: ctx[3],
+        media_storage: ctx[0],
         id: "menu_blur",
         description: "Menu Blur",
         units: "px",
@@ -3866,7 +3709,7 @@
         button1.textContent = "Export Lines";
         t10 = space();
         button2 = element("button");
-        t11 = text("Import Stats\n						");
+        t11 = text("Import Stats\n					");
         input = element("input");
         t12 = space();
         button3 = element("button");
@@ -3910,15 +3753,44 @@
         if (!mounted) {
           dispose = [
             listen(button0, "click", exportStats),
-            listen(button1, "click", ctx[5]),
-            listen(input, "change", ctx[6]),
-            listen(button2, "click", ctx[12]),
-            listen(button3, "click", ctx[7])
+            listen(button1, "click", ctx[4]),
+            listen(input, "change", ctx[5]),
+            listen(button2, "click", ctx[11]),
+            listen(button3, "click", ctx[6])
           ];
           mounted = true;
         }
       },
-      p: noop,
+      p(ctx2, dirty) {
+        const menuoption0_changes = {};
+        if (dirty & 1)
+          menuoption0_changes.media_storage = ctx2[0];
+        menuoption0.$set(menuoption0_changes);
+        const menuoption1_changes = {};
+        if (dirty & 1)
+          menuoption1_changes.media_storage = ctx2[0];
+        menuoption1.$set(menuoption1_changes);
+        const menuoption2_changes = {};
+        if (dirty & 1)
+          menuoption2_changes.media_storage = ctx2[0];
+        menuoption2.$set(menuoption2_changes);
+        const menuoption3_changes = {};
+        if (dirty & 1)
+          menuoption3_changes.media_storage = ctx2[0];
+        menuoption3.$set(menuoption3_changes);
+        const menuoption4_changes = {};
+        if (dirty & 1)
+          menuoption4_changes.media_storage = ctx2[0];
+        menuoption4.$set(menuoption4_changes);
+        const menuoption5_changes = {};
+        if (dirty & 1)
+          menuoption5_changes.media_storage = ctx2[0];
+        menuoption5.$set(menuoption5_changes);
+        const menuoption6_changes = {};
+        if (dirty & 1)
+          menuoption6_changes.media_storage = ctx2[0];
+        menuoption6.$set(menuoption6_changes);
+      },
       i(local) {
         if (current)
           return;
@@ -3982,54 +3854,49 @@
       }
     };
   }
-  function create_pending_block(ctx) {
-    return {
-      c: noop,
-      m: noop,
-      p: noop,
-      i: noop,
-      o: noop,
-      d: noop
-    };
-  }
   function create_fragment6(ctx) {
     let body;
     let div1;
     let input;
     let t0;
     let div0;
-    let promise_1;
+    let statbar;
     let t1;
+    let menubar;
+    let t2;
     let button;
-    let t3;
+    let t4;
     let lineholder;
     let updating_lines;
     let current;
     let mounted;
     let dispose;
-    let info = {
-      ctx,
-      current: null,
-      token: null,
-      hasCatch: false,
-      pending: create_pending_block,
-      then: create_then_block,
-      catch: create_catch_block,
-      value: 3,
-      blocks: [, , ,]
-    };
-    handle_promise(promise_1 = ctx[4], info);
+    statbar = new stat_bar_default({
+      props: {
+        media_storage: ctx[0],
+        $$slots: { default: [create_default_slot_1] },
+        $$scope: { ctx }
+      }
+    });
+    menubar = new menu_bar_default({
+      props: {
+        show: ctx[3],
+        media_storage: ctx[0],
+        $$slots: { default: [create_default_slot] },
+        $$scope: { ctx }
+      }
+    });
     function lineholder_lines_binding(value) {
-      ctx[13](value);
+      ctx[12](value);
     }
     let lineholder_props = {};
-    if (ctx[1] !== void 0) {
-      lineholder_props.lines = ctx[1];
+    if (ctx[2] !== void 0) {
+      lineholder_props.lines = ctx[2];
     }
     lineholder = new line_holder_default({ props: lineholder_props });
     binding_callbacks.push(() => bind(lineholder, "lines", lineholder_lines_binding));
-    lineholder.$on("click", ctx[14]);
-    lineholder.$on("dblclick", ctx[8]);
+    lineholder.$on("click", ctx[13]);
+    lineholder.$on("dblclick", ctx[7]);
     return {
       c() {
         body = element("body");
@@ -4037,11 +3904,13 @@
         input = element("input");
         t0 = space();
         div0 = element("div");
-        info.block.c();
+        create_component(statbar.$$.fragment);
         t1 = space();
+        create_component(menubar.$$.fragment);
+        t2 = space();
         button = element("button");
         button.textContent = "delete";
-        t3 = space();
+        t4 = space();
         create_component(lineholder.$$.fragment);
         attr(input, "id", "game_name");
         attr(input, "class", "w-20 h-full shrink grow justify-self-start jp-text");
@@ -4057,35 +3926,49 @@
         insert(target, body, anchor);
         append(body, div1);
         append(div1, input);
-        set_input_value(input, ctx[0]);
+        set_input_value(input, ctx[1]);
         append(div1, t0);
         append(div1, div0);
-        info.block.m(div0, info.anchor = null);
-        info.mount = () => div0;
-        info.anchor = null;
-        append(div1, t1);
+        mount_component(statbar, div0, null);
+        append(div0, t1);
+        mount_component(menubar, div0, null);
+        append(div1, t2);
         append(div1, button);
-        append(body, t3);
+        append(body, t4);
         mount_component(lineholder, body, null);
         current = true;
         if (!mounted) {
           dispose = [
-            listen(input, "input", ctx[10]),
-            listen(button, "click", ctx[9])
+            listen(input, "input", ctx[9]),
+            listen(button, "click", ctx[8])
           ];
           mounted = true;
         }
       },
-      p(new_ctx, [dirty]) {
-        ctx = new_ctx;
-        if (dirty & 1 && input.value !== ctx[0]) {
-          set_input_value(input, ctx[0]);
+      p(ctx2, [dirty]) {
+        if (dirty & 2 && input.value !== ctx2[1]) {
+          set_input_value(input, ctx2[1]);
         }
-        update_await_block_branch(info, ctx, dirty);
+        const statbar_changes = {};
+        if (dirty & 1)
+          statbar_changes.media_storage = ctx2[0];
+        if (dirty & 131080) {
+          statbar_changes.$$scope = { dirty, ctx: ctx2 };
+        }
+        statbar.$set(statbar_changes);
+        const menubar_changes = {};
+        if (dirty & 8)
+          menubar_changes.show = ctx2[3];
+        if (dirty & 1)
+          menubar_changes.media_storage = ctx2[0];
+        if (dirty & 131073) {
+          menubar_changes.$$scope = { dirty, ctx: ctx2 };
+        }
+        menubar.$set(menubar_changes);
         const lineholder_changes = {};
-        if (!updating_lines && dirty & 2) {
+        if (!updating_lines && dirty & 4) {
           updating_lines = true;
-          lineholder_changes.lines = ctx[1];
+          lineholder_changes.lines = ctx2[2];
           add_flush_callback(() => updating_lines = false);
         }
         lineholder.$set(lineholder_changes);
@@ -4093,24 +3976,22 @@
       i(local) {
         if (current)
           return;
-        transition_in(info.block);
+        transition_in(statbar.$$.fragment, local);
+        transition_in(menubar.$$.fragment, local);
         transition_in(lineholder.$$.fragment, local);
         current = true;
       },
       o(local) {
-        for (let i = 0; i < 3; i += 1) {
-          const block = info.blocks[i];
-          transition_out(block);
-        }
+        transition_out(statbar.$$.fragment, local);
+        transition_out(menubar.$$.fragment, local);
         transition_out(lineholder.$$.fragment, local);
         current = false;
       },
       d(detaching) {
         if (detaching)
           detach(body);
-        info.block.d();
-        info.token = null;
-        info = null;
+        destroy_component(statbar);
+        destroy_component(menubar);
         destroy_component(lineholder);
         mounted = false;
         run_all(dispose);
@@ -4145,27 +4026,17 @@
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var browser5 = require_browser_polyfill();
-    const promise = VNStorage.build(true);
-    let vn_storage;
+    var browser6 = require_browser_polyfill();
+    let { vn_storage } = $$props;
     let title = "Game";
     let lines = [];
     let menu = false;
-    const setup = () => __awaiter(void 0, void 0, void 0, function* () {
-      $$invalidate(3, vn_storage = yield promise);
-      const port = browser5.runtime.connect({ "name": "vn_lines" });
-      port.onMessage.addListener((data) => __awaiter(void 0, void 0, void 0, function* () {
-        yield vn_storage.changeInstance(void 0, data["process_path"]);
-        yield vn_storage.addLine(data["line"], data["date"], data["time"]);
-      }));
-    });
-    setup();
     document.addEventListener("media_changed", (event) => {
-      $$invalidate(0, title = event["detail"]["name"]);
-      $$invalidate(1, lines = event["detail"]["lines"].sort((first, second) => first[1] - second[1]));
+      $$invalidate(1, title = event["detail"]["name"]);
+      $$invalidate(2, lines = event["detail"]["lines"].sort((first, second) => first[1] - second[1]));
     });
     document.addEventListener("new_line", (event) => {
-      $$invalidate(1, lines = [
+      $$invalidate(2, lines = [
         ...lines,
         [
           vn_storage.uuid,
@@ -4200,7 +4071,7 @@
       });
     };
     const openStats = () => {
-      browser5.runtime.sendMessage({
+      browser6.runtime.sendMessage({
         "action": "open_tab",
         "url": "https://kamwithk.github.io/exSTATic/stats.html"
       });
@@ -4238,27 +4109,30 @@ Char and line statistics will be modified accordingly however time read won't ch
     });
     function input_input_handler() {
       title = this.value;
-      $$invalidate(0, title);
+      $$invalidate(1, title);
     }
-    const click_handler = () => $$invalidate(2, menu = !menu);
+    const click_handler = () => $$invalidate(3, menu = !menu);
     const click_handler_1 = () => document.getElementById("import_stats").click();
     function lineholder_lines_binding(value) {
       lines = value;
-      $$invalidate(1, lines);
+      $$invalidate(2, lines);
     }
-    const click_handler_2 = () => $$invalidate(2, menu = false);
+    const click_handler_2 = () => $$invalidate(3, menu = false);
+    $$self.$$set = ($$props2) => {
+      if ("vn_storage" in $$props2)
+        $$invalidate(0, vn_storage = $$props2.vn_storage);
+    };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 1) {
+      if ($$self.$$.dirty & 2) {
         $:
           setTitle(title);
       }
     };
     return [
+      vn_storage,
       title,
       lines,
       menu,
-      vn_storage,
-      promise,
       requestExportLines,
       requestImportLines,
       openStats,
@@ -4274,19 +4148,29 @@ Char and line statistics will be modified accordingly however time read won't ch
   var Vn = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment6, safe_not_equal, {});
+      init(this, options, instance6, create_fragment6, safe_not_equal, { vn_storage: 0 });
     }
   };
   var vn_default = Vn;
 
   // src/vn/tracker_inject.ts
   console.log("Injected");
-  new vn_default({
-    target: document.documentElement,
-    props: {
-      name: "vn"
-    }
-  });
+  var browser5 = require_browser_polyfill();
+  var setup = async () => {
+    const vn_storage = await VNStorage.build(true);
+    const port = browser5.runtime.connect({ "name": "vn_lines" });
+    port.onMessage.addListener(async (data) => {
+      await vn_storage.changeInstance(void 0, data["process_path"]);
+      await vn_storage.addLine(data["line"], data["date"], data["time"]);
+    });
+    new vn_default({
+      target: document.documentElement,
+      props: {
+        vn_storage
+      }
+    });
+  };
+  setup();
 })();
 /* @license
 Papa Parse

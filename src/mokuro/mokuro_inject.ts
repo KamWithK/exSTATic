@@ -53,7 +53,6 @@ async function setup() {
     new App({
         target: svelte_div,
         props: {
-            name: "vn",
             mokuro_storage: mokuro_storage
         }
     })

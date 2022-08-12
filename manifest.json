@@ -42,7 +42,7 @@
     ],
 
     "web_accessible_resources": [
-      "fonts/*.ttf"
+      "fonts/*"
     ],
 
     "browser_action": {

@@ -2,8 +2,6 @@
     import { timeNowSeconds } from "../calculations.js"
     import StatBar from "../components/stat_bar.svelte"
     
-    import "../external/tailwindcss.js"
-
     export let mokuro_storage
 
     const userActive = async () => {
@@ -26,3 +24,9 @@
         <StatBar media_storage={mokuro_storage}/>
     </div>
 </div>
+
+<style global>
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+</style>

@@ -2277,13 +2277,6 @@
   function set_input_value(input, value) {
     input.value = value == null ? "" : value;
   }
-  function set_style(node, key, value, important) {
-    if (value === null) {
-      node.style.removeProperty(key);
-    } else {
-      node.style.setProperty(key, value, important ? "important" : "");
-    }
-  }
   var current_component;
   function set_current_component(component) {
     current_component = component;
@@ -3465,8 +3458,7 @@
           each_blocks[i].c();
         }
         attr(div, "id", "entry_holder");
-        attr(div, "class", "flex flex-col w-full -h-full flex-grow overflow-auto gap-2");
-        set_style(div, "padding-bottom", "var(--default-text-align)");
+        attr(div, "class", "svelte-due56j");
       },
       m(target, anchor) {
         insert(target, div, anchor);

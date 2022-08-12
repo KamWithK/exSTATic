@@ -143,3 +143,76 @@
 	
 	<LineHolder bind:lines={lines} on:click={() => menu = false } on:dblclick={userActive}/>
 </body>
+
+<style global>
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+	input {
+    	border-style: none;
+	}
+
+	body {
+		@apply dark:bg-slate-800 px-12;
+	}
+
+	.jp-text {
+		font-family: var(--default-font);
+		font-size: var(--default-font-size);
+	}
+
+	#top_bar {
+		@apply py-3 bg-slate-800;
+	}
+
+	#game_name {
+		@apply text-4xl bg-transparent text-indigo-400;
+	}
+
+	.entry_holder {
+		@apply bg-slate-800;
+	}
+
+	.sentence-entry {
+		@apply flex items-center dark:bg-slate-900 jp-text p-4 gap-4;
+		filter: blur(var(--default-inactivity-blur));
+	}
+
+	.sentence {
+		@apply grow inline-block text-left dark:text-slate-400 jp-text;
+	}
+
+	.delete-button {
+		@apply self-center rounded-full inline-flex dark:text-indigo-500 dark:border-indigo-500 p-2 hover:bg-indigo-700 hover:text-white;
+	}
+
+	.line-select {
+		@apply w-4 h-4 shrink-0 rounded-full text-indigo-500 bg-indigo-400;
+	}
+
+	.stat-numbers {
+		@apply font-mono text-base whitespace-nowrap;
+	}
+
+	.stat-annotation {
+		@apply text-xs tracking-tighter whitespace-nowrap;
+	}
+
+	.menu-bar {
+		@apply flex items-center h-full p-3 gap-3 bg-indigo-400 bg-opacity-70 hover:filter-none hover:bg-opacity-80;
+		filter: blur(var(--default-menu-blur));
+	}
+
+	.menu-button {
+		@apply text-left col-span-2 p-4 dark:bg-slate-900 text-white hover:bg-slate-700;
+	}
+
+	.menu-input {
+		@apply col-start-2 p-1 grow bg-slate-700 text-gray-300;
+	}
+
+	.menu-label {
+		@apply p-4 dark:bg-slate-900 text-white;
+	}
+</style>

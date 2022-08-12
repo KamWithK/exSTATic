@@ -15,7 +15,8 @@
           "https://kamwithk.github.io/exSTATic/tracker.html",
           "file:///*/exSTATic/*/tracker.html"
         ],
-        "js": ["build/vn/tracker_inject.js"]
+        "js": ["build/vn/tracker_inject.js"],
+        "css": ["build/vn/tracker_inject.css"]
       },
       {
         "matches": [
@@ -23,9 +24,7 @@
           "file:///*/Manga/**.html"
         ],
         "js": ["build/mokuro/mokuro_inject.js"],
-        "css": [
-          "build/mokuro/mokuro_inject.css"
-        ]
+        "css": ["build/mokuro/mokuro_inject.css"]
       },
       {
         "matches": [

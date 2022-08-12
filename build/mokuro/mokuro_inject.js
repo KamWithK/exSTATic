@@ -2290,11 +2290,6 @@
   var mokuro_default = Mokuro;
 
   // src/mokuro/mokuro_inject.ts
-  var browser5 = require_browser_polyfill();
-  var material_cdn = document.createElement("link");
-  material_cdn.href = browser5.extension.getURL("build/external/material_icons.css");
-  material_cdn.rel = "stylesheet";
-  document.head.appendChild(material_cdn);
   console.log("Injected");
   var mokuro_storage;
   function getVolumeSeries() {

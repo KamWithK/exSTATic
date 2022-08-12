@@ -1,11 +1,3 @@
-var browser = require("webextension-polyfill")
-
-// Insert Google Material Icons CDN
-const material_cdn = document.createElement("link")
-material_cdn.href = browser.extension.getURL("build/external/material_icons.css")
-material_cdn.rel="stylesheet"
-document.head.appendChild(material_cdn)
-
 import { dateNowString } from "../calculations"
 import { MokuroStorage } from "./mokuro_storage"
 import { SPLIT_PATH } from "../messaging/socket_actions"

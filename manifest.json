@@ -16,7 +16,10 @@
           "file:///*/exSTATic/*/tracker.html"
         ],
         "js": ["build/vn/tracker_inject.js"],
-        "css": ["build/vn/tracker_inject.css"]
+        "css": [
+          "docs/fonts.css",
+          "build/vn/tracker_inject.css"
+        ]
       },
       {
         "matches": [
@@ -24,7 +27,10 @@
           "file:///*/Manga/**.html"
         ],
         "js": ["build/mokuro/mokuro_inject.js"],
-        "css": ["build/mokuro/mokuro_inject.css"]
+        "css": [
+          "docs/fonts.css",
+          "build/mokuro/mokuro_inject.css"
+        ]
       },
       {
         "matches": [
@@ -33,6 +39,10 @@
         ],
         "js": ["build/stats_inject.js"]
       }
+    ],
+
+    "web_accessible_resources": [
+      "fonts/*.ttf"
     ],
 
     "browser_action": {

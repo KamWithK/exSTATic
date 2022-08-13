@@ -1009,7 +1009,6 @@
     document.fonts.add(font);
   };
   addFont("Material Icons", "fonts/MaterialIcons-Regular.ttf");
-  addFont("Klee One", "fonts/Klee One/KleeOne-SemiBold.ttf");
-  addFont("Noto Sans JP", "fonts/Noto Sans JP/NotoSansJP-Regular.otf");
-  addFont("Shippori Mincho", "fonts/Shippori Mincho/ShipporiMincho-Regular.otf");
+  addFont("Klee One", "fonts/KleeOne-SemiBold.ttf");
+  addFont("Noto Sans JP", "fonts/NotoSansJP-Regular.otf");
 })();

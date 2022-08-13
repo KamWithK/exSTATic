@@ -140,4 +140,22 @@ export class MediaStorage {
         const listen_status = (await browser.storage.local.get("listen_status"))["listen_status"]
         return (listen_status == true || listen_status === undefined)
     }
+
+    async toggleActive() {
+        const listen_status = await this.extensionActivated()
+        if (!listen_status) {
+            this.stop_ticker()
+            return
+        }
+
+        const time = timeNowSeconds()
+		if (this.instance_storage === undefined) return
+		
+		if (this.previous_time === undefined) {
+			await this.instance_storage.updateDetails({"last_active_at": time})
+			this.start_ticker()
+		} else {
+			this.stop_ticker()
+		}
+    }
 }

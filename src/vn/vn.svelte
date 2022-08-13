@@ -75,18 +75,6 @@
     	})
 	}
 
-	const userActive = async () => {
-		const time = timeNowSeconds()
-		if (vn_storage.instance_storage === undefined) return
-		
-		if (vn_storage.previous_time === undefined) {
-			await vn_storage.instance_storage.updateDetails({"last_active_at": time})
-			vn_storage.start_ticker()
-		} else {
-			vn_storage.stop_ticker()
-		}
-	}
-
 	document.addEventListener("status_active", () => {
 		document.documentElement.style.setProperty(
 			"--default-inactivity-blur",
@@ -156,7 +144,7 @@
 		<button id="delete-selection" class="material-icons delete-button" on:click={deleteLines}>delete</button>
 	</div>
 
-	<div class="px-12" on:dblclick={userActive}>
+	<div class="px-12" on:dblclick={vn_storage.toggleActive.bind(vn_storage)}>
 		<LineHolder bind:lines={lines} on:click={() => menu = false }/>
 	</div>
 </body>

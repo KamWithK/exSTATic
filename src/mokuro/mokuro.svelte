@@ -5,19 +5,7 @@
     
     export let mokuro_storage: MokuroStorage
 
-    const userActive = async () => {
-		const time = timeNowSeconds()
-		if (mokuro_storage.instance_storage === undefined) return
-		
-		if (mokuro_storage.previous_time === undefined) {
-			await mokuro_storage.instance_storage.updateDetails({"last_active_at": time})
-			mokuro_storage.start_ticker()
-		} else {
-			mokuro_storage.stop_ticker()
-		}
-	}
-
-    document.body.addEventListener("dblclick", userActive)
+    document.body.addEventListener("dblclick", mokuro_storage.toggleActive.bind(mokuro_storage))
 
 	document.addEventListener("status_active", () => {
 		document.getElementById("pagesContainer").style.setProperty(

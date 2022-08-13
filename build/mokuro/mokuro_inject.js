@@ -1524,6 +1524,22 @@
       const listen_status = (await browser3.storage.local.get("listen_status"))["listen_status"];
       return listen_status == true || listen_status === void 0;
     }
+    async toggleActive() {
+      const listen_status = await this.extensionActivated();
+      if (!listen_status) {
+        this.stop_ticker();
+        return;
+      }
+      const time = timeNowSeconds();
+      if (this.instance_storage === void 0)
+        return;
+      if (this.previous_time === void 0) {
+        await this.instance_storage.updateDetails({ "last_active_at": time });
+        this.start_ticker();
+      } else {
+        this.stop_ticker();
+      }
+    }
   };
 
   // src/mokuro/mokuro_storage.js
@@ -2246,46 +2262,8 @@
     };
   }
   function instance2($$self, $$props, $$invalidate) {
-    var __awaiter = this && this.__awaiter || function(thisArg, _arguments, P, generator) {
-      function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve) {
-          resolve(value);
-        });
-      }
-      return new (P || (P = Promise))(function(resolve, reject) {
-        function fulfilled(value) {
-          try {
-            step(generator.next(value));
-          } catch (e) {
-            reject(e);
-          }
-        }
-        function rejected(value) {
-          try {
-            step(generator["throw"](value));
-          } catch (e) {
-            reject(e);
-          }
-        }
-        function step(result) {
-          result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-        }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-      });
-    };
     let { mokuro_storage: mokuro_storage2 } = $$props;
-    const userActive = () => __awaiter(void 0, void 0, void 0, function* () {
-      const time = timeNowSeconds();
-      if (mokuro_storage2.instance_storage === void 0)
-        return;
-      if (mokuro_storage2.previous_time === void 0) {
-        yield mokuro_storage2.instance_storage.updateDetails({ "last_active_at": time });
-        mokuro_storage2.start_ticker();
-      } else {
-        mokuro_storage2.stop_ticker();
-      }
-    });
-    document.body.addEventListener("dblclick", userActive);
+    document.body.addEventListener("dblclick", mokuro_storage2.toggleActive.bind(mokuro_storage2));
     document.addEventListener("status_active", () => {
       document.getElementById("pagesContainer").style.setProperty("filter", "");
     });

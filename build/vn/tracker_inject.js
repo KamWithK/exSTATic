@@ -2086,6 +2086,22 @@
       const listen_status = (await browser3.storage.local.get("listen_status"))["listen_status"];
       return listen_status == true || listen_status === void 0;
     }
+    async toggleActive() {
+      const listen_status = await this.extensionActivated();
+      if (!listen_status) {
+        this.stop_ticker();
+        return;
+      }
+      const time = timeNowSeconds();
+      if (this.instance_storage === void 0)
+        return;
+      if (this.previous_time === void 0) {
+        await this.instance_storage.updateDetails({ "last_active_at": time });
+        this.start_ticker();
+      } else {
+        this.stop_ticker();
+      }
+    }
   };
 
   // src/vn/vn_storage.js
@@ -3582,7 +3598,7 @@
       m(target, anchor) {
         insert(target, button, anchor);
         if (!mounted) {
-          dispose = listen(button, "click", ctx[10]);
+          dispose = listen(button, "click", ctx[9]);
           mounted = true;
         }
       },
@@ -3758,7 +3774,7 @@
             listen(button0, "click", exportStats),
             listen(button1, "click", ctx[4]),
             listen(input, "change", ctx[5]),
-            listen(button2, "click", ctx[11]),
+            listen(button2, "click", ctx[10]),
             listen(button3, "click", ctx[6])
           ];
           mounted = true;
@@ -3891,7 +3907,7 @@
       }
     });
     function lineholder_lines_binding(value) {
-      ctx[12](value);
+      ctx[11](value);
     }
     let lineholder_props = {};
     if (ctx[2] !== void 0) {
@@ -3899,7 +3915,7 @@
     }
     lineholder = new line_holder_default({ props: lineholder_props });
     binding_callbacks.push(() => bind(lineholder, "lines", lineholder_lines_binding));
-    lineholder.$on("click", ctx[13]);
+    lineholder.$on("click", ctx[12]);
     return {
       c() {
         body = element("body");
@@ -3945,37 +3961,41 @@
         current = true;
         if (!mounted) {
           dispose = [
-            listen(input, "input", ctx[9]),
-            listen(button, "click", ctx[8]),
-            listen(div2, "dblclick", ctx[7])
+            listen(input, "input", ctx[8]),
+            listen(button, "click", ctx[7]),
+            listen(div2, "dblclick", function() {
+              if (is_function(ctx[0].toggleActive.bind(ctx[0])))
+                ctx[0].toggleActive.bind(ctx[0]).apply(this, arguments);
+            })
           ];
           mounted = true;
         }
       },
-      p(ctx2, [dirty]) {
-        if (dirty & 2 && input.value !== ctx2[1]) {
-          set_input_value(input, ctx2[1]);
+      p(new_ctx, [dirty]) {
+        ctx = new_ctx;
+        if (dirty & 2 && input.value !== ctx[1]) {
+          set_input_value(input, ctx[1]);
         }
         const statbar_changes = {};
         if (dirty & 1)
-          statbar_changes.media_storage = ctx2[0];
-        if (dirty & 131080) {
-          statbar_changes.$$scope = { dirty, ctx: ctx2 };
+          statbar_changes.media_storage = ctx[0];
+        if (dirty & 65544) {
+          statbar_changes.$$scope = { dirty, ctx };
         }
         statbar.$set(statbar_changes);
         const menubar_changes = {};
         if (dirty & 8)
-          menubar_changes.show = ctx2[3];
+          menubar_changes.show = ctx[3];
         if (dirty & 1)
-          menubar_changes.media_storage = ctx2[0];
-        if (dirty & 131073) {
-          menubar_changes.$$scope = { dirty, ctx: ctx2 };
+          menubar_changes.media_storage = ctx[0];
+        if (dirty & 65537) {
+          menubar_changes.$$scope = { dirty, ctx };
         }
         menubar.$set(menubar_changes);
         const lineholder_changes = {};
         if (!updating_lines && dirty & 4) {
           updating_lines = true;
-          lineholder_changes.lines = ctx2[2];
+          lineholder_changes.lines = ctx[2];
           add_flush_callback(() => updating_lines = false);
         }
         lineholder.$set(lineholder_changes);
@@ -4083,17 +4103,6 @@
         "url": "https://kamwithk.github.io/exSTATic/stats.html"
       });
     };
-    const userActive = () => __awaiter(void 0, void 0, void 0, function* () {
-      const time = timeNowSeconds();
-      if (vn_storage.instance_storage === void 0)
-        return;
-      if (vn_storage.previous_time === void 0) {
-        yield vn_storage.instance_storage.updateDetails({ "last_active_at": time });
-        vn_storage.start_ticker();
-      } else {
-        vn_storage.stop_ticker();
-      }
-    });
     document.addEventListener("status_active", () => {
       document.documentElement.style.setProperty("--default-inactivity-blur", "0");
     });
@@ -4149,7 +4158,6 @@ Char and line statistics will be modified accordingly however time read won't ch
       requestExportLines,
       requestImportLines,
       openStats,
-      userActive,
       deleteLines,
       input_input_handler,
       click_handler,

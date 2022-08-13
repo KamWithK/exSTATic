@@ -15,14 +15,22 @@
           "https://kamwithk.github.io/exSTATic/tracker.html",
           "file:///*/exSTATic/*/tracker.html"
         ],
-        "js": ["build/vn/tracker_inject.js"]
+        "js": ["build/vn/tracker_inject.js"],
+        "css": [
+          "docs/fonts.css",
+          "build/vn/tracker_inject.css"
+        ]
       },
       {
         "matches": [
           "https://*/Manga/**.html",
-          "file:///*/Manga/**.html"
+          "file:///**/Manga/**.html"
         ],
-        "js": ["build/mokuro/mokuro_inject.js"]
+        "js": ["build/mokuro/mokuro_inject.js"],
+        "css": [
+          "docs/fonts.css",
+          "build/mokuro/mokuro_inject.css"
+        ]
       },
       {
         "matches": [
@@ -31,6 +39,10 @@
         ],
         "js": ["build/stats_inject.js"]
       }
+    ],
+
+    "web_accessible_resources": [
+      "fonts/*"
     ],
 
     "browser_action": {

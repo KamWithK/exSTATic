@@ -1,0 +1,113 @@
+@font-face {
+  font-family: "Material Icons";
+  font-style: normal;
+  font-weight: 400;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/MaterialIcons-Regular.ttf") format("truetype");
+}
+  
+.material-icons {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -moz-font-feature-settings: "liga";
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@font-face {
+  font-family: "Klee One";
+  font-style: normal;
+  font-weight: 400;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Klee One/KleeOne-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Klee One";
+  font-style: normal;
+  font-weight: 600;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Klee One/KleeOne-SemiBold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Noto Sans JP";
+  font-style: normal;
+  font-weight: 100;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Noto Sans JP/NotoSansJP-Thin.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Noto Sans JP";
+  font-style: normal;
+  font-weight: 300;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Noto Sans JP/NotoSansJP-Light.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Noto Sans JP";
+  font-style: normal;
+  font-weight: 400;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Noto Sans JP/NotoSansJP-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Noto Sans JP";
+  font-style: normal;
+  font-weight: 500;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Noto Sans JP/NotoSansJP-Medium.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Noto Sans JP";
+  font-style: normal;
+  font-weight: 700;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Noto Sans JP/NotoSansJP-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Noto Sans JP";
+  font-style: normal;
+  font-weight: 700;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Noto Sans JP/NotoSansJP-Black.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Shippori Mincho";
+  font-style: normal;
+  font-weight: 400;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Shippori Mincho/ShipporiMincho-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Shippori Mincho";
+  font-style: normal;
+  font-weight: 500;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Shippori Mincho/ShipporiMincho-Medium.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Shippori Mincho";
+  font-style: normal;
+  font-weight: 600;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Shippori Mincho/ShipporiMincho-SemiBold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Shippori Mincho";
+  font-style: normal;
+  font-weight: 700;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Shippori Mincho/ShipporiMincho-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Shippori Mincho";
+  font-style: normal;
+  font-weight: 800;
+  src: url("chrome-extension://__MSG_@@extension_id__/fonts/Shippori Mincho/ShipporiMincho-ExtraBold.otf") format("opentype");
+}

@@ -21,7 +21,7 @@
   // node_modules/webextension-polyfill/dist/browser-polyfill.js
   var require_browser_polyfill = __commonJS({
     "node_modules/webextension-polyfill/dist/browser-polyfill.js"(exports, module) {
-      (function(global, factory) {
+      (function(global2, factory) {
         if (typeof define === "function" && define.amd) {
           define("webextension-polyfill", ["module"], factory);
         } else if (typeof exports !== "undefined") {
@@ -31,7 +31,7 @@
             exports: {}
           };
           factory(mod);
-          global.browser = mod.exports;
+          global2.browser = mod.exports;
         }
       })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : exports, function(module2) {
         "use strict";
@@ -1828,7 +1828,7 @@
     }
     async setup() {
       this.details = (await browser.storage.local.get(this.uuid))[this.uuid];
-      let uuid_date_key = JSON.stringify([this.uuid, dateNowString()]);
+      const uuid_date_key = JSON.stringify([this.uuid, dateNowString()]);
       this.today_stats = (await browser.storage.local.get(uuid_date_key))[uuid_date_key];
     }
     async updateDetails(details) {
@@ -1838,7 +1838,7 @@
       await browser.storage.local.set(detail_entries);
     }
     async setDailyStats(date, values) {
-      let uuid_date_key = JSON.stringify([this.uuid, date]);
+      const uuid_date_key = JSON.stringify([this.uuid, date]);
       let daily_stats_entry = await browser.storage.local.get(uuid_date_key);
       daily_stats_entry[uuid_date_key] = values;
       if (date == dateNowString()) {
@@ -1850,7 +1850,7 @@
       return this.mutex.runExclusive(async () => this.#addStats(date_stat_adds, multiple));
     }
     async #addStats(date_stat_adds, multiple = 1) {
-      let date_keys = Object.keys(date_stat_adds).map((date) => JSON.stringify([this.uuid, date]));
+      const date_keys = Object.keys(date_stat_adds).map((date) => JSON.stringify([this.uuid, date]));
       let date_stats = await browser.storage.local.get(date_keys);
       date_keys.forEach((key) => {
         let date = JSON.parse(key)[1];
@@ -1881,7 +1881,7 @@
       await this.addDailyStats(date, values, -1 * multiple);
     }
     async insertLine(line, time) {
-      let line_key = JSON.stringify([this.uuid, this.details["last_line_added"] + 1]);
+      const line_key = JSON.stringify([this.uuid, this.details["last_line_added"] + 1]);
       let line_entry = {};
       line_entry[line_key] = [line, time];
       await this.updateDetails({
@@ -1900,10 +1900,10 @@
       if (!this.details.hasOwnProperty("last_line_added")) {
         return;
       }
-      let max_line_id = this.details["last_line_added"];
-      let min_line_id = max_lines <= 0 | max_lines === void 0 | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1);
-      let id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map((index) => JSON.stringify([this.uuid, min_line_id + index]));
-      let lines = await browser.storage.local.get(id_queries);
+      const max_line_id = this.details["last_line_added"];
+      const min_line_id = max_lines <= 0 | max_lines === void 0 | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1);
+      const id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map((index) => JSON.stringify([this.uuid, min_line_id + index]));
+      const lines = await browser.storage.local.get(id_queries);
       return Object.entries(lines).map(([key, line_data]) => {
         let line = typeof line_data === "string" ? line_data : line_data[0];
         let time = typeof line_data === "string" ? void 0 : line_data[1];
@@ -1962,8 +1962,8 @@
       await browser2.storage.local.set(properties_entry);
     }
     async getMedia(given_identifier) {
-      let media_entries = await browser2.storage.local.get("media");
-      let media_key = JSON.stringify([given_identifier, this.type]);
+      const media_entries = await browser2.storage.local.get("media");
+      const media_key = JSON.stringify([given_identifier, this.type]);
       if (media_entries.hasOwnProperty("media") && media_entries["media"].hasOwnProperty(media_key)) {
         return media_entries["media"][media_key];
       } else {
@@ -1975,11 +1975,11 @@
       if (!media_entries.hasOwnProperty("media")) {
         media_entries["media"] = {};
       }
-      let media_key = JSON.stringify([given_identifier, this.type]);
+      const media_key = JSON.stringify([given_identifier, this.type]);
       if (!media_entries["media"].hasOwnProperty(media_key)) {
         let new_uuid = uuid !== void 0 ? uuid : crypto.randomUUID();
         media_entries["media"][media_key] = new_uuid;
-        let details_entry = await browser2.storage.local.get(new_uuid);
+        const details_entry = await browser2.storage.local.get(new_uuid);
         if (!details_entry.hasOwnProperty(new_uuid)) {
           media_entries[new_uuid] = {
             "name": given_identifier,
@@ -2012,7 +2012,7 @@
       }
     }
     static async build(type) {
-      let type_storage = new TypeStorage(type);
+      const type_storage = new TypeStorage(type);
       await type_storage.setup();
       let instance_storage;
       if (type_storage.properties.hasOwnProperty("previous_uuid")) {
@@ -2053,24 +2053,24 @@
         this.previous_time = timeNowSeconds();
       }
       if (event) {
-        let event2 = new Event("status_active");
+        const event2 = new Event("status_active");
         document.dispatchEvent(event2);
       }
     }
     stop_ticker(event = true) {
       this.previous_time = void 0;
       if (event) {
-        let event2 = new Event("status_inactive");
+        const event2 = new Event("status_inactive");
         document.dispatchEvent(event2);
       }
     }
     async #ticker() {
-      let time_now = timeNowSeconds();
+      const time_now = timeNowSeconds();
       if (this.instance_storage == void 0 || this.previous_time == void 0) {
         return;
       }
-      let time_between_lines = this.details["last_active_at"] !== void 0 ? time_now - this.details["last_active_at"] : 0;
-      let time_between_ticks = time_now - this.previous_time;
+      const time_between_lines = this.details["last_active_at"] !== void 0 ? time_now - this.details["last_active_at"] : 0;
+      const time_between_ticks = time_now - this.previous_time;
       this.previous_time = time_now;
       if (time_between_lines <= this.properties["afk_max_time"]) {
         await this.instance_storage.addDailyStats(dateNowString(), {
@@ -2091,7 +2091,7 @@
       this.max_lines = Number.parseInt(type_storage.properties["max_loaded_lines"]);
     }
     static async build(live_stat_update = false) {
-      let [type_storage, instance_storage] = await super.build("vn");
+      const [type_storage, instance_storage] = await super.build("vn");
       return new VNStorage(type_storage, instance_storage, live_stat_update);
     }
     async logLines() {
@@ -2105,10 +2105,10 @@
       document.dispatchEvent(event);
     }
     async addLine(line, date, time) {
-      let previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]]);
-      let previous_line = (await browser3.storage.local.get(previous_line_key))[previous_line_key];
+      const previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]]);
+      const previous_line = (await browser3.storage.local.get(previous_line_key))[previous_line_key];
       if (previous_line == void 0 || line != previous_line[0]) {
-        let chars_in_line = charsInLine(line);
+        const chars_in_line = charsInLine(line);
         if (chars_in_line === 0)
           return;
         this.start_ticker(false);
@@ -2155,14 +2155,416 @@
     }
   };
 
+  // node_modules/svelte/internal/index.mjs
+  function noop() {
+  }
+  function assign(tar, src) {
+    for (const k in src)
+      tar[k] = src[k];
+    return tar;
+  }
+  function run(fn) {
+    return fn();
+  }
+  function blank_object() {
+    return /* @__PURE__ */ Object.create(null);
+  }
+  function run_all(fns) {
+    fns.forEach(run);
+  }
+  function is_function(thing) {
+    return typeof thing === "function";
+  }
+  function safe_not_equal(a, b) {
+    return a != a ? b == b : a !== b || (a && typeof a === "object" || typeof a === "function");
+  }
+  function is_empty(obj) {
+    return Object.keys(obj).length === 0;
+  }
+  function create_slot(definition, ctx, $$scope, fn) {
+    if (definition) {
+      const slot_ctx = get_slot_context(definition, ctx, $$scope, fn);
+      return definition[0](slot_ctx);
+    }
+  }
+  function get_slot_context(definition, ctx, $$scope, fn) {
+    return definition[1] && fn ? assign($$scope.ctx.slice(), definition[1](fn(ctx))) : $$scope.ctx;
+  }
+  function get_slot_changes(definition, $$scope, dirty, fn) {
+    if (definition[2] && fn) {
+      const lets = definition[2](fn(dirty));
+      if ($$scope.dirty === void 0) {
+        return lets;
+      }
+      if (typeof lets === "object") {
+        const merged = [];
+        const len = Math.max($$scope.dirty.length, lets.length);
+        for (let i = 0; i < len; i += 1) {
+          merged[i] = $$scope.dirty[i] | lets[i];
+        }
+        return merged;
+      }
+      return $$scope.dirty | lets;
+    }
+    return $$scope.dirty;
+  }
+  function update_slot_base(slot, slot_definition, ctx, $$scope, slot_changes, get_slot_context_fn) {
+    if (slot_changes) {
+      const slot_context = get_slot_context(slot_definition, ctx, $$scope, get_slot_context_fn);
+      slot.p(slot_context, slot_changes);
+    }
+  }
+  function get_all_dirty_from_scope($$scope) {
+    if ($$scope.ctx.length > 32) {
+      const dirty = [];
+      const length = $$scope.ctx.length / 32;
+      for (let i = 0; i < length; i++) {
+        dirty[i] = -1;
+      }
+      return dirty;
+    }
+    return -1;
+  }
+  var is_hydrating = false;
+  function start_hydrating() {
+    is_hydrating = true;
+  }
+  function end_hydrating() {
+    is_hydrating = false;
+  }
+  function append(target, node) {
+    target.appendChild(node);
+  }
+  function insert(target, node, anchor) {
+    target.insertBefore(node, anchor || null);
+  }
+  function detach(node) {
+    node.parentNode.removeChild(node);
+  }
+  function destroy_each(iterations, detaching) {
+    for (let i = 0; i < iterations.length; i += 1) {
+      if (iterations[i])
+        iterations[i].d(detaching);
+    }
+  }
+  function element(name) {
+    return document.createElement(name);
+  }
+  function text(data) {
+    return document.createTextNode(data);
+  }
+  function space() {
+    return text(" ");
+  }
+  function listen(node, event, handler, options) {
+    node.addEventListener(event, handler, options);
+    return () => node.removeEventListener(event, handler, options);
+  }
+  function attr(node, attribute, value) {
+    if (value == null)
+      node.removeAttribute(attribute);
+    else if (node.getAttribute(attribute) !== value)
+      node.setAttribute(attribute, value);
+  }
+  function children(element2) {
+    return Array.from(element2.childNodes);
+  }
+  function set_data(text2, data) {
+    data = "" + data;
+    if (text2.wholeText !== data)
+      text2.data = data;
+  }
+  function set_input_value(input, value) {
+    input.value = value == null ? "" : value;
+  }
+  var current_component;
+  function set_current_component(component) {
+    current_component = component;
+  }
+  function get_current_component() {
+    if (!current_component)
+      throw new Error("Function called outside component initialization");
+    return current_component;
+  }
+  function onMount(fn) {
+    get_current_component().$$.on_mount.push(fn);
+  }
+  function bubble(component, event) {
+    const callbacks = component.$$.callbacks[event.type];
+    if (callbacks) {
+      callbacks.slice().forEach((fn) => fn.call(this, event));
+    }
+  }
+  var dirty_components = [];
+  var binding_callbacks = [];
+  var render_callbacks = [];
+  var flush_callbacks = [];
+  var resolved_promise = Promise.resolve();
+  var update_scheduled = false;
+  function schedule_update() {
+    if (!update_scheduled) {
+      update_scheduled = true;
+      resolved_promise.then(flush);
+    }
+  }
+  function add_render_callback(fn) {
+    render_callbacks.push(fn);
+  }
+  function add_flush_callback(fn) {
+    flush_callbacks.push(fn);
+  }
+  var seen_callbacks = /* @__PURE__ */ new Set();
+  var flushidx = 0;
+  function flush() {
+    const saved_component = current_component;
+    do {
+      while (flushidx < dirty_components.length) {
+        const component = dirty_components[flushidx];
+        flushidx++;
+        set_current_component(component);
+        update(component.$$);
+      }
+      set_current_component(null);
+      dirty_components.length = 0;
+      flushidx = 0;
+      while (binding_callbacks.length)
+        binding_callbacks.pop()();
+      for (let i = 0; i < render_callbacks.length; i += 1) {
+        const callback = render_callbacks[i];
+        if (!seen_callbacks.has(callback)) {
+          seen_callbacks.add(callback);
+          callback();
+        }
+      }
+      render_callbacks.length = 0;
+    } while (dirty_components.length);
+    while (flush_callbacks.length) {
+      flush_callbacks.pop()();
+    }
+    update_scheduled = false;
+    seen_callbacks.clear();
+    set_current_component(saved_component);
+  }
+  function update($$) {
+    if ($$.fragment !== null) {
+      $$.update();
+      run_all($$.before_update);
+      const dirty = $$.dirty;
+      $$.dirty = [-1];
+      $$.fragment && $$.fragment.p($$.ctx, dirty);
+      $$.after_update.forEach(add_render_callback);
+    }
+  }
+  var outroing = /* @__PURE__ */ new Set();
+  var outros;
+  function group_outros() {
+    outros = {
+      r: 0,
+      c: [],
+      p: outros
+    };
+  }
+  function check_outros() {
+    if (!outros.r) {
+      run_all(outros.c);
+    }
+    outros = outros.p;
+  }
+  function transition_in(block, local) {
+    if (block && block.i) {
+      outroing.delete(block);
+      block.i(local);
+    }
+  }
+  function transition_out(block, local, detach2, callback) {
+    if (block && block.o) {
+      if (outroing.has(block))
+        return;
+      outroing.add(block);
+      outros.c.push(() => {
+        outroing.delete(block);
+        if (callback) {
+          if (detach2)
+            block.d(1);
+          callback();
+        }
+      });
+      block.o(local);
+    } else if (callback) {
+      callback();
+    }
+  }
+  var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
+  function bind(component, name, callback) {
+    const index = component.$$.props[name];
+    if (index !== void 0) {
+      component.$$.bound[index] = callback;
+      callback(component.$$.ctx[index]);
+    }
+  }
+  function create_component(block) {
+    block && block.c();
+  }
+  function mount_component(component, target, anchor, customElement) {
+    const { fragment, on_mount, on_destroy, after_update } = component.$$;
+    fragment && fragment.m(target, anchor);
+    if (!customElement) {
+      add_render_callback(() => {
+        const new_on_destroy = on_mount.map(run).filter(is_function);
+        if (on_destroy) {
+          on_destroy.push(...new_on_destroy);
+        } else {
+          run_all(new_on_destroy);
+        }
+        component.$$.on_mount = [];
+      });
+    }
+    after_update.forEach(add_render_callback);
+  }
+  function destroy_component(component, detaching) {
+    const $$ = component.$$;
+    if ($$.fragment !== null) {
+      run_all($$.on_destroy);
+      $$.fragment && $$.fragment.d(detaching);
+      $$.on_destroy = $$.fragment = null;
+      $$.ctx = [];
+    }
+  }
+  function make_dirty(component, i) {
+    if (component.$$.dirty[0] === -1) {
+      dirty_components.push(component);
+      schedule_update();
+      component.$$.dirty.fill(0);
+    }
+    component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
+  }
+  function init(component, options, instance7, create_fragment7, not_equal, props, append_styles, dirty = [-1]) {
+    const parent_component = current_component;
+    set_current_component(component);
+    const $$ = component.$$ = {
+      fragment: null,
+      ctx: null,
+      props,
+      update: noop,
+      not_equal,
+      bound: blank_object(),
+      on_mount: [],
+      on_destroy: [],
+      on_disconnect: [],
+      before_update: [],
+      after_update: [],
+      context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
+      callbacks: blank_object(),
+      dirty,
+      skip_bound: false,
+      root: options.target || parent_component.$$.root
+    };
+    append_styles && append_styles($$.root);
+    let ready = false;
+    $$.ctx = instance7 ? instance7(component, options.props || {}, (i, ret, ...rest) => {
+      const value = rest.length ? rest[0] : ret;
+      if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
+        if (!$$.skip_bound && $$.bound[i])
+          $$.bound[i](value);
+        if (ready)
+          make_dirty(component, i);
+      }
+      return ret;
+    }) : [];
+    $$.update();
+    ready = true;
+    run_all($$.before_update);
+    $$.fragment = create_fragment7 ? create_fragment7($$.ctx) : false;
+    if (options.target) {
+      if (options.hydrate) {
+        start_hydrating();
+        const nodes = children(options.target);
+        $$.fragment && $$.fragment.l(nodes);
+        nodes.forEach(detach);
+      } else {
+        $$.fragment && $$.fragment.c();
+      }
+      if (options.intro)
+        transition_in(component.$$.fragment);
+      mount_component(component, options.target, options.anchor, options.customElement);
+      end_hydrating();
+      flush();
+    }
+    set_current_component(parent_component);
+  }
+  var SvelteElement;
+  if (typeof HTMLElement === "function") {
+    SvelteElement = class extends HTMLElement {
+      constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+      }
+      connectedCallback() {
+        const { on_mount } = this.$$;
+        this.$$.on_disconnect = on_mount.map(run).filter(is_function);
+        for (const key in this.$$.slotted) {
+          this.appendChild(this.$$.slotted[key]);
+        }
+      }
+      attributeChangedCallback(attr2, _oldValue, newValue) {
+        this[attr2] = newValue;
+      }
+      disconnectedCallback() {
+        run_all(this.$$.on_disconnect);
+      }
+      $destroy() {
+        destroy_component(this, 1);
+        this.$destroy = noop;
+      }
+      $on(type, callback) {
+        const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
+        callbacks.push(callback);
+        return () => {
+          const index = callbacks.indexOf(callback);
+          if (index !== -1)
+            callbacks.splice(index, 1);
+        };
+      }
+      $set($$props) {
+        if (this.$$set && !is_empty($$props)) {
+          this.$$.skip_bound = true;
+          this.$$set($$props);
+          this.$$.skip_bound = false;
+        }
+      }
+    };
+  }
+  var SvelteComponent = class {
+    $destroy() {
+      destroy_component(this, 1);
+      this.$destroy = noop;
+    }
+    $on(type, callback) {
+      const callbacks = this.$$.callbacks[type] || (this.$$.callbacks[type] = []);
+      callbacks.push(callback);
+      return () => {
+        const index = callbacks.indexOf(callback);
+        if (index !== -1)
+          callbacks.splice(index, 1);
+      };
+    }
+    $set($$props) {
+      if (this.$$set && !is_empty($$props)) {
+        this.$$.skip_bound = true;
+        this.$$set($$props);
+        this.$$.skip_bound = false;
+      }
+    }
+  };
+
   // src/data_wrangling/data_extraction.js
   var import_papaparse = __toESM(require_papaparse_min());
   var browser4 = require_browser_polyfill();
   async function getDateData(date) {
-    let uuids = (await browser4.storage.local.get(date))[date];
-    let date_data = uuids.map(async (uuid, _) => {
-      let details = (await browser4.storage.local.get(uuid))[uuid];
-      let uuid_date_key = JSON.stringify([uuid, date]);
+    const uuids = (await browser4.storage.local.get(date))[date];
+    const date_data = uuids.map(async (uuid, _) => {
+      const details = (await browser4.storage.local.get(uuid))[uuid];
+      const uuid_date_key = JSON.stringify([uuid, date]);
       let stats_entry = (await browser4.storage.local.get(uuid_date_key))[uuid_date_key];
       if (stats_entry.hasOwnProperty("time_read")) {
         stats_entry["time_read"] = stats_entry["time_read"];
@@ -2182,15 +2584,15 @@
     return Promise.all(date_data);
   }
   async function getData() {
-    let dates = await browser4.storage.local.get("immersion_dates");
+    const dates = await browser4.storage.local.get("immersion_dates");
     if (!dates.hasOwnProperty("immersion_dates")) {
       return;
     }
-    let data = await Promise.all(dates["immersion_dates"].map(getDateData));
+    const data = await Promise.all(dates["immersion_dates"].map(getDateData));
     return data.flat();
   }
   async function exportStats() {
-    let data = await getData();
+    const data = await getData();
     chrome.runtime.sendMessage({
       "action": "export_csv",
       "csv": [(0, import_papaparse.unparse)(data)],
@@ -2202,8 +2604,8 @@
     if (!details.hasOwnProperty("last_line_added")) {
       return;
     }
-    let id_queries = [...Array(details["last_line_added"] + 1).keys()].map((index) => JSON.stringify([uuid, index]));
-    let lines = await browser4.storage.local.get(id_queries);
+    const id_queries = [...Array(details["last_line_added"] + 1).keys()].map((index) => JSON.stringify([uuid, index]));
+    const lines = await browser4.storage.local.get(id_queries);
     return Object.values(lines).map((line) => {
       return {
         "uuid": uuid,
@@ -2215,12 +2617,12 @@
     });
   }
   async function exportLines() {
-    let media = await browser4.storage.local.get("media");
+    const media = await browser4.storage.local.get("media");
     if (!media.hasOwnProperty("media")) {
       return;
     }
-    let detail_entries = await browser4.storage.local.get(Object.values(media["media"]));
-    let data = await Promise.all(Object.entries(detail_entries).map(getInstanceData));
+    const detail_entries = await browser4.storage.local.get(Object.values(media["media"]));
+    const data = await Promise.all(Object.entries(detail_entries).map(getInstanceData));
     chrome.runtime.sendMessage({
       "action": "export_csv",
       "csv": [(0, import_papaparse.unparse)(data.flat())],
@@ -2233,9 +2635,9 @@
       if (!entry.hasOwnProperty("type") || !entry.hasOwnProperty("date") || !entry.hasOwnProperty("given_identifier")) {
         return;
       }
-      let type_storage = new TypeStorage(entry["type"]);
+      const type_storage = new TypeStorage(entry["type"]);
       await type_storage.setup();
-      let uuid = await type_storage.addMedia(entry["given_identifier"], entry["uuid"]);
+      const uuid = await type_storage.addMedia(entry["given_identifier"], entry["uuid"]);
       let stats = {};
       if (entry.hasOwnProperty("chars_read")) {
         stats["chars_read"] = entry["chars_read"];
@@ -2246,7 +2648,7 @@
       if (entry.hasOwnProperty("time_read")) {
         stats["time_read"] = entry["time_read"];
       }
-      let instance_storage = new InstanceStorage(uuid);
+      const instance_storage = new InstanceStorage(uuid);
       await instance_storage.setup();
       if (entry.hasOwnProperty("name")) {
         await instance_storage.updateDetails({
@@ -2261,197 +2663,1522 @@
     }
   }
 
-  // src/vn/ui_properties.js
-  var import_papaparse2 = __toESM(require_papaparse_min());
-  var browser5 = require_browser_polyfill();
-  var vn_storage;
-  function setStorage(vn_storage_) {
-    vn_storage = vn_storage_;
+  // src/components/stat_bar.svelte
+  function create_else_block(ctx) {
+    let t;
+    return {
+      c() {
+        t = text("bedtime");
+      },
+      m(target, anchor) {
+        insert(target, t, anchor);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(t);
+      }
+    };
   }
-  async function useProperty(element_id, global_css_property = false, units = "") {
-    let element = document.getElementById(element_id);
-    let properties = {};
-    properties[element_id] = element.value;
-    await vn_storage.type_storage.updateProperties(properties);
-    if (global_css_property) {
-      document.documentElement.style.setProperty(global_css_property, element.value + units);
-    }
+  function create_if_block(ctx) {
+    let t;
+    return {
+      c() {
+        t = text("hourglass_bottom");
+      },
+      m(target, anchor) {
+        insert(target, t, anchor);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(t);
+      }
+    };
   }
-  async function setupProperty(element_id, event_type, global_css_property = false, units = "") {
-    let element = document.getElementById(element_id);
-    if (vn_storage.properties.hasOwnProperty(element_id)) {
-      element.value = vn_storage.properties[element_id];
+  function create_fragment(ctx) {
+    let div8;
+    let div0;
+    let t0;
+    let t1;
+    let div1;
+    let t3;
+    let span0;
+    let t5;
+    let div2;
+    let t6;
+    let t7;
+    let div3;
+    let t9;
+    let span1;
+    let t11;
+    let div4;
+    let t12;
+    let t13;
+    let div5;
+    let t15;
+    let span2;
+    let t17;
+    let div6;
+    let t18;
+    let t19;
+    let div7;
+    let t21;
+    let span3;
+    let t22;
+    let current;
+    function select_block_type(ctx2, dirty) {
+      if (ctx2[0])
+        return create_if_block;
+      return create_else_block;
     }
-    await useProperty(element_id, global_css_property, units);
-    if (event_type) {
-      element.addEventListener(event_type, async (event) => await useProperty(event["target"].id, global_css_property, units));
-    }
+    let current_block_type = select_block_type(ctx, -1);
+    let if_block = current_block_type(ctx);
+    const default_slot_template = ctx[7].default;
+    const default_slot = create_slot(default_slot_template, ctx, ctx[6], null);
+    return {
+      c() {
+        div8 = element("div");
+        div0 = element("div");
+        t0 = text(ctx[1]);
+        t1 = space();
+        div1 = element("div");
+        div1.textContent = "Chars";
+        t3 = space();
+        span0 = element("span");
+        span0.textContent = "auto_stories";
+        t5 = space();
+        div2 = element("div");
+        t6 = text(ctx[2]);
+        t7 = space();
+        div3 = element("div");
+        div3.textContent = "Lines";
+        t9 = space();
+        span1 = element("span");
+        span1.textContent = "drive_file_rename_outline";
+        t11 = space();
+        div4 = element("div");
+        t12 = text(ctx[3]);
+        t13 = space();
+        div5 = element("div");
+        div5.textContent = "Elapsed";
+        t15 = space();
+        span2 = element("span");
+        span2.textContent = "timer";
+        t17 = space();
+        div6 = element("div");
+        t18 = text(ctx[4]);
+        t19 = space();
+        div7 = element("div");
+        div7.textContent = "Chars / Hour";
+        t21 = space();
+        span3 = element("span");
+        if_block.c();
+        t22 = space();
+        if (default_slot)
+          default_slot.c();
+        attr(div0, "id", "chars_read");
+        attr(div0, "class", "stat-numbers svelte-1127kl9");
+        attr(div1, "class", "stat-annotation svelte-1127kl9");
+        attr(span0, "class", "material-icons");
+        attr(div2, "id", "lines_read");
+        attr(div2, "class", "stat-numbers svelte-1127kl9");
+        attr(div3, "class", "stat-annotation svelte-1127kl9");
+        attr(span1, "class", "material-icons");
+        attr(div4, "id", "elapsed_time");
+        attr(div4, "class", "stat-numbers svelte-1127kl9");
+        attr(div5, "class", "stat-annotation svelte-1127kl9");
+        attr(span2, "class", "material-icons");
+        attr(div6, "id", "chars_per_hour");
+        attr(div6, "class", "stat-numbers svelte-1127kl9");
+        attr(div7, "class", "stat-annotation svelte-1127kl9");
+        attr(span3, "id", "activity_symbol");
+        attr(span3, "class", "material-icons");
+        attr(div8, "class", "flex flex-row menu-bar z-50 h-full p-3 gap-3 items-center");
+      },
+      m(target, anchor) {
+        insert(target, div8, anchor);
+        append(div8, div0);
+        append(div0, t0);
+        append(div8, t1);
+        append(div8, div1);
+        append(div8, t3);
+        append(div8, span0);
+        append(div8, t5);
+        append(div8, div2);
+        append(div2, t6);
+        append(div8, t7);
+        append(div8, div3);
+        append(div8, t9);
+        append(div8, span1);
+        append(div8, t11);
+        append(div8, div4);
+        append(div4, t12);
+        append(div8, t13);
+        append(div8, div5);
+        append(div8, t15);
+        append(div8, span2);
+        append(div8, t17);
+        append(div8, div6);
+        append(div6, t18);
+        append(div8, t19);
+        append(div8, div7);
+        append(div8, t21);
+        append(div8, span3);
+        if_block.m(span3, null);
+        append(div8, t22);
+        if (default_slot) {
+          default_slot.m(div8, null);
+        }
+        current = true;
+      },
+      p(ctx2, [dirty]) {
+        if (!current || dirty & 2)
+          set_data(t0, ctx2[1]);
+        if (!current || dirty & 4)
+          set_data(t6, ctx2[2]);
+        if (!current || dirty & 8)
+          set_data(t12, ctx2[3]);
+        if (!current || dirty & 16)
+          set_data(t18, ctx2[4]);
+        if (current_block_type !== (current_block_type = select_block_type(ctx2, dirty))) {
+          if_block.d(1);
+          if_block = current_block_type(ctx2);
+          if (if_block) {
+            if_block.c();
+            if_block.m(span3, null);
+          }
+        }
+        if (default_slot) {
+          if (default_slot.p && (!current || dirty & 64)) {
+            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[6], !current ? get_all_dirty_from_scope(ctx2[6]) : get_slot_changes(default_slot_template, ctx2[6], dirty, null), null);
+          }
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(default_slot, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(default_slot, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div8);
+        if_block.d();
+        if (default_slot)
+          default_slot.d(detaching);
+      }
+    };
   }
-  function gameNameModified(event) {
-    vn_storage.instance_storage.updateDetails({
-      "name": event["target"].value
+  function instance($$self, $$props, $$invalidate) {
+    let { $$slots: slots = {}, $$scope } = $$props;
+    let SECS_TO_HOURS = 60 * 60;
+    let { media_storage } = $$props;
+    let { active = false } = $$props;
+    let chars, lines, time, speed;
+    const statsExist = (media_storage2) => media_storage2.instance_storage != void 0 ? media_storage2.instance_storage.today_stats : void 0;
+    const getStat = (daily_stats, stat_key) => daily_stats != void 0 && daily_stats.hasOwnProperty(stat_key) ? daily_stats[stat_key] : 0;
+    const getTime = (time_secs) => {
+      const date = new Date(0);
+      date.setSeconds(Math.round(time_secs));
+      return date.toISOString().substring(11, 19);
+    };
+    const getSpeed = (chars2, time_secs) => chars2 === void 0 || time_secs === void 0 || isNaN(chars2) || isNaN(time_secs) || chars2 === 0 || time_secs === 0 ? 0 .toLocaleString() : Math.round(chars2 / time_secs * SECS_TO_HOURS).toLocaleString();
+    const calculateStats = () => {
+      const daily_stats = statsExist(media_storage);
+      const char_count = getStat(daily_stats, "chars_read");
+      const line_count = getStat(daily_stats, "lines_read");
+      const time_secs = getStat(daily_stats, "time_read");
+      $$invalidate(1, chars = char_count.toLocaleString());
+      $$invalidate(2, lines = line_count.toLocaleString());
+      $$invalidate(3, time = getTime(time_secs));
+      $$invalidate(4, speed = getSpeed(char_count, time_secs));
+    };
+    calculateStats();
+    document.addEventListener("status_active", () => {
+      $$invalidate(0, active = true);
+      calculateStats();
     });
-    showNameTitle(event["target"].value);
-  }
-  async function userActive() {
-    let time = timeNowSeconds();
-    if (vn_storage.instance_storage === void 0)
-      return;
-    if (vn_storage.previous_time === void 0) {
-      await vn_storage.instance_storage.updateDetails({ "last_active_at": time });
-      vn_storage.start_ticker();
-    } else {
-      vn_storage.stop_ticker();
-    }
-  }
-  function openStats() {
-    browser5.runtime.sendMessage({
-      "action": "open_tab",
-      "url": "https://kamwithk.github.io/exSTATic/stats.html"
+    document.addEventListener("status_inactive", () => {
+      $$invalidate(0, active = false);
+      calculateStats();
     });
+    $$self.$$set = ($$props2) => {
+      if ("media_storage" in $$props2)
+        $$invalidate(5, media_storage = $$props2.media_storage);
+      if ("active" in $$props2)
+        $$invalidate(0, active = $$props2.active);
+      if ("$$scope" in $$props2)
+        $$invalidate(6, $$scope = $$props2.$$scope);
+    };
+    return [active, chars, lines, time, speed, media_storage, $$scope, slots];
   }
-  async function deleteLines() {
-    if (vn_storage.instance_storage === void 0)
-      return;
-    let checked_boxes = Array.from(document.querySelectorAll(".line-select:checked"));
-    if (checked_boxes.length === 0)
-      return;
-    let plural = checked_boxes.length > 1 ? "lines" : "line";
-    confirmed = confirm(`Are you sure you'd like to delete ${checked_boxes.length} ${plural}?
-Char and line statistics will be modified accordingly however time read won't change...`);
-    if (!confirmed)
-      return;
-    let parents = checked_boxes.map((checkbox) => checkbox.parentElement);
-    let details = parents.map((element_div) => [
-      Number.parseInt(element_div.dataset.line_id),
-      element_div.textContent,
-      timeToDateString(Number.parseInt(element_div.dataset.time))
-    ]);
-    await vn_storage.deleteLines(details);
-    parents.forEach((element_div) => element_div.remove());
-    setStats();
+  var Stat_bar = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance, create_fragment, safe_not_equal, { media_storage: 5, active: 0 });
+    }
+  };
+  var stat_bar_default = Stat_bar;
+
+  // src/components/menu_option.svelte
+  function create_if_block2(ctx) {
+    let t0_value = " ";
+    let t0;
+    let t1;
+    let t2;
+    let t3;
+    return {
+      c() {
+        t0 = text(t0_value);
+        t1 = text("(");
+        t2 = text(ctx[2]);
+        t3 = text(")");
+      },
+      m(target, anchor) {
+        insert(target, t0, anchor);
+        insert(target, t1, anchor);
+        insert(target, t2, anchor);
+        insert(target, t3, anchor);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 4)
+          set_data(t2, ctx2[2]);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(t0);
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(t2);
+        if (detaching)
+          detach(t3);
+      }
+    };
   }
-  async function setupProperties() {
-    await setupProperty("font", "change", "--default-jp-font");
-    await setupProperty("font_size", "change", "--default-jp-font-size", "rem");
-    await setupProperty("afk_max_time", "change");
-    await setupProperty("max_loaded_lines", "change");
-    await setupProperty("inactivity_blur", "change");
-    await setupProperty("menu_blur", "change", "--default-menu-blur", "px");
-    await setupProperty("bottom_line_padding", "change", "--default-text-align", "%");
-    document.getElementById("game_name").addEventListener("change", gameNameModified);
-    document.getElementById("entry_holder").addEventListener("dblclick", userActive);
-    document.getElementById("delete-selection").addEventListener("click", deleteLines);
-    document.getElementById("view_stats").addEventListener("click", openStats);
-    document.getElementById("export_stats").addEventListener("click", exportStats);
-    document.getElementById("export_lines").addEventListener("click", async (_) => {
-      confirmed = confirm("Are you sure you'd like to export lines?\nExporting large numbers of lines can take a long time, please wait and do not retry whilst the operation takes place...");
-      if (confirmed) {
-        await exportLines();
+  function create_fragment2(ctx) {
+    let div;
+    let t0;
+    let t1;
+    let input;
+    let mounted;
+    let dispose;
+    let if_block = ctx[2] != "" && create_if_block2(ctx);
+    return {
+      c() {
+        div = element("div");
+        t0 = text(ctx[1]);
+        if (if_block)
+          if_block.c();
+        t1 = space();
+        input = element("input");
+        attr(div, "class", "menu-label");
+        attr(input, "class", "menu-input");
+        attr(input, "type", ctx[3]);
+        input.value = ctx[0];
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, t0);
+        if (if_block)
+          if_block.m(div, null);
+        insert(target, t1, anchor);
+        insert(target, input, anchor);
+        ctx[9](input);
+        if (!mounted) {
+          dispose = listen(input, "change", ctx[5]);
+          mounted = true;
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 2)
+          set_data(t0, ctx2[1]);
+        if (ctx2[2] != "") {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block2(ctx2);
+            if_block.c();
+            if_block.m(div, null);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+        if (dirty & 8) {
+          attr(input, "type", ctx2[3]);
+        }
+        if (dirty & 1 && input.value !== ctx2[0]) {
+          input.value = ctx2[0];
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        if (if_block)
+          if_block.d();
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(input);
+        ctx[9](null);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function instance2($$self, $$props, $$invalidate) {
+    var __awaiter = this && this.__awaiter || function(thisArg, _arguments, P, generator) {
+      function adopt(value2) {
+        return value2 instanceof P ? value2 : new P(function(resolve) {
+          resolve(value2);
+        });
+      }
+      return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value2) {
+          try {
+            step(generator.next(value2));
+          } catch (e) {
+            reject(e);
+          }
+        }
+        function rejected(value2) {
+          try {
+            step(generator["throw"](value2));
+          } catch (e) {
+            reject(e);
+          }
+        }
+        function step(result) {
+          result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+      });
+    };
+    let { media_storage } = $$props;
+    let { id } = $$props;
+    let { description = "" } = $$props;
+    let { units = "" } = $$props;
+    let { type = "number" } = $$props;
+    let { value = void 0 } = $$props;
+    let { root_css = void 0 } = $$props;
+    let input_element = void 0;
+    const update2 = (event) => __awaiter(void 0, void 0, void 0, function* () {
+      $$invalidate(0, value = event["target"].value);
+      if (root_css !== void 0) {
+        document.documentElement.style.setProperty(root_css, `${value}${units}`);
+      }
+      const properties = {};
+      properties[id] = value;
+      if (media_storage !== void 0 && media_storage.type_storage !== void 0) {
+        yield media_storage.type_storage.updateProperties(properties);
       }
     });
-    document.getElementById("import_stats").addEventListener("change", (event) => {
-      confirmed = confirm("Are you sure you'd like to import previous data?\nPrevious stats in storage will be replaced with new values from this data dump (when the type, media and date all collide)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!");
+    onMount(() => {
+      if (media_storage.properties.hasOwnProperty(id)) {
+        $$invalidate(0, value = media_storage.properties[id]);
+        $$invalidate(4, input_element.value = value, input_element);
+      }
+      if (input_element.value != void 0) {
+        input_element.dispatchEvent(new Event("change"));
+      }
+    });
+    function input_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        input_element = $$value;
+        $$invalidate(4, input_element);
+      });
+    }
+    $$self.$$set = ($$props2) => {
+      if ("media_storage" in $$props2)
+        $$invalidate(6, media_storage = $$props2.media_storage);
+      if ("id" in $$props2)
+        $$invalidate(7, id = $$props2.id);
+      if ("description" in $$props2)
+        $$invalidate(1, description = $$props2.description);
+      if ("units" in $$props2)
+        $$invalidate(2, units = $$props2.units);
+      if ("type" in $$props2)
+        $$invalidate(3, type = $$props2.type);
+      if ("value" in $$props2)
+        $$invalidate(0, value = $$props2.value);
+      if ("root_css" in $$props2)
+        $$invalidate(8, root_css = $$props2.root_css);
+    };
+    return [
+      value,
+      description,
+      units,
+      type,
+      input_element,
+      update2,
+      media_storage,
+      id,
+      root_css,
+      input_binding
+    ];
+  }
+  var Menu_option = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance2, create_fragment2, safe_not_equal, {
+        media_storage: 6,
+        id: 7,
+        description: 1,
+        units: 2,
+        type: 3,
+        value: 0,
+        root_css: 8
+      });
+    }
+  };
+  var menu_option_default = Menu_option;
+
+  // src/components/menu_bar.svelte
+  function fallback_block(ctx) {
+    let menuoption0;
+    let t0;
+    let menuoption1;
+    let t1;
+    let menuoption2;
+    let current;
+    menuoption0 = new menu_option_default({
+      props: {
+        media_storage: ctx[1],
+        id: "afk_max_time",
+        description: "Max AFK Time",
+        units: "secs",
+        value: "60"
+      }
+    });
+    menuoption1 = new menu_option_default({
+      props: {
+        media_storage: ctx[1],
+        id: "inactivity_blur",
+        description: "Inactivity Blur",
+        units: "px",
+        value: "2"
+      }
+    });
+    menuoption2 = new menu_option_default({
+      props: {
+        media_storage: ctx[1],
+        id: "menu_blur",
+        description: "Menu Blur",
+        units: "px",
+        value: "8",
+        root_css: "--default-menu-blur"
+      }
+    });
+    return {
+      c() {
+        create_component(menuoption0.$$.fragment);
+        t0 = space();
+        create_component(menuoption1.$$.fragment);
+        t1 = space();
+        create_component(menuoption2.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(menuoption0, target, anchor);
+        insert(target, t0, anchor);
+        mount_component(menuoption1, target, anchor);
+        insert(target, t1, anchor);
+        mount_component(menuoption2, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const menuoption0_changes = {};
+        if (dirty & 2)
+          menuoption0_changes.media_storage = ctx2[1];
+        menuoption0.$set(menuoption0_changes);
+        const menuoption1_changes = {};
+        if (dirty & 2)
+          menuoption1_changes.media_storage = ctx2[1];
+        menuoption1.$set(menuoption1_changes);
+        const menuoption2_changes = {};
+        if (dirty & 2)
+          menuoption2_changes.media_storage = ctx2[1];
+        menuoption2.$set(menuoption2_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(menuoption0.$$.fragment, local);
+        transition_in(menuoption1.$$.fragment, local);
+        transition_in(menuoption2.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(menuoption0.$$.fragment, local);
+        transition_out(menuoption1.$$.fragment, local);
+        transition_out(menuoption2.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(menuoption0, detaching);
+        if (detaching)
+          detach(t0);
+        destroy_component(menuoption1, detaching);
+        if (detaching)
+          detach(t1);
+        destroy_component(menuoption2, detaching);
+      }
+    };
+  }
+  function create_fragment3(ctx) {
+    let div;
+    let div_class_value;
+    let current;
+    const default_slot_template = ctx[3].default;
+    const default_slot = create_slot(default_slot_template, ctx, ctx[2], null);
+    const default_slot_or_fallback = default_slot || fallback_block(ctx);
+    return {
+      c() {
+        div = element("div");
+        if (default_slot_or_fallback)
+          default_slot_or_fallback.c();
+        attr(div, "class", div_class_value = (ctx[0] ? "grid" : "hidden") + " grid-rows-2 absolute z-50 left-0 right-0");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        if (default_slot_or_fallback) {
+          default_slot_or_fallback.m(div, null);
+        }
+        current = true;
+      },
+      p(ctx2, [dirty]) {
+        if (default_slot) {
+          if (default_slot.p && (!current || dirty & 4)) {
+            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[2], !current ? get_all_dirty_from_scope(ctx2[2]) : get_slot_changes(default_slot_template, ctx2[2], dirty, null), null);
+          }
+        } else {
+          if (default_slot_or_fallback && default_slot_or_fallback.p && (!current || dirty & 2)) {
+            default_slot_or_fallback.p(ctx2, !current ? -1 : dirty);
+          }
+        }
+        if (!current || dirty & 1 && div_class_value !== (div_class_value = (ctx2[0] ? "grid" : "hidden") + " grid-rows-2 absolute z-50 left-0 right-0")) {
+          attr(div, "class", div_class_value);
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(default_slot_or_fallback, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(default_slot_or_fallback, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        if (default_slot_or_fallback)
+          default_slot_or_fallback.d(detaching);
+      }
+    };
+  }
+  function instance3($$self, $$props, $$invalidate) {
+    let { $$slots: slots = {}, $$scope } = $$props;
+    let { show = false } = $$props;
+    let { media_storage } = $$props;
+    $$self.$$set = ($$props2) => {
+      if ("show" in $$props2)
+        $$invalidate(0, show = $$props2.show);
+      if ("media_storage" in $$props2)
+        $$invalidate(1, media_storage = $$props2.media_storage);
+      if ("$$scope" in $$props2)
+        $$invalidate(2, $$scope = $$props2.$$scope);
+    };
+    return [show, media_storage, $$scope, slots];
+  }
+  var Menu_bar = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance3, create_fragment3, safe_not_equal, { show: 0, media_storage: 1 });
+    }
+  };
+  var menu_bar_default = Menu_bar;
+
+  // src/components/line.svelte
+  function create_fragment4(ctx) {
+    let div;
+    let p;
+    let t0;
+    let t1;
+    let input;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        div = element("div");
+        p = element("p");
+        t0 = text(ctx[3]);
+        t1 = space();
+        input = element("input");
+        attr(p, "class", "sentence w-full");
+        attr(input, "type", "checkbox");
+        attr(input, "class", "line-select");
+        attr(div, "class", "sentence-entry w-full");
+        attr(div, "data-line-id", ctx[1]);
+        attr(div, "data-time", ctx[2]);
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, p);
+        append(p, t0);
+        append(div, t1);
+        append(div, input);
+        input.checked = ctx[0];
+        if (!mounted) {
+          dispose = listen(input, "change", ctx[4]);
+          mounted = true;
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 8)
+          set_data(t0, ctx2[3]);
+        if (dirty & 1) {
+          input.checked = ctx2[0];
+        }
+        if (dirty & 2) {
+          attr(div, "data-line-id", ctx2[1]);
+        }
+        if (dirty & 4) {
+          attr(div, "data-time", ctx2[2]);
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function instance4($$self, $$props, $$invalidate) {
+    let { id } = $$props;
+    let { time } = $$props;
+    let { sentence = "" } = $$props;
+    let { checked = false } = $$props;
+    function input_change_handler() {
+      checked = this.checked;
+      $$invalidate(0, checked);
+    }
+    $$self.$$set = ($$props2) => {
+      if ("id" in $$props2)
+        $$invalidate(1, id = $$props2.id);
+      if ("time" in $$props2)
+        $$invalidate(2, time = $$props2.time);
+      if ("sentence" in $$props2)
+        $$invalidate(3, sentence = $$props2.sentence);
+      if ("checked" in $$props2)
+        $$invalidate(0, checked = $$props2.checked);
+    };
+    return [checked, id, time, sentence, input_change_handler];
+  }
+  var Line = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance4, create_fragment4, safe_not_equal, { id: 1, time: 2, sentence: 3, checked: 0 });
+    }
+  };
+  var line_default = Line;
+
+  // src/components/line_holder.svelte
+  function get_each_context(ctx, list, i) {
+    const child_ctx = ctx.slice();
+    child_ctx[6] = list[i][0];
+    child_ctx[7] = list[i][1];
+    child_ctx[8] = list[i][2];
+    child_ctx[9] = list[i][3];
+    return child_ctx;
+  }
+  function create_each_block(ctx) {
+    let line;
+    let current;
+    line = new line_default({
+      props: {
+        id: ctx[7],
+        time: ctx[9],
+        sentence: ctx[8]
+      }
+    });
+    return {
+      c() {
+        create_component(line.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(line, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const line_changes = {};
+        if (dirty & 1)
+          line_changes.id = ctx2[7];
+        if (dirty & 1)
+          line_changes.time = ctx2[9];
+        if (dirty & 1)
+          line_changes.sentence = ctx2[8];
+        line.$set(line_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(line.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(line.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(line, detaching);
+      }
+    };
+  }
+  function create_fragment5(ctx) {
+    let div;
+    let current;
+    let mounted;
+    let dispose;
+    let each_value = ctx[0];
+    let each_blocks = [];
+    for (let i = 0; i < each_value.length; i += 1) {
+      each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    }
+    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
+      each_blocks[i] = null;
+    });
+    return {
+      c() {
+        div = element("div");
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].c();
+        }
+        attr(div, "id", "entry_holder");
+        attr(div, "class", "svelte-1rkxv40");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].m(div, null);
+        }
+        ctx[4](div);
+        current = true;
+        if (!mounted) {
+          dispose = [
+            listen(div, "click", ctx[2]),
+            listen(div, "dblclick", ctx[3])
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 1) {
+          each_value = ctx2[0];
+          let i;
+          for (i = 0; i < each_value.length; i += 1) {
+            const child_ctx = get_each_context(ctx2, each_value, i);
+            if (each_blocks[i]) {
+              each_blocks[i].p(child_ctx, dirty);
+              transition_in(each_blocks[i], 1);
+            } else {
+              each_blocks[i] = create_each_block(child_ctx);
+              each_blocks[i].c();
+              transition_in(each_blocks[i], 1);
+              each_blocks[i].m(div, null);
+            }
+          }
+          group_outros();
+          for (i = each_value.length; i < each_blocks.length; i += 1) {
+            out(i);
+          }
+          check_outros();
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        for (let i = 0; i < each_value.length; i += 1) {
+          transition_in(each_blocks[i]);
+        }
+        current = true;
+      },
+      o(local) {
+        each_blocks = each_blocks.filter(Boolean);
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          transition_out(each_blocks[i]);
+        }
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        destroy_each(each_blocks, detaching);
+        ctx[4](null);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function instance5($$self, $$props, $$invalidate) {
+    let { lines } = $$props;
+    let entry_holder;
+    const observer = new MutationObserver(() => {
+      window.scrollTo(0, entry_holder.scrollHeight);
+    });
+    onMount(() => observer.observe(entry_holder, { "childList": true, "subtree": true }));
+    function click_handler(event) {
+      bubble.call(this, $$self, event);
+    }
+    function dblclick_handler(event) {
+      bubble.call(this, $$self, event);
+    }
+    function div_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        entry_holder = $$value;
+        $$invalidate(1, entry_holder);
+      });
+    }
+    $$self.$$set = ($$props2) => {
+      if ("lines" in $$props2)
+        $$invalidate(0, lines = $$props2.lines);
+    };
+    return [lines, entry_holder, click_handler, dblclick_handler, div_binding];
+  }
+  var Line_holder = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance5, create_fragment5, safe_not_equal, { lines: 0 });
+    }
+  };
+  var line_holder_default = Line_holder;
+
+  // src/vn/vn.svelte
+  var import_papaparse2 = __toESM(require_papaparse_min());
+  function create_default_slot_1(ctx) {
+    let button;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        button = element("button");
+        button.textContent = "more_vert";
+        attr(button, "class", "material-icons rounded-full hover:bg-indigo-700");
+      },
+      m(target, anchor) {
+        insert(target, button, anchor);
+        if (!mounted) {
+          dispose = listen(button, "click", ctx[10]);
+          mounted = true;
+        }
+      },
+      p: noop,
+      d(detaching) {
+        if (detaching)
+          detach(button);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_default_slot(ctx) {
+    let menuoption0;
+    let t0;
+    let menuoption1;
+    let t1;
+    let menuoption2;
+    let t2;
+    let menuoption3;
+    let t3;
+    let menuoption4;
+    let t4;
+    let menuoption5;
+    let t5;
+    let menuoption6;
+    let t6;
+    let button0;
+    let t8;
+    let button1;
+    let t10;
+    let button2;
+    let t11;
+    let input;
+    let t12;
+    let button3;
+    let current;
+    let mounted;
+    let dispose;
+    menuoption0 = new menu_option_default({
+      props: {
+        media_storage: ctx[0],
+        id: "font",
+        description: "Font",
+        type: "text",
+        value: "Klee One",
+        root_css: "--default-font"
+      }
+    });
+    menuoption1 = new menu_option_default({
+      props: {
+        media_storage: ctx[0],
+        id: "font_size",
+        description: "Font Size",
+        units: "rem",
+        value: "2",
+        root_css: "--default-font-size"
+      }
+    });
+    menuoption2 = new menu_option_default({
+      props: {
+        media_storage: ctx[0],
+        id: "bottom_line_padding",
+        description: "Bottom Pushback",
+        units: "%",
+        value: "20",
+        root_css: "--default-text-align"
+      }
+    });
+    menuoption3 = new menu_option_default({
+      props: {
+        media_storage: ctx[0],
+        id: "afk_max_time",
+        description: "Max AFK Time",
+        units: "secs",
+        value: "60"
+      }
+    });
+    menuoption4 = new menu_option_default({
+      props: {
+        media_storage: ctx[0],
+        id: "max_loaded_lines",
+        description: "Max Loaded Lines",
+        units: "UI",
+        value: "5000"
+      }
+    });
+    menuoption5 = new menu_option_default({
+      props: {
+        media_storage: ctx[0],
+        id: "inactivity_blur",
+        description: "Inactivity Blur",
+        units: "px",
+        value: "2"
+      }
+    });
+    menuoption6 = new menu_option_default({
+      props: {
+        media_storage: ctx[0],
+        id: "menu_blur",
+        description: "Menu Blur",
+        units: "px",
+        value: "8",
+        root_css: "--default-menu-blur"
+      }
+    });
+    return {
+      c() {
+        create_component(menuoption0.$$.fragment);
+        t0 = space();
+        create_component(menuoption1.$$.fragment);
+        t1 = space();
+        create_component(menuoption2.$$.fragment);
+        t2 = space();
+        create_component(menuoption3.$$.fragment);
+        t3 = space();
+        create_component(menuoption4.$$.fragment);
+        t4 = space();
+        create_component(menuoption5.$$.fragment);
+        t5 = space();
+        create_component(menuoption6.$$.fragment);
+        t6 = space();
+        button0 = element("button");
+        button0.textContent = "Export Stats";
+        t8 = space();
+        button1 = element("button");
+        button1.textContent = "Export Lines";
+        t10 = space();
+        button2 = element("button");
+        t11 = text("Import Stats\n					");
+        input = element("input");
+        t12 = space();
+        button3 = element("button");
+        button3.textContent = "View Stats";
+        attr(button0, "id", "export_stats");
+        attr(button0, "class", "menu-button");
+        attr(button1, "id", "export_lines");
+        attr(button1, "class", "menu-button");
+        attr(input, "id", "import_stats");
+        attr(input, "class", "hidden");
+        attr(input, "type", "file");
+        attr(button2, "class", "menu-button");
+        attr(button3, "id", "view_stats");
+        attr(button3, "class", "menu-button");
+      },
+      m(target, anchor) {
+        mount_component(menuoption0, target, anchor);
+        insert(target, t0, anchor);
+        mount_component(menuoption1, target, anchor);
+        insert(target, t1, anchor);
+        mount_component(menuoption2, target, anchor);
+        insert(target, t2, anchor);
+        mount_component(menuoption3, target, anchor);
+        insert(target, t3, anchor);
+        mount_component(menuoption4, target, anchor);
+        insert(target, t4, anchor);
+        mount_component(menuoption5, target, anchor);
+        insert(target, t5, anchor);
+        mount_component(menuoption6, target, anchor);
+        insert(target, t6, anchor);
+        insert(target, button0, anchor);
+        insert(target, t8, anchor);
+        insert(target, button1, anchor);
+        insert(target, t10, anchor);
+        insert(target, button2, anchor);
+        append(button2, t11);
+        append(button2, input);
+        insert(target, t12, anchor);
+        insert(target, button3, anchor);
+        current = true;
+        if (!mounted) {
+          dispose = [
+            listen(button0, "click", exportStats),
+            listen(button1, "click", ctx[4]),
+            listen(input, "change", ctx[5]),
+            listen(button2, "click", ctx[11]),
+            listen(button3, "click", ctx[6])
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        const menuoption0_changes = {};
+        if (dirty & 1)
+          menuoption0_changes.media_storage = ctx2[0];
+        menuoption0.$set(menuoption0_changes);
+        const menuoption1_changes = {};
+        if (dirty & 1)
+          menuoption1_changes.media_storage = ctx2[0];
+        menuoption1.$set(menuoption1_changes);
+        const menuoption2_changes = {};
+        if (dirty & 1)
+          menuoption2_changes.media_storage = ctx2[0];
+        menuoption2.$set(menuoption2_changes);
+        const menuoption3_changes = {};
+        if (dirty & 1)
+          menuoption3_changes.media_storage = ctx2[0];
+        menuoption3.$set(menuoption3_changes);
+        const menuoption4_changes = {};
+        if (dirty & 1)
+          menuoption4_changes.media_storage = ctx2[0];
+        menuoption4.$set(menuoption4_changes);
+        const menuoption5_changes = {};
+        if (dirty & 1)
+          menuoption5_changes.media_storage = ctx2[0];
+        menuoption5.$set(menuoption5_changes);
+        const menuoption6_changes = {};
+        if (dirty & 1)
+          menuoption6_changes.media_storage = ctx2[0];
+        menuoption6.$set(menuoption6_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(menuoption0.$$.fragment, local);
+        transition_in(menuoption1.$$.fragment, local);
+        transition_in(menuoption2.$$.fragment, local);
+        transition_in(menuoption3.$$.fragment, local);
+        transition_in(menuoption4.$$.fragment, local);
+        transition_in(menuoption5.$$.fragment, local);
+        transition_in(menuoption6.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(menuoption0.$$.fragment, local);
+        transition_out(menuoption1.$$.fragment, local);
+        transition_out(menuoption2.$$.fragment, local);
+        transition_out(menuoption3.$$.fragment, local);
+        transition_out(menuoption4.$$.fragment, local);
+        transition_out(menuoption5.$$.fragment, local);
+        transition_out(menuoption6.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(menuoption0, detaching);
+        if (detaching)
+          detach(t0);
+        destroy_component(menuoption1, detaching);
+        if (detaching)
+          detach(t1);
+        destroy_component(menuoption2, detaching);
+        if (detaching)
+          detach(t2);
+        destroy_component(menuoption3, detaching);
+        if (detaching)
+          detach(t3);
+        destroy_component(menuoption4, detaching);
+        if (detaching)
+          detach(t4);
+        destroy_component(menuoption5, detaching);
+        if (detaching)
+          detach(t5);
+        destroy_component(menuoption6, detaching);
+        if (detaching)
+          detach(t6);
+        if (detaching)
+          detach(button0);
+        if (detaching)
+          detach(t8);
+        if (detaching)
+          detach(button1);
+        if (detaching)
+          detach(t10);
+        if (detaching)
+          detach(button2);
+        if (detaching)
+          detach(t12);
+        if (detaching)
+          detach(button3);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function create_fragment6(ctx) {
+    let body;
+    let div1;
+    let input;
+    let t0;
+    let div0;
+    let statbar;
+    let t1;
+    let menubar;
+    let t2;
+    let button;
+    let t4;
+    let div2;
+    let lineholder;
+    let updating_lines;
+    let current;
+    let mounted;
+    let dispose;
+    statbar = new stat_bar_default({
+      props: {
+        media_storage: ctx[0],
+        $$slots: { default: [create_default_slot_1] },
+        $$scope: { ctx }
+      }
+    });
+    menubar = new menu_bar_default({
+      props: {
+        show: ctx[3],
+        media_storage: ctx[0],
+        $$slots: { default: [create_default_slot] },
+        $$scope: { ctx }
+      }
+    });
+    function lineholder_lines_binding(value) {
+      ctx[12](value);
+    }
+    let lineholder_props = {};
+    if (ctx[2] !== void 0) {
+      lineholder_props.lines = ctx[2];
+    }
+    lineholder = new line_holder_default({ props: lineholder_props });
+    binding_callbacks.push(() => bind(lineholder, "lines", lineholder_lines_binding));
+    lineholder.$on("click", ctx[13]);
+    return {
+      c() {
+        body = element("body");
+        div1 = element("div");
+        input = element("input");
+        t0 = space();
+        div0 = element("div");
+        create_component(statbar.$$.fragment);
+        t1 = space();
+        create_component(menubar.$$.fragment);
+        t2 = space();
+        button = element("button");
+        button.textContent = "delete";
+        t4 = space();
+        div2 = element("div");
+        create_component(lineholder.$$.fragment);
+        attr(input, "id", "game_name");
+        attr(input, "class", "w-20 h-full shrink grow justify-self-start jp-text");
+        attr(input, "type", "text");
+        attr(div0, "class", "relative");
+        attr(button, "id", "delete-selection");
+        attr(button, "class", "material-icons delete-button");
+        attr(div1, "id", "top_bar");
+        attr(div1, "class", "flex z-50 h-20 px-12 sticky top-0 items-center justify-between");
+        attr(div2, "class", "px-12");
+        attr(body, "class", "flex flex-col h-full w-full");
+      },
+      m(target, anchor) {
+        insert(target, body, anchor);
+        append(body, div1);
+        append(div1, input);
+        set_input_value(input, ctx[1]);
+        append(div1, t0);
+        append(div1, div0);
+        mount_component(statbar, div0, null);
+        append(div0, t1);
+        mount_component(menubar, div0, null);
+        append(div1, t2);
+        append(div1, button);
+        append(body, t4);
+        append(body, div2);
+        mount_component(lineholder, div2, null);
+        current = true;
+        if (!mounted) {
+          dispose = [
+            listen(input, "input", ctx[9]),
+            listen(button, "click", ctx[8]),
+            listen(div2, "dblclick", ctx[7])
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 2 && input.value !== ctx2[1]) {
+          set_input_value(input, ctx2[1]);
+        }
+        const statbar_changes = {};
+        if (dirty & 1)
+          statbar_changes.media_storage = ctx2[0];
+        if (dirty & 131080) {
+          statbar_changes.$$scope = { dirty, ctx: ctx2 };
+        }
+        statbar.$set(statbar_changes);
+        const menubar_changes = {};
+        if (dirty & 8)
+          menubar_changes.show = ctx2[3];
+        if (dirty & 1)
+          menubar_changes.media_storage = ctx2[0];
+        if (dirty & 131073) {
+          menubar_changes.$$scope = { dirty, ctx: ctx2 };
+        }
+        menubar.$set(menubar_changes);
+        const lineholder_changes = {};
+        if (!updating_lines && dirty & 4) {
+          updating_lines = true;
+          lineholder_changes.lines = ctx2[2];
+          add_flush_callback(() => updating_lines = false);
+        }
+        lineholder.$set(lineholder_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(statbar.$$.fragment, local);
+        transition_in(menubar.$$.fragment, local);
+        transition_in(lineholder.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(statbar.$$.fragment, local);
+        transition_out(menubar.$$.fragment, local);
+        transition_out(lineholder.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(body);
+        destroy_component(statbar);
+        destroy_component(menubar);
+        destroy_component(lineholder);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function instance6($$self, $$props, $$invalidate) {
+    var __awaiter = this && this.__awaiter || function(thisArg, _arguments, P, generator) {
+      function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+          resolve(value);
+        });
+      }
+      return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+          try {
+            step(generator.next(value));
+          } catch (e) {
+            reject(e);
+          }
+        }
+        function rejected(value) {
+          try {
+            step(generator["throw"](value));
+          } catch (e) {
+            reject(e);
+          }
+        }
+        function step(result) {
+          result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+      });
+    };
+    var browser6 = require_browser_polyfill();
+    let { vn_storage } = $$props;
+    let title = "Game";
+    let lines = [];
+    let menu = false;
+    document.addEventListener("media_changed", (event) => {
+      $$invalidate(1, title = event["detail"]["name"]);
+      $$invalidate(2, lines = event["detail"]["lines"].sort((first, second) => first[1] - second[1]));
+    });
+    document.addEventListener("new_line", (event) => {
+      $$invalidate(2, lines = [
+        ...lines,
+        [
+          vn_storage.uuid,
+          event["detail"]["line_id"],
+          event["detail"]["line"],
+          event["detail"]["time"]
+        ]
+      ]);
+    });
+    const setTitle = (title2) => {
+      if (vn_storage == void 0 || vn_storage.instance_storage == void 0)
+        return;
+      vn_storage.instance_storage.updateDetails({ "name": title2 });
+    };
+    const requestExportLines = () => __awaiter(void 0, void 0, void 0, function* () {
+      const confirmed = confirm("Are you sure you'd like to export lines?\nExporting large numbers of lines can take a long time, please wait and do not retry whilst the operation takes place...");
+      if (confirmed) {
+        yield exportLines();
+      }
+    });
+    const requestImportLines = (event) => {
+      const confirmed = confirm("Are you sure you'd like to import previous data?\nPrevious stats in storage will be replaced with new values from this data dump (when the type, media and date all collide)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!");
       if (!confirmed)
         return;
       (0, import_papaparse2.parse)(event["target"].files[0], {
         "header": true,
         "dynamicTyping": true,
-        "complete": async (result) => {
-          await importStats(result.data);
-          alert("Finished importing stats successfully, refresh all pages now...");
-        }
+        "complete": (result) => __awaiter(void 0, void 0, void 0, function* () {
+          yield importStats(result.data);
+          alert("Finished importing stats successfully!\nPlease refresh all exSTATic pages now...");
+        })
       });
+    };
+    const openStats = () => {
+      browser6.runtime.sendMessage({
+        "action": "open_tab",
+        "url": "https://kamwithk.github.io/exSTATic/stats.html"
+      });
+    };
+    const userActive = () => __awaiter(void 0, void 0, void 0, function* () {
+      const time = timeNowSeconds();
+      if (vn_storage.instance_storage === void 0)
+        return;
+      if (vn_storage.previous_time === void 0) {
+        yield vn_storage.instance_storage.updateDetails({ "last_active_at": time });
+        vn_storage.start_ticker();
+      } else {
+        vn_storage.stop_ticker();
+      }
     });
+    document.addEventListener("status_active", () => {
+      document.documentElement.style.setProperty("--default-inactivity-blur", "0");
+    });
+    document.addEventListener("status_inactive", () => {
+      document.documentElement.style.setProperty("--default-inactivity-blur", vn_storage.properties["inactivity_blur"] + "px");
+    });
+    const deleteLines = () => __awaiter(void 0, void 0, void 0, function* () {
+      if (vn_storage.instance_storage === void 0)
+        return;
+      const checked_boxes = Array.from(document.querySelectorAll(".line-select:checked"));
+      if (checked_boxes.length === 0)
+        return;
+      const plural = checked_boxes.length > 1 ? "lines" : "line";
+      const confirmed = confirm(`Are you sure you'd like to delete ${checked_boxes.length} ${plural}?
+Char and line statistics will be modified accordingly however time read won't change...`);
+      if (!confirmed)
+        return;
+      const parents = checked_boxes.map((checkbox) => checkbox.parentElement);
+      const details = parents.map((element_div) => [
+        Number.parseInt(element_div.dataset.lineId),
+        element_div.textContent,
+        timeToDateString(Number.parseInt(element_div.dataset.time))
+      ]);
+      yield vn_storage.deleteLines(details);
+      parents.forEach((element_div) => element_div.remove());
+    });
+    function input_input_handler() {
+      title = this.value;
+      $$invalidate(1, title);
+    }
+    const click_handler = () => $$invalidate(3, menu = !menu);
+    const click_handler_1 = () => document.getElementById("import_stats").click();
+    function lineholder_lines_binding(value) {
+      lines = value;
+      $$invalidate(2, lines);
+    }
+    const click_handler_2 = () => $$invalidate(3, menu = false);
+    $$self.$$set = ($$props2) => {
+      if ("vn_storage" in $$props2)
+        $$invalidate(0, vn_storage = $$props2.vn_storage);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 2) {
+        $:
+          setTitle(title);
+      }
+    };
+    return [
+      vn_storage,
+      title,
+      lines,
+      menu,
+      requestExportLines,
+      requestImportLines,
+      openStats,
+      userActive,
+      deleteLines,
+      input_input_handler,
+      click_handler,
+      click_handler_1,
+      lineholder_lines_binding,
+      click_handler_2
+    ];
   }
+  var Vn = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance6, create_fragment6, safe_not_equal, { vn_storage: 0 });
+    }
+  };
+  var vn_default = Vn;
 
-  // src/storage/stress_test.js
-  var browser6 = require_browser_polyfill();
-
-  // src/vn/tracker_inject.js
+  // src/vn/tracker_inject.ts
   console.log("Injected");
-  var browser7 = require_browser_polyfill();
-  var SECS_TO_HOURS = 60 * 60;
-  var vn_storage2;
-  async function setup() {
-    vn_storage2 = await VNStorage.build(true);
-    var port = browser7.runtime.connect({ "name": "vn_lines" });
+  var browser5 = require_browser_polyfill();
+  var setup = async () => {
+    const vn_storage = await VNStorage.build(true);
+    const port = browser5.runtime.connect({ "name": "vn_lines" });
     port.onMessage.addListener(async (data) => {
-      await vn_storage2.changeInstance(void 0, data["process_path"]);
-      await vn_storage2.addLine(data["line"], data["date"], data["time"]);
+      await vn_storage.changeInstance(void 0, data["process_path"]);
+      await vn_storage.addLine(data["line"], data["date"], data["time"]);
     });
-    setStorage(vn_storage2);
-    await setupProperties();
-    setStats();
-  }
+    new vn_default({
+      target: document.documentElement,
+      props: {
+        vn_storage
+      }
+    });
+  };
   setup();
-  function setActive() {
-    document.getElementById("activity_symbol").innerHTML = "hourglass_bottom";
-    document.documentElement.style.setProperty("--default-inactivity-blur", 0);
-    setStats();
-  }
-  document.addEventListener("status_active", setActive);
-  async function setInactive() {
-    document.getElementById("activity_symbol").innerHTML = "bedtime";
-    document.documentElement.style.setProperty("--default-inactivity-blur", vn_storage2.properties["inactivity_blur"] + "px");
-    setStats();
-  }
-  document.addEventListener("status_inactive", setInactive);
-  function newLineDiv(line, line_id, time) {
-    let container_div = document.createElement("div");
-    let new_p = document.createElement("p");
-    let new_checkbox = document.createElement("input");
-    new_checkbox.type = "checkbox";
-    container_div.classList.add("sentence-entry");
-    new_p.classList.add("sentence");
-    new_checkbox.classList.add("line-select");
-    container_div.dataset.line_id = line_id;
-    container_div.dataset.time = time;
-    new_p.innerHTML = line;
-    container_div.appendChild(new_p);
-    container_div.appendChild(new_checkbox);
-    return container_div;
-  }
-  function showNameTitle(name) {
-    let game_name_heading = document.getElementById("game_name");
-    game_name_heading.disabled = true;
-    game_name_heading.value = name;
-    game_name_heading.disabled = false;
-    document.title = "exSTATic | " + name;
-  }
-  function setStats() {
-    if (vn_storage2.instance_storage == void 0 || vn_storage2.instance_storage.today_stats == void 0) {
-      return;
-    }
-    let chars_read = vn_storage2.instance_storage.today_stats["chars_read"];
-    let lines_read = vn_storage2.instance_storage.today_stats["lines_read"];
-    let time_read = vn_storage2.instance_storage.today_stats["time_read"];
-    if (chars_read !== void 0) {
-      document.getElementById("chars_read").innerHTML = chars_read.toLocaleString();
-    }
-    if (lines_read !== void 0) {
-      document.getElementById("lines_read").innerHTML = lines_read.toLocaleString();
-    }
-    if (chars_read !== void 0 && time_read !== void 0) {
-      let average = Math.round(chars_read / (time_read / SECS_TO_HOURS));
-      document.getElementById("chars_per_hour").innerHTML = average.toLocaleString();
-    }
-    if (time_read !== void 0) {
-      let date = new Date(0);
-      date.setSeconds(Math.round(time_read));
-      document.getElementById("elapsed_time").innerHTML = date.toISOString().substring(11, 19);
-    }
-  }
-  function gameChanged(event) {
-    showNameTitle(event.detail["name"]);
-    let line_divs = event.detail["lines"].map(([_, line_id, line, time]) => newLineDiv(line, line_id, time)).sort((first, second) => first.dataset.line_id - second.dataset.line_id);
-    document.getElementById("entry_holder").replaceChildren(...line_divs);
-  }
-  document.addEventListener("media_changed", gameChanged);
-  function lineAdded(event) {
-    document.getElementById("entry_holder").appendChild(newLineDiv(event.detail["line"], event.detail["line_id"], event.detail["time"]));
-  }
-  document.addEventListener("new_line", lineAdded);
 })();
 /* @license
 Papa Parse

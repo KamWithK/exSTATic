@@ -17,7 +17,7 @@ var browser = require("webextension-polyfill")
 
 export class MokuroStorage extends MediaStorage {
     static async build(live_stat_update=false) {
-        let [type_storage, instance_storage] = await super.build("mokuro")
+        const [type_storage, instance_storage] = await super.build("mokuro")
 
         await MokuroStorage.setPages(instance_storage)
         await type_storage.updateProperties({"afk_max_time": 60})

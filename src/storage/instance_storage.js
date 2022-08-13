@@ -29,7 +29,7 @@ export class InstanceStorage {
     async setup() {
         this.details = (await browser.storage.local.get(this.uuid))[this.uuid]
 
-        let uuid_date_key = JSON.stringify([this.uuid, dateNowString()])
+        const uuid_date_key = JSON.stringify([this.uuid, dateNowString()])
         this.today_stats = (await browser.storage.local.get(uuid_date_key))[uuid_date_key]
     }
 
@@ -43,7 +43,7 @@ export class InstanceStorage {
     }
 
     async setDailyStats(date, values) {
-        let uuid_date_key = JSON.stringify([this.uuid, date])
+        const uuid_date_key = JSON.stringify([this.uuid, date])
         let daily_stats_entry = await browser.storage.local.get(uuid_date_key)
     
         daily_stats_entry[uuid_date_key] = values
@@ -59,7 +59,7 @@ export class InstanceStorage {
     }
 
     async #addStats(date_stat_adds, multiple=1) {
-        let date_keys = Object.keys(date_stat_adds).map(date => JSON.stringify([this.uuid, date]))
+        const date_keys = Object.keys(date_stat_adds).map(date => JSON.stringify([this.uuid, date]))
         let date_stats = await browser.storage.local.get(date_keys)
 
         date_keys.forEach(key => {
@@ -100,7 +100,7 @@ export class InstanceStorage {
     }
 
     async insertLine(line, time) {
-        let line_key = JSON.stringify([this.uuid, this.details["last_line_added"] + 1])
+        const line_key = JSON.stringify([this.uuid, this.details["last_line_added"] + 1])
         let line_entry = {}
         line_entry[line_key] = [line, time]
 
@@ -130,13 +130,13 @@ export class InstanceStorage {
         }
 
         // NOTE: This doesn't account for deleted lines
-        let max_line_id = this.details["last_line_added"]
-        let min_line_id = max_lines <= 0 | max_lines === undefined | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1)
+        const max_line_id = this.details["last_line_added"]
+        const min_line_id = max_lines <= 0 | max_lines === undefined | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1)
     
-        let id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map(
+        const id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map(
             index => JSON.stringify([this.uuid, min_line_id + index])
         )
-        let lines = await browser.storage.local.get(id_queries)
+        const lines = await browser.storage.local.get(id_queries)
 
         return Object.entries(lines).map(
             ([key, line_data]) => {

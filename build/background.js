@@ -1014,7 +1014,7 @@
     if (args["csv"][0].substring(0, 5) != BOM_CODE) {
       args["csv"][0] = BOM_CODE + args["csv"][0];
     }
-    let blob = new Blob(args["csv"], args["blob_options"]);
+    const blob = new Blob(args["csv"], args["blob_options"]);
     await browser.downloads.download({
       url: URL.createObjectURL(blob),
       filename: args["filename"]
@@ -1117,7 +1117,6 @@
   // src/messaging/socket_actions.js
   var browser2 = require_browser_polyfill();
   var SPLIT_PATH = /\\|\//g;
-  var socket;
   var SocketManager = class {
     constructor(url) {
       this.url = url;
@@ -1137,7 +1136,7 @@
       }
     }
     connectToWebSocket() {
-      socket = new WebSocket(this.url);
+      const socket = new WebSocket(this.url);
       socket.addEventListener("open", this.connectionOpened.bind(this));
       socket.addEventListener("close", this.connectToWebSocket.bind(this));
       socket.addEventListener("error", this.connectToWebSocket.bind(this));
@@ -1147,20 +1146,20 @@
       console.log("Connected");
     }
     async dataFetched(event) {
-      let listen_status = (await browser2.storage.local.get("listen_status"))["listen_status"];
+      const listen_status = (await browser2.storage.local.get("listen_status"))["listen_status"];
       if (listen_status === false) {
         return;
       }
-      let time = timeNowSeconds();
-      let date = dateNowString();
-      let data = JSON.parse(event.data);
+      const time = timeNowSeconds();
+      const date = dateNowString();
+      const data = JSON.parse(event.data);
       console.log("Recieved Socket Data: ", data);
       if (!data.hasOwnProperty("process_path") || !data.hasOwnProperty("sentence")) {
         return;
       }
       let process_path = data["process_path"];
-      let line = data["sentence"];
-      let path_segments = process_path.split(SPLIT_PATH);
+      const line = data["sentence"];
+      const path_segments = process_path.split(SPLIT_PATH);
       process_path = path_segments.slice(Math.max(0, path_segments.length - 3)).join("/");
       await this.port.postMessage({
         "line": line,
@@ -1176,7 +1175,7 @@
   var browser3 = require_browser_polyfill();
   browser3.runtime.onMessage.addListener(message_action);
   browser3.browserAction.onClicked.addListener(async (_) => {
-    let listen_status = (await browser3.storage.local.get("listen_status"))["listen_status"];
+    const listen_status = (await browser3.storage.local.get("listen_status"))["listen_status"];
     if (listen_status == true || listen_status === void 0) {
       await browser3.browserAction.setIcon({
         "path": {

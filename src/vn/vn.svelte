@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { timeToDateString } from "../calculations"
 	import type { VNStorage } from "./vn_storage"
-	import { exportLines, exportStats, importStats } from "../data_wrangling/data_extraction"
+	import { exportLines, exportStats, importLines, importStats } from "../data_wrangling/data_extraction"
 	import StatBar from "../components/stat_bar.svelte"
 	import MenuBar from "../components/menu_bar.svelte"
 	import MenuOption from "../components/menu_option.svelte"
@@ -51,9 +51,9 @@
         }
 	}
 
-	const requestImportLines = event => {
+	const requestImportStats = event => {
         const confirmed = confirm(
-            "Are you sure you'd like to import previous data?\nPrevious stats in storage will be replaced with new values from this data dump (when the type, media and date all collide)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"
+            "Are you sure you'd like to import lines?\nThe imported lines will be inserted after the current ones in storage...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"
         )
     
         if (!confirmed) return
@@ -63,7 +63,24 @@
             "dynamicTyping": true,
             "complete": async result => {
                 await importStats(result.data)
-                alert("Finished importing stats successfully!\nPlease refresh all exSTATic pages now...")
+                alert("Finished importing lines successfully!\nPlease refresh all exSTATic pages now...")
+            }
+        })
+    }
+
+	const requestImportLines = event => {
+        const confirmed = confirm(
+            "Are you sure you'd like to import lines?\n Please ensure that ALL stats are up to date beforehand (import if necessary).\nThe imported lines will be inserted after the current ones in storage...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"
+        )
+    
+        if (!confirmed) return
+
+        parse(event["target"].files[0], {
+            "header": true,
+            "dynamicTyping": true,
+            "complete": async result => {
+                await importLines(result.data)
+                alert("Finished importing lines successfully!\nPlease refresh all exSTATic pages now...")
             }
         })
     }
@@ -136,7 +153,11 @@
 				<button id="export_lines" class="menu-button" on:click={requestExportLines}>Export Lines</button>
 				<button class="menu-button" on:click="{() => document.getElementById('import_stats').click()}">
 					Import Stats
-					<input id="import_stats" class="hidden" type="file" on:change={requestImportLines}>
+					<input id="import_stats" class="hidden" type="file" on:change={requestImportStats}>
+				</button>
+				<button class="menu-button" on:click="{() => document.getElementById('import_lines').click()}">
+					Import Lines
+					<input id="import_lines" class="hidden" type="file" on:change={requestImportLines}>
 				</button>
 				<button id="view_stats" class="menu-button" on:click={openStats}>View Stats</button>
 			</MenuBar>

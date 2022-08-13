@@ -1265,7 +1265,8 @@
       this.mutex = new Mutex();
     }
     async setup() {
-      this.details = (await browser.storage.local.get(this.uuid))[this.uuid];
+      const details = await browser.storage.local.get(this.uuid);
+      this.details = details.hasOwnProperty(this.uuid) ? details[this.uuid] : {};
       const uuid_date_key = JSON.stringify([this.uuid, dateNowString()]);
       this.today_stats = (await browser.storage.local.get(uuid_date_key))[uuid_date_key];
     }

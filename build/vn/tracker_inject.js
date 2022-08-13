@@ -1827,7 +1827,8 @@
       this.mutex = new Mutex();
     }
     async setup() {
-      this.details = (await browser.storage.local.get(this.uuid))[this.uuid];
+      const details = await browser.storage.local.get(this.uuid);
+      this.details = details.hasOwnProperty(this.uuid) ? details[this.uuid] : {};
       const uuid_date_key = JSON.stringify([this.uuid, dateNowString()]);
       this.today_stats = (await browser.storage.local.get(uuid_date_key))[uuid_date_key];
     }
@@ -2681,6 +2682,21 @@
       if (Object.keys(stats).length !== 0) {
         await instance_storage.setDailyStats(entry["date"], stats);
       }
+    }
+  }
+  async function importLines(data) {
+    data = data.sort((first, second) => first["time"] - second["time"]);
+    for (const entry of data) {
+      const instance_storage = new InstanceStorage(entry["uuid"]);
+      await instance_storage.setup();
+      const next_line = instance_storage.details.hasOwnProperty("last_line_added") ? instance_storage.details["last_line_added"] + 1 : 0;
+      const line_key = JSON.stringify([entry["uuid"], next_line]);
+      let line_entry = {};
+      line_entry[line_key] = [entry["line"], entry["time"]];
+      await instance_storage.updateDetails({
+        "last_line_added": next_line
+      });
+      await browser5.storage.local.set(line_entry);
     }
   }
 
@@ -3598,7 +3614,7 @@
       m(target, anchor) {
         insert(target, button, anchor);
         if (!mounted) {
-          dispose = listen(button, "click", ctx[9]);
+          dispose = listen(button, "click", ctx[10]);
           mounted = true;
         }
       },
@@ -3632,9 +3648,13 @@
     let t10;
     let button2;
     let t11;
-    let input;
+    let input0;
     let t12;
     let button3;
+    let t13;
+    let input1;
+    let t14;
+    let button4;
     let current;
     let mounted;
     let dispose;
@@ -3729,20 +3749,28 @@
         t10 = space();
         button2 = element("button");
         t11 = text("Import Stats\n					");
-        input = element("input");
+        input0 = element("input");
         t12 = space();
         button3 = element("button");
-        button3.textContent = "View Stats";
+        t13 = text("Import Lines\n					");
+        input1 = element("input");
+        t14 = space();
+        button4 = element("button");
+        button4.textContent = "View Stats";
         attr(button0, "id", "export_stats");
         attr(button0, "class", "menu-button");
         attr(button1, "id", "export_lines");
         attr(button1, "class", "menu-button");
-        attr(input, "id", "import_stats");
-        attr(input, "class", "hidden");
-        attr(input, "type", "file");
+        attr(input0, "id", "import_stats");
+        attr(input0, "class", "hidden");
+        attr(input0, "type", "file");
         attr(button2, "class", "menu-button");
-        attr(button3, "id", "view_stats");
+        attr(input1, "id", "import_lines");
+        attr(input1, "class", "hidden");
+        attr(input1, "type", "file");
         attr(button3, "class", "menu-button");
+        attr(button4, "id", "view_stats");
+        attr(button4, "class", "menu-button");
       },
       m(target, anchor) {
         mount_component(menuoption0, target, anchor);
@@ -3765,17 +3793,23 @@
         insert(target, t10, anchor);
         insert(target, button2, anchor);
         append(button2, t11);
-        append(button2, input);
+        append(button2, input0);
         insert(target, t12, anchor);
         insert(target, button3, anchor);
+        append(button3, t13);
+        append(button3, input1);
+        insert(target, t14, anchor);
+        insert(target, button4, anchor);
         current = true;
         if (!mounted) {
           dispose = [
             listen(button0, "click", exportStats),
             listen(button1, "click", ctx[4]),
-            listen(input, "change", ctx[5]),
-            listen(button2, "click", ctx[10]),
-            listen(button3, "click", ctx[6])
+            listen(input0, "change", ctx[5]),
+            listen(button2, "click", ctx[11]),
+            listen(input1, "change", ctx[6]),
+            listen(button3, "click", ctx[12]),
+            listen(button4, "click", ctx[7])
           ];
           mounted = true;
         }
@@ -3868,6 +3902,10 @@
           detach(t12);
         if (detaching)
           detach(button3);
+        if (detaching)
+          detach(t14);
+        if (detaching)
+          detach(button4);
         mounted = false;
         run_all(dispose);
       }
@@ -3907,7 +3945,7 @@
       }
     });
     function lineholder_lines_binding(value) {
-      ctx[11](value);
+      ctx[13](value);
     }
     let lineholder_props = {};
     if (ctx[2] !== void 0) {
@@ -3915,7 +3953,7 @@
     }
     lineholder = new line_holder_default({ props: lineholder_props });
     binding_callbacks.push(() => bind(lineholder, "lines", lineholder_lines_binding));
-    lineholder.$on("click", ctx[12]);
+    lineholder.$on("click", ctx[14]);
     return {
       c() {
         body = element("body");
@@ -3961,8 +3999,8 @@
         current = true;
         if (!mounted) {
           dispose = [
-            listen(input, "input", ctx[8]),
-            listen(button, "click", ctx[7]),
+            listen(input, "input", ctx[9]),
+            listen(button, "click", ctx[8]),
             listen(div2, "dblclick", function() {
               if (is_function(ctx[0].toggleActive.bind(ctx[0])))
                 ctx[0].toggleActive.bind(ctx[0]).apply(this, arguments);
@@ -3979,7 +4017,7 @@
         const statbar_changes = {};
         if (dirty & 1)
           statbar_changes.media_storage = ctx[0];
-        if (dirty & 65544) {
+        if (dirty & 262152) {
           statbar_changes.$$scope = { dirty, ctx };
         }
         statbar.$set(statbar_changes);
@@ -3988,7 +4026,7 @@
           menubar_changes.show = ctx[3];
         if (dirty & 1)
           menubar_changes.media_storage = ctx[0];
-        if (dirty & 65537) {
+        if (dirty & 262145) {
           menubar_changes.$$scope = { dirty, ctx };
         }
         menubar.$set(menubar_changes);
@@ -4084,8 +4122,8 @@
         yield exportLines();
       }
     });
-    const requestImportLines = (event) => {
-      const confirmed = confirm("Are you sure you'd like to import previous data?\nPrevious stats in storage will be replaced with new values from this data dump (when the type, media and date all collide)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!");
+    const requestImportStats = (event) => {
+      const confirmed = confirm("Are you sure you'd like to import lines?\nThe imported lines will be inserted after the current ones in storage...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!");
       if (!confirmed)
         return;
       (0, import_papaparse2.parse)(event["target"].files[0], {
@@ -4093,7 +4131,20 @@
         "dynamicTyping": true,
         "complete": (result) => __awaiter(void 0, void 0, void 0, function* () {
           yield importStats(result.data);
-          alert("Finished importing stats successfully!\nPlease refresh all exSTATic pages now...");
+          alert("Finished importing lines successfully!\nPlease refresh all exSTATic pages now...");
+        })
+      });
+    };
+    const requestImportLines = (event) => {
+      const confirmed = confirm("Are you sure you'd like to import lines?\n Please ensure that ALL stats are up to date beforehand (import if necessary).\nThe imported lines will be inserted after the current ones in storage...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!");
+      if (!confirmed)
+        return;
+      (0, import_papaparse2.parse)(event["target"].files[0], {
+        "header": true,
+        "dynamicTyping": true,
+        "complete": (result) => __awaiter(void 0, void 0, void 0, function* () {
+          yield importLines(result.data);
+          alert("Finished importing lines successfully!\nPlease refresh all exSTATic pages now...");
         })
       });
     };
@@ -4135,11 +4186,12 @@ Char and line statistics will be modified accordingly however time read won't ch
     }
     const click_handler = () => $$invalidate(3, menu = !menu);
     const click_handler_1 = () => document.getElementById("import_stats").click();
+    const click_handler_2 = () => document.getElementById("import_lines").click();
     function lineholder_lines_binding(value) {
       lines = value;
       $$invalidate(2, lines);
     }
-    const click_handler_2 = () => $$invalidate(3, menu = false);
+    const click_handler_3 = () => $$invalidate(3, menu = false);
     $$self.$$set = ($$props2) => {
       if ("vn_storage" in $$props2)
         $$invalidate(0, vn_storage = $$props2.vn_storage);
@@ -4156,14 +4208,16 @@ Char and line statistics will be modified accordingly however time read won't ch
       lines,
       menu,
       requestExportLines,
+      requestImportStats,
       requestImportLines,
       openStats,
       deleteLines,
       input_input_handler,
       click_handler,
       click_handler_1,
+      click_handler_2,
       lineholder_lines_binding,
-      click_handler_2
+      click_handler_3
     ];
   }
   var Vn = class extends SvelteComponent {

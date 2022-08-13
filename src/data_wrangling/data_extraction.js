@@ -134,3 +134,24 @@ export async function importStats(data) {
         }
     }
 }
+
+export async function importLines(data) {
+    data = data.sort((first, second) => first["time"] - second["time"])
+
+    for (const entry of data) {
+        const instance_storage = new InstanceStorage(entry["uuid"])
+        await instance_storage.setup()
+
+        const next_line = instance_storage.details.hasOwnProperty("last_line_added")
+            ? instance_storage.details["last_line_added"] + 1
+            : 0
+
+        const line_key = JSON.stringify([entry["uuid"], next_line])
+        let line_entry = {}
+        line_entry[line_key] = [entry["line"], entry["time"]]
+        await instance_storage.updateDetails({
+            "last_line_added": next_line
+        })
+        await browser.storage.local.set(line_entry)
+    }
+}

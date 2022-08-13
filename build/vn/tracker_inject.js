@@ -1996,6 +1996,7 @@
 
   // src/storage/media_storage.js
   var REFRESH_STATS_INTERVAL = 1e3;
+  var browser3 = require_browser_polyfill();
   var MediaStorage = class {
     constructor(type_storage, instance_storage, live_stat_update = false) {
       this.type_storage = type_storage;
@@ -2081,10 +2082,14 @@
         this.stop_ticker();
       }
     }
+    async extensionActivated() {
+      const listen_status = (await browser3.storage.local.get("listen_status"))["listen_status"];
+      return listen_status == true || listen_status === void 0;
+    }
   };
 
   // src/vn/vn_storage.js
-  var browser3 = require_browser_polyfill();
+  var browser4 = require_browser_polyfill();
   var VNStorage = class extends MediaStorage {
     constructor(type_storage, instance_storage, live_stat_update = false) {
       super(type_storage, instance_storage, live_stat_update);
@@ -2106,7 +2111,7 @@
     }
     async addLine(line, date, time) {
       const previous_line_key = JSON.stringify([this.uuid, this.details["last_line_added"]]);
-      const previous_line = (await browser3.storage.local.get(previous_line_key))[previous_line_key];
+      const previous_line = (await browser4.storage.local.get(previous_line_key))[previous_line_key];
       if (previous_line == void 0 || line != previous_line[0]) {
         const chars_in_line = charsInLine(line);
         if (chars_in_line === 0)
@@ -2559,13 +2564,13 @@
 
   // src/data_wrangling/data_extraction.js
   var import_papaparse = __toESM(require_papaparse_min());
-  var browser4 = require_browser_polyfill();
+  var browser5 = require_browser_polyfill();
   async function getDateData(date) {
-    const uuids = (await browser4.storage.local.get(date))[date];
+    const uuids = (await browser5.storage.local.get(date))[date];
     const date_data = uuids.map(async (uuid, _) => {
-      const details = (await browser4.storage.local.get(uuid))[uuid];
+      const details = (await browser5.storage.local.get(uuid))[uuid];
       const uuid_date_key = JSON.stringify([uuid, date]);
-      let stats_entry = (await browser4.storage.local.get(uuid_date_key))[uuid_date_key];
+      let stats_entry = (await browser5.storage.local.get(uuid_date_key))[uuid_date_key];
       if (stats_entry.hasOwnProperty("time_read")) {
         stats_entry["time_read"] = stats_entry["time_read"];
         if (stats_entry.hasOwnProperty("chars_read")) {
@@ -2584,7 +2589,7 @@
     return Promise.all(date_data);
   }
   async function getData() {
-    const dates = await browser4.storage.local.get("immersion_dates");
+    const dates = await browser5.storage.local.get("immersion_dates");
     if (!dates.hasOwnProperty("immersion_dates")) {
       return;
     }
@@ -2605,7 +2610,7 @@
       return;
     }
     const id_queries = [...Array(details["last_line_added"] + 1).keys()].map((index) => JSON.stringify([uuid, index]));
-    const lines = await browser4.storage.local.get(id_queries);
+    const lines = await browser5.storage.local.get(id_queries);
     return Object.values(lines).map((line) => {
       return {
         "uuid": uuid,
@@ -2617,11 +2622,11 @@
     });
   }
   async function exportLines() {
-    const media = await browser4.storage.local.get("media");
+    const media = await browser5.storage.local.get("media");
     if (!media.hasOwnProperty("media")) {
       return;
     }
-    const detail_entries = await browser4.storage.local.get(Object.values(media["media"]));
+    const detail_entries = await browser5.storage.local.get(Object.values(media["media"]));
     const data = await Promise.all(Object.entries(detail_entries).map(getInstanceData));
     chrome.runtime.sendMessage({
       "action": "export_csv",
@@ -4028,7 +4033,7 @@
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var browser6 = require_browser_polyfill();
+    var browser7 = require_browser_polyfill();
     let { vn_storage } = $$props;
     let title = "Game";
     let lines = [];
@@ -4073,7 +4078,7 @@
       });
     };
     const openStats = () => {
-      browser6.runtime.sendMessage({
+      browser7.runtime.sendMessage({
         "action": "open_tab",
         "url": "https://kamwithk.github.io/exSTATic/stats.html"
       });
@@ -4163,10 +4168,10 @@ Char and line statistics will be modified accordingly however time read won't ch
 
   // src/vn/tracker_inject.ts
   console.log("Injected");
-  var browser5 = require_browser_polyfill();
+  var browser6 = require_browser_polyfill();
   var setup = async () => {
     const vn_storage = await VNStorage.build(true);
-    const port = browser5.runtime.connect({ "name": "vn_lines" });
+    const port = browser6.runtime.connect({ "name": "vn_lines" });
     port.onMessage.addListener(async (data) => {
       await vn_storage.changeInstance(void 0, data["process_path"]);
       await vn_storage.addLine(data["line"], data["date"], data["time"]);

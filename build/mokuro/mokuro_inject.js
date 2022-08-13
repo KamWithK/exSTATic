@@ -1434,6 +1434,7 @@
 
   // src/storage/media_storage.js
   var REFRESH_STATS_INTERVAL = 1e3;
+  var browser3 = require_browser_polyfill();
   var MediaStorage = class {
     constructor(type_storage, instance_storage, live_stat_update = false) {
       this.type_storage = type_storage;
@@ -1519,10 +1520,14 @@
         this.stop_ticker();
       }
     }
+    async extensionActivated() {
+      const listen_status = (await browser3.storage.local.get("listen_status"))["listen_status"];
+      return listen_status == true || listen_status === void 0;
+    }
   };
 
   // src/mokuro/mokuro_storage.js
-  var browser3 = require_browser_polyfill();
+  var browser4 = require_browser_polyfill();
   var MokuroStorage = class extends MediaStorage {
     static async build(live_stat_update = false) {
       const [type_storage, instance_storage] = await super.build("mokuro");
@@ -1570,7 +1575,7 @@
   };
 
   // src/messaging/socket_actions.js
-  var browser4 = require_browser_polyfill();
+  var browser5 = require_browser_polyfill();
   var SPLIT_PATH = /\\|\//g;
 
   // node_modules/svelte/internal/index.mjs
@@ -2333,6 +2338,8 @@
   }
   setup();
   var observer = new MutationObserver(async (_) => {
+    if (!await mokuro_storage.extensionActivated())
+      return;
     const [volume, series] = getVolumeSeries();
     const [current_page, total_pages] = getPage();
     const get_page = current_page > mokuro_storage.details["last_page_read"] ? current_page - 1 : current_page;

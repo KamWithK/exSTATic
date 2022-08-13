@@ -4,6 +4,8 @@ import { TypeStorage } from "./type_storage"
 
 var REFRESH_STATS_INTERVAL = 1000 // in milliseconds
 
+var browser = require("webextension-polyfill")
+
 // EXTENDED STORAGE SPEC
 // {
 //     "type": {
@@ -132,5 +134,10 @@ export class MediaStorage {
         } else {
             this.stop_ticker()
         }
+    }
+
+    async extensionActivated() {
+        const listen_status = (await browser.storage.local.get("listen_status"))["listen_status"]
+        return (listen_status == true || listen_status === undefined)
     }
 }

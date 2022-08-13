@@ -53,6 +53,8 @@ setup()
 
 
 const observer = new MutationObserver(async _ => {
+    if (!await mokuro_storage.extensionActivated()) return
+
     const [volume, series] = getVolumeSeries()
     const [current_page, total_pages] = getPage()
 

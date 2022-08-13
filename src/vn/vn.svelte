@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { timeNowSeconds, timeToDateString } from "../calculations"
+	import { timeToDateString } from "../calculations"
 	import type { VNStorage } from "./vn_storage"
 	import { exportLines, exportStats, importStats } from "../data_wrangling/data_extraction"
 	import StatBar from "../components/stat_bar.svelte"

@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { timeNowSeconds } from "../calculations.js"
 	import type { MokuroStorage } from "./mokuro_storage.js"
     import StatBar from "../components/stat_bar.svelte"
     

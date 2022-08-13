@@ -5,6 +5,11 @@
   
     "description": "Completely automated reading statistics and tracking",
 
+    "icons": {
+      "100": "docs/favicon_100x100.png",
+      "500": "docs/favicon.png"
+    },
+
     "background": {
       "persistent": true,
       "scripts": ["build/background.js"]

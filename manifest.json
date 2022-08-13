@@ -20,7 +20,10 @@
           "https://kamwithk.github.io/exSTATic/tracker.html",
           "file:///*/exSTATic/*/tracker.html"
         ],
-        "js": ["build/vn/tracker_inject.js"],
+        "js": [
+          "build/vn/tracker_inject.js",
+          "build/fonts.js"
+        ],
         "css": [
           "docs/fonts.css",
           "build/vn/tracker_inject.css"
@@ -31,7 +34,10 @@
           "https://*/Manga/**.html",
           "file:///**/Manga/**.html"
         ],
-        "js": ["build/mokuro/mokuro_inject.js"],
+        "js": [
+          "build/mokuro/mokuro_inject.js",
+          "build/fonts.js"
+        ],
         "css": [
           "docs/fonts.css",
           "build/mokuro/mokuro_inject.css"

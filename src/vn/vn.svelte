@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { timeToDateString } from "../calculations"
 	import type { VNStorage } from "./vn_storage"
-	import { exportLines, exportStats, importLines, importStats } from "../data_wrangling/data_extraction"
+	import { exportLines, exportStats } from "../data_wrangling/data_export"
+	import { importLines, importStats } from "../data_wrangling/data_import"
 	import StatBar from "../components/stat_bar.svelte"
 	import MenuBar from "../components/menu_bar.svelte"
 	import MenuOption from "../components/menu_option.svelte"

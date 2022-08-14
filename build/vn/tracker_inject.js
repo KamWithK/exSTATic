@@ -2579,8 +2579,7 @@
     }
   };
 
-  // src/data_wrangling/data_extraction.js
-  var import_papaparse = __toESM(require_papaparse_min());
+  // src/data_wrangling/data_extraction.ts
   var browser5 = require_browser_polyfill();
   async function getDateData(date) {
     const uuids = (await browser5.storage.local.get(date))[date];
@@ -2613,15 +2612,6 @@
     const data = await Promise.all(dates["immersion_dates"].map(getDateData));
     return data.flat();
   }
-  async function exportStats() {
-    const data = await getData();
-    chrome.runtime.sendMessage({
-      "action": "export_csv",
-      "csv": [(0, import_papaparse.unparse)(data)],
-      "blob_options": { "type": "text/csv" },
-      "filename": "exSTATic_stats.csv"
-    });
-  }
   async function getInstanceData([uuid, details]) {
     if (!details.hasOwnProperty("last_line_added")) {
       return;
@@ -2638,20 +2628,36 @@
       };
     });
   }
+
+  // src/data_wrangling/data_export.ts
+  var import_papaparse = __toESM(require_papaparse_min());
+  var browser6 = require_browser_polyfill();
+  async function exportStats() {
+    const data = await getData();
+    browser6.runtime.sendMessage({
+      "action": "export_csv",
+      "csv": [(0, import_papaparse.unparse)(data)],
+      "blob_options": { "type": "text/csv" },
+      "filename": "exSTATic_stats.csv"
+    });
+  }
   async function exportLines() {
-    const media = await browser5.storage.local.get("media");
+    const media = await browser6.storage.local.get("media");
     if (!media.hasOwnProperty("media")) {
       return;
     }
-    const detail_entries = await browser5.storage.local.get(Object.values(media["media"]));
+    const detail_entries = await browser6.storage.local.get(Object.values(media["media"]));
     const data = await Promise.all(Object.entries(detail_entries).map(getInstanceData));
-    chrome.runtime.sendMessage({
+    browser6.runtime.sendMessage({
       "action": "export_csv",
       "csv": [(0, import_papaparse.unparse)(data.flat())],
       "blob_options": { "type": "text/csv;charset=utf-8" },
       "filename": "exSTATic_lines.csv"
     });
   }
+
+  // src/data_wrangling/data_import.ts
+  var browser7 = require_browser_polyfill();
   async function importStats(data) {
     for (const entry of data) {
       if (!entry.hasOwnProperty("type") || !entry.hasOwnProperty("date") || !entry.hasOwnProperty("given_identifier")) {
@@ -2696,7 +2702,7 @@
       await instance_storage.updateDetails({
         "last_line_added": next_line
       });
-      await browser5.storage.local.set(line_entry);
+      await browser7.storage.local.set(line_entry);
     }
   }
 
@@ -4091,7 +4097,7 @@
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var browser7 = require_browser_polyfill();
+    var browser9 = require_browser_polyfill();
     let { vn_storage } = $$props;
     let title = "Game";
     let lines = [];
@@ -4149,7 +4155,7 @@
       });
     };
     const openStats = () => {
-      browser7.runtime.sendMessage({
+      browser9.runtime.sendMessage({
         "action": "open_tab",
         "url": "https://kamwithk.github.io/exSTATic/stats.html"
       });
@@ -4230,10 +4236,10 @@ Char and line statistics will be modified accordingly however time read won't ch
 
   // src/vn/tracker_inject.ts
   console.log("Injected");
-  var browser6 = require_browser_polyfill();
+  var browser8 = require_browser_polyfill();
   var setup = async () => {
     const vn_storage = await VNStorage.build(true);
-    const port = browser6.runtime.connect({ "name": "vn_lines" });
+    const port = browser8.runtime.connect({ "name": "vn_lines" });
     port.onMessage.addListener(async (data) => {
       await vn_storage.changeInstance(void 0, data["process_path"]);
       await vn_storage.addLine(data["line"], data["date"], data["time"]);

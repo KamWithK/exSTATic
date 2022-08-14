@@ -1062,11 +1062,17 @@
   function end_hydrating() {
     is_hydrating = false;
   }
+  function insert(target, node, anchor) {
+    target.insertBefore(node, anchor || null);
+  }
   function detach(node) {
     node.parentNode.removeChild(node);
   }
-  function children(element) {
-    return Array.from(element.childNodes);
+  function element(name) {
+    return document.createElement(name);
+  }
+  function children(element2) {
+    return Array.from(element2.childNodes);
   }
   var current_component;
   function set_current_component(component) {
@@ -1170,7 +1176,7 @@
     }
     component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
   }
-  function init(component, options, instance2, create_fragment, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance2, create_fragment2, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -1206,7 +1212,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment ? create_fragment($$.ctx) : false;
+    $$.fragment = create_fragment2 ? create_fragment2($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -1389,6 +1395,24 @@
   }
 
   // src/stats/stats.svelte
+  function create_fragment(ctx) {
+    let div;
+    return {
+      c() {
+        div = element("div");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+      },
+      p: noop,
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div);
+      }
+    };
+  }
   function instance($$self, $$props, $$invalidate) {
     const SECS_TO_HRS = 60 * 60;
     let { data } = $$props;
@@ -1405,7 +1429,7 @@
   var Stats = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance, null, safe_not_equal, { data: 0 });
+      init(this, options, instance, create_fragment, safe_not_equal, { data: 0 });
     }
   };
   var stats_default = Stats;

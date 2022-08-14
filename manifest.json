@@ -48,7 +48,8 @@
           "https://kamwithk.github.io/exSTATic/stats.html",
           "file:///*/exSTATic/*/stats.html"
         ],
-        "js": ["build/stats/stats_inject.js"]
+        "js": ["build/stats/stats_inject.js"],
+        "css": ["build/stats/stats_inject.css"]
       }
     ],
 

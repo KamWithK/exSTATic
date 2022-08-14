@@ -1071,6 +1071,12 @@
   function element(name) {
     return document.createElement(name);
   }
+  function attr(node, attribute, value) {
+    if (value == null)
+      node.removeAttribute(attribute);
+    else if (node.getAttribute(attribute) !== value)
+      node.setAttribute(attribute, value);
+  }
   function children(element2) {
     return Array.from(element2.childNodes);
   }
@@ -1244,8 +1250,8 @@
           this.appendChild(this.$$.slotted[key]);
         }
       }
-      attributeChangedCallback(attr, _oldValue, newValue) {
-        this[attr] = newValue;
+      attributeChangedCallback(attr2, _oldValue, newValue) {
+        this[attr2] = newValue;
       }
       disconnectedCallback() {
         run_all(this.$$.on_disconnect);
@@ -1400,6 +1406,7 @@
     return {
       c() {
         div = element("div");
+        attr(div, "class", "flex h-full w-full");
       },
       m(target, anchor) {
         insert(target, div, anchor);

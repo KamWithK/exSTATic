@@ -1,5 +1,7 @@
 <script lang="ts">
     import LineAxis from "./line_axis.svelte"
+    import Circles from "./circles.svelte"
+    import Popup from "./popup.svelte"
 
     import { extent, group } from "d3-array"
     import { format } from "d3-format"
@@ -53,34 +55,7 @@
         "i": i
     }))
 
-    let popup_name = ""
-    let popup_date = ""
-    let popout_color = ""
-    let [popup_x, popup_y] = [0, margin / 2]
-    let show_popup = false
-
-    let popup_tooltips = {}
-    Object.keys(tooltip_accessors).forEach(key => popup_tooltips[key] = "")
-
-    const mouse_over = event => {
-        const index = event["target"].dataset.index
-
-        popup_x = event.layerX
-        popup_y = event.layerY
-
-        popup_name = c_accessor(data[index])
-        popup_date = timeFormat("%d %B %Y")(x_accessor(data[index]))
-        popout_color = hues[groups.indexOf(c_accessor(data[index]))]
-
-        Object.entries(tooltip_accessors).forEach(([key, value_accessor]: [string, Function]) => {
-            popup_tooltips[key] = value_accessor(data[index])
-        })
-
-        show_popup = true
-    }
-    const mouse_out = () => {
-        show_popup = false
-    }
+    let mouse_move, mouse_out
 </script>
 
 <div class="flex flex-col w-full h-full items-center p-12 bg-slate-900">
@@ -90,13 +65,10 @@
         <p class="whitespace-nowrap -rotate-90 text-[#808080]">{y_label}</p>
 
         <svg height="100%" width="100%" style="resize: both;" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">
-            <LineAxis bind:scale={x_scale} bind:height={height} bind:width={width} bind:margin={margin} position="bottom" formater={x_formatter}/>
-            <LineAxis bind:scale={y_scale} bind:height={height} bind:width={width} bind:margin={margin} position="left" formater={y_formatter}/>
+            <LineAxis bind:scale={x_scale} bind:height bind:width bind:margin position="bottom" formater={x_formatter}/>
+            <LineAxis bind:scale={y_scale} bind:height bind:width bind:margin position="left" formater={y_formatter}/>
 
-            <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-            {#each mapped_data as { x, y, r, c, i } }
-                <circle data-index={i} cx={x} cy={y} r={r} fill={c} fill-opacity=0.8 class="z-10" on:mousemove={mouse_over} on:mouseout={mouse_out}/>
-            {/each}
+            <Circles {mapped_data} {mouse_move} {mouse_out}/>
         </svg>
 
         <div class="flex flex-col">
@@ -108,16 +80,7 @@
             {/each}
         </div>
 
-        <div id="popup" class="{show_popup ? "absolute" : "hidden"} p-3" style="left: {popup_x}px;top: {popup_y}px; background-color: {popout_color}">
-            <p id="popup_title" class="font-semibold">{popup_name}</p>
-            <p id="popup_date">{popup_date}</p>
-
-            <br>
-
-            {#each Object.keys(tooltip_accessors) as tooltip}
-                <p>{tooltip} - {popup_tooltips[tooltip]}</p>
-            {/each}
-        </div>
+        <Popup {data} {groups} {hues} {x_accessor} group_accessor={c_accessor} {tooltip_accessors} bind:mouse_move bind:mouse_out/>
     </figure>
     <p class="text-[#808080]">{x_label}</p>
 </div>

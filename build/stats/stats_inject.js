@@ -3224,15 +3224,15 @@
     let { label = "" } = $$props;
     let axis2;
     let transform = "0,0";
-    const positionedAxis = () => {
+    const positionedAxis = (scale2) => {
       if (position === "top") {
-        return axisTop(scale);
+        return axisTop(scale2);
       } else if (position == "right") {
-        return axisRight(scale);
+        return axisRight(scale2);
       } else if (position === "bottom") {
-        return axisBottom(scale);
+        return axisBottom(scale2);
       } else if (position == "left") {
-        return axisLeft(scale);
+        return axisLeft(scale2);
       }
     };
     const transitionAxis = () => {
@@ -3246,8 +3246,21 @@
         $$invalidate(6, transform = `${margin},0`);
       }
     };
+    const enlargedScale = () => {
+      const axis_scale = scale.copy();
+      const range = axis_scale.range();
+      let excess;
+      if (position === "bottom" || position === "top") {
+        excess = width - margin * 2 - (range[1] - range[0]);
+      } else if (position == "left" || position == "right") {
+        excess = height - margin * 2 - (range[1] - range[0]);
+      }
+      const extended_range = [range[0] - excess / 2, range[1] + excess / 2];
+      const extended_domain = [axis_scale.invert(extended_range[0]), axis_scale.invert(extended_range[1])];
+      return axis_scale.domain(extended_domain).range(extended_range).nice();
+    };
     const setupAxis = () => {
-      const axis_creator = positionedAxis().tickSizeOuter(0).tickSize(0).tickFormat(formater);
+      const axis_creator = positionedAxis(enlargedScale()).tickSizeOuter(0).tickSize(0).tickFormat(formater);
       axis_creator(select_default2(axis2));
       transitionAxis();
     };

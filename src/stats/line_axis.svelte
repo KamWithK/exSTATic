@@ -13,7 +13,7 @@
     let axis
     let transform = "0,0"
 
-    const positionedAxis = () => {
+    const positionedAxis = (scale: Function) => {
         if (position === "top") {
             return axisTop(scale)
         }
@@ -43,8 +43,30 @@
         }
     }
 
+    const enlargedScale = (): Function => {
+        const axis_scale = scale.copy()
+        const range = axis_scale.range()
+        let excess
+
+        // Find how much more room is physical range is available than was specified
+        // NOTE: A margins worth of extra space is allowed at the start and end
+        if (position === "bottom" || position === "top") {
+            excess = width - margin * 2 - (range[1] - range[0])
+        }
+        else if (position == "left" || position == "right") {
+            excess = height - margin * 2 - (range[1] - range[0])
+        }
+
+        // Find the positions in the domain these uncovered extremes would have mapped to
+        const extended_range = [range[0] - excess / 2, range[1] + excess / 2]
+        const extended_domain = [axis_scale.invert(extended_range[0]), axis_scale.invert(extended_range[1])]
+
+        // Modify the domain and range to cover the full available section
+        return axis_scale.domain(extended_domain).range(extended_range).nice()
+    }
+
     const setupAxis = () => {
-        const axis_creator = positionedAxis()
+        const axis_creator = positionedAxis(enlargedScale())
             .tickSizeOuter(0).tickSize(0)
             .tickFormat(formater)
 

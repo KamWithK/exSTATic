@@ -3018,22 +3018,186 @@
   }
 
   // src/stats/line_axis.svelte
+  function create_if_block_3(ctx) {
+    let text_1;
+    let t;
+    let text_1_x_value;
+    let text_1_y_value;
+    return {
+      c() {
+        text_1 = svg_element("text");
+        t = text(ctx[4]);
+        attr(text_1, "x", text_1_x_value = (ctx[0] + ctx[2]) * -0.5);
+        attr(text_1, "y", text_1_y_value = ctx[2] - 30);
+        attr(text_1, "fill", "grey");
+        attr(text_1, "transform", "rotate(-90)");
+      },
+      m(target, anchor) {
+        insert(target, text_1, anchor);
+        append(text_1, t);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 16)
+          set_data(t, ctx2[4]);
+        if (dirty & 5 && text_1_x_value !== (text_1_x_value = (ctx2[0] + ctx2[2]) * -0.5)) {
+          attr(text_1, "x", text_1_x_value);
+        }
+        if (dirty & 4 && text_1_y_value !== (text_1_y_value = ctx2[2] - 30)) {
+          attr(text_1, "y", text_1_y_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(text_1);
+      }
+    };
+  }
+  function create_if_block_2(ctx) {
+    let text_1;
+    let t;
+    let text_1_x_value;
+    let text_1_y_value;
+    return {
+      c() {
+        text_1 = svg_element("text");
+        t = text(ctx[4]);
+        attr(text_1, "x", text_1_x_value = (ctx[1] + ctx[2]) / 2);
+        attr(text_1, "y", text_1_y_value = ctx[0] - ctx[2] + 45);
+        attr(text_1, "fill", "grey");
+      },
+      m(target, anchor) {
+        insert(target, text_1, anchor);
+        append(text_1, t);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 16)
+          set_data(t, ctx2[4]);
+        if (dirty & 6 && text_1_x_value !== (text_1_x_value = (ctx2[1] + ctx2[2]) / 2)) {
+          attr(text_1, "x", text_1_x_value);
+        }
+        if (dirty & 5 && text_1_y_value !== (text_1_y_value = ctx2[0] - ctx2[2] + 45)) {
+          attr(text_1, "y", text_1_y_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(text_1);
+      }
+    };
+  }
+  function create_if_block_1(ctx) {
+    let text_1;
+    let t;
+    let text_1_x_value;
+    let text_1_y_value;
+    return {
+      c() {
+        text_1 = svg_element("text");
+        t = text(ctx[4]);
+        attr(text_1, "x", text_1_x_value = (ctx[0] + ctx[2]) * -0.5);
+        attr(text_1, "y", text_1_y_value = ctx[1] - 10);
+        attr(text_1, "fill", "grey");
+        attr(text_1, "transform", "rotate(-90)");
+      },
+      m(target, anchor) {
+        insert(target, text_1, anchor);
+        append(text_1, t);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 16)
+          set_data(t, ctx2[4]);
+        if (dirty & 5 && text_1_x_value !== (text_1_x_value = (ctx2[0] + ctx2[2]) * -0.5)) {
+          attr(text_1, "x", text_1_x_value);
+        }
+        if (dirty & 2 && text_1_y_value !== (text_1_y_value = ctx2[1] - 10)) {
+          attr(text_1, "y", text_1_y_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(text_1);
+      }
+    };
+  }
+  function create_if_block(ctx) {
+    let text_1;
+    let t;
+    let text_1_x_value;
+    let text_1_y_value;
+    return {
+      c() {
+        text_1 = svg_element("text");
+        t = text(ctx[4]);
+        attr(text_1, "x", text_1_x_value = (ctx[1] + ctx[2]) / 2);
+        attr(text_1, "y", text_1_y_value = 30);
+        attr(text_1, "fill", "grey");
+      },
+      m(target, anchor) {
+        insert(target, text_1, anchor);
+        append(text_1, t);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 16)
+          set_data(t, ctx2[4]);
+        if (dirty & 6 && text_1_x_value !== (text_1_x_value = (ctx2[1] + ctx2[2]) / 2)) {
+          attr(text_1, "x", text_1_x_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(text_1);
+      }
+    };
+  }
   function create_fragment(ctx) {
     let g;
     let g_transform_value;
+    let t;
+    let if_block_anchor;
+    function select_block_type(ctx2, dirty) {
+      if (ctx2[3] === "top")
+        return create_if_block;
+      if (ctx2[3] === "right")
+        return create_if_block_1;
+      if (ctx2[3] === "bottom")
+        return create_if_block_2;
+      if (ctx2[3] === "left")
+        return create_if_block_3;
+    }
+    let current_block_type = select_block_type(ctx, -1);
+    let if_block = current_block_type && current_block_type(ctx);
     return {
       c() {
         g = svg_element("g");
+        t = space();
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
         attr(g, "color", "grey");
-        attr(g, "transform", g_transform_value = "translate(" + ctx[1] + ")");
+        attr(g, "transform", g_transform_value = "translate(" + ctx[6] + ")");
       },
       m(target, anchor) {
         insert(target, g, anchor);
-        ctx[8](g);
+        ctx[9](g);
+        insert(target, t, anchor);
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
       },
       p(ctx2, [dirty]) {
-        if (dirty & 2 && g_transform_value !== (g_transform_value = "translate(" + ctx2[1] + ")")) {
+        if (dirty & 64 && g_transform_value !== (g_transform_value = "translate(" + ctx2[6] + ")")) {
           attr(g, "transform", g_transform_value);
+        }
+        if (current_block_type === (current_block_type = select_block_type(ctx2, dirty)) && if_block) {
+          if_block.p(ctx2, dirty);
+        } else {
+          if (if_block)
+            if_block.d(1);
+          if_block = current_block_type && current_block_type(ctx2);
+          if (if_block) {
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
         }
       },
       i: noop,
@@ -3041,7 +3205,14 @@
       d(detaching) {
         if (detaching)
           detach(g);
-        ctx[8](null);
+        ctx[9](null);
+        if (detaching)
+          detach(t);
+        if (if_block) {
+          if_block.d(detaching);
+        }
+        if (detaching)
+          detach(if_block_anchor);
       }
     };
   }
@@ -3050,6 +3221,7 @@
     let { height, width, margin } = $$props;
     let { position } = $$props;
     let { formater } = $$props;
+    let { label = "" } = $$props;
     let axis2;
     let transform = "0,0";
     const positionedAxis = () => {
@@ -3065,13 +3237,13 @@
     };
     const transitionAxis = () => {
       if (position === "top") {
-        $$invalidate(1, transform = `0,${margin / 2}`);
+        $$invalidate(6, transform = `0,${margin}`);
       } else if (position == "right") {
-        $$invalidate(1, transform = `${width - margin / 2},0`);
+        $$invalidate(6, transform = `${width - margin},0`);
       } else if (position === "bottom") {
-        $$invalidate(1, transform = `0,${height - margin / 2}`);
+        $$invalidate(6, transform = `0,${height - margin}`);
       } else if (position == "left") {
-        $$invalidate(1, transform = `${margin / 2},0`);
+        $$invalidate(6, transform = `${margin},0`);
       }
     };
     const setupAxis = () => {
@@ -3082,42 +3254,56 @@
     function g_binding($$value) {
       binding_callbacks[$$value ? "unshift" : "push"](() => {
         axis2 = $$value;
-        $$invalidate(0, axis2);
+        $$invalidate(5, axis2);
       });
     }
     $$self.$$set = ($$props2) => {
       if ("scale" in $$props2)
-        $$invalidate(2, scale = $$props2.scale);
+        $$invalidate(7, scale = $$props2.scale);
       if ("height" in $$props2)
-        $$invalidate(3, height = $$props2.height);
+        $$invalidate(0, height = $$props2.height);
       if ("width" in $$props2)
-        $$invalidate(4, width = $$props2.width);
+        $$invalidate(1, width = $$props2.width);
       if ("margin" in $$props2)
-        $$invalidate(5, margin = $$props2.margin);
+        $$invalidate(2, margin = $$props2.margin);
       if ("position" in $$props2)
-        $$invalidate(6, position = $$props2.position);
+        $$invalidate(3, position = $$props2.position);
       if ("formater" in $$props2)
-        $$invalidate(7, formater = $$props2.formater);
+        $$invalidate(8, formater = $$props2.formater);
+      if ("label" in $$props2)
+        $$invalidate(4, label = $$props2.label);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 253) {
+      if ($$self.$$.dirty & 431) {
         $:
           if (scale && height && width && margin && position && formater && axis2)
             setupAxis();
       }
     };
-    return [axis2, transform, scale, height, width, margin, position, formater, g_binding];
+    return [
+      height,
+      width,
+      margin,
+      position,
+      label,
+      axis2,
+      transform,
+      scale,
+      formater,
+      g_binding
+    ];
   }
   var Line_axis = class extends SvelteComponent {
     constructor(options) {
       super();
       init(this, options, instance, create_fragment, safe_not_equal, {
-        scale: 2,
-        height: 3,
-        width: 4,
-        margin: 5,
-        position: 6,
-        formater: 7
+        scale: 7,
+        height: 0,
+        width: 1,
+        margin: 2,
+        position: 3,
+        formater: 8,
+        label: 4
       });
     }
   };
@@ -6222,7 +6408,7 @@
 
   // src/stats/scatterplot.svelte
   var import_iwanthue = __toESM(require_iwanthue());
-  function create_if_block(ctx) {
+  function create_if_block2(ctx) {
     let line;
     let updating_data;
     let updating_x_accessor;
@@ -6325,9 +6511,6 @@
     let t02;
     let t12;
     let figure;
-    let p0;
-    let t2;
-    let t3;
     let svg;
     let lineaxis0;
     let updating_scale;
@@ -6341,18 +6524,15 @@
     let updating_margin_1;
     let circles;
     let svg_viewBox_value;
-    let t4;
+    let t2;
     let legend;
     let updating_groups;
     let updating_hues;
-    let t5;
+    let t3;
     let popup;
     let updating_mouse_move;
     let updating_mouse_out;
     let figure_resize_listener;
-    let t6;
-    let p1;
-    let t7;
     let current;
     function lineaxis0_scale_binding(value) {
       ctx[24](value);
@@ -6368,7 +6548,8 @@
     }
     let lineaxis0_props = {
       position: "bottom",
-      formater: ctx[19]
+      formater: ctx[19],
+      label: ctx[7]
     };
     if (ctx[14] !== void 0) {
       lineaxis0_props.scale = ctx[14];
@@ -6401,7 +6582,8 @@
     }
     let lineaxis1_props = {
       position: "left",
-      formater: ctx[20]
+      formater: ctx[20],
+      label: ctx[8]
     };
     if (ctx[15] !== void 0) {
       lineaxis1_props.scale = ctx[15];
@@ -6427,7 +6609,7 @@
         mouse_out: ctx[18]
       }
     });
-    let if_block = ctx[4] && create_if_block(ctx);
+    let if_block = ctx[4] && create_if_block2(ctx);
     function legend_groups_binding(value) {
       ctx[37](value);
     }
@@ -6474,24 +6656,17 @@
         t02 = text(ctx[6]);
         t12 = space();
         figure = element("figure");
-        p0 = element("p");
-        t2 = text(ctx[8]);
-        t3 = space();
         svg = svg_element("svg");
         create_component(lineaxis0.$$.fragment);
         create_component(lineaxis1.$$.fragment);
         create_component(circles.$$.fragment);
         if (if_block)
           if_block.c();
-        t4 = space();
+        t2 = space();
         create_component(legend.$$.fragment);
-        t5 = space();
+        t3 = space();
         create_component(popup.$$.fragment);
-        t6 = space();
-        p1 = element("p");
-        t7 = text(ctx[7]);
         attr(h1, "class", "text-4xl font-semibold text-indigo-400");
-        attr(p0, "class", "whitespace-nowrap -rotate-90 text-[#808080]");
         attr(svg, "height", "100%");
         attr(svg, "width", "100%");
         set_style(svg, "resize", "both");
@@ -6499,7 +6674,6 @@
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
         attr(figure, "class", "flex flex-row w-full h-full items-center");
         add_render_callback(() => ctx[41].call(figure));
-        attr(p1, "class", "text-[#808080]");
         attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
@@ -6508,31 +6682,25 @@
         append(h1, t02);
         append(div, t12);
         append(div, figure);
-        append(figure, p0);
-        append(p0, t2);
-        append(figure, t3);
         append(figure, svg);
         mount_component(lineaxis0, svg, null);
         mount_component(lineaxis1, svg, null);
         mount_component(circles, svg, null);
         if (if_block)
           if_block.m(svg, null);
-        append(figure, t4);
+        append(figure, t2);
         mount_component(legend, figure, null);
-        append(figure, t5);
+        append(figure, t3);
         mount_component(popup, figure, null);
         figure_resize_listener = add_resize_listener(figure, ctx[41].bind(figure));
-        append(div, t6);
-        append(div, p1);
-        append(p1, t7);
         current = true;
       },
       p(ctx2, dirty) {
         if (!current || dirty[0] & 64)
           set_data(t02, ctx2[6]);
-        if (!current || dirty[0] & 256)
-          set_data(t2, ctx2[8]);
         const lineaxis0_changes = {};
+        if (dirty[0] & 128)
+          lineaxis0_changes.label = ctx2[7];
         if (!updating_scale && dirty[0] & 16384) {
           updating_scale = true;
           lineaxis0_changes.scale = ctx2[14];
@@ -6555,6 +6723,8 @@
         }
         lineaxis0.$set(lineaxis0_changes);
         const lineaxis1_changes = {};
+        if (dirty[0] & 256)
+          lineaxis1_changes.label = ctx2[8];
         if (!updating_scale_1 && dirty[0] & 32768) {
           updating_scale_1 = true;
           lineaxis1_changes.scale = ctx2[15];
@@ -6591,7 +6761,7 @@
               transition_in(if_block, 1);
             }
           } else {
-            if_block = create_if_block(ctx2);
+            if_block = create_if_block2(ctx2);
             if_block.c();
             transition_in(if_block, 1);
             if_block.m(svg, null);
@@ -6642,8 +6812,6 @@
           add_flush_callback(() => updating_mouse_out = false);
         }
         popup.$set(popup_changes);
-        if (!current || dirty[0] & 128)
-          set_data(t7, ctx2[7]);
       },
       i(local) {
         if (current)
@@ -6693,14 +6861,14 @@
     let { y_label } = $$props;
     let groups2, hues;
     let [height, width] = [50, 100];
-    let margin = 2 * (radius + 10);
+    let margin = 50;
     let x_scale, y_scale, r_scale;
     const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")];
     let mapped_data;
     let mouse_move, mouse_out;
     function lineaxis0_scale_binding(value) {
       x_scale = value;
-      $$invalidate(14, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(13, margin), $$invalidate(12, width);
+      $$invalidate(14, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(21, radius), $$invalidate(13, margin), $$invalidate(12, width);
     }
     function lineaxis0_height_binding(value) {
       height = value;
@@ -6716,7 +6884,7 @@
     }
     function lineaxis1_scale_binding(value) {
       y_scale = value;
-      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(13, margin);
+      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(21, radius), $$invalidate(13, margin);
     }
     function lineaxis1_height_binding(value) {
       height = value;
@@ -6744,11 +6912,11 @@
     }
     function line_x_scale_binding(value) {
       x_scale = value;
-      $$invalidate(14, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(13, margin), $$invalidate(12, width);
+      $$invalidate(14, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(21, radius), $$invalidate(13, margin), $$invalidate(12, width);
     }
     function line_y_scale_binding(value) {
       y_scale = value;
-      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(13, margin);
+      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(21, radius), $$invalidate(13, margin);
     }
     function legend_groups_binding(value) {
       groups2 = value;
@@ -6809,13 +6977,13 @@
             "seed": "exSTATic!"
           }));
       }
-      if ($$self.$$.dirty[0] & 12291) {
+      if ($$self.$$.dirty[0] & 2109443) {
         $:
-          $$invalidate(14, x_scale = time().domain(extent(data, x_accessor)).range([margin, width - margin]));
+          $$invalidate(14, x_scale = time().domain(extent(data, x_accessor)).range([radius + margin, width - radius - margin]));
       }
-      if ($$self.$$.dirty[0] & 10245) {
+      if ($$self.$$.dirty[0] & 2107397) {
         $:
-          $$invalidate(15, y_scale = linear2().domain(extent(data, y_accessor)).range([height - margin, margin]));
+          $$invalidate(15, y_scale = linear2().domain(extent(data, y_accessor)).range([height - radius - margin, radius + margin]));
       }
       if ($$self.$$.dirty[0] & 6291457) {
         $:

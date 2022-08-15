@@ -643,10 +643,6 @@ select {
 .grow {
   flex-grow: 1;
 }
-.-rotate-90 {
-  --tw-rotate:-90deg;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
@@ -691,9 +687,6 @@ select {
 }
 .justify-self-start {
   justify-self: start;
-}
-.whitespace-nowrap {
-  white-space: nowrap;
 }
 .rounded-\[3px\] {
   border-radius: 3px;

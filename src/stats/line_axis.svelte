@@ -7,6 +7,8 @@
     export let height, width, margin
     export let position: "top" | "right" | "bottom" | "left"
     export let formater
+
+    export let label = ""
     
     let axis
     let transform = "0,0"
@@ -28,16 +30,16 @@
 
     const transitionAxis = () => {
         if (position === "top") {
-            transform = `0,${margin / 2}`
+            transform = `0,${margin}`
         }
         else if (position == "right") {
-            transform = `${width - margin / 2},0`
+            transform = `${width - margin},0`
         }
         else if (position === "bottom") {
-            transform = `0,${height - margin / 2}`
+            transform = `0,${height - margin}`
         }
         else if (position == "left") {
-            transform = `${margin / 2},0`
+            transform = `${margin},0`
         }
     }
 
@@ -55,3 +57,12 @@
 </script>
 
 <g color="grey" bind:this={axis} transform="translate({transform})"/>
+{#if position === "top"}
+    <text x={(width + margin) / 2} y={30} fill="grey">{label}</text>
+{:else if position === "right"}
+    <text x={(height + margin) * -0.5} y={width - 10} fill="grey" transform="rotate(-90)">{label}</text>
+{:else if position === "bottom"}
+    <text x={(width + margin) / 2} y={height - margin + 45} fill="grey">{label}</text>
+{:else if position === "left"}
+    <text x={(height + margin) * -0.5} y={margin - 30} fill="grey" transform="rotate(-90)">{label}</text>
+{/if}

@@ -36,16 +36,17 @@
     })
 
     let [height, width] = [50, 100]
-    let margin = 2 * (radius + 10)
+    let margin = 50
 
     // Map data (domains) onto physical scales (ranges)
+    // Physical ranges shrink in proport to the maximal circle radius and padding
     let x_scale, y_scale, r_scale
     $: x_scale = scaleTime()
         .domain(extent(data, x_accessor))
-        .range([margin, width - margin])
+        .range([radius + margin, width - radius - margin])
     $: y_scale = scaleLinear()
         .domain(extent(data, y_accessor))
-        .range([height - margin, margin])
+        .range([height - radius - margin, radius + margin])
     $: r_scale = scaleLinear()
         .domain(extent(data, r_accessor))
         .range([0, radius])
@@ -68,11 +69,9 @@
     <h1 class="text-4xl font-semibold text-indigo-400">{graph_title}</h1>
 
     <figure bind:clientHeight={height} bind:clientWidth={width} class="flex flex-row w-full h-full items-center">
-        <p class="whitespace-nowrap -rotate-90 text-[#808080]">{y_label}</p>
-
         <svg height="100%" width="100%" style="resize: both;" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">
-            <LineAxis bind:scale={x_scale} bind:height bind:width bind:margin position="bottom" formater={x_formatter}/>
-            <LineAxis bind:scale={y_scale} bind:height bind:width bind:margin position="left" formater={y_formatter}/>
+            <LineAxis bind:scale={x_scale} bind:height bind:width bind:margin position="bottom" formater={x_formatter} label={x_label}/>
+            <LineAxis bind:scale={y_scale} bind:height bind:width bind:margin position="left" formater={y_formatter} label={y_label}/>
 
             <Circles {mapped_data} {mouse_move} {mouse_out}/>
 
@@ -85,5 +84,4 @@
 
         <Popup {data} {groups} {hues} {x_accessor} group_accessor={c_accessor} {tooltip_accessors} bind:mouse_move bind:mouse_out/>
     </figure>
-    <p class="text-[#808080]">{x_label}</p>
 </div>

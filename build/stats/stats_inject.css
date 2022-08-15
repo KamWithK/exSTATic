@@ -719,6 +719,9 @@ select {
 .bg-opacity-70 {
   --tw-bg-opacity:0.7;
 }
+.fill-transparent {
+  fill: transparent;
+}
 .p-3 {
   padding: 0.75rem;
 }

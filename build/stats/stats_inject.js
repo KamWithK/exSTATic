@@ -1958,7 +1958,7 @@
     }
     component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
   }
-  function init(component, options, instance7, create_fragment7, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance8, create_fragment8, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -1981,7 +1981,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance7 ? instance7(component, options.props || {}, (i, ret, ...rest) => {
+    $$.ctx = instance8 ? instance8(component, options.props || {}, (i, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
         if (!$$.skip_bound && $$.bound[i])
@@ -1994,7 +1994,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment7 ? create_fragment7($$.ctx) : false;
+    $$.fragment = create_fragment8 ? create_fragment8($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -5021,6 +5021,123 @@
   };
   var popup_default = Popup;
 
+  // src/stats/legend.svelte
+  function get_each_context3(ctx, list, i) {
+    const child_ctx = ctx.slice();
+    child_ctx[2] = list[i];
+    child_ctx[4] = i;
+    return child_ctx;
+  }
+  function create_each_block3(ctx) {
+    let div1;
+    let div0;
+    let t02;
+    let p;
+    let t1_value = ctx[2] + "";
+    let t12;
+    let t2;
+    return {
+      c() {
+        div1 = element("div");
+        div0 = element("div");
+        t02 = space();
+        p = element("p");
+        t12 = text(t1_value);
+        t2 = space();
+        attr(div0, "class", "z-50 w-3 h-3 rounded-full");
+        set_style(div0, "background-color", ctx[1][ctx[4]]);
+        attr(p, "class", "text-[#808080]");
+        attr(div1, "class", "flex flex-row gap-1 items-center");
+      },
+      m(target, anchor) {
+        insert(target, div1, anchor);
+        append(div1, div0);
+        append(div1, t02);
+        append(div1, p);
+        append(p, t12);
+        append(div1, t2);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 2) {
+          set_style(div0, "background-color", ctx2[1][ctx2[4]]);
+        }
+        if (dirty & 1 && t1_value !== (t1_value = ctx2[2] + ""))
+          set_data(t12, t1_value);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div1);
+      }
+    };
+  }
+  function create_fragment5(ctx) {
+    let div;
+    let each_value = ctx[0];
+    let each_blocks = [];
+    for (let i = 0; i < each_value.length; i += 1) {
+      each_blocks[i] = create_each_block3(get_each_context3(ctx, each_value, i));
+    }
+    return {
+      c() {
+        div = element("div");
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].c();
+        }
+        attr(div, "class", "flex flex-col");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].m(div, null);
+        }
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 3) {
+          each_value = ctx2[0];
+          let i;
+          for (i = 0; i < each_value.length; i += 1) {
+            const child_ctx = get_each_context3(ctx2, each_value, i);
+            if (each_blocks[i]) {
+              each_blocks[i].p(child_ctx, dirty);
+            } else {
+              each_blocks[i] = create_each_block3(child_ctx);
+              each_blocks[i].c();
+              each_blocks[i].m(div, null);
+            }
+          }
+          for (; i < each_blocks.length; i += 1) {
+            each_blocks[i].d(1);
+          }
+          each_blocks.length = each_value.length;
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        destroy_each(each_blocks, detaching);
+      }
+    };
+  }
+  function instance5($$self, $$props, $$invalidate) {
+    let { groups: groups2, hues } = $$props;
+    $$self.$$set = ($$props2) => {
+      if ("groups" in $$props2)
+        $$invalidate(0, groups2 = $$props2.groups);
+      if ("hues" in $$props2)
+        $$invalidate(1, hues = $$props2.hues);
+    };
+    return [groups2, hues];
+  }
+  var Legend = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance5, create_fragment5, safe_not_equal, { groups: 0, hues: 1 });
+    }
+  };
+  var legend_default = Legend;
+
   // node_modules/d3-format/src/formatDecimal.js
   function formatDecimal_default(x2) {
     return Math.abs(x2 = Math.round(x2)) >= 1e21 ? x2.toLocaleString("en").replace(/,/g, "") : x2.toString(10);
@@ -6105,12 +6222,6 @@
 
   // src/stats/scatterplot.svelte
   var import_iwanthue = __toESM(require_iwanthue());
-  function get_each_context3(ctx, list, i) {
-    const child_ctx = ctx.slice();
-    child_ctx[40] = list[i];
-    child_ctx[42] = i;
-    return child_ctx;
-  }
   function create_if_block(ctx) {
     let line;
     let updating_data;
@@ -6208,50 +6319,8 @@
       }
     };
   }
-  function create_each_block3(ctx) {
-    let div1;
-    let div0;
-    let t02;
-    let p;
-    let t1_value = ctx[40] + "";
-    let t12;
-    let t2;
-    return {
-      c() {
-        div1 = element("div");
-        div0 = element("div");
-        t02 = space();
-        p = element("p");
-        t12 = text(t1_value);
-        t2 = space();
-        attr(div0, "class", "z-50 w-3 h-3 rounded-full");
-        set_style(div0, "background-color", ctx[10][ctx[42]]);
-        attr(p, "class", "text-[#808080]");
-        attr(div1, "class", "flex flex-row gap-1 items-center");
-      },
-      m(target, anchor) {
-        insert(target, div1, anchor);
-        append(div1, div0);
-        append(div1, t02);
-        append(div1, p);
-        append(p, t12);
-        append(div1, t2);
-      },
-      p(ctx2, dirty) {
-        if (dirty[0] & 1024) {
-          set_style(div0, "background-color", ctx2[10][ctx2[42]]);
-        }
-        if (dirty[0] & 512 && t1_value !== (t1_value = ctx2[40] + ""))
-          set_data(t12, t1_value);
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div1);
-      }
-    };
-  }
-  function create_fragment5(ctx) {
-    let div1;
+  function create_fragment6(ctx) {
+    let div;
     let h1;
     let t02;
     let t12;
@@ -6273,7 +6342,9 @@
     let circles;
     let svg_viewBox_value;
     let t4;
-    let div0;
+    let legend;
+    let updating_groups;
+    let updating_hues;
     let t5;
     let popup;
     let updating_mouse_move;
@@ -6357,16 +6428,27 @@
       }
     });
     let if_block = ctx[4] && create_if_block(ctx);
-    let each_value = ctx[9];
-    let each_blocks = [];
-    for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block3(get_each_context3(ctx, each_value, i));
-    }
-    function popup_mouse_move_binding(value) {
+    function legend_groups_binding(value) {
       ctx[37](value);
     }
-    function popup_mouse_out_binding(value) {
+    function legend_hues_binding(value) {
       ctx[38](value);
+    }
+    let legend_props = {};
+    if (ctx[9] !== void 0) {
+      legend_props.groups = ctx[9];
+    }
+    if (ctx[10] !== void 0) {
+      legend_props.hues = ctx[10];
+    }
+    legend = new legend_default({ props: legend_props });
+    binding_callbacks.push(() => bind(legend, "groups", legend_groups_binding));
+    binding_callbacks.push(() => bind(legend, "hues", legend_hues_binding));
+    function popup_mouse_move_binding(value) {
+      ctx[39](value);
+    }
+    function popup_mouse_out_binding(value) {
+      ctx[40](value);
     }
     let popup_props = {
       data: ctx[0],
@@ -6387,7 +6469,7 @@
     binding_callbacks.push(() => bind(popup, "mouse_out", popup_mouse_out_binding));
     return {
       c() {
-        div1 = element("div");
+        div = element("div");
         h1 = element("h1");
         t02 = text(ctx[6]);
         t12 = space();
@@ -6402,10 +6484,7 @@
         if (if_block)
           if_block.c();
         t4 = space();
-        div0 = element("div");
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].c();
-        }
+        create_component(legend.$$.fragment);
         t5 = space();
         create_component(popup.$$.fragment);
         t6 = space();
@@ -6418,18 +6497,17 @@
         set_style(svg, "resize", "both");
         attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[12] + " " + ctx[11]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
-        attr(div0, "class", "flex flex-col");
         attr(figure, "class", "flex flex-row w-full h-full items-center");
-        add_render_callback(() => ctx[39].call(figure));
+        add_render_callback(() => ctx[41].call(figure));
         attr(p1, "class", "text-[#808080]");
-        attr(div1, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
+        attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
-        insert(target, div1, anchor);
-        append(div1, h1);
+        insert(target, div, anchor);
+        append(div, h1);
         append(h1, t02);
-        append(div1, t12);
-        append(div1, figure);
+        append(div, t12);
+        append(div, figure);
         append(figure, p0);
         append(p0, t2);
         append(figure, t3);
@@ -6440,15 +6518,12 @@
         if (if_block)
           if_block.m(svg, null);
         append(figure, t4);
-        append(figure, div0);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(div0, null);
-        }
+        mount_component(legend, figure, null);
         append(figure, t5);
         mount_component(popup, figure, null);
-        figure_resize_listener = add_resize_listener(figure, ctx[39].bind(figure));
-        append(div1, t6);
-        append(div1, p1);
+        figure_resize_listener = add_resize_listener(figure, ctx[41].bind(figure));
+        append(div, t6);
+        append(div, p1);
         append(p1, t7);
         current = true;
       },
@@ -6531,24 +6606,18 @@
         if (!current || dirty[0] & 6144 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[12] + " " + ctx2[11])) {
           attr(svg, "viewBox", svg_viewBox_value);
         }
-        if (dirty[0] & 1536) {
-          each_value = ctx2[9];
-          let i;
-          for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context3(ctx2, each_value, i);
-            if (each_blocks[i]) {
-              each_blocks[i].p(child_ctx, dirty);
-            } else {
-              each_blocks[i] = create_each_block3(child_ctx);
-              each_blocks[i].c();
-              each_blocks[i].m(div0, null);
-            }
-          }
-          for (; i < each_blocks.length; i += 1) {
-            each_blocks[i].d(1);
-          }
-          each_blocks.length = each_value.length;
+        const legend_changes = {};
+        if (!updating_groups && dirty[0] & 512) {
+          updating_groups = true;
+          legend_changes.groups = ctx2[9];
+          add_flush_callback(() => updating_groups = false);
         }
+        if (!updating_hues && dirty[0] & 1024) {
+          updating_hues = true;
+          legend_changes.hues = ctx2[10];
+          add_flush_callback(() => updating_hues = false);
+        }
+        legend.$set(legend_changes);
         const popup_changes = {};
         if (dirty[0] & 1)
           popup_changes.data = ctx2[0];
@@ -6583,6 +6652,7 @@
         transition_in(lineaxis1.$$.fragment, local);
         transition_in(circles.$$.fragment, local);
         transition_in(if_block);
+        transition_in(legend.$$.fragment, local);
         transition_in(popup.$$.fragment, local);
         current = true;
       },
@@ -6591,24 +6661,25 @@
         transition_out(lineaxis1.$$.fragment, local);
         transition_out(circles.$$.fragment, local);
         transition_out(if_block);
+        transition_out(legend.$$.fragment, local);
         transition_out(popup.$$.fragment, local);
         current = false;
       },
       d(detaching) {
         if (detaching)
-          detach(div1);
+          detach(div);
         destroy_component(lineaxis0);
         destroy_component(lineaxis1);
         destroy_component(circles);
         if (if_block)
           if_block.d();
-        destroy_each(each_blocks, detaching);
+        destroy_component(legend);
         destroy_component(popup);
         figure_resize_listener();
       }
     };
   }
-  function instance5($$self, $$props, $$invalidate) {
+  function instance6($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { radius = 60 } = $$props;
     let { x_accessor } = $$props;
@@ -6678,6 +6749,14 @@
     function line_y_scale_binding(value) {
       y_scale = value;
       $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(13, margin);
+    }
+    function legend_groups_binding(value) {
+      groups2 = value;
+      $$invalidate(9, groups2), $$invalidate(0, data), $$invalidate(3, c_accessor);
+    }
+    function legend_hues_binding(value) {
+      hues = value;
+      $$invalidate(10, hues), $$invalidate(9, groups2), $$invalidate(0, data), $$invalidate(3, c_accessor);
     }
     function popup_mouse_move_binding(value) {
       mouse_move = value;
@@ -6791,6 +6870,8 @@
       line_y_accessor_binding,
       line_x_scale_binding,
       line_y_scale_binding,
+      legend_groups_binding,
+      legend_hues_binding,
       popup_mouse_move_binding,
       popup_mouse_out_binding,
       figure_elementresize_handler
@@ -6799,7 +6880,7 @@
   var Scatterplot = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment5, safe_not_equal, {
+      init(this, options, instance6, create_fragment6, safe_not_equal, {
         data: 0,
         radius: 21,
         x_accessor: 1,
@@ -7025,7 +7106,7 @@
   }
 
   // src/stats/stats.svelte
-  function create_fragment6(ctx) {
+  function create_fragment7(ctx) {
     let div;
     let scatterplot0;
     let t02;
@@ -7162,7 +7243,7 @@
   var func_7 = (d) => d.name;
   var func_10 = (d) => d.name;
   var func_13 = (d) => d.name;
-  function instance6($$self, $$props, $$invalidate) {
+  function instance7($$self, $$props, $$invalidate) {
     const SECS_TO_HRS = 60 * 60;
     let { data } = $$props;
     const uuid_groups = group(data, (d) => d.uuid);
@@ -7203,7 +7284,7 @@
   var Stats = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment6, safe_not_equal, { data: 0 });
+      init(this, options, instance7, create_fragment7, safe_not_equal, { data: 0 });
     }
   };
   var stats_default = Stats;

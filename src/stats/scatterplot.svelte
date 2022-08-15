@@ -3,6 +3,7 @@
     import Circles from "./circles.svelte"
     import Line from "./line.svelte"
     import Popup from "./popup.svelte"
+    import Legend from "./legend.svelte"
 
     import { extent, group } from "d3-array"
     import { format } from "d3-format"
@@ -80,14 +81,7 @@
             {/if}
         </svg>
 
-        <div class="flex flex-col">
-            {#each groups as group, index}
-                <div class="flex flex-row gap-1 items-center">
-                    <div class="z-50 w-3 h-3 rounded-full" style="background-color: {hues[index]};"/>
-                    <p class="text-[#808080]">{group}</p>
-                </div>
-            {/each}
-        </div>
+        <Legend bind:groups bind:hues/>
 
         <Popup {data} {groups} {hues} {x_accessor} group_accessor={c_accessor} {tooltip_accessors} bind:mouse_move bind:mouse_out/>
     </figure>

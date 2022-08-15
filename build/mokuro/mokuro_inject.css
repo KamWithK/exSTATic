@@ -802,13 +802,13 @@ select {
 .tracking-tighter {
   letter-spacing: -0.05em;
 }
-.text-indigo-400 {
-  --tw-text-opacity:1;
-  color: rgb(129 140 248 / var(--tw-text-opacity));
-}
 .text-\[\#808080\] {
   --tw-text-opacity:1;
   color: rgb(128 128 128 / var(--tw-text-opacity));
+}
+.text-indigo-400 {
+  --tw-text-opacity:1;
+  color: rgb(129 140 248 / var(--tw-text-opacity));
 }
 .text-indigo-500 {
   --tw-text-opacity:1;

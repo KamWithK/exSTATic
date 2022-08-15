@@ -1827,6 +1827,9 @@
   function add_render_callback(fn) {
     render_callbacks.push(fn);
   }
+  function add_flush_callback(fn) {
+    flush_callbacks.push(fn);
+  }
   var seen_callbacks = /* @__PURE__ */ new Set();
   var flushidx = 0;
   function flush() {
@@ -1896,6 +1899,13 @@
     }
   }
   var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
+  function bind(component, name, callback) {
+    const index2 = component.$$.props[name];
+    if (index2 !== void 0) {
+      component.$$.bound[index2] = callback;
+      callback(component.$$.ctx[index2]);
+    }
+  }
   function create_component(block) {
     block && block.c();
   }
@@ -1932,7 +1942,7 @@
     }
     component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
   }
-  function init(component, options, instance4, create_fragment4, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance5, create_fragment5, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -1955,7 +1965,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance4 ? instance4(component, options.props || {}, (i, ret, ...rest) => {
+    $$.ctx = instance5 ? instance5(component, options.props || {}, (i, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
         if (!$$.skip_bound && $$.bound[i])
@@ -1968,7 +1978,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment4 ? create_fragment4($$.ctx) : false;
+    $$.fragment = create_fragment5 ? create_fragment5($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -2050,266 +2060,6 @@
       }
     }
   };
-
-  // node_modules/d3-array/src/ascending.js
-  function ascending(a, b) {
-    return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-  }
-
-  // node_modules/d3-array/src/descending.js
-  function descending(a, b) {
-    return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
-  }
-
-  // node_modules/d3-array/src/bisector.js
-  function bisector(f) {
-    let compare1, compare2, delta;
-    if (f.length !== 2) {
-      compare1 = ascending;
-      compare2 = (d, x2) => ascending(f(d), x2);
-      delta = (d, x2) => f(d) - x2;
-    } else {
-      compare1 = f === ascending || f === descending ? f : zero;
-      compare2 = f;
-      delta = f;
-    }
-    function left2(a, x2, lo = 0, hi = a.length) {
-      if (lo < hi) {
-        if (compare1(x2, x2) !== 0)
-          return hi;
-        do {
-          const mid = lo + hi >>> 1;
-          if (compare2(a[mid], x2) < 0)
-            lo = mid + 1;
-          else
-            hi = mid;
-        } while (lo < hi);
-      }
-      return lo;
-    }
-    function right2(a, x2, lo = 0, hi = a.length) {
-      if (lo < hi) {
-        if (compare1(x2, x2) !== 0)
-          return hi;
-        do {
-          const mid = lo + hi >>> 1;
-          if (compare2(a[mid], x2) <= 0)
-            lo = mid + 1;
-          else
-            hi = mid;
-        } while (lo < hi);
-      }
-      return lo;
-    }
-    function center2(a, x2, lo = 0, hi = a.length) {
-      const i = left2(a, x2, lo, hi - 1);
-      return i > lo && delta(a[i - 1], x2) > -delta(a[i], x2) ? i - 1 : i;
-    }
-    return { left: left2, center: center2, right: right2 };
-  }
-  function zero() {
-    return 0;
-  }
-
-  // node_modules/d3-array/src/number.js
-  function number(x2) {
-    return x2 === null ? NaN : +x2;
-  }
-
-  // node_modules/d3-array/src/bisect.js
-  var ascendingBisect = bisector(ascending);
-  var bisectRight = ascendingBisect.right;
-  var bisectLeft = ascendingBisect.left;
-  var bisectCenter = bisector(number).center;
-  var bisect_default = bisectRight;
-
-  // node_modules/d3-array/src/extent.js
-  function extent(values, valueof) {
-    let min;
-    let max;
-    if (valueof === void 0) {
-      for (const value of values) {
-        if (value != null) {
-          if (min === void 0) {
-            if (value >= value)
-              min = max = value;
-          } else {
-            if (min > value)
-              min = value;
-            if (max < value)
-              max = value;
-          }
-        }
-      }
-    } else {
-      let index2 = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index2, values)) != null) {
-          if (min === void 0) {
-            if (value >= value)
-              min = max = value;
-          } else {
-            if (min > value)
-              min = value;
-            if (max < value)
-              max = value;
-          }
-        }
-      }
-    }
-    return [min, max];
-  }
-
-  // node_modules/internmap/src/index.js
-  var InternMap = class extends Map {
-    constructor(entries, key = keyof) {
-      super();
-      Object.defineProperties(this, { _intern: { value: /* @__PURE__ */ new Map() }, _key: { value: key } });
-      if (entries != null)
-        for (const [key2, value] of entries)
-          this.set(key2, value);
-    }
-    get(key) {
-      return super.get(intern_get(this, key));
-    }
-    has(key) {
-      return super.has(intern_get(this, key));
-    }
-    set(key, value) {
-      return super.set(intern_set(this, key), value);
-    }
-    delete(key) {
-      return super.delete(intern_delete(this, key));
-    }
-  };
-  function intern_get({ _intern, _key }, value) {
-    const key = _key(value);
-    return _intern.has(key) ? _intern.get(key) : value;
-  }
-  function intern_set({ _intern, _key }, value) {
-    const key = _key(value);
-    if (_intern.has(key))
-      return _intern.get(key);
-    _intern.set(key, value);
-    return value;
-  }
-  function intern_delete({ _intern, _key }, value) {
-    const key = _key(value);
-    if (_intern.has(key)) {
-      value = _intern.get(key);
-      _intern.delete(key);
-    }
-    return value;
-  }
-  function keyof(value) {
-    return value !== null && typeof value === "object" ? value.valueOf() : value;
-  }
-
-  // node_modules/d3-array/src/identity.js
-  function identity(x2) {
-    return x2;
-  }
-
-  // node_modules/d3-array/src/group.js
-  function group(values, ...keys) {
-    return nest(values, identity, identity, keys);
-  }
-  function rollup(values, reduce, ...keys) {
-    return nest(values, identity, reduce, keys);
-  }
-  function nest(values, map2, reduce, keys) {
-    return function regroup(values2, i) {
-      if (i >= keys.length)
-        return reduce(values2);
-      const groups2 = new InternMap();
-      const keyof2 = keys[i++];
-      let index2 = -1;
-      for (const value of values2) {
-        const key = keyof2(value, ++index2, values2);
-        const group2 = groups2.get(key);
-        if (group2)
-          group2.push(value);
-        else
-          groups2.set(key, [value]);
-      }
-      for (const [key, values3] of groups2) {
-        groups2.set(key, regroup(values3, i));
-      }
-      return map2(groups2);
-    }(values, 0);
-  }
-
-  // node_modules/d3-array/src/ticks.js
-  var e10 = Math.sqrt(50);
-  var e5 = Math.sqrt(10);
-  var e2 = Math.sqrt(2);
-  function ticks(start, stop, count) {
-    var reverse, i = -1, n, ticks2, step;
-    stop = +stop, start = +start, count = +count;
-    if (start === stop && count > 0)
-      return [start];
-    if (reverse = stop < start)
-      n = start, start = stop, stop = n;
-    if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step))
-      return [];
-    if (step > 0) {
-      let r0 = Math.round(start / step), r1 = Math.round(stop / step);
-      if (r0 * step < start)
-        ++r0;
-      if (r1 * step > stop)
-        --r1;
-      ticks2 = new Array(n = r1 - r0 + 1);
-      while (++i < n)
-        ticks2[i] = (r0 + i) * step;
-    } else {
-      step = -step;
-      let r0 = Math.round(start * step), r1 = Math.round(stop * step);
-      if (r0 / step < start)
-        ++r0;
-      if (r1 / step > stop)
-        --r1;
-      ticks2 = new Array(n = r1 - r0 + 1);
-      while (++i < n)
-        ticks2[i] = (r0 + i) / step;
-    }
-    if (reverse)
-      ticks2.reverse();
-    return ticks2;
-  }
-  function tickIncrement(start, stop, count) {
-    var step = (stop - start) / Math.max(0, count), power = Math.floor(Math.log(step) / Math.LN10), error = step / Math.pow(10, power);
-    return power >= 0 ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power) : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
-  }
-  function tickStep(start, stop, count) {
-    var step0 = Math.abs(stop - start) / Math.max(0, count), step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)), error = step0 / step1;
-    if (error >= e10)
-      step1 *= 10;
-    else if (error >= e5)
-      step1 *= 5;
-    else if (error >= e2)
-      step1 *= 2;
-    return stop < start ? -step1 : step1;
-  }
-
-  // node_modules/d3-array/src/sum.js
-  function sum(values, valueof) {
-    let sum2 = 0;
-    if (valueof === void 0) {
-      for (let value of values) {
-        if (value = +value) {
-          sum2 += value;
-        }
-      }
-    } else {
-      let index2 = -1;
-      for (let value of values) {
-        if (value = +valueof(value, ++index2, values)) {
-          sum2 += value;
-        }
-      }
-    }
-    return sum2;
-  }
 
   // node_modules/d3-selection/src/namespaces.js
   var xhtml = "http://www.w3.org/1999/xhtml";
@@ -2552,12 +2302,12 @@
   function data_default(value, key) {
     if (!arguments.length)
       return Array.from(this, datum);
-    var bind = key ? bindKey : bindIndex, parents = this._parents, groups2 = this._groups;
+    var bind2 = key ? bindKey : bindIndex, parents = this._parents, groups2 = this._groups;
     if (typeof value !== "function")
       value = constant_default(value);
     for (var m = groups2.length, update2 = new Array(m), enter = new Array(m), exit = new Array(m), j = 0; j < m; ++j) {
       var parent = parents[j], group2 = groups2[j], groupLength = group2.length, data = arraylike(value.call(parent, parent && parent.__data__, j, parents)), dataLength = data.length, enterGroup = enter[j] = new Array(dataLength), updateGroup = update2[j] = new Array(dataLength), exitGroup = exit[j] = new Array(groupLength);
-      bind(parent, group2, enterGroup, updateGroup, exitGroup, data, key);
+      bind2(parent, group2, enterGroup, updateGroup, exitGroup, data, key);
       for (var i0 = 0, i1 = 0, previous, next; i0 < dataLength; ++i0) {
         if (previous = enterGroup[i0]) {
           if (i0 >= i1)
@@ -2637,7 +2387,7 @@
   // node_modules/d3-selection/src/selection/sort.js
   function sort_default(compare) {
     if (!compare)
-      compare = ascending2;
+      compare = ascending;
     function compareNode(a, b) {
       return a && b ? compare(a.__data__, b.__data__) : !a - !b;
     }
@@ -2651,7 +2401,7 @@
     }
     return new Selection(sortgroups, this._parents).order();
   }
-  function ascending2(a, b) {
+  function ascending(a, b) {
     return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
   }
 
@@ -3144,6 +2894,479 @@
     return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
   }
 
+  // node_modules/d3-axis/src/identity.js
+  function identity_default(x2) {
+    return x2;
+  }
+
+  // node_modules/d3-axis/src/axis.js
+  var top = 1;
+  var right = 2;
+  var bottom = 3;
+  var left = 4;
+  var epsilon = 1e-6;
+  function translateX(x2) {
+    return "translate(" + x2 + ",0)";
+  }
+  function translateY(y2) {
+    return "translate(0," + y2 + ")";
+  }
+  function number(scale) {
+    return (d) => +scale(d);
+  }
+  function center(scale, offset) {
+    offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
+    if (scale.round())
+      offset = Math.round(offset);
+    return (d) => +scale(d) + offset;
+  }
+  function entering() {
+    return !this.__axis;
+  }
+  function axis(orient, scale) {
+    var tickArguments = [], tickValues = null, tickFormat2 = null, tickSizeInner = 6, tickSizeOuter = 6, tickPadding = 3, offset = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5, k = orient === top || orient === left ? -1 : 1, x2 = orient === left || orient === right ? "x" : "y", transform = orient === top || orient === bottom ? translateX : translateY;
+    function axis2(context) {
+      var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues, format2 = tickFormat2 == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : identity_default : tickFormat2, spacing = Math.max(tickSizeInner, 0) + tickPadding, range = scale.range(), range0 = +range[0] + offset, range1 = +range[range.length - 1] + offset, position = (scale.bandwidth ? center : number)(scale.copy(), offset), selection2 = context.selection ? context.selection() : context, path2 = selection2.selectAll(".domain").data([null]), tick = selection2.selectAll(".tick").data(values, scale).order(), tickExit = tick.exit(), tickEnter = tick.enter().append("g").attr("class", "tick"), line = tick.select("line"), text2 = tick.select("text");
+      path2 = path2.merge(path2.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
+      tick = tick.merge(tickEnter);
+      line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x2 + "2", k * tickSizeInner));
+      text2 = text2.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x2, k * spacing).attr("dy", orient === top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
+      if (context !== selection2) {
+        path2 = path2.transition(context);
+        tick = tick.transition(context);
+        line = line.transition(context);
+        text2 = text2.transition(context);
+        tickExit = tickExit.transition(context).attr("opacity", epsilon).attr("transform", function(d) {
+          return isFinite(d = position(d)) ? transform(d + offset) : this.getAttribute("transform");
+        });
+        tickEnter.attr("opacity", epsilon).attr("transform", function(d) {
+          var p = this.parentNode.__axis;
+          return transform((p && isFinite(p = p(d)) ? p : position(d)) + offset);
+        });
+      }
+      tickExit.remove();
+      path2.attr("d", orient === left || orient === right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H" + offset + "V" + range1 + "H" + k * tickSizeOuter : "M" + offset + "," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V" + offset + "H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + "," + offset + "H" + range1);
+      tick.attr("opacity", 1).attr("transform", function(d) {
+        return transform(position(d) + offset);
+      });
+      line.attr(x2 + "2", k * tickSizeInner);
+      text2.attr(x2, k * spacing).text(format2);
+      selection2.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === right ? "start" : orient === left ? "end" : "middle");
+      selection2.each(function() {
+        this.__axis = position;
+      });
+    }
+    axis2.scale = function(_) {
+      return arguments.length ? (scale = _, axis2) : scale;
+    };
+    axis2.ticks = function() {
+      return tickArguments = Array.from(arguments), axis2;
+    };
+    axis2.tickArguments = function(_) {
+      return arguments.length ? (tickArguments = _ == null ? [] : Array.from(_), axis2) : tickArguments.slice();
+    };
+    axis2.tickValues = function(_) {
+      return arguments.length ? (tickValues = _ == null ? null : Array.from(_), axis2) : tickValues && tickValues.slice();
+    };
+    axis2.tickFormat = function(_) {
+      return arguments.length ? (tickFormat2 = _, axis2) : tickFormat2;
+    };
+    axis2.tickSize = function(_) {
+      return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis2) : tickSizeInner;
+    };
+    axis2.tickSizeInner = function(_) {
+      return arguments.length ? (tickSizeInner = +_, axis2) : tickSizeInner;
+    };
+    axis2.tickSizeOuter = function(_) {
+      return arguments.length ? (tickSizeOuter = +_, axis2) : tickSizeOuter;
+    };
+    axis2.tickPadding = function(_) {
+      return arguments.length ? (tickPadding = +_, axis2) : tickPadding;
+    };
+    axis2.offset = function(_) {
+      return arguments.length ? (offset = +_, axis2) : offset;
+    };
+    return axis2;
+  }
+  function axisTop(scale) {
+    return axis(top, scale);
+  }
+  function axisRight(scale) {
+    return axis(right, scale);
+  }
+  function axisBottom(scale) {
+    return axis(bottom, scale);
+  }
+  function axisLeft(scale) {
+    return axis(left, scale);
+  }
+
+  // src/stats/line_axis.svelte
+  function create_fragment(ctx) {
+    let g;
+    let g_transform_value;
+    return {
+      c() {
+        g = svg_element("g");
+        attr(g, "color", "grey");
+        attr(g, "transform", g_transform_value = "translate(" + ctx[1] + ")");
+      },
+      m(target, anchor) {
+        insert(target, g, anchor);
+        ctx[8](g);
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 2 && g_transform_value !== (g_transform_value = "translate(" + ctx2[1] + ")")) {
+          attr(g, "transform", g_transform_value);
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(g);
+        ctx[8](null);
+      }
+    };
+  }
+  function instance($$self, $$props, $$invalidate) {
+    let { scale } = $$props;
+    let { height, width, margin } = $$props;
+    let { position } = $$props;
+    let { formater } = $$props;
+    let axis2;
+    let transform = "0,0";
+    const positionedAxis = () => {
+      if (position === "top") {
+        return axisTop(scale);
+      } else if (position == "right") {
+        return axisRight(scale);
+      } else if (position === "bottom") {
+        return axisBottom(scale);
+      } else if (position == "left") {
+        return axisLeft(scale);
+      }
+    };
+    const transitionAxis = () => {
+      if (position === "top") {
+        $$invalidate(1, transform = `0,${margin / 2}`);
+      } else if (position == "right") {
+        $$invalidate(1, transform = `${width - margin / 2},0`);
+      } else if (position === "bottom") {
+        $$invalidate(1, transform = `0,${height - margin / 2}`);
+      } else if (position == "left") {
+        $$invalidate(1, transform = `${margin / 2},0`);
+      }
+    };
+    const setupAxis = () => {
+      const axis_creator = positionedAxis().tickSizeOuter(0).tickSize(0).tickFormat(formater);
+      axis_creator(select_default2(axis2));
+      transitionAxis();
+    };
+    function g_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        axis2 = $$value;
+        $$invalidate(0, axis2);
+      });
+    }
+    $$self.$$set = ($$props2) => {
+      if ("scale" in $$props2)
+        $$invalidate(2, scale = $$props2.scale);
+      if ("height" in $$props2)
+        $$invalidate(3, height = $$props2.height);
+      if ("width" in $$props2)
+        $$invalidate(4, width = $$props2.width);
+      if ("margin" in $$props2)
+        $$invalidate(5, margin = $$props2.margin);
+      if ("position" in $$props2)
+        $$invalidate(6, position = $$props2.position);
+      if ("formater" in $$props2)
+        $$invalidate(7, formater = $$props2.formater);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 253) {
+        $:
+          if (scale && height && width && margin && position && formater && axis2)
+            setupAxis();
+      }
+    };
+    return [axis2, transform, scale, height, width, margin, position, formater, g_binding];
+  }
+  var Line_axis = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance, create_fragment, safe_not_equal, {
+        scale: 2,
+        height: 3,
+        width: 4,
+        margin: 5,
+        position: 6,
+        formater: 7
+      });
+    }
+  };
+  var line_axis_default = Line_axis;
+
+  // node_modules/d3-array/src/ascending.js
+  function ascending2(a, b) {
+    return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+  }
+
+  // node_modules/d3-array/src/descending.js
+  function descending(a, b) {
+    return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+  }
+
+  // node_modules/d3-array/src/bisector.js
+  function bisector(f) {
+    let compare1, compare2, delta;
+    if (f.length !== 2) {
+      compare1 = ascending2;
+      compare2 = (d, x2) => ascending2(f(d), x2);
+      delta = (d, x2) => f(d) - x2;
+    } else {
+      compare1 = f === ascending2 || f === descending ? f : zero;
+      compare2 = f;
+      delta = f;
+    }
+    function left2(a, x2, lo = 0, hi = a.length) {
+      if (lo < hi) {
+        if (compare1(x2, x2) !== 0)
+          return hi;
+        do {
+          const mid = lo + hi >>> 1;
+          if (compare2(a[mid], x2) < 0)
+            lo = mid + 1;
+          else
+            hi = mid;
+        } while (lo < hi);
+      }
+      return lo;
+    }
+    function right2(a, x2, lo = 0, hi = a.length) {
+      if (lo < hi) {
+        if (compare1(x2, x2) !== 0)
+          return hi;
+        do {
+          const mid = lo + hi >>> 1;
+          if (compare2(a[mid], x2) <= 0)
+            lo = mid + 1;
+          else
+            hi = mid;
+        } while (lo < hi);
+      }
+      return lo;
+    }
+    function center2(a, x2, lo = 0, hi = a.length) {
+      const i = left2(a, x2, lo, hi - 1);
+      return i > lo && delta(a[i - 1], x2) > -delta(a[i], x2) ? i - 1 : i;
+    }
+    return { left: left2, center: center2, right: right2 };
+  }
+  function zero() {
+    return 0;
+  }
+
+  // node_modules/d3-array/src/number.js
+  function number2(x2) {
+    return x2 === null ? NaN : +x2;
+  }
+
+  // node_modules/d3-array/src/bisect.js
+  var ascendingBisect = bisector(ascending2);
+  var bisectRight = ascendingBisect.right;
+  var bisectLeft = ascendingBisect.left;
+  var bisectCenter = bisector(number2).center;
+  var bisect_default = bisectRight;
+
+  // node_modules/d3-array/src/extent.js
+  function extent(values, valueof) {
+    let min;
+    let max;
+    if (valueof === void 0) {
+      for (const value of values) {
+        if (value != null) {
+          if (min === void 0) {
+            if (value >= value)
+              min = max = value;
+          } else {
+            if (min > value)
+              min = value;
+            if (max < value)
+              max = value;
+          }
+        }
+      }
+    } else {
+      let index2 = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index2, values)) != null) {
+          if (min === void 0) {
+            if (value >= value)
+              min = max = value;
+          } else {
+            if (min > value)
+              min = value;
+            if (max < value)
+              max = value;
+          }
+        }
+      }
+    }
+    return [min, max];
+  }
+
+  // node_modules/internmap/src/index.js
+  var InternMap = class extends Map {
+    constructor(entries, key = keyof) {
+      super();
+      Object.defineProperties(this, { _intern: { value: /* @__PURE__ */ new Map() }, _key: { value: key } });
+      if (entries != null)
+        for (const [key2, value] of entries)
+          this.set(key2, value);
+    }
+    get(key) {
+      return super.get(intern_get(this, key));
+    }
+    has(key) {
+      return super.has(intern_get(this, key));
+    }
+    set(key, value) {
+      return super.set(intern_set(this, key), value);
+    }
+    delete(key) {
+      return super.delete(intern_delete(this, key));
+    }
+  };
+  function intern_get({ _intern, _key }, value) {
+    const key = _key(value);
+    return _intern.has(key) ? _intern.get(key) : value;
+  }
+  function intern_set({ _intern, _key }, value) {
+    const key = _key(value);
+    if (_intern.has(key))
+      return _intern.get(key);
+    _intern.set(key, value);
+    return value;
+  }
+  function intern_delete({ _intern, _key }, value) {
+    const key = _key(value);
+    if (_intern.has(key)) {
+      value = _intern.get(key);
+      _intern.delete(key);
+    }
+    return value;
+  }
+  function keyof(value) {
+    return value !== null && typeof value === "object" ? value.valueOf() : value;
+  }
+
+  // node_modules/d3-array/src/identity.js
+  function identity(x2) {
+    return x2;
+  }
+
+  // node_modules/d3-array/src/group.js
+  function group(values, ...keys) {
+    return nest(values, identity, identity, keys);
+  }
+  function rollup(values, reduce, ...keys) {
+    return nest(values, identity, reduce, keys);
+  }
+  function nest(values, map2, reduce, keys) {
+    return function regroup(values2, i) {
+      if (i >= keys.length)
+        return reduce(values2);
+      const groups2 = new InternMap();
+      const keyof2 = keys[i++];
+      let index2 = -1;
+      for (const value of values2) {
+        const key = keyof2(value, ++index2, values2);
+        const group2 = groups2.get(key);
+        if (group2)
+          group2.push(value);
+        else
+          groups2.set(key, [value]);
+      }
+      for (const [key, values3] of groups2) {
+        groups2.set(key, regroup(values3, i));
+      }
+      return map2(groups2);
+    }(values, 0);
+  }
+
+  // node_modules/d3-array/src/ticks.js
+  var e10 = Math.sqrt(50);
+  var e5 = Math.sqrt(10);
+  var e2 = Math.sqrt(2);
+  function ticks(start, stop, count) {
+    var reverse, i = -1, n, ticks2, step;
+    stop = +stop, start = +start, count = +count;
+    if (start === stop && count > 0)
+      return [start];
+    if (reverse = stop < start)
+      n = start, start = stop, stop = n;
+    if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step))
+      return [];
+    if (step > 0) {
+      let r0 = Math.round(start / step), r1 = Math.round(stop / step);
+      if (r0 * step < start)
+        ++r0;
+      if (r1 * step > stop)
+        --r1;
+      ticks2 = new Array(n = r1 - r0 + 1);
+      while (++i < n)
+        ticks2[i] = (r0 + i) * step;
+    } else {
+      step = -step;
+      let r0 = Math.round(start * step), r1 = Math.round(stop * step);
+      if (r0 / step < start)
+        ++r0;
+      if (r1 / step > stop)
+        --r1;
+      ticks2 = new Array(n = r1 - r0 + 1);
+      while (++i < n)
+        ticks2[i] = (r0 + i) / step;
+    }
+    if (reverse)
+      ticks2.reverse();
+    return ticks2;
+  }
+  function tickIncrement(start, stop, count) {
+    var step = (stop - start) / Math.max(0, count), power = Math.floor(Math.log(step) / Math.LN10), error = step / Math.pow(10, power);
+    return power >= 0 ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power) : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
+  }
+  function tickStep(start, stop, count) {
+    var step0 = Math.abs(stop - start) / Math.max(0, count), step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)), error = step0 / step1;
+    if (error >= e10)
+      step1 *= 10;
+    else if (error >= e5)
+      step1 *= 5;
+    else if (error >= e2)
+      step1 *= 2;
+    return stop < start ? -step1 : step1;
+  }
+
+  // node_modules/d3-array/src/sum.js
+  function sum(values, valueof) {
+    let sum2 = 0;
+    if (valueof === void 0) {
+      for (let value of values) {
+        if (value = +value) {
+          sum2 += value;
+        }
+      }
+    } else {
+      let index2 = -1;
+      for (let value of values) {
+        if (value = +valueof(value, ++index2, values)) {
+          sum2 += value;
+        }
+      }
+    }
+    return sum2;
+  }
+
   // node_modules/d3-format/src/formatDecimal.js
   function formatDecimal_default(x2) {
     return Math.abs(x2 = Math.round(x2)) >= 1e21 ? x2.toLocaleString("en").replace(/,/g, "") : x2.toString(10);
@@ -3285,7 +3508,7 @@
   };
 
   // node_modules/d3-format/src/identity.js
-  function identity_default(x2) {
+  function identity_default2(x2) {
     return x2;
   }
 
@@ -3293,7 +3516,7 @@
   var map = Array.prototype.map;
   var prefixes = ["y", "z", "a", "f", "p", "n", "\xB5", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y"];
   function locale_default(locale3) {
-    var group2 = locale3.grouping === void 0 || locale3.thousands === void 0 ? identity_default : formatGroup_default(map.call(locale3.grouping, Number), locale3.thousands + ""), currencyPrefix = locale3.currency === void 0 ? "" : locale3.currency[0] + "", currencySuffix = locale3.currency === void 0 ? "" : locale3.currency[1] + "", decimal = locale3.decimal === void 0 ? "." : locale3.decimal + "", numerals = locale3.numerals === void 0 ? identity_default : formatNumerals_default(map.call(locale3.numerals, String)), percent = locale3.percent === void 0 ? "%" : locale3.percent + "", minus = locale3.minus === void 0 ? "\u2212" : locale3.minus + "", nan = locale3.nan === void 0 ? "NaN" : locale3.nan + "";
+    var group2 = locale3.grouping === void 0 || locale3.thousands === void 0 ? identity_default2 : formatGroup_default(map.call(locale3.grouping, Number), locale3.thousands + ""), currencyPrefix = locale3.currency === void 0 ? "" : locale3.currency[0] + "", currencySuffix = locale3.currency === void 0 ? "" : locale3.currency[1] + "", decimal = locale3.decimal === void 0 ? "." : locale3.decimal + "", numerals = locale3.numerals === void 0 ? identity_default2 : formatNumerals_default(map.call(locale3.numerals, String)), percent = locale3.percent === void 0 ? "%" : locale3.percent + "", minus = locale3.minus === void 0 ? "\u2212" : locale3.minus + "", nan = locale3.nan === void 0 ? "NaN" : locale3.nan + "";
     function newFormat(specifier) {
       specifier = formatSpecifier(specifier);
       var fill = specifier.fill, align = specifier.align, sign = specifier.sign, symbol = specifier.symbol, zero3 = specifier.zero, width = specifier.width, comma = specifier.comma, precision = specifier.precision, trim = specifier.trim, type = specifier.type;
@@ -4930,7 +5153,7 @@
   }
 
   // node_modules/d3-scale/src/number.js
-  function number2(x2) {
+  function number3(x2) {
     return +x2;
   }
 
@@ -4997,7 +5220,7 @@
       return clamp(untransform((input || (input = piecewise(range, domain.map(transform), number_default)))(y2)));
     };
     scale.domain = function(_) {
-      return arguments.length ? (domain = Array.from(_, number2), rescale()) : domain.slice();
+      return arguments.length ? (domain = Array.from(_, number3), rescale()) : domain.slice();
     };
     scale.range = function(_) {
       return arguments.length ? (range = Array.from(_), rescale()) : range.slice();
@@ -5126,7 +5349,7 @@
   function date(t) {
     return new Date(t);
   }
-  function number3(t) {
+  function number4(t) {
     return t instanceof Date ? +t : +new Date(+t);
   }
   function calendar(ticks2, tickInterval, year2, month2, week, day2, hour2, minute2, second2, format2) {
@@ -5139,7 +5362,7 @@
       return new Date(invert(y2));
     };
     scale.domain = function(_) {
-      return arguments.length ? domain(Array.from(_, number3)) : domain().map(date);
+      return arguments.length ? domain(Array.from(_, number4)) : domain().map(date);
     };
     scale.ticks = function(interval) {
       var d = domain();
@@ -5163,127 +5386,26 @@
     return initRange.apply(calendar(timeTicks, timeTickInterval, year_default, month_default, sunday, day_default, hour_default, minute_default, second_default, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
   }
 
-  // node_modules/d3-axis/src/identity.js
-  function identity_default2(x2) {
-    return x2;
-  }
-
-  // node_modules/d3-axis/src/axis.js
-  var top = 1;
-  var right = 2;
-  var bottom = 3;
-  var left = 4;
-  var epsilon = 1e-6;
-  function translateX(x2) {
-    return "translate(" + x2 + ",0)";
-  }
-  function translateY(y2) {
-    return "translate(0," + y2 + ")";
-  }
-  function number4(scale) {
-    return (d) => +scale(d);
-  }
-  function center(scale, offset) {
-    offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
-    if (scale.round())
-      offset = Math.round(offset);
-    return (d) => +scale(d) + offset;
-  }
-  function entering() {
-    return !this.__axis;
-  }
-  function axis(orient, scale) {
-    var tickArguments = [], tickValues = null, tickFormat2 = null, tickSizeInner = 6, tickSizeOuter = 6, tickPadding = 3, offset = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5, k = orient === top || orient === left ? -1 : 1, x2 = orient === left || orient === right ? "x" : "y", transform = orient === top || orient === bottom ? translateX : translateY;
-    function axis2(context) {
-      var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues, format2 = tickFormat2 == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : identity_default2 : tickFormat2, spacing = Math.max(tickSizeInner, 0) + tickPadding, range = scale.range(), range0 = +range[0] + offset, range1 = +range[range.length - 1] + offset, position = (scale.bandwidth ? center : number4)(scale.copy(), offset), selection2 = context.selection ? context.selection() : context, path2 = selection2.selectAll(".domain").data([null]), tick = selection2.selectAll(".tick").data(values, scale).order(), tickExit = tick.exit(), tickEnter = tick.enter().append("g").attr("class", "tick"), line = tick.select("line"), text2 = tick.select("text");
-      path2 = path2.merge(path2.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
-      tick = tick.merge(tickEnter);
-      line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x2 + "2", k * tickSizeInner));
-      text2 = text2.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x2, k * spacing).attr("dy", orient === top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
-      if (context !== selection2) {
-        path2 = path2.transition(context);
-        tick = tick.transition(context);
-        line = line.transition(context);
-        text2 = text2.transition(context);
-        tickExit = tickExit.transition(context).attr("opacity", epsilon).attr("transform", function(d) {
-          return isFinite(d = position(d)) ? transform(d + offset) : this.getAttribute("transform");
-        });
-        tickEnter.attr("opacity", epsilon).attr("transform", function(d) {
-          var p = this.parentNode.__axis;
-          return transform((p && isFinite(p = p(d)) ? p : position(d)) + offset);
-        });
-      }
-      tickExit.remove();
-      path2.attr("d", orient === left || orient === right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H" + offset + "V" + range1 + "H" + k * tickSizeOuter : "M" + offset + "," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V" + offset + "H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + "," + offset + "H" + range1);
-      tick.attr("opacity", 1).attr("transform", function(d) {
-        return transform(position(d) + offset);
-      });
-      line.attr(x2 + "2", k * tickSizeInner);
-      text2.attr(x2, k * spacing).text(format2);
-      selection2.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === right ? "start" : orient === left ? "end" : "middle");
-      selection2.each(function() {
-        this.__axis = position;
-      });
-    }
-    axis2.scale = function(_) {
-      return arguments.length ? (scale = _, axis2) : scale;
-    };
-    axis2.ticks = function() {
-      return tickArguments = Array.from(arguments), axis2;
-    };
-    axis2.tickArguments = function(_) {
-      return arguments.length ? (tickArguments = _ == null ? [] : Array.from(_), axis2) : tickArguments.slice();
-    };
-    axis2.tickValues = function(_) {
-      return arguments.length ? (tickValues = _ == null ? null : Array.from(_), axis2) : tickValues && tickValues.slice();
-    };
-    axis2.tickFormat = function(_) {
-      return arguments.length ? (tickFormat2 = _, axis2) : tickFormat2;
-    };
-    axis2.tickSize = function(_) {
-      return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis2) : tickSizeInner;
-    };
-    axis2.tickSizeInner = function(_) {
-      return arguments.length ? (tickSizeInner = +_, axis2) : tickSizeInner;
-    };
-    axis2.tickSizeOuter = function(_) {
-      return arguments.length ? (tickSizeOuter = +_, axis2) : tickSizeOuter;
-    };
-    axis2.tickPadding = function(_) {
-      return arguments.length ? (tickPadding = +_, axis2) : tickPadding;
-    };
-    axis2.offset = function(_) {
-      return arguments.length ? (offset = +_, axis2) : offset;
-    };
-    return axis2;
-  }
-  function axisBottom(scale) {
-    return axis(bottom, scale);
-  }
-  function axisLeft(scale) {
-    return axis(left, scale);
-  }
-
   // src/stats/scatterplot.svelte
   var import_iwanthue = __toESM(require_iwanthue());
   function get_each_context(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[35] = list[i];
+    child_ctx[39] = list[i];
     return child_ctx;
   }
   function get_each_context_1(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[38] = list[i];
-    child_ctx[40] = i;
+    child_ctx[42] = list[i];
+    child_ctx[44] = i;
     return child_ctx;
   }
   function get_each_context_2(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[41] = list[i].x;
-    child_ctx[42] = list[i].y;
-    child_ctx[43] = list[i].r;
-    child_ctx[44] = list[i].c;
-    child_ctx[45] = list[i].i;
+    child_ctx[45] = list[i].x;
+    child_ctx[46] = list[i].y;
+    child_ctx[47] = list[i].r;
+    child_ctx[48] = list[i].c;
+    child_ctx[49] = list[i].i;
     return child_ctx;
   }
   function create_each_block_2(ctx) {
@@ -5298,11 +5420,11 @@
     return {
       c() {
         circle = svg_element("circle");
-        attr(circle, "data-index", circle_data_index_value = ctx[45]);
-        attr(circle, "cx", circle_cx_value = ctx[41]);
-        attr(circle, "cy", circle_cy_value = ctx[42]);
-        attr(circle, "r", circle_r_value = ctx[43]);
-        attr(circle, "fill", circle_fill_value = ctx[44]);
+        attr(circle, "data-index", circle_data_index_value = ctx[49]);
+        attr(circle, "cx", circle_cx_value = ctx[45]);
+        attr(circle, "cy", circle_cy_value = ctx[46]);
+        attr(circle, "r", circle_r_value = ctx[47]);
+        attr(circle, "fill", circle_fill_value = ctx[48]);
         attr(circle, "fill-opacity", "0.8");
         attr(circle, "class", "z-10");
       },
@@ -5310,26 +5432,26 @@
         insert(target, circle, anchor);
         if (!mounted) {
           dispose = [
-            listen(circle, "mousemove", ctx[19]),
-            listen(circle, "mouseout", ctx[20])
+            listen(circle, "mousemove", ctx[21]),
+            listen(circle, "mouseout", ctx[22])
           ];
           mounted = true;
         }
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 1024 && circle_data_index_value !== (circle_data_index_value = ctx2[45])) {
+        if (dirty[0] & 2048 && circle_data_index_value !== (circle_data_index_value = ctx2[49])) {
           attr(circle, "data-index", circle_data_index_value);
         }
-        if (dirty[0] & 1024 && circle_cx_value !== (circle_cx_value = ctx2[41])) {
+        if (dirty[0] & 2048 && circle_cx_value !== (circle_cx_value = ctx2[45])) {
           attr(circle, "cx", circle_cx_value);
         }
-        if (dirty[0] & 1024 && circle_cy_value !== (circle_cy_value = ctx2[42])) {
+        if (dirty[0] & 2048 && circle_cy_value !== (circle_cy_value = ctx2[46])) {
           attr(circle, "cy", circle_cy_value);
         }
-        if (dirty[0] & 1024 && circle_r_value !== (circle_r_value = ctx2[43])) {
+        if (dirty[0] & 2048 && circle_r_value !== (circle_r_value = ctx2[47])) {
           attr(circle, "r", circle_r_value);
         }
-        if (dirty[0] & 1024 && circle_fill_value !== (circle_fill_value = ctx2[44])) {
+        if (dirty[0] & 2048 && circle_fill_value !== (circle_fill_value = ctx2[48])) {
           attr(circle, "fill", circle_fill_value);
         }
       },
@@ -5346,7 +5468,7 @@
     let div0;
     let t02;
     let p;
-    let t1_value = ctx[38] + "";
+    let t1_value = ctx[42] + "";
     let t12;
     let t2;
     return {
@@ -5358,7 +5480,7 @@
         t12 = text(t1_value);
         t2 = space();
         attr(div0, "class", "z-50 w-3 h-3 rounded-full");
-        set_style(div0, "background-color", ctx[5][ctx[40]]);
+        set_style(div0, "background-color", ctx[5][ctx[44]]);
         attr(p, "class", "text-[#808080]");
         attr(div1, "class", "flex flex-row gap-1 items-center");
       },
@@ -5372,9 +5494,9 @@
       },
       p(ctx2, dirty) {
         if (dirty[0] & 32) {
-          set_style(div0, "background-color", ctx2[5][ctx2[40]]);
+          set_style(div0, "background-color", ctx2[5][ctx2[44]]);
         }
-        if (dirty[0] & 16 && t1_value !== (t1_value = ctx2[38] + ""))
+        if (dirty[0] & 16 && t1_value !== (t1_value = ctx2[42] + ""))
           set_data(t12, t1_value);
       },
       d(detaching) {
@@ -5385,10 +5507,10 @@
   }
   function create_each_block(ctx) {
     let p;
-    let t0_value = ctx[35] + "";
+    let t0_value = ctx[39] + "";
     let t02;
     let t12;
-    let t2_value = ctx[17][ctx[35]] + "";
+    let t2_value = ctx[18][ctx[39]] + "";
     let t2;
     return {
       c() {
@@ -5404,9 +5526,9 @@
         append(p, t2);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 1 && t0_value !== (t0_value = ctx2[35] + ""))
+        if (dirty[0] & 1 && t0_value !== (t0_value = ctx2[39] + ""))
           set_data(t02, t0_value);
-        if (dirty[0] & 131073 && t2_value !== (t2_value = ctx2[17][ctx2[35]] + ""))
+        if (dirty[0] & 262145 && t2_value !== (t2_value = ctx2[18][ctx2[39]] + ""))
           set_data(t2, t2_value);
       },
       d(detaching) {
@@ -5415,7 +5537,7 @@
       }
     };
   }
-  function create_fragment(ctx) {
+  function create_fragment2(ctx) {
     let div2;
     let h1;
     let t02;
@@ -5425,10 +5547,16 @@
     let t2;
     let t3;
     let svg;
-    let g0;
-    let g0_transform_value;
-    let g1;
-    let g1_transform_value;
+    let lineaxis0;
+    let updating_scale;
+    let updating_height;
+    let updating_width;
+    let updating_margin;
+    let lineaxis1;
+    let updating_scale_1;
+    let updating_height_1;
+    let updating_width_1;
+    let updating_margin_1;
     let svg_viewBox_value;
     let t4;
     let div0;
@@ -5447,7 +5575,74 @@
     let t11;
     let p3;
     let t122;
-    let each_value_2 = ctx[10];
+    let current;
+    function lineaxis0_scale_binding(value) {
+      ctx[29](value);
+    }
+    function lineaxis0_height_binding(value) {
+      ctx[30](value);
+    }
+    function lineaxis0_width_binding(value) {
+      ctx[31](value);
+    }
+    function lineaxis0_margin_binding(value) {
+      ctx[32](value);
+    }
+    let lineaxis0_props = {
+      position: "bottom",
+      formater: ctx[19]
+    };
+    if (ctx[9] !== void 0) {
+      lineaxis0_props.scale = ctx[9];
+    }
+    if (ctx[6] !== void 0) {
+      lineaxis0_props.height = ctx[6];
+    }
+    if (ctx[7] !== void 0) {
+      lineaxis0_props.width = ctx[7];
+    }
+    if (ctx[8] !== void 0) {
+      lineaxis0_props.margin = ctx[8];
+    }
+    lineaxis0 = new line_axis_default({ props: lineaxis0_props });
+    binding_callbacks.push(() => bind(lineaxis0, "scale", lineaxis0_scale_binding));
+    binding_callbacks.push(() => bind(lineaxis0, "height", lineaxis0_height_binding));
+    binding_callbacks.push(() => bind(lineaxis0, "width", lineaxis0_width_binding));
+    binding_callbacks.push(() => bind(lineaxis0, "margin", lineaxis0_margin_binding));
+    function lineaxis1_scale_binding(value) {
+      ctx[33](value);
+    }
+    function lineaxis1_height_binding(value) {
+      ctx[34](value);
+    }
+    function lineaxis1_width_binding(value) {
+      ctx[35](value);
+    }
+    function lineaxis1_margin_binding(value) {
+      ctx[36](value);
+    }
+    let lineaxis1_props = {
+      position: "left",
+      formater: ctx[20]
+    };
+    if (ctx[10] !== void 0) {
+      lineaxis1_props.scale = ctx[10];
+    }
+    if (ctx[6] !== void 0) {
+      lineaxis1_props.height = ctx[6];
+    }
+    if (ctx[7] !== void 0) {
+      lineaxis1_props.width = ctx[7];
+    }
+    if (ctx[8] !== void 0) {
+      lineaxis1_props.margin = ctx[8];
+    }
+    lineaxis1 = new line_axis_default({ props: lineaxis1_props });
+    binding_callbacks.push(() => bind(lineaxis1, "scale", lineaxis1_scale_binding));
+    binding_callbacks.push(() => bind(lineaxis1, "height", lineaxis1_height_binding));
+    binding_callbacks.push(() => bind(lineaxis1, "width", lineaxis1_width_binding));
+    binding_callbacks.push(() => bind(lineaxis1, "margin", lineaxis1_margin_binding));
+    let each_value_2 = ctx[11];
     let each_blocks_2 = [];
     for (let i = 0; i < each_value_2.length; i += 1) {
       each_blocks_2[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
@@ -5473,8 +5668,8 @@
         t2 = text(ctx[3]);
         t3 = space();
         svg = svg_element("svg");
-        g0 = svg_element("g");
-        g1 = svg_element("g");
+        create_component(lineaxis0.$$.fragment);
+        create_component(lineaxis1.$$.fragment);
         for (let i = 0; i < each_blocks_2.length; i += 1) {
           each_blocks_2[i].c();
         }
@@ -5486,10 +5681,10 @@
         t5 = space();
         div1 = element("div");
         p1 = element("p");
-        t6 = text(ctx[11]);
+        t6 = text(ctx[12]);
         t7 = space();
         p2 = element("p");
-        t8 = text(ctx[12]);
+        t8 = text(ctx[13]);
         t9 = space();
         br = element("br");
         t10 = space();
@@ -5501,10 +5696,6 @@
         t122 = text(ctx[2]);
         attr(h1, "class", "text-4xl font-semibold text-indigo-400");
         attr(p0, "class", "whitespace-nowrap -rotate-90 text-[#808080]");
-        attr(g0, "color", "grey");
-        attr(g0, "transform", g0_transform_value = "translate(0," + (ctx[6] - ctx[18] / 2) + ")");
-        attr(g1, "color", "grey");
-        attr(g1, "transform", g1_transform_value = "translate(" + ctx[18] / 2 + ",0)");
         attr(svg, "height", "100%");
         attr(svg, "width", "100%");
         set_style(svg, "resize", "both");
@@ -5515,12 +5706,12 @@
         attr(p1, "class", "font-semibold");
         attr(p2, "id", "popup_date");
         attr(div1, "id", "popup");
-        attr(div1, "class", div1_class_value = (ctx[16] ? "absolute" : "hidden") + " p-3");
-        set_style(div1, "left", ctx[14] + "px");
-        set_style(div1, "top", ctx[15] + "px");
-        set_style(div1, "background-color", ctx[13]);
+        attr(div1, "class", div1_class_value = (ctx[17] ? "absolute" : "hidden") + " p-3");
+        set_style(div1, "left", ctx[15] + "px");
+        set_style(div1, "top", ctx[16] + "px");
+        set_style(div1, "background-color", ctx[14]);
         attr(figure, "class", "flex flex-row w-full h-full items-center");
-        add_render_callback(() => ctx[33].call(figure));
+        add_render_callback(() => ctx[37].call(figure));
         attr(p3, "class", "text-[#808080]");
         attr(div2, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
@@ -5534,10 +5725,8 @@
         append(p0, t2);
         append(figure, t3);
         append(figure, svg);
-        append(svg, g0);
-        ctx[31](g0);
-        append(svg, g1);
-        ctx[32](g1);
+        mount_component(lineaxis0, svg, null);
+        mount_component(lineaxis1, svg, null);
         for (let i = 0; i < each_blocks_2.length; i += 1) {
           each_blocks_2[i].m(svg, null);
         }
@@ -5559,21 +5748,63 @@
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].m(div1, null);
         }
-        figure_resize_listener = add_resize_listener(figure, ctx[33].bind(figure));
+        figure_resize_listener = add_resize_listener(figure, ctx[37].bind(figure));
         append(div2, t11);
         append(div2, p3);
         append(p3, t122);
+        current = true;
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 2)
+        if (!current || dirty[0] & 2)
           set_data(t02, ctx2[1]);
-        if (dirty[0] & 8)
+        if (!current || dirty[0] & 8)
           set_data(t2, ctx2[3]);
-        if (dirty[0] & 64 && g0_transform_value !== (g0_transform_value = "translate(0," + (ctx2[6] - ctx2[18] / 2) + ")")) {
-          attr(g0, "transform", g0_transform_value);
+        const lineaxis0_changes = {};
+        if (!updating_scale && dirty[0] & 512) {
+          updating_scale = true;
+          lineaxis0_changes.scale = ctx2[9];
+          add_flush_callback(() => updating_scale = false);
         }
-        if (dirty[0] & 1573888) {
-          each_value_2 = ctx2[10];
+        if (!updating_height && dirty[0] & 64) {
+          updating_height = true;
+          lineaxis0_changes.height = ctx2[6];
+          add_flush_callback(() => updating_height = false);
+        }
+        if (!updating_width && dirty[0] & 128) {
+          updating_width = true;
+          lineaxis0_changes.width = ctx2[7];
+          add_flush_callback(() => updating_width = false);
+        }
+        if (!updating_margin && dirty[0] & 256) {
+          updating_margin = true;
+          lineaxis0_changes.margin = ctx2[8];
+          add_flush_callback(() => updating_margin = false);
+        }
+        lineaxis0.$set(lineaxis0_changes);
+        const lineaxis1_changes = {};
+        if (!updating_scale_1 && dirty[0] & 1024) {
+          updating_scale_1 = true;
+          lineaxis1_changes.scale = ctx2[10];
+          add_flush_callback(() => updating_scale_1 = false);
+        }
+        if (!updating_height_1 && dirty[0] & 64) {
+          updating_height_1 = true;
+          lineaxis1_changes.height = ctx2[6];
+          add_flush_callback(() => updating_height_1 = false);
+        }
+        if (!updating_width_1 && dirty[0] & 128) {
+          updating_width_1 = true;
+          lineaxis1_changes.width = ctx2[7];
+          add_flush_callback(() => updating_width_1 = false);
+        }
+        if (!updating_margin_1 && dirty[0] & 256) {
+          updating_margin_1 = true;
+          lineaxis1_changes.margin = ctx2[8];
+          add_flush_callback(() => updating_margin_1 = false);
+        }
+        lineaxis1.$set(lineaxis1_changes);
+        if (dirty[0] & 6293504) {
+          each_value_2 = ctx2[11];
           let i;
           for (i = 0; i < each_value_2.length; i += 1) {
             const child_ctx = get_each_context_2(ctx2, each_value_2, i);
@@ -5590,7 +5821,7 @@
           }
           each_blocks_2.length = each_value_2.length;
         }
-        if (dirty[0] & 192 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[7] + " " + ctx2[6])) {
+        if (!current || dirty[0] & 192 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[7] + " " + ctx2[6])) {
           attr(svg, "viewBox", svg_viewBox_value);
         }
         if (dirty[0] & 48) {
@@ -5611,11 +5842,11 @@
           }
           each_blocks_1.length = each_value_1.length;
         }
-        if (dirty[0] & 2048)
-          set_data(t6, ctx2[11]);
-        if (dirty[0] & 4096)
-          set_data(t8, ctx2[12]);
-        if (dirty[0] & 131073) {
+        if (!current || dirty[0] & 4096)
+          set_data(t6, ctx2[12]);
+        if (!current || dirty[0] & 8192)
+          set_data(t8, ctx2[13]);
+        if (dirty[0] & 262145) {
           each_value = Object.keys(ctx2[0]);
           let i;
           for (i = 0; i < each_value.length; i += 1) {
@@ -5633,28 +5864,38 @@
           }
           each_blocks.length = each_value.length;
         }
-        if (dirty[0] & 65536 && div1_class_value !== (div1_class_value = (ctx2[16] ? "absolute" : "hidden") + " p-3")) {
+        if (!current || dirty[0] & 131072 && div1_class_value !== (div1_class_value = (ctx2[17] ? "absolute" : "hidden") + " p-3")) {
           attr(div1, "class", div1_class_value);
         }
-        if (dirty[0] & 16384) {
-          set_style(div1, "left", ctx2[14] + "px");
+        if (!current || dirty[0] & 32768) {
+          set_style(div1, "left", ctx2[15] + "px");
         }
-        if (dirty[0] & 32768) {
-          set_style(div1, "top", ctx2[15] + "px");
+        if (!current || dirty[0] & 65536) {
+          set_style(div1, "top", ctx2[16] + "px");
         }
-        if (dirty[0] & 8192) {
-          set_style(div1, "background-color", ctx2[13]);
+        if (!current || dirty[0] & 16384) {
+          set_style(div1, "background-color", ctx2[14]);
         }
-        if (dirty[0] & 4)
+        if (!current || dirty[0] & 4)
           set_data(t122, ctx2[2]);
       },
-      i: noop,
-      o: noop,
+      i(local) {
+        if (current)
+          return;
+        transition_in(lineaxis0.$$.fragment, local);
+        transition_in(lineaxis1.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(lineaxis0.$$.fragment, local);
+        transition_out(lineaxis1.$$.fragment, local);
+        current = false;
+      },
       d(detaching) {
         if (detaching)
           detach(div2);
-        ctx[31](null);
-        ctx[32](null);
+        destroy_component(lineaxis0);
+        destroy_component(lineaxis1);
         destroy_each(each_blocks_2, detaching);
         destroy_each(each_blocks_1, detaching);
         destroy_each(each_blocks, detaching);
@@ -5662,7 +5903,7 @@
       }
     };
   }
-  function instance($$self, $$props, $$invalidate) {
+  function instance2($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { x_accessor } = $$props;
     let { y_accessor } = $$props;
@@ -5676,8 +5917,7 @@
     let [height, width, radius] = [50, 100, 60];
     let margin = 2 * (radius + 10);
     let x_scale, y_scale, r_scale;
-    let x_axis_creator, y_axis_creator;
-    let x_axis, y_axis;
+    const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")];
     let mapped_data;
     let popup_name = "";
     let popup_date = "";
@@ -5685,33 +5925,53 @@
     let [popup_x, popup_y] = [0, margin / 2];
     let show_popup = false;
     let popup_tooltips = {};
-    Object.keys(tooltip_accessors).forEach((key) => $$invalidate(17, popup_tooltips[key] = "", popup_tooltips));
+    Object.keys(tooltip_accessors).forEach((key) => $$invalidate(18, popup_tooltips[key] = "", popup_tooltips));
     const mouse_over = (event) => {
       const index2 = event["target"].dataset.index;
-      $$invalidate(14, popup_x = event.layerX);
-      $$invalidate(15, popup_y = event.layerY);
-      $$invalidate(11, popup_name = c_accessor(data[index2]));
-      $$invalidate(12, popup_date = timeFormat("%d %B %Y")(x_accessor(data[index2])));
-      $$invalidate(13, popout_color = hues[groups2.indexOf(c_accessor(data[index2]))]);
+      $$invalidate(15, popup_x = event.layerX);
+      $$invalidate(16, popup_y = event.layerY);
+      $$invalidate(12, popup_name = c_accessor(data[index2]));
+      $$invalidate(13, popup_date = timeFormat("%d %B %Y")(x_accessor(data[index2])));
+      $$invalidate(14, popout_color = hues[groups2.indexOf(c_accessor(data[index2]))]);
       Object.entries(tooltip_accessors).forEach(([key, value_accessor]) => {
-        $$invalidate(17, popup_tooltips[key] = value_accessor(data[index2]), popup_tooltips);
+        $$invalidate(18, popup_tooltips[key] = value_accessor(data[index2]), popup_tooltips);
       });
-      $$invalidate(16, show_popup = true);
+      $$invalidate(17, show_popup = true);
     };
     const mouse_out = () => {
-      $$invalidate(16, show_popup = false);
+      $$invalidate(17, show_popup = false);
     };
-    function g0_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        x_axis = $$value;
-        $$invalidate(8, x_axis);
-      });
+    function lineaxis0_scale_binding(value) {
+      x_scale = value;
+      $$invalidate(9, x_scale), $$invalidate(23, data), $$invalidate(24, x_accessor), $$invalidate(8, margin), $$invalidate(7, width);
     }
-    function g1_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        y_axis = $$value;
-        $$invalidate(9, y_axis);
-      });
+    function lineaxis0_height_binding(value) {
+      height = value;
+      $$invalidate(6, height);
+    }
+    function lineaxis0_width_binding(value) {
+      width = value;
+      $$invalidate(7, width);
+    }
+    function lineaxis0_margin_binding(value) {
+      margin = value;
+      $$invalidate(8, margin);
+    }
+    function lineaxis1_scale_binding(value) {
+      y_scale = value;
+      $$invalidate(10, y_scale), $$invalidate(23, data), $$invalidate(25, y_accessor), $$invalidate(6, height), $$invalidate(8, margin);
+    }
+    function lineaxis1_height_binding(value) {
+      height = value;
+      $$invalidate(6, height);
+    }
+    function lineaxis1_width_binding(value) {
+      width = value;
+      $$invalidate(7, width);
+    }
+    function lineaxis1_margin_binding(value) {
+      margin = value;
+      $$invalidate(8, margin);
     }
     function figure_elementresize_handler() {
       height = this.clientHeight;
@@ -5721,15 +5981,15 @@
     }
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)
-        $$invalidate(21, data = $$props2.data);
+        $$invalidate(23, data = $$props2.data);
       if ("x_accessor" in $$props2)
-        $$invalidate(22, x_accessor = $$props2.x_accessor);
+        $$invalidate(24, x_accessor = $$props2.x_accessor);
       if ("y_accessor" in $$props2)
-        $$invalidate(23, y_accessor = $$props2.y_accessor);
+        $$invalidate(25, y_accessor = $$props2.y_accessor);
       if ("r_accessor" in $$props2)
-        $$invalidate(24, r_accessor = $$props2.r_accessor);
+        $$invalidate(26, r_accessor = $$props2.r_accessor);
       if ("c_accessor" in $$props2)
-        $$invalidate(25, c_accessor = $$props2.c_accessor);
+        $$invalidate(27, c_accessor = $$props2.c_accessor);
       if ("tooltip_accessors" in $$props2)
         $$invalidate(0, tooltip_accessors = $$props2.tooltip_accessors);
       if ("graph_title" in $$props2)
@@ -5740,7 +6000,7 @@
         $$invalidate(3, y_label = $$props2.y_label);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & 35651584) {
+      if ($$self.$$.dirty[0] & 142606336) {
         $:
           $$invalidate(4, groups2 = Array.from(group(data, c_accessor).keys()));
       }
@@ -5752,39 +6012,21 @@
             "seed": "exSTATic!"
           }));
       }
-      if ($$self.$$.dirty[0] & 6291584) {
+      if ($$self.$$.dirty[0] & 25166208) {
         $:
-          $$invalidate(26, x_scale = time().domain(extent(data, x_accessor)).range([margin, width - margin]));
+          $$invalidate(9, x_scale = time().domain(extent(data, x_accessor)).range([margin, width - margin]));
       }
-      if ($$self.$$.dirty[0] & 10485824) {
+      if ($$self.$$.dirty[0] & 41943360) {
         $:
-          $$invalidate(27, y_scale = linear2().domain(extent(data, y_accessor)).range([height - margin, margin]));
+          $$invalidate(10, y_scale = linear2().domain(extent(data, y_accessor)).range([height - margin, margin]));
       }
-      if ($$self.$$.dirty[0] & 18874368) {
+      if ($$self.$$.dirty[0] & 75497472) {
         $:
           $$invalidate(28, r_scale = linear2().domain(extent(data, r_accessor)).range([0, radius]));
       }
-      if ($$self.$$.dirty[0] & 67108864) {
+      if ($$self.$$.dirty[0] & 528483888) {
         $:
-          $$invalidate(29, x_axis_creator = axisBottom(x_scale).tickSizeOuter(0).tickSize(0).tickFormat(timeFormat("%B\n%Y")));
-      }
-      if ($$self.$$.dirty[0] & 134217728) {
-        $:
-          $$invalidate(30, y_axis_creator = axisLeft(y_scale).tickSizeOuter(0).tickSize(0).tickFormat(format(".2s")));
-      }
-      if ($$self.$$.dirty[0] & 536871168) {
-        $:
-          if (x_axis)
-            select_default2(x_axis).call(x_axis_creator).selectAll("text").attr("transform", "translate(0,3)");
-      }
-      if ($$self.$$.dirty[0] & 1073742336) {
-        $:
-          if (y_axis)
-            select_default2(y_axis).call(y_axis_creator).selectAll("text").attr("transform", "translate(-3,0)");
-      }
-      if ($$self.$$.dirty[0] & 534773808) {
-        $:
-          $$invalidate(10, mapped_data = data.map((d, i) => ({
+          $$invalidate(11, mapped_data = data.map((d, i) => ({
             "x": x_scale(x_accessor(d)),
             "y": y_scale(y_accessor(d)),
             "r": r_scale(r_accessor(d)),
@@ -5802,8 +6044,9 @@
       hues,
       height,
       width,
-      x_axis,
-      y_axis,
+      margin,
+      x_scale,
+      y_scale,
       mapped_data,
       popup_name,
       popup_date,
@@ -5812,7 +6055,8 @@
       popup_y,
       show_popup,
       popup_tooltips,
-      margin,
+      x_formatter,
+      y_formatter,
       mouse_over,
       mouse_out,
       data,
@@ -5820,25 +6064,27 @@
       y_accessor,
       r_accessor,
       c_accessor,
-      x_scale,
-      y_scale,
       r_scale,
-      x_axis_creator,
-      y_axis_creator,
-      g0_binding,
-      g1_binding,
+      lineaxis0_scale_binding,
+      lineaxis0_height_binding,
+      lineaxis0_width_binding,
+      lineaxis0_margin_binding,
+      lineaxis1_scale_binding,
+      lineaxis1_height_binding,
+      lineaxis1_width_binding,
+      lineaxis1_margin_binding,
       figure_elementresize_handler
     ];
   }
   var Scatterplot = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance, create_fragment, safe_not_equal, {
-        data: 21,
-        x_accessor: 22,
-        y_accessor: 23,
-        r_accessor: 24,
-        c_accessor: 25,
+      init(this, options, instance2, create_fragment2, safe_not_equal, {
+        data: 23,
+        x_accessor: 24,
+        y_accessor: 25,
+        r_accessor: 26,
+        c_accessor: 27,
         tooltip_accessors: 0,
         graph_title: 1,
         x_label: 2,
@@ -6089,21 +6335,21 @@
   var import_iwanthue2 = __toESM(require_iwanthue());
   function get_each_context2(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[34] = list[i];
+    child_ctx[38] = list[i];
     return child_ctx;
   }
   function get_each_context_12(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[37] = list[i];
-    child_ctx[39] = i;
+    child_ctx[41] = list[i];
+    child_ctx[43] = i;
     return child_ctx;
   }
   function get_each_context_22(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[40] = list[i].x;
-    child_ctx[41] = list[i].y;
-    child_ctx[42] = list[i].c;
-    child_ctx[43] = list[i].i;
+    child_ctx[44] = list[i].x;
+    child_ctx[45] = list[i].y;
+    child_ctx[46] = list[i].c;
+    child_ctx[47] = list[i].i;
     return child_ctx;
   }
   function create_each_block_22(ctx) {
@@ -6117,11 +6363,11 @@
     return {
       c() {
         circle = svg_element("circle");
-        attr(circle, "data-index", circle_data_index_value = ctx[43]);
-        attr(circle, "cx", circle_cx_value = ctx[40]);
-        attr(circle, "cy", circle_cy_value = ctx[41]);
+        attr(circle, "data-index", circle_data_index_value = ctx[47]);
+        attr(circle, "cx", circle_cx_value = ctx[44]);
+        attr(circle, "cy", circle_cy_value = ctx[45]);
         attr(circle, "r", "5");
-        attr(circle, "fill", circle_fill_value = ctx[42]);
+        attr(circle, "fill", circle_fill_value = ctx[46]);
         attr(circle, "fill-opacity", "0.8");
         attr(circle, "class", "z-10");
       },
@@ -6129,23 +6375,23 @@
         insert(target, circle, anchor);
         if (!mounted) {
           dispose = [
-            listen(circle, "mousemove", ctx[20]),
-            listen(circle, "mouseout", ctx[21])
+            listen(circle, "mousemove", ctx[22]),
+            listen(circle, "mouseout", ctx[23])
           ];
           mounted = true;
         }
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 2048 && circle_data_index_value !== (circle_data_index_value = ctx2[43])) {
+        if (dirty[0] & 4096 && circle_data_index_value !== (circle_data_index_value = ctx2[47])) {
           attr(circle, "data-index", circle_data_index_value);
         }
-        if (dirty[0] & 2048 && circle_cx_value !== (circle_cx_value = ctx2[40])) {
+        if (dirty[0] & 4096 && circle_cx_value !== (circle_cx_value = ctx2[44])) {
           attr(circle, "cx", circle_cx_value);
         }
-        if (dirty[0] & 2048 && circle_cy_value !== (circle_cy_value = ctx2[41])) {
+        if (dirty[0] & 4096 && circle_cy_value !== (circle_cy_value = ctx2[45])) {
           attr(circle, "cy", circle_cy_value);
         }
-        if (dirty[0] & 2048 && circle_fill_value !== (circle_fill_value = ctx2[42])) {
+        if (dirty[0] & 4096 && circle_fill_value !== (circle_fill_value = ctx2[46])) {
           attr(circle, "fill", circle_fill_value);
         }
       },
@@ -6162,7 +6408,7 @@
     let div0;
     let t02;
     let p;
-    let t1_value = ctx[37] + "";
+    let t1_value = ctx[41] + "";
     let t12;
     let t2;
     return {
@@ -6174,7 +6420,7 @@
         t12 = text(t1_value);
         t2 = space();
         attr(div0, "class", "z-50 w-3 h-3 rounded-full");
-        set_style(div0, "background-color", ctx[5][ctx[39]]);
+        set_style(div0, "background-color", ctx[5][ctx[43]]);
         attr(p, "class", "text-[#808080]");
         attr(div1, "class", "flex flex-row gap-1 items-center");
       },
@@ -6188,9 +6434,9 @@
       },
       p(ctx2, dirty) {
         if (dirty[0] & 32) {
-          set_style(div0, "background-color", ctx2[5][ctx2[39]]);
+          set_style(div0, "background-color", ctx2[5][ctx2[43]]);
         }
-        if (dirty[0] & 16 && t1_value !== (t1_value = ctx2[37] + ""))
+        if (dirty[0] & 16 && t1_value !== (t1_value = ctx2[41] + ""))
           set_data(t12, t1_value);
       },
       d(detaching) {
@@ -6201,10 +6447,10 @@
   }
   function create_each_block2(ctx) {
     let p;
-    let t0_value = ctx[34] + "";
+    let t0_value = ctx[38] + "";
     let t02;
     let t12;
-    let t2_value = ctx[18][ctx[34]] + "";
+    let t2_value = ctx[19][ctx[38]] + "";
     let t2;
     return {
       c() {
@@ -6220,9 +6466,9 @@
         append(p, t2);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 1 && t0_value !== (t0_value = ctx2[34] + ""))
+        if (dirty[0] & 1 && t0_value !== (t0_value = ctx2[38] + ""))
           set_data(t02, t0_value);
-        if (dirty[0] & 262145 && t2_value !== (t2_value = ctx2[18][ctx2[34]] + ""))
+        if (dirty[0] & 524289 && t2_value !== (t2_value = ctx2[19][ctx2[38]] + ""))
           set_data(t2, t2_value);
       },
       d(detaching) {
@@ -6231,7 +6477,7 @@
       }
     };
   }
-  function create_fragment2(ctx) {
+  function create_fragment3(ctx) {
     let div2;
     let h1;
     let t02;
@@ -6241,10 +6487,16 @@
     let t2;
     let t3;
     let svg;
-    let g0;
-    let g0_transform_value;
-    let g1;
-    let g1_transform_value;
+    let lineaxis0;
+    let updating_scale;
+    let updating_height;
+    let updating_width;
+    let updating_margin;
+    let lineaxis1;
+    let updating_scale_1;
+    let updating_height_1;
+    let updating_width_1;
+    let updating_margin_1;
     let path2;
     let svg_viewBox_value;
     let t4;
@@ -6264,7 +6516,74 @@
     let t11;
     let p3;
     let t122;
-    let each_value_2 = ctx[11];
+    let current;
+    function lineaxis0_scale_binding(value) {
+      ctx[28](value);
+    }
+    function lineaxis0_height_binding(value) {
+      ctx[29](value);
+    }
+    function lineaxis0_width_binding(value) {
+      ctx[30](value);
+    }
+    function lineaxis0_margin_binding(value) {
+      ctx[31](value);
+    }
+    let lineaxis0_props = {
+      position: "bottom",
+      formater: ctx[20]
+    };
+    if (ctx[9] !== void 0) {
+      lineaxis0_props.scale = ctx[9];
+    }
+    if (ctx[6] !== void 0) {
+      lineaxis0_props.height = ctx[6];
+    }
+    if (ctx[7] !== void 0) {
+      lineaxis0_props.width = ctx[7];
+    }
+    if (ctx[8] !== void 0) {
+      lineaxis0_props.margin = ctx[8];
+    }
+    lineaxis0 = new line_axis_default({ props: lineaxis0_props });
+    binding_callbacks.push(() => bind(lineaxis0, "scale", lineaxis0_scale_binding));
+    binding_callbacks.push(() => bind(lineaxis0, "height", lineaxis0_height_binding));
+    binding_callbacks.push(() => bind(lineaxis0, "width", lineaxis0_width_binding));
+    binding_callbacks.push(() => bind(lineaxis0, "margin", lineaxis0_margin_binding));
+    function lineaxis1_scale_binding(value) {
+      ctx[32](value);
+    }
+    function lineaxis1_height_binding(value) {
+      ctx[33](value);
+    }
+    function lineaxis1_width_binding(value) {
+      ctx[34](value);
+    }
+    function lineaxis1_margin_binding(value) {
+      ctx[35](value);
+    }
+    let lineaxis1_props = {
+      position: "left",
+      formater: ctx[21]
+    };
+    if (ctx[10] !== void 0) {
+      lineaxis1_props.scale = ctx[10];
+    }
+    if (ctx[6] !== void 0) {
+      lineaxis1_props.height = ctx[6];
+    }
+    if (ctx[7] !== void 0) {
+      lineaxis1_props.width = ctx[7];
+    }
+    if (ctx[8] !== void 0) {
+      lineaxis1_props.margin = ctx[8];
+    }
+    lineaxis1 = new line_axis_default({ props: lineaxis1_props });
+    binding_callbacks.push(() => bind(lineaxis1, "scale", lineaxis1_scale_binding));
+    binding_callbacks.push(() => bind(lineaxis1, "height", lineaxis1_height_binding));
+    binding_callbacks.push(() => bind(lineaxis1, "width", lineaxis1_width_binding));
+    binding_callbacks.push(() => bind(lineaxis1, "margin", lineaxis1_margin_binding));
+    let each_value_2 = ctx[12];
     let each_blocks_2 = [];
     for (let i = 0; i < each_value_2.length; i += 1) {
       each_blocks_2[i] = create_each_block_22(get_each_context_22(ctx, each_value_2, i));
@@ -6290,8 +6609,8 @@
         t2 = text(ctx[3]);
         t3 = space();
         svg = svg_element("svg");
-        g0 = svg_element("g");
-        g1 = svg_element("g");
+        create_component(lineaxis0.$$.fragment);
+        create_component(lineaxis1.$$.fragment);
         path2 = svg_element("path");
         for (let i = 0; i < each_blocks_2.length; i += 1) {
           each_blocks_2[i].c();
@@ -6304,10 +6623,10 @@
         t5 = space();
         div1 = element("div");
         p1 = element("p");
-        t6 = text(ctx[12]);
+        t6 = text(ctx[13]);
         t7 = space();
         p2 = element("p");
-        t8 = text(ctx[13]);
+        t8 = text(ctx[14]);
         t9 = space();
         br = element("br");
         t10 = space();
@@ -6319,11 +6638,7 @@
         t122 = text(ctx[2]);
         attr(h1, "class", "text-4xl font-semibold text-indigo-400");
         attr(p0, "class", "whitespace-nowrap -rotate-90 text-[#808080]");
-        attr(g0, "color", "grey");
-        attr(g0, "transform", g0_transform_value = "translate(0," + (ctx[6] - ctx[19] / 2) + ")");
-        attr(g1, "color", "grey");
-        attr(g1, "transform", g1_transform_value = "translate(" + ctx[19] / 2 + ",0)");
-        attr(path2, "d", ctx[10]);
+        attr(path2, "d", ctx[11]);
         attr(path2, "class", "fill-transparent");
         set_style(path2, "stroke", "grey");
         attr(svg, "height", "100%");
@@ -6336,12 +6651,12 @@
         attr(p1, "class", "font-semibold");
         attr(p2, "id", "popup_date");
         attr(div1, "id", "popup");
-        attr(div1, "class", div1_class_value = (ctx[17] ? "absolute" : "hidden") + " p-3");
-        set_style(div1, "left", ctx[15] + "px");
-        set_style(div1, "top", ctx[16] + "px");
-        set_style(div1, "background-color", ctx[14]);
+        attr(div1, "class", div1_class_value = (ctx[18] ? "absolute" : "hidden") + " p-3");
+        set_style(div1, "left", ctx[16] + "px");
+        set_style(div1, "top", ctx[17] + "px");
+        set_style(div1, "background-color", ctx[15]);
         attr(figure, "class", "flex flex-row w-full h-full items-center");
-        add_render_callback(() => ctx[32].call(figure));
+        add_render_callback(() => ctx[36].call(figure));
         attr(p3, "class", "text-[#808080]");
         attr(div2, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
@@ -6355,10 +6670,8 @@
         append(p0, t2);
         append(figure, t3);
         append(figure, svg);
-        append(svg, g0);
-        ctx[30](g0);
-        append(svg, g1);
-        ctx[31](g1);
+        mount_component(lineaxis0, svg, null);
+        mount_component(lineaxis1, svg, null);
         append(svg, path2);
         for (let i = 0; i < each_blocks_2.length; i += 1) {
           each_blocks_2[i].m(svg, null);
@@ -6381,24 +6694,66 @@
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].m(div1, null);
         }
-        figure_resize_listener = add_resize_listener(figure, ctx[32].bind(figure));
+        figure_resize_listener = add_resize_listener(figure, ctx[36].bind(figure));
         append(div2, t11);
         append(div2, p3);
         append(p3, t122);
+        current = true;
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 2)
+        if (!current || dirty[0] & 2)
           set_data(t02, ctx2[1]);
-        if (dirty[0] & 8)
+        if (!current || dirty[0] & 8)
           set_data(t2, ctx2[3]);
-        if (dirty[0] & 64 && g0_transform_value !== (g0_transform_value = "translate(0," + (ctx2[6] - ctx2[19] / 2) + ")")) {
-          attr(g0, "transform", g0_transform_value);
+        const lineaxis0_changes = {};
+        if (!updating_scale && dirty[0] & 512) {
+          updating_scale = true;
+          lineaxis0_changes.scale = ctx2[9];
+          add_flush_callback(() => updating_scale = false);
         }
-        if (dirty[0] & 1024) {
-          attr(path2, "d", ctx2[10]);
+        if (!updating_height && dirty[0] & 64) {
+          updating_height = true;
+          lineaxis0_changes.height = ctx2[6];
+          add_flush_callback(() => updating_height = false);
         }
-        if (dirty[0] & 3147776) {
-          each_value_2 = ctx2[11];
+        if (!updating_width && dirty[0] & 128) {
+          updating_width = true;
+          lineaxis0_changes.width = ctx2[7];
+          add_flush_callback(() => updating_width = false);
+        }
+        if (!updating_margin && dirty[0] & 256) {
+          updating_margin = true;
+          lineaxis0_changes.margin = ctx2[8];
+          add_flush_callback(() => updating_margin = false);
+        }
+        lineaxis0.$set(lineaxis0_changes);
+        const lineaxis1_changes = {};
+        if (!updating_scale_1 && dirty[0] & 1024) {
+          updating_scale_1 = true;
+          lineaxis1_changes.scale = ctx2[10];
+          add_flush_callback(() => updating_scale_1 = false);
+        }
+        if (!updating_height_1 && dirty[0] & 64) {
+          updating_height_1 = true;
+          lineaxis1_changes.height = ctx2[6];
+          add_flush_callback(() => updating_height_1 = false);
+        }
+        if (!updating_width_1 && dirty[0] & 128) {
+          updating_width_1 = true;
+          lineaxis1_changes.width = ctx2[7];
+          add_flush_callback(() => updating_width_1 = false);
+        }
+        if (!updating_margin_1 && dirty[0] & 256) {
+          updating_margin_1 = true;
+          lineaxis1_changes.margin = ctx2[8];
+          add_flush_callback(() => updating_margin_1 = false);
+        }
+        lineaxis1.$set(lineaxis1_changes);
+        if (!current || dirty[0] & 2048) {
+          attr(path2, "d", ctx2[11]);
+        }
+        if (dirty[0] & 12587008) {
+          each_value_2 = ctx2[12];
           let i;
           for (i = 0; i < each_value_2.length; i += 1) {
             const child_ctx = get_each_context_22(ctx2, each_value_2, i);
@@ -6415,7 +6770,7 @@
           }
           each_blocks_2.length = each_value_2.length;
         }
-        if (dirty[0] & 192 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[7] + " " + ctx2[6])) {
+        if (!current || dirty[0] & 192 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[7] + " " + ctx2[6])) {
           attr(svg, "viewBox", svg_viewBox_value);
         }
         if (dirty[0] & 48) {
@@ -6436,11 +6791,11 @@
           }
           each_blocks_1.length = each_value_1.length;
         }
-        if (dirty[0] & 4096)
-          set_data(t6, ctx2[12]);
-        if (dirty[0] & 8192)
-          set_data(t8, ctx2[13]);
-        if (dirty[0] & 262145) {
+        if (!current || dirty[0] & 8192)
+          set_data(t6, ctx2[13]);
+        if (!current || dirty[0] & 16384)
+          set_data(t8, ctx2[14]);
+        if (dirty[0] & 524289) {
           each_value = Object.keys(ctx2[0]);
           let i;
           for (i = 0; i < each_value.length; i += 1) {
@@ -6458,28 +6813,38 @@
           }
           each_blocks.length = each_value.length;
         }
-        if (dirty[0] & 131072 && div1_class_value !== (div1_class_value = (ctx2[17] ? "absolute" : "hidden") + " p-3")) {
+        if (!current || dirty[0] & 262144 && div1_class_value !== (div1_class_value = (ctx2[18] ? "absolute" : "hidden") + " p-3")) {
           attr(div1, "class", div1_class_value);
         }
-        if (dirty[0] & 32768) {
-          set_style(div1, "left", ctx2[15] + "px");
+        if (!current || dirty[0] & 65536) {
+          set_style(div1, "left", ctx2[16] + "px");
         }
-        if (dirty[0] & 65536) {
-          set_style(div1, "top", ctx2[16] + "px");
+        if (!current || dirty[0] & 131072) {
+          set_style(div1, "top", ctx2[17] + "px");
         }
-        if (dirty[0] & 16384) {
-          set_style(div1, "background-color", ctx2[14]);
+        if (!current || dirty[0] & 32768) {
+          set_style(div1, "background-color", ctx2[15]);
         }
-        if (dirty[0] & 4)
+        if (!current || dirty[0] & 4)
           set_data(t122, ctx2[2]);
       },
-      i: noop,
-      o: noop,
+      i(local) {
+        if (current)
+          return;
+        transition_in(lineaxis0.$$.fragment, local);
+        transition_in(lineaxis1.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(lineaxis0.$$.fragment, local);
+        transition_out(lineaxis1.$$.fragment, local);
+        current = false;
+      },
       d(detaching) {
         if (detaching)
           detach(div2);
-        ctx[30](null);
-        ctx[31](null);
+        destroy_component(lineaxis0);
+        destroy_component(lineaxis1);
         destroy_each(each_blocks_2, detaching);
         destroy_each(each_blocks_1, detaching);
         destroy_each(each_blocks, detaching);
@@ -6487,7 +6852,7 @@
       }
     };
   }
-  function instance2($$self, $$props, $$invalidate) {
+  function instance3($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { x_accessor } = $$props;
     let { y_accessor } = $$props;
@@ -6501,8 +6866,7 @@
     let margin = 2 * (radius + 10);
     let x_scale, y_scale;
     let line_gen;
-    let x_axis_creator, y_axis_creator;
-    let x_axis, y_axis;
+    const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")];
     let mapped_data;
     let popup_name = "";
     let popup_date = "";
@@ -6510,33 +6874,53 @@
     let [popup_x, popup_y] = [0, margin / 2];
     let show_popup = false;
     let popup_tooltips = {};
-    Object.keys(tooltip_accessors).forEach((key) => $$invalidate(18, popup_tooltips[key] = "", popup_tooltips));
+    Object.keys(tooltip_accessors).forEach((key) => $$invalidate(19, popup_tooltips[key] = "", popup_tooltips));
     const mouse_over = (event) => {
       const index2 = event["target"].dataset.index;
-      $$invalidate(15, popup_x = event.layerX);
-      $$invalidate(16, popup_y = event.layerY);
-      $$invalidate(12, popup_name = c_accessor(data[index2]));
-      $$invalidate(13, popup_date = timeFormat("%d %B %Y")(x_accessor(data[index2])));
-      $$invalidate(14, popout_color = hues[groups2.indexOf(c_accessor(data[index2]))]);
+      $$invalidate(16, popup_x = event.layerX);
+      $$invalidate(17, popup_y = event.layerY);
+      $$invalidate(13, popup_name = c_accessor(data[index2]));
+      $$invalidate(14, popup_date = timeFormat("%d %B %Y")(x_accessor(data[index2])));
+      $$invalidate(15, popout_color = hues[groups2.indexOf(c_accessor(data[index2]))]);
       Object.entries(tooltip_accessors).forEach(([key, value_accessor]) => {
-        $$invalidate(18, popup_tooltips[key] = value_accessor(data[index2]), popup_tooltips);
+        $$invalidate(19, popup_tooltips[key] = value_accessor(data[index2]), popup_tooltips);
       });
-      $$invalidate(17, show_popup = true);
+      $$invalidate(18, show_popup = true);
     };
     const mouse_out = () => {
-      $$invalidate(17, show_popup = false);
+      $$invalidate(18, show_popup = false);
     };
-    function g0_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        x_axis = $$value;
-        $$invalidate(8, x_axis);
-      });
+    function lineaxis0_scale_binding(value) {
+      x_scale = value;
+      $$invalidate(9, x_scale), $$invalidate(24, data), $$invalidate(25, x_accessor), $$invalidate(8, margin), $$invalidate(7, width);
     }
-    function g1_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        y_axis = $$value;
-        $$invalidate(9, y_axis);
-      });
+    function lineaxis0_height_binding(value) {
+      height = value;
+      $$invalidate(6, height);
+    }
+    function lineaxis0_width_binding(value) {
+      width = value;
+      $$invalidate(7, width);
+    }
+    function lineaxis0_margin_binding(value) {
+      margin = value;
+      $$invalidate(8, margin);
+    }
+    function lineaxis1_scale_binding(value) {
+      y_scale = value;
+      $$invalidate(10, y_scale), $$invalidate(24, data), $$invalidate(26, y_accessor), $$invalidate(6, height), $$invalidate(8, margin);
+    }
+    function lineaxis1_height_binding(value) {
+      height = value;
+      $$invalidate(6, height);
+    }
+    function lineaxis1_width_binding(value) {
+      width = value;
+      $$invalidate(7, width);
+    }
+    function lineaxis1_margin_binding(value) {
+      margin = value;
+      $$invalidate(8, margin);
     }
     function figure_elementresize_handler() {
       height = this.clientHeight;
@@ -6546,13 +6930,13 @@
     }
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)
-        $$invalidate(22, data = $$props2.data);
+        $$invalidate(24, data = $$props2.data);
       if ("x_accessor" in $$props2)
-        $$invalidate(23, x_accessor = $$props2.x_accessor);
+        $$invalidate(25, x_accessor = $$props2.x_accessor);
       if ("y_accessor" in $$props2)
-        $$invalidate(24, y_accessor = $$props2.y_accessor);
+        $$invalidate(26, y_accessor = $$props2.y_accessor);
       if ("c_accessor" in $$props2)
-        $$invalidate(25, c_accessor = $$props2.c_accessor);
+        $$invalidate(27, c_accessor = $$props2.c_accessor);
       if ("tooltip_accessors" in $$props2)
         $$invalidate(0, tooltip_accessors = $$props2.tooltip_accessors);
       if ("graph_title" in $$props2)
@@ -6563,7 +6947,7 @@
         $$invalidate(3, y_label = $$props2.y_label);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & 37748736) {
+      if ($$self.$$.dirty[0] & 150994944) {
         $:
           $$invalidate(4, groups2 = Array.from(group(data, c_accessor).keys()));
       }
@@ -6575,39 +6959,21 @@
             "seed": "exSTATic!"
           }));
       }
-      if ($$self.$$.dirty[0] & 12583040) {
+      if ($$self.$$.dirty[0] & 50332032) {
         $:
-          $$invalidate(26, x_scale = time().domain(extent(data, x_accessor)).range([margin, width - margin]));
+          $$invalidate(9, x_scale = time().domain(extent(data, x_accessor)).range([margin, width - margin]));
       }
-      if ($$self.$$.dirty[0] & 20971584) {
+      if ($$self.$$.dirty[0] & 83886400) {
         $:
-          $$invalidate(27, y_scale = linear2().domain(extent(data, y_accessor)).range([height - margin, margin]));
+          $$invalidate(10, y_scale = linear2().domain(extent(data, y_accessor)).range([height - margin, margin]));
       }
-      if ($$self.$$.dirty[0] & 230686720) {
+      if ($$self.$$.dirty[0] & 117442048) {
         $:
-          $$invalidate(10, line_gen = line_default().curve(natural_default).x((d) => x_scale(x_accessor(d))).y((d) => y_scale(y_accessor(d)))(data));
+          $$invalidate(11, line_gen = line_default().curve(natural_default).x((d) => x_scale(x_accessor(d))).y((d) => y_scale(y_accessor(d)))(data));
       }
-      if ($$self.$$.dirty[0] & 67108864) {
+      if ($$self.$$.dirty[0] & 251659824) {
         $:
-          $$invalidate(28, x_axis_creator = axisBottom(x_scale).tickSizeOuter(0).tickSize(0).tickFormat(timeFormat("%B\n%Y")));
-      }
-      if ($$self.$$.dirty[0] & 134217728) {
-        $:
-          $$invalidate(29, y_axis_creator = axisLeft(y_scale).tickSizeOuter(0).tickSize(0).tickFormat(format(".2s")));
-      }
-      if ($$self.$$.dirty[0] & 268435712) {
-        $:
-          if (x_axis)
-            select_default2(x_axis).call(x_axis_creator).selectAll("text").attr("transform", "translate(0,3)");
-      }
-      if ($$self.$$.dirty[0] & 536871424) {
-        $:
-          if (y_axis)
-            select_default2(y_axis).call(y_axis_creator).selectAll("text").attr("transform", "translate(-3,0)");
-      }
-      if ($$self.$$.dirty[0] & 264241200) {
-        $:
-          $$invalidate(11, mapped_data = data.map((d, i) => ({
+          $$invalidate(12, mapped_data = data.map((d, i) => ({
             "x": x_scale(x_accessor(d)),
             "y": y_scale(y_accessor(d)),
             "c": hues[groups2.indexOf(c_accessor(d))],
@@ -6624,8 +6990,9 @@
       hues,
       height,
       width,
-      x_axis,
-      y_axis,
+      margin,
+      x_scale,
+      y_scale,
       line_gen,
       mapped_data,
       popup_name,
@@ -6635,30 +7002,33 @@
       popup_y,
       show_popup,
       popup_tooltips,
-      margin,
+      x_formatter,
+      y_formatter,
       mouse_over,
       mouse_out,
       data,
       x_accessor,
       y_accessor,
       c_accessor,
-      x_scale,
-      y_scale,
-      x_axis_creator,
-      y_axis_creator,
-      g0_binding,
-      g1_binding,
+      lineaxis0_scale_binding,
+      lineaxis0_height_binding,
+      lineaxis0_width_binding,
+      lineaxis0_margin_binding,
+      lineaxis1_scale_binding,
+      lineaxis1_height_binding,
+      lineaxis1_width_binding,
+      lineaxis1_margin_binding,
       figure_elementresize_handler
     ];
   }
   var Lineplot = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance2, create_fragment2, safe_not_equal, {
-        data: 22,
-        x_accessor: 23,
-        y_accessor: 24,
-        c_accessor: 25,
+      init(this, options, instance3, create_fragment3, safe_not_equal, {
+        data: 24,
+        x_accessor: 25,
+        y_accessor: 26,
+        c_accessor: 27,
         tooltip_accessors: 0,
         graph_title: 1,
         x_label: 2,
@@ -6877,7 +7247,7 @@
   }
 
   // src/stats/stats.svelte
-  function create_fragment3(ctx) {
+  function create_fragment4(ctx) {
     let div;
     let scatterplot0;
     let t02;
@@ -7010,7 +7380,7 @@
   var func_7 = (d) => d.name;
   var func_10 = (d) => d.name;
   var func_13 = (d) => d.name;
-  function instance3($$self, $$props, $$invalidate) {
+  function instance4($$self, $$props, $$invalidate) {
     const SECS_TO_HRS = 60 * 60;
     let { data } = $$props;
     const uuid_groups = group(data, (d) => d.uuid);
@@ -7051,7 +7421,7 @@
   var Stats = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance3, create_fragment3, safe_not_equal, { data: 0 });
+      init(this, options, instance4, create_fragment4, safe_not_equal, { data: 0 });
     }
   };
   var stats_default = Stats;

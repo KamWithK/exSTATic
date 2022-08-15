@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { extent, group } from "d3-array";
-    import { select } from "d3-selection"
+    import LineAxis from "./line_axis.svelte"
+
+    import { extent, group } from "d3-array"
     import { format } from "d3-format"
     import { timeFormat } from "d3-time-format"
     import { scaleLinear, scaleTime } from "d3-scale"
-    import { axisLeft, axisBottom } from "d3-axis"
     import { line, curveNatural } from "d3-shape"
     import iwanthue from "iwanthue"
 
@@ -29,7 +29,7 @@
 
     let [height, width, radius] = [50, 100, 60]
     let margin = 2 * (radius + 10)
-    
+
     // Map data (domains) onto physical scales (ranges)
     let x_scale, y_scale
     $: x_scale = scaleTime()
@@ -45,19 +45,7 @@
         .y(d => y_scale(y_accessor(d)))
         (data)
 
-    let x_axis_creator, y_axis_creator
-    $: x_axis_creator = axisBottom(x_scale)
-        .tickSizeOuter(0).tickSize(0)
-        .tickFormat(timeFormat("%B\n%Y"))
-    $: y_axis_creator = axisLeft(y_scale)
-        .tickSizeOuter(0).tickSize(0)
-        .tickFormat(format(".2s"))
-
-    let x_axis, y_axis
-    $: if (x_axis) select(x_axis).call(x_axis_creator)
-        .selectAll("text").attr("transform", "translate(0,3)")
-    $: if (y_axis) select(y_axis).call(y_axis_creator)
-        .selectAll("text").attr("transform", "translate(-3,0)")
+    const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")]
 
     let mapped_data
     $: mapped_data = data.map((d, i) => ({
@@ -78,7 +66,7 @@
 
     const mouse_over = event => {
         const index = event["target"].dataset.index
-        
+
         popup_x = event.layerX
         popup_y = event.layerY
 
@@ -104,8 +92,8 @@
         <p class="whitespace-nowrap -rotate-90 text-[#808080]">{y_label}</p>
 
         <svg height="100%" width="100%" style="resize: both;" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">
-            <g color="grey" bind:this={x_axis} transform="translate(0,{height - margin / 2})"/>
-            <g color="grey" bind:this={y_axis} transform="translate({margin / 2},0)"/>
+            <LineAxis bind:scale={x_scale} bind:height={height} bind:width={width} bind:margin={margin} position="bottom" formater={x_formatter}/>
+            <LineAxis bind:scale={y_scale} bind:height={height} bind:width={width} bind:margin={margin} position="left" formater={y_formatter}/>
 
             <path d={line_gen} class="fill-transparent" style="stroke: grey;"/>
 
@@ -114,7 +102,7 @@
                 <circle data-index={i} cx={x} cy={y} r=5 fill={c} fill-opacity=0.8 class="z-10" on:mousemove={mouse_over} on:mouseout={mouse_out}/>
             {/each}
         </svg>
-    
+
         <div class="flex flex-col">
             {#each groups as group, index}
                 <div class="flex flex-row gap-1 items-center">

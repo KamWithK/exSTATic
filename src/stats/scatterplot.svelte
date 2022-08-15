@@ -1,13 +1,13 @@
 <script lang="ts">
     import LineAxis from "./line_axis.svelte"
     import Circles from "./circles.svelte"
+    import Line from "./line.svelte"
     import Popup from "./popup.svelte"
 
     import { extent, group } from "d3-array"
     import { format } from "d3-format"
     import { timeFormat } from "d3-time-format"
     import { scaleLinear, scaleTime } from "d3-scale"
-    import { line, curveMonotoneX } from "d3-shape"
     import iwanthue from "iwanthue"
 
     export let data
@@ -60,15 +60,6 @@
         "i": i
     }))
 
-    const make_line = (x_scale, y_scale, x_accessor, y_accessor, data) => line()
-        .curve(curveMonotoneX)
-        .x(d => x_scale(x_accessor(d)))
-        .y(d => y_scale(y_accessor(d)))
-        (data)
-
-    let line_path
-    $: if (draw_line) line_path = make_line(x_scale, y_scale, x_accessor, y_accessor, data)
-
     let mouse_move, mouse_out
 </script>
 
@@ -85,7 +76,7 @@
             <Circles {mapped_data} {mouse_move} {mouse_out}/>
 
             {#if draw_line}
-                <path d={line_path} class="fill-transparent" style="stroke: grey;"/>
+                <Line bind:data bind:x_accessor bind:y_accessor bind:x_scale bind:y_scale/>
             {/if}
         </svg>
 

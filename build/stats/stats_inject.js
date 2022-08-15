@@ -1877,6 +1877,19 @@
   }
   var outroing = /* @__PURE__ */ new Set();
   var outros;
+  function group_outros() {
+    outros = {
+      r: 0,
+      c: [],
+      p: outros
+    };
+  }
+  function check_outros() {
+    if (!outros.r) {
+      run_all(outros.c);
+    }
+    outros = outros.p;
+  }
   function transition_in(block, local) {
     if (block && block.i) {
       outroing.delete(block);
@@ -1945,7 +1958,7 @@
     }
     component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
   }
-  function init(component, options, instance6, create_fragment6, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance7, create_fragment7, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -1968,7 +1981,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance6 ? instance6(component, options.props || {}, (i, ret, ...rest) => {
+    $$.ctx = instance7 ? instance7(component, options.props || {}, (i, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
         if (!$$.skip_bound && $$.bound[i])
@@ -1981,7 +1994,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment6 ? create_fragment6($$.ctx) : false;
+    $$.fragment = create_fragment7 ? create_fragment7($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -3256,6 +3269,347 @@
   };
   var circles_default = Circles;
 
+  // node_modules/d3-path/src/path.js
+  var pi = Math.PI;
+  var tau = 2 * pi;
+  var epsilon2 = 1e-6;
+  var tauEpsilon = tau - epsilon2;
+  function Path() {
+    this._x0 = this._y0 = this._x1 = this._y1 = null;
+    this._ = "";
+  }
+  function path() {
+    return new Path();
+  }
+  Path.prototype = path.prototype = {
+    constructor: Path,
+    moveTo: function(x2, y2) {
+      this._ += "M" + (this._x0 = this._x1 = +x2) + "," + (this._y0 = this._y1 = +y2);
+    },
+    closePath: function() {
+      if (this._x1 !== null) {
+        this._x1 = this._x0, this._y1 = this._y0;
+        this._ += "Z";
+      }
+    },
+    lineTo: function(x2, y2) {
+      this._ += "L" + (this._x1 = +x2) + "," + (this._y1 = +y2);
+    },
+    quadraticCurveTo: function(x1, y1, x2, y2) {
+      this._ += "Q" + +x1 + "," + +y1 + "," + (this._x1 = +x2) + "," + (this._y1 = +y2);
+    },
+    bezierCurveTo: function(x1, y1, x2, y2, x3, y3) {
+      this._ += "C" + +x1 + "," + +y1 + "," + +x2 + "," + +y2 + "," + (this._x1 = +x3) + "," + (this._y1 = +y3);
+    },
+    arcTo: function(x1, y1, x2, y2, r) {
+      x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
+      var x0 = this._x1, y0 = this._y1, x21 = x2 - x1, y21 = y2 - y1, x01 = x0 - x1, y01 = y0 - y1, l01_2 = x01 * x01 + y01 * y01;
+      if (r < 0)
+        throw new Error("negative radius: " + r);
+      if (this._x1 === null) {
+        this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1);
+      } else if (!(l01_2 > epsilon2))
+        ;
+      else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon2) || !r) {
+        this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1);
+      } else {
+        var x20 = x2 - x0, y20 = y2 - y0, l21_2 = x21 * x21 + y21 * y21, l20_2 = x20 * x20 + y20 * y20, l21 = Math.sqrt(l21_2), l01 = Math.sqrt(l01_2), l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2), t01 = l / l01, t21 = l / l21;
+        if (Math.abs(t01 - 1) > epsilon2) {
+          this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01);
+        }
+        this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
+      }
+    },
+    arc: function(x2, y2, r, a0, a1, ccw) {
+      x2 = +x2, y2 = +y2, r = +r, ccw = !!ccw;
+      var dx = r * Math.cos(a0), dy = r * Math.sin(a0), x0 = x2 + dx, y0 = y2 + dy, cw = 1 ^ ccw, da = ccw ? a0 - a1 : a1 - a0;
+      if (r < 0)
+        throw new Error("negative radius: " + r);
+      if (this._x1 === null) {
+        this._ += "M" + x0 + "," + y0;
+      } else if (Math.abs(this._x1 - x0) > epsilon2 || Math.abs(this._y1 - y0) > epsilon2) {
+        this._ += "L" + x0 + "," + y0;
+      }
+      if (!r)
+        return;
+      if (da < 0)
+        da = da % tau + tau;
+      if (da > tauEpsilon) {
+        this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x2 - dx) + "," + (y2 - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0);
+      } else if (da > epsilon2) {
+        this._ += "A" + r + "," + r + ",0," + +(da >= pi) + "," + cw + "," + (this._x1 = x2 + r * Math.cos(a1)) + "," + (this._y1 = y2 + r * Math.sin(a1));
+      }
+    },
+    rect: function(x2, y2, w, h) {
+      this._ += "M" + (this._x0 = this._x1 = +x2) + "," + (this._y0 = this._y1 = +y2) + "h" + +w + "v" + +h + "h" + -w + "Z";
+    },
+    toString: function() {
+      return this._;
+    }
+  };
+  var path_default = path;
+
+  // node_modules/d3-shape/src/constant.js
+  function constant_default2(x2) {
+    return function constant() {
+      return x2;
+    };
+  }
+
+  // node_modules/d3-shape/src/array.js
+  var slice = Array.prototype.slice;
+  function array_default(x2) {
+    return typeof x2 === "object" && "length" in x2 ? x2 : Array.from(x2);
+  }
+
+  // node_modules/d3-shape/src/curve/linear.js
+  function Linear(context) {
+    this._context = context;
+  }
+  Linear.prototype = {
+    areaStart: function() {
+      this._line = 0;
+    },
+    areaEnd: function() {
+      this._line = NaN;
+    },
+    lineStart: function() {
+      this._point = 0;
+    },
+    lineEnd: function() {
+      if (this._line || this._line !== 0 && this._point === 1)
+        this._context.closePath();
+      this._line = 1 - this._line;
+    },
+    point: function(x2, y2) {
+      x2 = +x2, y2 = +y2;
+      switch (this._point) {
+        case 0:
+          this._point = 1;
+          this._line ? this._context.lineTo(x2, y2) : this._context.moveTo(x2, y2);
+          break;
+        case 1:
+          this._point = 2;
+        default:
+          this._context.lineTo(x2, y2);
+          break;
+      }
+    }
+  };
+  function linear_default(context) {
+    return new Linear(context);
+  }
+
+  // node_modules/d3-shape/src/point.js
+  function x(p) {
+    return p[0];
+  }
+  function y(p) {
+    return p[1];
+  }
+
+  // node_modules/d3-shape/src/line.js
+  function line_default(x2, y2) {
+    var defined = constant_default2(true), context = null, curve = linear_default, output = null;
+    x2 = typeof x2 === "function" ? x2 : x2 === void 0 ? x : constant_default2(x2);
+    y2 = typeof y2 === "function" ? y2 : y2 === void 0 ? y : constant_default2(y2);
+    function line(data) {
+      var i, n = (data = array_default(data)).length, d, defined0 = false, buffer;
+      if (context == null)
+        output = curve(buffer = path_default());
+      for (i = 0; i <= n; ++i) {
+        if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+          if (defined0 = !defined0)
+            output.lineStart();
+          else
+            output.lineEnd();
+        }
+        if (defined0)
+          output.point(+x2(d, i, data), +y2(d, i, data));
+      }
+      if (buffer)
+        return output = null, buffer + "" || null;
+    }
+    line.x = function(_) {
+      return arguments.length ? (x2 = typeof _ === "function" ? _ : constant_default2(+_), line) : x2;
+    };
+    line.y = function(_) {
+      return arguments.length ? (y2 = typeof _ === "function" ? _ : constant_default2(+_), line) : y2;
+    };
+    line.defined = function(_) {
+      return arguments.length ? (defined = typeof _ === "function" ? _ : constant_default2(!!_), line) : defined;
+    };
+    line.curve = function(_) {
+      return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
+    };
+    line.context = function(_) {
+      return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
+    };
+    return line;
+  }
+
+  // node_modules/d3-shape/src/curve/monotone.js
+  function sign(x2) {
+    return x2 < 0 ? -1 : 1;
+  }
+  function slope3(that, x2, y2) {
+    var h0 = that._x1 - that._x0, h1 = x2 - that._x1, s0 = (that._y1 - that._y0) / (h0 || h1 < 0 && -0), s1 = (y2 - that._y1) / (h1 || h0 < 0 && -0), p = (s0 * h1 + s1 * h0) / (h0 + h1);
+    return (sign(s0) + sign(s1)) * Math.min(Math.abs(s0), Math.abs(s1), 0.5 * Math.abs(p)) || 0;
+  }
+  function slope2(that, t) {
+    var h = that._x1 - that._x0;
+    return h ? (3 * (that._y1 - that._y0) / h - t) / 2 : t;
+  }
+  function point(that, t02, t12) {
+    var x0 = that._x0, y0 = that._y0, x1 = that._x1, y1 = that._y1, dx = (x1 - x0) / 3;
+    that._context.bezierCurveTo(x0 + dx, y0 + dx * t02, x1 - dx, y1 - dx * t12, x1, y1);
+  }
+  function MonotoneX(context) {
+    this._context = context;
+  }
+  MonotoneX.prototype = {
+    areaStart: function() {
+      this._line = 0;
+    },
+    areaEnd: function() {
+      this._line = NaN;
+    },
+    lineStart: function() {
+      this._x0 = this._x1 = this._y0 = this._y1 = this._t0 = NaN;
+      this._point = 0;
+    },
+    lineEnd: function() {
+      switch (this._point) {
+        case 2:
+          this._context.lineTo(this._x1, this._y1);
+          break;
+        case 3:
+          point(this, this._t0, slope2(this, this._t0));
+          break;
+      }
+      if (this._line || this._line !== 0 && this._point === 1)
+        this._context.closePath();
+      this._line = 1 - this._line;
+    },
+    point: function(x2, y2) {
+      var t12 = NaN;
+      x2 = +x2, y2 = +y2;
+      if (x2 === this._x1 && y2 === this._y1)
+        return;
+      switch (this._point) {
+        case 0:
+          this._point = 1;
+          this._line ? this._context.lineTo(x2, y2) : this._context.moveTo(x2, y2);
+          break;
+        case 1:
+          this._point = 2;
+          break;
+        case 2:
+          this._point = 3;
+          point(this, slope2(this, t12 = slope3(this, x2, y2)), t12);
+          break;
+        default:
+          point(this, this._t0, t12 = slope3(this, x2, y2));
+          break;
+      }
+      this._x0 = this._x1, this._x1 = x2;
+      this._y0 = this._y1, this._y1 = y2;
+      this._t0 = t12;
+    }
+  };
+  function MonotoneY(context) {
+    this._context = new ReflectContext(context);
+  }
+  (MonotoneY.prototype = Object.create(MonotoneX.prototype)).point = function(x2, y2) {
+    MonotoneX.prototype.point.call(this, y2, x2);
+  };
+  function ReflectContext(context) {
+    this._context = context;
+  }
+  ReflectContext.prototype = {
+    moveTo: function(x2, y2) {
+      this._context.moveTo(y2, x2);
+    },
+    closePath: function() {
+      this._context.closePath();
+    },
+    lineTo: function(x2, y2) {
+      this._context.lineTo(y2, x2);
+    },
+    bezierCurveTo: function(x1, y1, x2, y2, x3, y3) {
+      this._context.bezierCurveTo(y1, x1, y2, x2, y3, x3);
+    }
+  };
+  function monotoneX(context) {
+    return new MonotoneX(context);
+  }
+
+  // src/stats/line.svelte
+  function create_fragment3(ctx) {
+    let path2;
+    return {
+      c() {
+        path2 = svg_element("path");
+        attr(path2, "d", ctx[0]);
+        attr(path2, "class", "fill-transparent");
+        set_style(path2, "stroke", "grey");
+      },
+      m(target, anchor) {
+        insert(target, path2, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 1) {
+          attr(path2, "d", ctx2[0]);
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(path2);
+      }
+    };
+  }
+  function instance3($$self, $$props, $$invalidate) {
+    let { data } = $$props;
+    let { x_accessor, y_accessor } = $$props;
+    let { x_scale, y_scale } = $$props;
+    const make_line = (x_accessor2, y_accessor2, x_scale2, y_scale2, data2) => line_default().curve(monotoneX).x((d) => x_scale2(x_accessor2(d))).y((d) => y_scale2(y_accessor2(d)))(data2);
+    let line_path;
+    $$self.$$set = ($$props2) => {
+      if ("data" in $$props2)
+        $$invalidate(1, data = $$props2.data);
+      if ("x_accessor" in $$props2)
+        $$invalidate(2, x_accessor = $$props2.x_accessor);
+      if ("y_accessor" in $$props2)
+        $$invalidate(3, y_accessor = $$props2.y_accessor);
+      if ("x_scale" in $$props2)
+        $$invalidate(4, x_scale = $$props2.x_scale);
+      if ("y_scale" in $$props2)
+        $$invalidate(5, y_scale = $$props2.y_scale);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 62) {
+        $:
+          $$invalidate(0, line_path = make_line(x_accessor, y_accessor, x_scale, y_scale, data));
+      }
+    };
+    return [line_path, data, x_accessor, y_accessor, x_scale, y_scale];
+  }
+  var Line = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance3, create_fragment3, safe_not_equal, {
+        data: 1,
+        x_accessor: 2,
+        y_accessor: 3,
+        x_scale: 4,
+        y_scale: 5
+      });
+    }
+  };
+  var line_default2 = Line;
+
   // node_modules/d3-time/src/interval.js
   var t0 = new Date();
   var t1 = new Date();
@@ -4491,7 +4845,7 @@
       }
     };
   }
-  function create_fragment3(ctx) {
+  function create_fragment4(ctx) {
     let div;
     let p0;
     let t02;
@@ -4589,7 +4943,7 @@
       }
     };
   }
-  function instance3($$self, $$props, $$invalidate) {
+  function instance4($$self, $$props, $$invalidate) {
     let show_popup = false;
     let [popup_x, popup_y] = [0, 0];
     let [popup_name, popup_date, popout_color] = ["", "", ""];
@@ -4647,7 +5001,7 @@
   var Popup = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance3, create_fragment3, safe_not_equal, {
+      init(this, options, instance4, create_fragment4, safe_not_equal, {
         data: 8,
         groups: 9,
         hues: 10,
@@ -5318,7 +5672,7 @@
   }
 
   // node_modules/d3-interpolate/src/constant.js
-  var constant_default2 = (x2) => () => x2;
+  var constant_default3 = (x2) => () => x2;
 
   // node_modules/d3-interpolate/src/color.js
   function linear(a, d) {
@@ -5333,12 +5687,12 @@
   }
   function gamma(y2) {
     return (y2 = +y2) === 1 ? nogamma : function(a, b) {
-      return b - a ? exponential(a, b, y2) : constant_default2(isNaN(a) ? b : a);
+      return b - a ? exponential(a, b, y2) : constant_default3(isNaN(a) ? b : a);
     };
   }
   function nogamma(a, b) {
     var d = b - a;
-    return d ? linear(a, d) : constant_default2(isNaN(a) ? b : a);
+    return d ? linear(a, d) : constant_default3(isNaN(a) ? b : a);
   }
 
   // node_modules/d3-interpolate/src/rgb.js
@@ -5498,7 +5852,7 @@
   // node_modules/d3-interpolate/src/value.js
   function value_default(a, b) {
     var t = typeof b, c;
-    return b == null || t === "boolean" ? constant_default2(b) : (t === "number" ? number_default : t === "string" ? (c = color(b)) ? (b = c, rgb_default) : string_default : b instanceof color ? rgb_default : b instanceof Date ? date_default : isNumberArray(b) ? numberArray_default : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object_default : number_default)(a, b);
+    return b == null || t === "boolean" ? constant_default3(b) : (t === "number" ? number_default : t === "string" ? (c = color(b)) ? (b = c, rgb_default) : string_default : b instanceof color ? rgb_default : b instanceof Date ? date_default : isNumberArray(b) ? numberArray_default : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object_default : number_default)(a, b);
   }
 
   // node_modules/d3-interpolate/src/round.js
@@ -5749,309 +6103,108 @@
     return initRange.apply(calendar(timeTicks, timeTickInterval, year_default, month_default, sunday, day_default, hour_default, minute_default, second_default, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
   }
 
-  // node_modules/d3-path/src/path.js
-  var pi = Math.PI;
-  var tau = 2 * pi;
-  var epsilon2 = 1e-6;
-  var tauEpsilon = tau - epsilon2;
-  function Path() {
-    this._x0 = this._y0 = this._x1 = this._y1 = null;
-    this._ = "";
-  }
-  function path() {
-    return new Path();
-  }
-  Path.prototype = path.prototype = {
-    constructor: Path,
-    moveTo: function(x2, y2) {
-      this._ += "M" + (this._x0 = this._x1 = +x2) + "," + (this._y0 = this._y1 = +y2);
-    },
-    closePath: function() {
-      if (this._x1 !== null) {
-        this._x1 = this._x0, this._y1 = this._y0;
-        this._ += "Z";
-      }
-    },
-    lineTo: function(x2, y2) {
-      this._ += "L" + (this._x1 = +x2) + "," + (this._y1 = +y2);
-    },
-    quadraticCurveTo: function(x1, y1, x2, y2) {
-      this._ += "Q" + +x1 + "," + +y1 + "," + (this._x1 = +x2) + "," + (this._y1 = +y2);
-    },
-    bezierCurveTo: function(x1, y1, x2, y2, x3, y3) {
-      this._ += "C" + +x1 + "," + +y1 + "," + +x2 + "," + +y2 + "," + (this._x1 = +x3) + "," + (this._y1 = +y3);
-    },
-    arcTo: function(x1, y1, x2, y2, r) {
-      x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
-      var x0 = this._x1, y0 = this._y1, x21 = x2 - x1, y21 = y2 - y1, x01 = x0 - x1, y01 = y0 - y1, l01_2 = x01 * x01 + y01 * y01;
-      if (r < 0)
-        throw new Error("negative radius: " + r);
-      if (this._x1 === null) {
-        this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1);
-      } else if (!(l01_2 > epsilon2))
-        ;
-      else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon2) || !r) {
-        this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1);
-      } else {
-        var x20 = x2 - x0, y20 = y2 - y0, l21_2 = x21 * x21 + y21 * y21, l20_2 = x20 * x20 + y20 * y20, l21 = Math.sqrt(l21_2), l01 = Math.sqrt(l01_2), l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2), t01 = l / l01, t21 = l / l21;
-        if (Math.abs(t01 - 1) > epsilon2) {
-          this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01);
-        }
-        this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
-      }
-    },
-    arc: function(x2, y2, r, a0, a1, ccw) {
-      x2 = +x2, y2 = +y2, r = +r, ccw = !!ccw;
-      var dx = r * Math.cos(a0), dy = r * Math.sin(a0), x0 = x2 + dx, y0 = y2 + dy, cw = 1 ^ ccw, da = ccw ? a0 - a1 : a1 - a0;
-      if (r < 0)
-        throw new Error("negative radius: " + r);
-      if (this._x1 === null) {
-        this._ += "M" + x0 + "," + y0;
-      } else if (Math.abs(this._x1 - x0) > epsilon2 || Math.abs(this._y1 - y0) > epsilon2) {
-        this._ += "L" + x0 + "," + y0;
-      }
-      if (!r)
-        return;
-      if (da < 0)
-        da = da % tau + tau;
-      if (da > tauEpsilon) {
-        this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x2 - dx) + "," + (y2 - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0);
-      } else if (da > epsilon2) {
-        this._ += "A" + r + "," + r + ",0," + +(da >= pi) + "," + cw + "," + (this._x1 = x2 + r * Math.cos(a1)) + "," + (this._y1 = y2 + r * Math.sin(a1));
-      }
-    },
-    rect: function(x2, y2, w, h) {
-      this._ += "M" + (this._x0 = this._x1 = +x2) + "," + (this._y0 = this._y1 = +y2) + "h" + +w + "v" + +h + "h" + -w + "Z";
-    },
-    toString: function() {
-      return this._;
-    }
-  };
-  var path_default = path;
-
-  // node_modules/d3-shape/src/constant.js
-  function constant_default3(x2) {
-    return function constant() {
-      return x2;
-    };
-  }
-
-  // node_modules/d3-shape/src/array.js
-  var slice = Array.prototype.slice;
-  function array_default(x2) {
-    return typeof x2 === "object" && "length" in x2 ? x2 : Array.from(x2);
-  }
-
-  // node_modules/d3-shape/src/curve/linear.js
-  function Linear(context) {
-    this._context = context;
-  }
-  Linear.prototype = {
-    areaStart: function() {
-      this._line = 0;
-    },
-    areaEnd: function() {
-      this._line = NaN;
-    },
-    lineStart: function() {
-      this._point = 0;
-    },
-    lineEnd: function() {
-      if (this._line || this._line !== 0 && this._point === 1)
-        this._context.closePath();
-      this._line = 1 - this._line;
-    },
-    point: function(x2, y2) {
-      x2 = +x2, y2 = +y2;
-      switch (this._point) {
-        case 0:
-          this._point = 1;
-          this._line ? this._context.lineTo(x2, y2) : this._context.moveTo(x2, y2);
-          break;
-        case 1:
-          this._point = 2;
-        default:
-          this._context.lineTo(x2, y2);
-          break;
-      }
-    }
-  };
-  function linear_default(context) {
-    return new Linear(context);
-  }
-
-  // node_modules/d3-shape/src/point.js
-  function x(p) {
-    return p[0];
-  }
-  function y(p) {
-    return p[1];
-  }
-
-  // node_modules/d3-shape/src/line.js
-  function line_default(x2, y2) {
-    var defined = constant_default3(true), context = null, curve = linear_default, output = null;
-    x2 = typeof x2 === "function" ? x2 : x2 === void 0 ? x : constant_default3(x2);
-    y2 = typeof y2 === "function" ? y2 : y2 === void 0 ? y : constant_default3(y2);
-    function line(data) {
-      var i, n = (data = array_default(data)).length, d, defined0 = false, buffer;
-      if (context == null)
-        output = curve(buffer = path_default());
-      for (i = 0; i <= n; ++i) {
-        if (!(i < n && defined(d = data[i], i, data)) === defined0) {
-          if (defined0 = !defined0)
-            output.lineStart();
-          else
-            output.lineEnd();
-        }
-        if (defined0)
-          output.point(+x2(d, i, data), +y2(d, i, data));
-      }
-      if (buffer)
-        return output = null, buffer + "" || null;
-    }
-    line.x = function(_) {
-      return arguments.length ? (x2 = typeof _ === "function" ? _ : constant_default3(+_), line) : x2;
-    };
-    line.y = function(_) {
-      return arguments.length ? (y2 = typeof _ === "function" ? _ : constant_default3(+_), line) : y2;
-    };
-    line.defined = function(_) {
-      return arguments.length ? (defined = typeof _ === "function" ? _ : constant_default3(!!_), line) : defined;
-    };
-    line.curve = function(_) {
-      return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
-    };
-    line.context = function(_) {
-      return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
-    };
-    return line;
-  }
-
-  // node_modules/d3-shape/src/curve/monotone.js
-  function sign(x2) {
-    return x2 < 0 ? -1 : 1;
-  }
-  function slope3(that, x2, y2) {
-    var h0 = that._x1 - that._x0, h1 = x2 - that._x1, s0 = (that._y1 - that._y0) / (h0 || h1 < 0 && -0), s1 = (y2 - that._y1) / (h1 || h0 < 0 && -0), p = (s0 * h1 + s1 * h0) / (h0 + h1);
-    return (sign(s0) + sign(s1)) * Math.min(Math.abs(s0), Math.abs(s1), 0.5 * Math.abs(p)) || 0;
-  }
-  function slope2(that, t) {
-    var h = that._x1 - that._x0;
-    return h ? (3 * (that._y1 - that._y0) / h - t) / 2 : t;
-  }
-  function point(that, t02, t12) {
-    var x0 = that._x0, y0 = that._y0, x1 = that._x1, y1 = that._y1, dx = (x1 - x0) / 3;
-    that._context.bezierCurveTo(x0 + dx, y0 + dx * t02, x1 - dx, y1 - dx * t12, x1, y1);
-  }
-  function MonotoneX(context) {
-    this._context = context;
-  }
-  MonotoneX.prototype = {
-    areaStart: function() {
-      this._line = 0;
-    },
-    areaEnd: function() {
-      this._line = NaN;
-    },
-    lineStart: function() {
-      this._x0 = this._x1 = this._y0 = this._y1 = this._t0 = NaN;
-      this._point = 0;
-    },
-    lineEnd: function() {
-      switch (this._point) {
-        case 2:
-          this._context.lineTo(this._x1, this._y1);
-          break;
-        case 3:
-          point(this, this._t0, slope2(this, this._t0));
-          break;
-      }
-      if (this._line || this._line !== 0 && this._point === 1)
-        this._context.closePath();
-      this._line = 1 - this._line;
-    },
-    point: function(x2, y2) {
-      var t12 = NaN;
-      x2 = +x2, y2 = +y2;
-      if (x2 === this._x1 && y2 === this._y1)
-        return;
-      switch (this._point) {
-        case 0:
-          this._point = 1;
-          this._line ? this._context.lineTo(x2, y2) : this._context.moveTo(x2, y2);
-          break;
-        case 1:
-          this._point = 2;
-          break;
-        case 2:
-          this._point = 3;
-          point(this, slope2(this, t12 = slope3(this, x2, y2)), t12);
-          break;
-        default:
-          point(this, this._t0, t12 = slope3(this, x2, y2));
-          break;
-      }
-      this._x0 = this._x1, this._x1 = x2;
-      this._y0 = this._y1, this._y1 = y2;
-      this._t0 = t12;
-    }
-  };
-  function MonotoneY(context) {
-    this._context = new ReflectContext(context);
-  }
-  (MonotoneY.prototype = Object.create(MonotoneX.prototype)).point = function(x2, y2) {
-    MonotoneX.prototype.point.call(this, y2, x2);
-  };
-  function ReflectContext(context) {
-    this._context = context;
-  }
-  ReflectContext.prototype = {
-    moveTo: function(x2, y2) {
-      this._context.moveTo(y2, x2);
-    },
-    closePath: function() {
-      this._context.closePath();
-    },
-    lineTo: function(x2, y2) {
-      this._context.lineTo(y2, x2);
-    },
-    bezierCurveTo: function(x1, y1, x2, y2, x3, y3) {
-      this._context.bezierCurveTo(y1, x1, y2, x2, y3, x3);
-    }
-  };
-  function monotoneX(context) {
-    return new MonotoneX(context);
-  }
-
   // src/stats/scatterplot.svelte
   var import_iwanthue = __toESM(require_iwanthue());
   function get_each_context3(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[37] = list[i];
-    child_ctx[39] = i;
+    child_ctx[40] = list[i];
+    child_ctx[42] = i;
     return child_ctx;
   }
   function create_if_block(ctx) {
-    let path2;
+    let line;
+    let updating_data;
+    let updating_x_accessor;
+    let updating_y_accessor;
+    let updating_x_scale;
+    let updating_y_scale;
+    let current;
+    function line_data_binding(value) {
+      ctx[32](value);
+    }
+    function line_x_accessor_binding(value) {
+      ctx[33](value);
+    }
+    function line_y_accessor_binding(value) {
+      ctx[34](value);
+    }
+    function line_x_scale_binding(value) {
+      ctx[35](value);
+    }
+    function line_y_scale_binding(value) {
+      ctx[36](value);
+    }
+    let line_props = {};
+    if (ctx[0] !== void 0) {
+      line_props.data = ctx[0];
+    }
+    if (ctx[1] !== void 0) {
+      line_props.x_accessor = ctx[1];
+    }
+    if (ctx[2] !== void 0) {
+      line_props.y_accessor = ctx[2];
+    }
+    if (ctx[14] !== void 0) {
+      line_props.x_scale = ctx[14];
+    }
+    if (ctx[15] !== void 0) {
+      line_props.y_scale = ctx[15];
+    }
+    line = new line_default2({ props: line_props });
+    binding_callbacks.push(() => bind(line, "data", line_data_binding));
+    binding_callbacks.push(() => bind(line, "x_accessor", line_x_accessor_binding));
+    binding_callbacks.push(() => bind(line, "y_accessor", line_y_accessor_binding));
+    binding_callbacks.push(() => bind(line, "x_scale", line_x_scale_binding));
+    binding_callbacks.push(() => bind(line, "y_scale", line_y_scale_binding));
     return {
       c() {
-        path2 = svg_element("path");
-        attr(path2, "d", ctx[16]);
-        attr(path2, "class", "fill-transparent");
-        set_style(path2, "stroke", "grey");
+        create_component(line.$$.fragment);
       },
       m(target, anchor) {
-        insert(target, path2, anchor);
+        mount_component(line, target, anchor);
+        current = true;
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 65536) {
-          attr(path2, "d", ctx2[16]);
+        const line_changes = {};
+        if (!updating_data && dirty[0] & 1) {
+          updating_data = true;
+          line_changes.data = ctx2[0];
+          add_flush_callback(() => updating_data = false);
         }
+        if (!updating_x_accessor && dirty[0] & 2) {
+          updating_x_accessor = true;
+          line_changes.x_accessor = ctx2[1];
+          add_flush_callback(() => updating_x_accessor = false);
+        }
+        if (!updating_y_accessor && dirty[0] & 4) {
+          updating_y_accessor = true;
+          line_changes.y_accessor = ctx2[2];
+          add_flush_callback(() => updating_y_accessor = false);
+        }
+        if (!updating_x_scale && dirty[0] & 16384) {
+          updating_x_scale = true;
+          line_changes.x_scale = ctx2[14];
+          add_flush_callback(() => updating_x_scale = false);
+        }
+        if (!updating_y_scale && dirty[0] & 32768) {
+          updating_y_scale = true;
+          line_changes.y_scale = ctx2[15];
+          add_flush_callback(() => updating_y_scale = false);
+        }
+        line.$set(line_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(line.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(line.$$.fragment, local);
+        current = false;
       },
       d(detaching) {
-        if (detaching)
-          detach(path2);
+        destroy_component(line, detaching);
       }
     };
   }
@@ -6060,7 +6213,7 @@
     let div0;
     let t02;
     let p;
-    let t1_value = ctx[37] + "";
+    let t1_value = ctx[40] + "";
     let t12;
     let t2;
     return {
@@ -6072,7 +6225,7 @@
         t12 = text(t1_value);
         t2 = space();
         attr(div0, "class", "z-50 w-3 h-3 rounded-full");
-        set_style(div0, "background-color", ctx[9][ctx[39]]);
+        set_style(div0, "background-color", ctx[10][ctx[42]]);
         attr(p, "class", "text-[#808080]");
         attr(div1, "class", "flex flex-row gap-1 items-center");
       },
@@ -6085,10 +6238,10 @@
         append(div1, t2);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 512) {
-          set_style(div0, "background-color", ctx2[9][ctx2[39]]);
+        if (dirty[0] & 1024) {
+          set_style(div0, "background-color", ctx2[10][ctx2[42]]);
         }
-        if (dirty[0] & 256 && t1_value !== (t1_value = ctx2[37] + ""))
+        if (dirty[0] & 512 && t1_value !== (t1_value = ctx2[40] + ""))
           set_data(t12, t1_value);
       },
       d(detaching) {
@@ -6097,7 +6250,7 @@
       }
     };
   }
-  function create_fragment4(ctx) {
+  function create_fragment5(ctx) {
     let div1;
     let h1;
     let t02;
@@ -6131,32 +6284,32 @@
     let t7;
     let current;
     function lineaxis0_scale_binding(value) {
-      ctx[25](value);
+      ctx[24](value);
     }
     function lineaxis0_height_binding(value) {
-      ctx[26](value);
+      ctx[25](value);
     }
     function lineaxis0_width_binding(value) {
-      ctx[27](value);
+      ctx[26](value);
     }
     function lineaxis0_margin_binding(value) {
-      ctx[28](value);
+      ctx[27](value);
     }
     let lineaxis0_props = {
       position: "bottom",
       formater: ctx[19]
     };
-    if (ctx[13] !== void 0) {
-      lineaxis0_props.scale = ctx[13];
-    }
-    if (ctx[10] !== void 0) {
-      lineaxis0_props.height = ctx[10];
+    if (ctx[14] !== void 0) {
+      lineaxis0_props.scale = ctx[14];
     }
     if (ctx[11] !== void 0) {
-      lineaxis0_props.width = ctx[11];
+      lineaxis0_props.height = ctx[11];
     }
     if (ctx[12] !== void 0) {
-      lineaxis0_props.margin = ctx[12];
+      lineaxis0_props.width = ctx[12];
+    }
+    if (ctx[13] !== void 0) {
+      lineaxis0_props.margin = ctx[13];
     }
     lineaxis0 = new line_axis_default({ props: lineaxis0_props });
     binding_callbacks.push(() => bind(lineaxis0, "scale", lineaxis0_scale_binding));
@@ -6164,32 +6317,32 @@
     binding_callbacks.push(() => bind(lineaxis0, "width", lineaxis0_width_binding));
     binding_callbacks.push(() => bind(lineaxis0, "margin", lineaxis0_margin_binding));
     function lineaxis1_scale_binding(value) {
-      ctx[29](value);
+      ctx[28](value);
     }
     function lineaxis1_height_binding(value) {
-      ctx[30](value);
+      ctx[29](value);
     }
     function lineaxis1_width_binding(value) {
-      ctx[31](value);
+      ctx[30](value);
     }
     function lineaxis1_margin_binding(value) {
-      ctx[32](value);
+      ctx[31](value);
     }
     let lineaxis1_props = {
       position: "left",
       formater: ctx[20]
     };
-    if (ctx[14] !== void 0) {
-      lineaxis1_props.scale = ctx[14];
-    }
-    if (ctx[10] !== void 0) {
-      lineaxis1_props.height = ctx[10];
+    if (ctx[15] !== void 0) {
+      lineaxis1_props.scale = ctx[15];
     }
     if (ctx[11] !== void 0) {
-      lineaxis1_props.width = ctx[11];
+      lineaxis1_props.height = ctx[11];
     }
     if (ctx[12] !== void 0) {
-      lineaxis1_props.margin = ctx[12];
+      lineaxis1_props.width = ctx[12];
+    }
+    if (ctx[13] !== void 0) {
+      lineaxis1_props.margin = ctx[13];
     }
     lineaxis1 = new line_axis_default({ props: lineaxis1_props });
     binding_callbacks.push(() => bind(lineaxis1, "scale", lineaxis1_scale_binding));
@@ -6198,30 +6351,30 @@
     binding_callbacks.push(() => bind(lineaxis1, "margin", lineaxis1_margin_binding));
     circles = new circles_default({
       props: {
-        mapped_data: ctx[15],
+        mapped_data: ctx[16],
         mouse_move: ctx[17],
         mouse_out: ctx[18]
       }
     });
-    let if_block = ctx[3] && create_if_block(ctx);
-    let each_value = ctx[8];
+    let if_block = ctx[4] && create_if_block(ctx);
+    let each_value = ctx[9];
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
       each_blocks[i] = create_each_block3(get_each_context3(ctx, each_value, i));
     }
     function popup_mouse_move_binding(value) {
-      ctx[33](value);
+      ctx[37](value);
     }
     function popup_mouse_out_binding(value) {
-      ctx[34](value);
+      ctx[38](value);
     }
     let popup_props = {
       data: ctx[0],
-      groups: ctx[8],
-      hues: ctx[9],
+      groups: ctx[9],
+      hues: ctx[10],
       x_accessor: ctx[1],
-      group_accessor: ctx[2],
-      tooltip_accessors: ctx[4]
+      group_accessor: ctx[3],
+      tooltip_accessors: ctx[5]
     };
     if (ctx[17] !== void 0) {
       popup_props.mouse_move = ctx[17];
@@ -6236,11 +6389,11 @@
       c() {
         div1 = element("div");
         h1 = element("h1");
-        t02 = text(ctx[5]);
+        t02 = text(ctx[6]);
         t12 = space();
         figure = element("figure");
         p0 = element("p");
-        t2 = text(ctx[7]);
+        t2 = text(ctx[8]);
         t3 = space();
         svg = svg_element("svg");
         create_component(lineaxis0.$$.fragment);
@@ -6257,17 +6410,17 @@
         create_component(popup.$$.fragment);
         t6 = space();
         p1 = element("p");
-        t7 = text(ctx[6]);
+        t7 = text(ctx[7]);
         attr(h1, "class", "text-4xl font-semibold text-indigo-400");
         attr(p0, "class", "whitespace-nowrap -rotate-90 text-[#808080]");
         attr(svg, "height", "100%");
         attr(svg, "width", "100%");
         set_style(svg, "resize", "both");
-        attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[11] + " " + ctx[10]);
+        attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[12] + " " + ctx[11]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
         attr(div0, "class", "flex flex-col");
         attr(figure, "class", "flex flex-row w-full h-full items-center");
-        add_render_callback(() => ctx[35].call(figure));
+        add_render_callback(() => ctx[39].call(figure));
         attr(p1, "class", "text-[#808080]");
         attr(div1, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
@@ -6293,86 +6446,93 @@
         }
         append(figure, t5);
         mount_component(popup, figure, null);
-        figure_resize_listener = add_resize_listener(figure, ctx[35].bind(figure));
+        figure_resize_listener = add_resize_listener(figure, ctx[39].bind(figure));
         append(div1, t6);
         append(div1, p1);
         append(p1, t7);
         current = true;
       },
       p(ctx2, dirty) {
-        if (!current || dirty[0] & 32)
-          set_data(t02, ctx2[5]);
-        if (!current || dirty[0] & 128)
-          set_data(t2, ctx2[7]);
+        if (!current || dirty[0] & 64)
+          set_data(t02, ctx2[6]);
+        if (!current || dirty[0] & 256)
+          set_data(t2, ctx2[8]);
         const lineaxis0_changes = {};
-        if (!updating_scale && dirty[0] & 8192) {
+        if (!updating_scale && dirty[0] & 16384) {
           updating_scale = true;
-          lineaxis0_changes.scale = ctx2[13];
+          lineaxis0_changes.scale = ctx2[14];
           add_flush_callback(() => updating_scale = false);
         }
-        if (!updating_height && dirty[0] & 1024) {
+        if (!updating_height && dirty[0] & 2048) {
           updating_height = true;
-          lineaxis0_changes.height = ctx2[10];
+          lineaxis0_changes.height = ctx2[11];
           add_flush_callback(() => updating_height = false);
         }
-        if (!updating_width && dirty[0] & 2048) {
+        if (!updating_width && dirty[0] & 4096) {
           updating_width = true;
-          lineaxis0_changes.width = ctx2[11];
+          lineaxis0_changes.width = ctx2[12];
           add_flush_callback(() => updating_width = false);
         }
-        if (!updating_margin && dirty[0] & 4096) {
+        if (!updating_margin && dirty[0] & 8192) {
           updating_margin = true;
-          lineaxis0_changes.margin = ctx2[12];
+          lineaxis0_changes.margin = ctx2[13];
           add_flush_callback(() => updating_margin = false);
         }
         lineaxis0.$set(lineaxis0_changes);
         const lineaxis1_changes = {};
-        if (!updating_scale_1 && dirty[0] & 16384) {
+        if (!updating_scale_1 && dirty[0] & 32768) {
           updating_scale_1 = true;
-          lineaxis1_changes.scale = ctx2[14];
+          lineaxis1_changes.scale = ctx2[15];
           add_flush_callback(() => updating_scale_1 = false);
         }
-        if (!updating_height_1 && dirty[0] & 1024) {
+        if (!updating_height_1 && dirty[0] & 2048) {
           updating_height_1 = true;
-          lineaxis1_changes.height = ctx2[10];
+          lineaxis1_changes.height = ctx2[11];
           add_flush_callback(() => updating_height_1 = false);
         }
-        if (!updating_width_1 && dirty[0] & 2048) {
+        if (!updating_width_1 && dirty[0] & 4096) {
           updating_width_1 = true;
-          lineaxis1_changes.width = ctx2[11];
+          lineaxis1_changes.width = ctx2[12];
           add_flush_callback(() => updating_width_1 = false);
         }
-        if (!updating_margin_1 && dirty[0] & 4096) {
+        if (!updating_margin_1 && dirty[0] & 8192) {
           updating_margin_1 = true;
-          lineaxis1_changes.margin = ctx2[12];
+          lineaxis1_changes.margin = ctx2[13];
           add_flush_callback(() => updating_margin_1 = false);
         }
         lineaxis1.$set(lineaxis1_changes);
         const circles_changes = {};
-        if (dirty[0] & 32768)
-          circles_changes.mapped_data = ctx2[15];
+        if (dirty[0] & 65536)
+          circles_changes.mapped_data = ctx2[16];
         if (dirty[0] & 131072)
           circles_changes.mouse_move = ctx2[17];
         if (dirty[0] & 262144)
           circles_changes.mouse_out = ctx2[18];
         circles.$set(circles_changes);
-        if (ctx2[3]) {
+        if (ctx2[4]) {
           if (if_block) {
             if_block.p(ctx2, dirty);
+            if (dirty[0] & 16) {
+              transition_in(if_block, 1);
+            }
           } else {
             if_block = create_if_block(ctx2);
             if_block.c();
+            transition_in(if_block, 1);
             if_block.m(svg, null);
           }
         } else if (if_block) {
-          if_block.d(1);
-          if_block = null;
+          group_outros();
+          transition_out(if_block, 1, 1, () => {
+            if_block = null;
+          });
+          check_outros();
         }
-        if (!current || dirty[0] & 3072 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[11] + " " + ctx2[10])) {
+        if (!current || dirty[0] & 6144 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[12] + " " + ctx2[11])) {
           attr(svg, "viewBox", svg_viewBox_value);
         }
-        if (dirty[0] & 768) {
-          each_value = ctx2[8];
+        if (dirty[0] & 1536) {
+          each_value = ctx2[9];
           let i;
           for (i = 0; i < each_value.length; i += 1) {
             const child_ctx = get_each_context3(ctx2, each_value, i);
@@ -6392,16 +6552,16 @@
         const popup_changes = {};
         if (dirty[0] & 1)
           popup_changes.data = ctx2[0];
-        if (dirty[0] & 256)
-          popup_changes.groups = ctx2[8];
         if (dirty[0] & 512)
-          popup_changes.hues = ctx2[9];
+          popup_changes.groups = ctx2[9];
+        if (dirty[0] & 1024)
+          popup_changes.hues = ctx2[10];
         if (dirty[0] & 2)
           popup_changes.x_accessor = ctx2[1];
-        if (dirty[0] & 4)
-          popup_changes.group_accessor = ctx2[2];
-        if (dirty[0] & 16)
-          popup_changes.tooltip_accessors = ctx2[4];
+        if (dirty[0] & 8)
+          popup_changes.group_accessor = ctx2[3];
+        if (dirty[0] & 32)
+          popup_changes.tooltip_accessors = ctx2[5];
         if (!updating_mouse_move && dirty[0] & 131072) {
           updating_mouse_move = true;
           popup_changes.mouse_move = ctx2[17];
@@ -6413,8 +6573,8 @@
           add_flush_callback(() => updating_mouse_out = false);
         }
         popup.$set(popup_changes);
-        if (!current || dirty[0] & 64)
-          set_data(t7, ctx2[6]);
+        if (!current || dirty[0] & 128)
+          set_data(t7, ctx2[7]);
       },
       i(local) {
         if (current)
@@ -6422,6 +6582,7 @@
         transition_in(lineaxis0.$$.fragment, local);
         transition_in(lineaxis1.$$.fragment, local);
         transition_in(circles.$$.fragment, local);
+        transition_in(if_block);
         transition_in(popup.$$.fragment, local);
         current = true;
       },
@@ -6429,6 +6590,7 @@
         transition_out(lineaxis0.$$.fragment, local);
         transition_out(lineaxis1.$$.fragment, local);
         transition_out(circles.$$.fragment, local);
+        transition_out(if_block);
         transition_out(popup.$$.fragment, local);
         current = false;
       },
@@ -6446,7 +6608,7 @@
       }
     };
   }
-  function instance4($$self, $$props, $$invalidate) {
+  function instance5($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { radius = 60 } = $$props;
     let { x_accessor } = $$props;
@@ -6464,40 +6626,58 @@
     let x_scale, y_scale, r_scale;
     const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")];
     let mapped_data;
-    const make_line = (x_scale2, y_scale2, x_accessor2, y_accessor2, data2) => line_default().curve(monotoneX).x((d) => x_scale2(x_accessor2(d))).y((d) => y_scale2(y_accessor2(d)))(data2);
-    let line_path;
     let mouse_move, mouse_out;
     function lineaxis0_scale_binding(value) {
       x_scale = value;
-      $$invalidate(13, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(12, margin), $$invalidate(11, width);
+      $$invalidate(14, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(13, margin), $$invalidate(12, width);
     }
     function lineaxis0_height_binding(value) {
       height = value;
-      $$invalidate(10, height);
+      $$invalidate(11, height);
     }
     function lineaxis0_width_binding(value) {
       width = value;
-      $$invalidate(11, width);
+      $$invalidate(12, width);
     }
     function lineaxis0_margin_binding(value) {
       margin = value;
-      $$invalidate(12, margin);
+      $$invalidate(13, margin);
     }
     function lineaxis1_scale_binding(value) {
       y_scale = value;
-      $$invalidate(14, y_scale), $$invalidate(0, data), $$invalidate(22, y_accessor), $$invalidate(10, height), $$invalidate(12, margin);
+      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(13, margin);
     }
     function lineaxis1_height_binding(value) {
       height = value;
-      $$invalidate(10, height);
+      $$invalidate(11, height);
     }
     function lineaxis1_width_binding(value) {
       width = value;
-      $$invalidate(11, width);
+      $$invalidate(12, width);
     }
     function lineaxis1_margin_binding(value) {
       margin = value;
-      $$invalidate(12, margin);
+      $$invalidate(13, margin);
+    }
+    function line_data_binding(value) {
+      data = value;
+      $$invalidate(0, data);
+    }
+    function line_x_accessor_binding(value) {
+      x_accessor = value;
+      $$invalidate(1, x_accessor);
+    }
+    function line_y_accessor_binding(value) {
+      y_accessor = value;
+      $$invalidate(2, y_accessor);
+    }
+    function line_x_scale_binding(value) {
+      x_scale = value;
+      $$invalidate(14, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(13, margin), $$invalidate(12, width);
+    }
+    function line_y_scale_binding(value) {
+      y_scale = value;
+      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(13, margin);
     }
     function popup_mouse_move_binding(value) {
       mouse_move = value;
@@ -6510,8 +6690,8 @@
     function figure_elementresize_handler() {
       height = this.clientHeight;
       width = this.clientWidth;
-      $$invalidate(10, height);
-      $$invalidate(11, width);
+      $$invalidate(11, height);
+      $$invalidate(12, width);
     }
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)
@@ -6521,50 +6701,50 @@
       if ("x_accessor" in $$props2)
         $$invalidate(1, x_accessor = $$props2.x_accessor);
       if ("y_accessor" in $$props2)
-        $$invalidate(22, y_accessor = $$props2.y_accessor);
+        $$invalidate(2, y_accessor = $$props2.y_accessor);
       if ("r_accessor" in $$props2)
-        $$invalidate(23, r_accessor = $$props2.r_accessor);
+        $$invalidate(22, r_accessor = $$props2.r_accessor);
       if ("c_accessor" in $$props2)
-        $$invalidate(2, c_accessor = $$props2.c_accessor);
+        $$invalidate(3, c_accessor = $$props2.c_accessor);
       if ("draw_line" in $$props2)
-        $$invalidate(3, draw_line = $$props2.draw_line);
+        $$invalidate(4, draw_line = $$props2.draw_line);
       if ("tooltip_accessors" in $$props2)
-        $$invalidate(4, tooltip_accessors = $$props2.tooltip_accessors);
+        $$invalidate(5, tooltip_accessors = $$props2.tooltip_accessors);
       if ("graph_title" in $$props2)
-        $$invalidate(5, graph_title = $$props2.graph_title);
+        $$invalidate(6, graph_title = $$props2.graph_title);
       if ("x_label" in $$props2)
-        $$invalidate(6, x_label = $$props2.x_label);
+        $$invalidate(7, x_label = $$props2.x_label);
       if ("y_label" in $$props2)
-        $$invalidate(7, y_label = $$props2.y_label);
+        $$invalidate(8, y_label = $$props2.y_label);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & 5) {
+      if ($$self.$$.dirty[0] & 9) {
         $:
-          $$invalidate(8, groups2 = Array.from(group(data, c_accessor).keys()));
+          $$invalidate(9, groups2 = Array.from(group(data, c_accessor).keys()));
       }
-      if ($$self.$$.dirty[0] & 256) {
+      if ($$self.$$.dirty[0] & 512) {
         $:
-          $$invalidate(9, hues = (0, import_iwanthue.default)(groups2.length, {
+          $$invalidate(10, hues = (0, import_iwanthue.default)(groups2.length, {
             "colorSpace": [0, 360, 0, 100, 50, 100],
             "clustering": "force-vector",
             "seed": "exSTATic!"
           }));
       }
-      if ($$self.$$.dirty[0] & 6147) {
+      if ($$self.$$.dirty[0] & 12291) {
         $:
-          $$invalidate(13, x_scale = time().domain(extent(data, x_accessor)).range([margin, width - margin]));
+          $$invalidate(14, x_scale = time().domain(extent(data, x_accessor)).range([margin, width - margin]));
       }
-      if ($$self.$$.dirty[0] & 4199425) {
+      if ($$self.$$.dirty[0] & 10245) {
         $:
-          $$invalidate(14, y_scale = linear2().domain(extent(data, y_accessor)).range([height - margin, margin]));
+          $$invalidate(15, y_scale = linear2().domain(extent(data, y_accessor)).range([height - margin, margin]));
       }
-      if ($$self.$$.dirty[0] & 10485761) {
+      if ($$self.$$.dirty[0] & 6291457) {
         $:
-          $$invalidate(24, r_scale = linear2().domain(extent(data, r_accessor)).range([0, radius]));
+          $$invalidate(23, r_scale = linear2().domain(extent(data, r_accessor)).range([0, radius]));
       }
-      if ($$self.$$.dirty[0] & 31482631) {
+      if ($$self.$$.dirty[0] & 14730767) {
         $:
-          $$invalidate(15, mapped_data = data.map((d, i) => ({
+          $$invalidate(16, mapped_data = data.map((d, i) => ({
             "x": x_scale(x_accessor(d)),
             "y": y_scale(y_accessor(d)),
             "r": r_accessor !== void 0 ? r_scale(r_accessor(d)) : radius,
@@ -6572,15 +6752,11 @@
             i
           })));
       }
-      if ($$self.$$.dirty[0] & 4218891) {
-        $:
-          if (draw_line)
-            $$invalidate(16, line_path = make_line(x_scale, y_scale, x_accessor, y_accessor, data));
-      }
     };
     return [
       data,
       x_accessor,
+      y_accessor,
       c_accessor,
       draw_line,
       tooltip_accessors,
@@ -6595,13 +6771,11 @@
       x_scale,
       y_scale,
       mapped_data,
-      line_path,
       mouse_move,
       mouse_out,
       x_formatter,
       y_formatter,
       radius,
-      y_accessor,
       r_accessor,
       r_scale,
       lineaxis0_scale_binding,
@@ -6612,6 +6786,11 @@
       lineaxis1_height_binding,
       lineaxis1_width_binding,
       lineaxis1_margin_binding,
+      line_data_binding,
+      line_x_accessor_binding,
+      line_y_accessor_binding,
+      line_x_scale_binding,
+      line_y_scale_binding,
       popup_mouse_move_binding,
       popup_mouse_out_binding,
       figure_elementresize_handler
@@ -6620,18 +6799,18 @@
   var Scatterplot = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance4, create_fragment4, safe_not_equal, {
+      init(this, options, instance5, create_fragment5, safe_not_equal, {
         data: 0,
         radius: 21,
         x_accessor: 1,
-        y_accessor: 22,
-        r_accessor: 23,
-        c_accessor: 2,
-        draw_line: 3,
-        tooltip_accessors: 4,
-        graph_title: 5,
-        x_label: 6,
-        y_label: 7
+        y_accessor: 2,
+        r_accessor: 22,
+        c_accessor: 3,
+        draw_line: 4,
+        tooltip_accessors: 5,
+        graph_title: 6,
+        x_label: 7,
+        y_label: 8
       }, null, [-1, -1]);
     }
   };
@@ -6846,7 +7025,7 @@
   }
 
   // src/stats/stats.svelte
-  function create_fragment5(ctx) {
+  function create_fragment6(ctx) {
     let div;
     let scatterplot0;
     let t02;
@@ -6983,7 +7162,7 @@
   var func_7 = (d) => d.name;
   var func_10 = (d) => d.name;
   var func_13 = (d) => d.name;
-  function instance5($$self, $$props, $$invalidate) {
+  function instance6($$self, $$props, $$invalidate) {
     const SECS_TO_HRS = 60 * 60;
     let { data } = $$props;
     const uuid_groups = group(data, (d) => d.uuid);
@@ -7024,7 +7203,7 @@
   var Stats = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment5, safe_not_equal, { data: 0 });
+      init(this, options, instance6, create_fragment6, safe_not_equal, { data: 0 });
     }
   };
   var stats_default = Stats;

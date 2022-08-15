@@ -1945,7 +1945,7 @@
     }
     component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
   }
-  function init(component, options, instance7, create_fragment7, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance6, create_fragment6, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -1968,7 +1968,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance7 ? instance7(component, options.props || {}, (i, ret, ...rest) => {
+    $$.ctx = instance6 ? instance6(component, options.props || {}, (i, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
         if (!$$.skip_bound && $$.bound[i])
@@ -1981,7 +1981,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment7 ? create_fragment7($$.ctx) : false;
+    $$.fragment = create_fragment6 ? create_fragment6($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -4193,8 +4193,8 @@
   var percentRe = /^%/;
   var requoteRe = /[\\^$*+?|[\]().{}]/g;
   function pad(value, fill, width) {
-    var sign = value < 0 ? "-" : "", string = (sign ? -value : value) + "", length = string.length;
-    return sign + (length < width ? new Array(width - length + 1).join(fill) + string : string);
+    var sign2 = value < 0 ? "-" : "", string = (sign2 ? -value : value) + "", length = string.length;
+    return sign2 + (length < width ? new Array(width - length + 1).join(fill) + string : string);
   }
   function requote(s) {
     return s.replace(requoteRe, "\\$&");
@@ -4819,7 +4819,7 @@
     var group2 = locale3.grouping === void 0 || locale3.thousands === void 0 ? identity_default2 : formatGroup_default(map.call(locale3.grouping, Number), locale3.thousands + ""), currencyPrefix = locale3.currency === void 0 ? "" : locale3.currency[0] + "", currencySuffix = locale3.currency === void 0 ? "" : locale3.currency[1] + "", decimal = locale3.decimal === void 0 ? "." : locale3.decimal + "", numerals = locale3.numerals === void 0 ? identity_default2 : formatNumerals_default(map.call(locale3.numerals, String)), percent = locale3.percent === void 0 ? "%" : locale3.percent + "", minus = locale3.minus === void 0 ? "\u2212" : locale3.minus + "", nan = locale3.nan === void 0 ? "NaN" : locale3.nan + "";
     function newFormat(specifier) {
       specifier = formatSpecifier(specifier);
-      var fill = specifier.fill, align = specifier.align, sign = specifier.sign, symbol = specifier.symbol, zero3 = specifier.zero, width = specifier.width, comma = specifier.comma, precision = specifier.precision, trim = specifier.trim, type = specifier.type;
+      var fill = specifier.fill, align = specifier.align, sign2 = specifier.sign, symbol = specifier.symbol, zero3 = specifier.zero, width = specifier.width, comma = specifier.comma, precision = specifier.precision, trim = specifier.trim, type = specifier.type;
       if (type === "n")
         comma = true, type = "g";
       else if (!formatTypes_default[type])
@@ -4840,10 +4840,10 @@
           value = isNaN(value) ? nan : formatType(Math.abs(value), precision);
           if (trim)
             value = formatTrim_default(value);
-          if (valueNegative && +value === 0 && sign !== "+")
+          if (valueNegative && +value === 0 && sign2 !== "+")
             valueNegative = false;
-          valuePrefix = (valueNegative ? sign === "(" ? sign : minus : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
-          valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
+          valuePrefix = (valueNegative ? sign2 === "(" ? sign2 : minus : sign2 === "-" || sign2 === "(" ? "" : sign2) + valuePrefix;
+          valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign2 === "(" ? ")" : "");
           if (maybeSuffix) {
             i = -1, n = value.length;
             while (++i < n) {
@@ -5749,559 +5749,6 @@
     return initRange.apply(calendar(timeTicks, timeTickInterval, year_default, month_default, sunday, day_default, hour_default, minute_default, second_default, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
   }
 
-  // src/stats/scatterplot.svelte
-  var import_iwanthue = __toESM(require_iwanthue());
-  function get_each_context3(ctx, list, i) {
-    const child_ctx = ctx.slice();
-    child_ctx[34] = list[i];
-    child_ctx[36] = i;
-    return child_ctx;
-  }
-  function create_each_block3(ctx) {
-    let div1;
-    let div0;
-    let t02;
-    let p;
-    let t1_value = ctx[34] + "";
-    let t12;
-    let t2;
-    return {
-      c() {
-        div1 = element("div");
-        div0 = element("div");
-        t02 = space();
-        p = element("p");
-        t12 = text(t1_value);
-        t2 = space();
-        attr(div0, "class", "z-50 w-3 h-3 rounded-full");
-        set_style(div0, "background-color", ctx[8][ctx[36]]);
-        attr(p, "class", "text-[#808080]");
-        attr(div1, "class", "flex flex-row gap-1 items-center");
-      },
-      m(target, anchor) {
-        insert(target, div1, anchor);
-        append(div1, div0);
-        append(div1, t02);
-        append(div1, p);
-        append(p, t12);
-        append(div1, t2);
-      },
-      p(ctx2, dirty) {
-        if (dirty[0] & 256) {
-          set_style(div0, "background-color", ctx2[8][ctx2[36]]);
-        }
-        if (dirty[0] & 128 && t1_value !== (t1_value = ctx2[34] + ""))
-          set_data(t12, t1_value);
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div1);
-      }
-    };
-  }
-  function create_fragment4(ctx) {
-    let div1;
-    let h1;
-    let t02;
-    let t12;
-    let figure;
-    let p0;
-    let t2;
-    let t3;
-    let svg;
-    let lineaxis0;
-    let updating_scale;
-    let updating_height;
-    let updating_width;
-    let updating_margin;
-    let lineaxis1;
-    let updating_scale_1;
-    let updating_height_1;
-    let updating_width_1;
-    let updating_margin_1;
-    let circles;
-    let svg_viewBox_value;
-    let t4;
-    let div0;
-    let t5;
-    let popup;
-    let updating_mouse_move;
-    let updating_mouse_out;
-    let figure_resize_listener;
-    let t6;
-    let p1;
-    let t7;
-    let current;
-    function lineaxis0_scale_binding(value) {
-      ctx[22](value);
-    }
-    function lineaxis0_height_binding(value) {
-      ctx[23](value);
-    }
-    function lineaxis0_width_binding(value) {
-      ctx[24](value);
-    }
-    function lineaxis0_margin_binding(value) {
-      ctx[25](value);
-    }
-    let lineaxis0_props = {
-      position: "bottom",
-      formater: ctx[17]
-    };
-    if (ctx[12] !== void 0) {
-      lineaxis0_props.scale = ctx[12];
-    }
-    if (ctx[9] !== void 0) {
-      lineaxis0_props.height = ctx[9];
-    }
-    if (ctx[10] !== void 0) {
-      lineaxis0_props.width = ctx[10];
-    }
-    if (ctx[11] !== void 0) {
-      lineaxis0_props.margin = ctx[11];
-    }
-    lineaxis0 = new line_axis_default({ props: lineaxis0_props });
-    binding_callbacks.push(() => bind(lineaxis0, "scale", lineaxis0_scale_binding));
-    binding_callbacks.push(() => bind(lineaxis0, "height", lineaxis0_height_binding));
-    binding_callbacks.push(() => bind(lineaxis0, "width", lineaxis0_width_binding));
-    binding_callbacks.push(() => bind(lineaxis0, "margin", lineaxis0_margin_binding));
-    function lineaxis1_scale_binding(value) {
-      ctx[26](value);
-    }
-    function lineaxis1_height_binding(value) {
-      ctx[27](value);
-    }
-    function lineaxis1_width_binding(value) {
-      ctx[28](value);
-    }
-    function lineaxis1_margin_binding(value) {
-      ctx[29](value);
-    }
-    let lineaxis1_props = {
-      position: "left",
-      formater: ctx[18]
-    };
-    if (ctx[13] !== void 0) {
-      lineaxis1_props.scale = ctx[13];
-    }
-    if (ctx[9] !== void 0) {
-      lineaxis1_props.height = ctx[9];
-    }
-    if (ctx[10] !== void 0) {
-      lineaxis1_props.width = ctx[10];
-    }
-    if (ctx[11] !== void 0) {
-      lineaxis1_props.margin = ctx[11];
-    }
-    lineaxis1 = new line_axis_default({ props: lineaxis1_props });
-    binding_callbacks.push(() => bind(lineaxis1, "scale", lineaxis1_scale_binding));
-    binding_callbacks.push(() => bind(lineaxis1, "height", lineaxis1_height_binding));
-    binding_callbacks.push(() => bind(lineaxis1, "width", lineaxis1_width_binding));
-    binding_callbacks.push(() => bind(lineaxis1, "margin", lineaxis1_margin_binding));
-    circles = new circles_default({
-      props: {
-        mapped_data: ctx[14],
-        mouse_move: ctx[15],
-        mouse_out: ctx[16]
-      }
-    });
-    let each_value = ctx[7];
-    let each_blocks = [];
-    for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block3(get_each_context3(ctx, each_value, i));
-    }
-    function popup_mouse_move_binding(value) {
-      ctx[30](value);
-    }
-    function popup_mouse_out_binding(value) {
-      ctx[31](value);
-    }
-    let popup_props = {
-      data: ctx[0],
-      groups: ctx[7],
-      hues: ctx[8],
-      x_accessor: ctx[1],
-      group_accessor: ctx[2],
-      tooltip_accessors: ctx[3]
-    };
-    if (ctx[15] !== void 0) {
-      popup_props.mouse_move = ctx[15];
-    }
-    if (ctx[16] !== void 0) {
-      popup_props.mouse_out = ctx[16];
-    }
-    popup = new popup_default({ props: popup_props });
-    binding_callbacks.push(() => bind(popup, "mouse_move", popup_mouse_move_binding));
-    binding_callbacks.push(() => bind(popup, "mouse_out", popup_mouse_out_binding));
-    return {
-      c() {
-        div1 = element("div");
-        h1 = element("h1");
-        t02 = text(ctx[4]);
-        t12 = space();
-        figure = element("figure");
-        p0 = element("p");
-        t2 = text(ctx[6]);
-        t3 = space();
-        svg = svg_element("svg");
-        create_component(lineaxis0.$$.fragment);
-        create_component(lineaxis1.$$.fragment);
-        create_component(circles.$$.fragment);
-        t4 = space();
-        div0 = element("div");
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].c();
-        }
-        t5 = space();
-        create_component(popup.$$.fragment);
-        t6 = space();
-        p1 = element("p");
-        t7 = text(ctx[5]);
-        attr(h1, "class", "text-4xl font-semibold text-indigo-400");
-        attr(p0, "class", "whitespace-nowrap -rotate-90 text-[#808080]");
-        attr(svg, "height", "100%");
-        attr(svg, "width", "100%");
-        set_style(svg, "resize", "both");
-        attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[10] + " " + ctx[9]);
-        attr(svg, "preserveAspectRatio", "xMidYMid meet");
-        attr(div0, "class", "flex flex-col");
-        attr(figure, "class", "flex flex-row w-full h-full items-center");
-        add_render_callback(() => ctx[32].call(figure));
-        attr(p1, "class", "text-[#808080]");
-        attr(div1, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
-      },
-      m(target, anchor) {
-        insert(target, div1, anchor);
-        append(div1, h1);
-        append(h1, t02);
-        append(div1, t12);
-        append(div1, figure);
-        append(figure, p0);
-        append(p0, t2);
-        append(figure, t3);
-        append(figure, svg);
-        mount_component(lineaxis0, svg, null);
-        mount_component(lineaxis1, svg, null);
-        mount_component(circles, svg, null);
-        append(figure, t4);
-        append(figure, div0);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(div0, null);
-        }
-        append(figure, t5);
-        mount_component(popup, figure, null);
-        figure_resize_listener = add_resize_listener(figure, ctx[32].bind(figure));
-        append(div1, t6);
-        append(div1, p1);
-        append(p1, t7);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        if (!current || dirty[0] & 16)
-          set_data(t02, ctx2[4]);
-        if (!current || dirty[0] & 64)
-          set_data(t2, ctx2[6]);
-        const lineaxis0_changes = {};
-        if (!updating_scale && dirty[0] & 4096) {
-          updating_scale = true;
-          lineaxis0_changes.scale = ctx2[12];
-          add_flush_callback(() => updating_scale = false);
-        }
-        if (!updating_height && dirty[0] & 512) {
-          updating_height = true;
-          lineaxis0_changes.height = ctx2[9];
-          add_flush_callback(() => updating_height = false);
-        }
-        if (!updating_width && dirty[0] & 1024) {
-          updating_width = true;
-          lineaxis0_changes.width = ctx2[10];
-          add_flush_callback(() => updating_width = false);
-        }
-        if (!updating_margin && dirty[0] & 2048) {
-          updating_margin = true;
-          lineaxis0_changes.margin = ctx2[11];
-          add_flush_callback(() => updating_margin = false);
-        }
-        lineaxis0.$set(lineaxis0_changes);
-        const lineaxis1_changes = {};
-        if (!updating_scale_1 && dirty[0] & 8192) {
-          updating_scale_1 = true;
-          lineaxis1_changes.scale = ctx2[13];
-          add_flush_callback(() => updating_scale_1 = false);
-        }
-        if (!updating_height_1 && dirty[0] & 512) {
-          updating_height_1 = true;
-          lineaxis1_changes.height = ctx2[9];
-          add_flush_callback(() => updating_height_1 = false);
-        }
-        if (!updating_width_1 && dirty[0] & 1024) {
-          updating_width_1 = true;
-          lineaxis1_changes.width = ctx2[10];
-          add_flush_callback(() => updating_width_1 = false);
-        }
-        if (!updating_margin_1 && dirty[0] & 2048) {
-          updating_margin_1 = true;
-          lineaxis1_changes.margin = ctx2[11];
-          add_flush_callback(() => updating_margin_1 = false);
-        }
-        lineaxis1.$set(lineaxis1_changes);
-        const circles_changes = {};
-        if (dirty[0] & 16384)
-          circles_changes.mapped_data = ctx2[14];
-        if (dirty[0] & 32768)
-          circles_changes.mouse_move = ctx2[15];
-        if (dirty[0] & 65536)
-          circles_changes.mouse_out = ctx2[16];
-        circles.$set(circles_changes);
-        if (!current || dirty[0] & 1536 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[10] + " " + ctx2[9])) {
-          attr(svg, "viewBox", svg_viewBox_value);
-        }
-        if (dirty[0] & 384) {
-          each_value = ctx2[7];
-          let i;
-          for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context3(ctx2, each_value, i);
-            if (each_blocks[i]) {
-              each_blocks[i].p(child_ctx, dirty);
-            } else {
-              each_blocks[i] = create_each_block3(child_ctx);
-              each_blocks[i].c();
-              each_blocks[i].m(div0, null);
-            }
-          }
-          for (; i < each_blocks.length; i += 1) {
-            each_blocks[i].d(1);
-          }
-          each_blocks.length = each_value.length;
-        }
-        const popup_changes = {};
-        if (dirty[0] & 1)
-          popup_changes.data = ctx2[0];
-        if (dirty[0] & 128)
-          popup_changes.groups = ctx2[7];
-        if (dirty[0] & 256)
-          popup_changes.hues = ctx2[8];
-        if (dirty[0] & 2)
-          popup_changes.x_accessor = ctx2[1];
-        if (dirty[0] & 4)
-          popup_changes.group_accessor = ctx2[2];
-        if (dirty[0] & 8)
-          popup_changes.tooltip_accessors = ctx2[3];
-        if (!updating_mouse_move && dirty[0] & 32768) {
-          updating_mouse_move = true;
-          popup_changes.mouse_move = ctx2[15];
-          add_flush_callback(() => updating_mouse_move = false);
-        }
-        if (!updating_mouse_out && dirty[0] & 65536) {
-          updating_mouse_out = true;
-          popup_changes.mouse_out = ctx2[16];
-          add_flush_callback(() => updating_mouse_out = false);
-        }
-        popup.$set(popup_changes);
-        if (!current || dirty[0] & 32)
-          set_data(t7, ctx2[5]);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(lineaxis0.$$.fragment, local);
-        transition_in(lineaxis1.$$.fragment, local);
-        transition_in(circles.$$.fragment, local);
-        transition_in(popup.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(lineaxis0.$$.fragment, local);
-        transition_out(lineaxis1.$$.fragment, local);
-        transition_out(circles.$$.fragment, local);
-        transition_out(popup.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div1);
-        destroy_component(lineaxis0);
-        destroy_component(lineaxis1);
-        destroy_component(circles);
-        destroy_each(each_blocks, detaching);
-        destroy_component(popup);
-        figure_resize_listener();
-      }
-    };
-  }
-  function instance4($$self, $$props, $$invalidate) {
-    let { data } = $$props;
-    let { x_accessor } = $$props;
-    let { y_accessor } = $$props;
-    let { r_accessor } = $$props;
-    let { c_accessor } = $$props;
-    let { tooltip_accessors } = $$props;
-    let { graph_title } = $$props;
-    let { x_label } = $$props;
-    let { y_label } = $$props;
-    let groups2, hues;
-    let [height, width, radius] = [50, 100, 60];
-    let margin = 2 * (radius + 10);
-    let x_scale, y_scale, r_scale;
-    const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")];
-    let mapped_data;
-    let mouse_move, mouse_out;
-    function lineaxis0_scale_binding(value) {
-      x_scale = value;
-      $$invalidate(12, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(11, margin), $$invalidate(10, width);
-    }
-    function lineaxis0_height_binding(value) {
-      height = value;
-      $$invalidate(9, height);
-    }
-    function lineaxis0_width_binding(value) {
-      width = value;
-      $$invalidate(10, width);
-    }
-    function lineaxis0_margin_binding(value) {
-      margin = value;
-      $$invalidate(11, margin);
-    }
-    function lineaxis1_scale_binding(value) {
-      y_scale = value;
-      $$invalidate(13, y_scale), $$invalidate(0, data), $$invalidate(19, y_accessor), $$invalidate(9, height), $$invalidate(11, margin);
-    }
-    function lineaxis1_height_binding(value) {
-      height = value;
-      $$invalidate(9, height);
-    }
-    function lineaxis1_width_binding(value) {
-      width = value;
-      $$invalidate(10, width);
-    }
-    function lineaxis1_margin_binding(value) {
-      margin = value;
-      $$invalidate(11, margin);
-    }
-    function popup_mouse_move_binding(value) {
-      mouse_move = value;
-      $$invalidate(15, mouse_move);
-    }
-    function popup_mouse_out_binding(value) {
-      mouse_out = value;
-      $$invalidate(16, mouse_out);
-    }
-    function figure_elementresize_handler() {
-      height = this.clientHeight;
-      width = this.clientWidth;
-      $$invalidate(9, height);
-      $$invalidate(10, width);
-    }
-    $$self.$$set = ($$props2) => {
-      if ("data" in $$props2)
-        $$invalidate(0, data = $$props2.data);
-      if ("x_accessor" in $$props2)
-        $$invalidate(1, x_accessor = $$props2.x_accessor);
-      if ("y_accessor" in $$props2)
-        $$invalidate(19, y_accessor = $$props2.y_accessor);
-      if ("r_accessor" in $$props2)
-        $$invalidate(20, r_accessor = $$props2.r_accessor);
-      if ("c_accessor" in $$props2)
-        $$invalidate(2, c_accessor = $$props2.c_accessor);
-      if ("tooltip_accessors" in $$props2)
-        $$invalidate(3, tooltip_accessors = $$props2.tooltip_accessors);
-      if ("graph_title" in $$props2)
-        $$invalidate(4, graph_title = $$props2.graph_title);
-      if ("x_label" in $$props2)
-        $$invalidate(5, x_label = $$props2.x_label);
-      if ("y_label" in $$props2)
-        $$invalidate(6, y_label = $$props2.y_label);
-    };
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & 5) {
-        $:
-          $$invalidate(7, groups2 = Array.from(group(data, c_accessor).keys()));
-      }
-      if ($$self.$$.dirty[0] & 128) {
-        $:
-          $$invalidate(8, hues = (0, import_iwanthue.default)(groups2.length, {
-            "colorSpace": [0, 360, 0, 100, 50, 100],
-            "clustering": "force-vector",
-            "seed": "exSTATic!"
-          }));
-      }
-      if ($$self.$$.dirty[0] & 3075) {
-        $:
-          $$invalidate(12, x_scale = time().domain(extent(data, x_accessor)).range([margin, width - margin]));
-      }
-      if ($$self.$$.dirty[0] & 526849) {
-        $:
-          $$invalidate(13, y_scale = linear2().domain(extent(data, y_accessor)).range([height - margin, margin]));
-      }
-      if ($$self.$$.dirty[0] & 1048577) {
-        $:
-          $$invalidate(21, r_scale = linear2().domain(extent(data, r_accessor)).range([0, radius]));
-      }
-      if ($$self.$$.dirty[0] & 3682695) {
-        $:
-          $$invalidate(14, mapped_data = data.map((d, i) => ({
-            "x": x_scale(x_accessor(d)),
-            "y": y_scale(y_accessor(d)),
-            "r": r_scale(r_accessor(d)),
-            "c": hues[groups2.indexOf(c_accessor(d))],
-            i
-          })));
-      }
-    };
-    return [
-      data,
-      x_accessor,
-      c_accessor,
-      tooltip_accessors,
-      graph_title,
-      x_label,
-      y_label,
-      groups2,
-      hues,
-      height,
-      width,
-      margin,
-      x_scale,
-      y_scale,
-      mapped_data,
-      mouse_move,
-      mouse_out,
-      x_formatter,
-      y_formatter,
-      y_accessor,
-      r_accessor,
-      r_scale,
-      lineaxis0_scale_binding,
-      lineaxis0_height_binding,
-      lineaxis0_width_binding,
-      lineaxis0_margin_binding,
-      lineaxis1_scale_binding,
-      lineaxis1_height_binding,
-      lineaxis1_width_binding,
-      lineaxis1_margin_binding,
-      popup_mouse_move_binding,
-      popup_mouse_out_binding,
-      figure_elementresize_handler
-    ];
-  }
-  var Scatterplot = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance4, create_fragment4, safe_not_equal, {
-        data: 0,
-        x_accessor: 1,
-        y_accessor: 19,
-        r_accessor: 20,
-        c_accessor: 2,
-        tooltip_accessors: 3,
-        graph_title: 4,
-        x_label: 5,
-        y_label: 6
-      }, null, [-1, -1]);
-    }
-  };
-  var scatterplot_default = Scatterplot;
-
   // node_modules/d3-path/src/path.js
   var pi = Math.PI;
   var tau = 2 * pi;
@@ -6481,11 +5928,26 @@
     return line;
   }
 
-  // node_modules/d3-shape/src/curve/natural.js
-  function Natural(context) {
+  // node_modules/d3-shape/src/curve/monotone.js
+  function sign(x2) {
+    return x2 < 0 ? -1 : 1;
+  }
+  function slope3(that, x2, y2) {
+    var h0 = that._x1 - that._x0, h1 = x2 - that._x1, s0 = (that._y1 - that._y0) / (h0 || h1 < 0 && -0), s1 = (y2 - that._y1) / (h1 || h0 < 0 && -0), p = (s0 * h1 + s1 * h0) / (h0 + h1);
+    return (sign(s0) + sign(s1)) * Math.min(Math.abs(s0), Math.abs(s1), 0.5 * Math.abs(p)) || 0;
+  }
+  function slope2(that, t) {
+    var h = that._x1 - that._x0;
+    return h ? (3 * (that._y1 - that._y0) / h - t) / 2 : t;
+  }
+  function point(that, t02, t12) {
+    var x0 = that._x0, y0 = that._y0, x1 = that._x1, y1 = that._y1, dx = (x1 - x0) / 3;
+    that._context.bezierCurveTo(x0 + dx, y0 + dx * t02, x1 - dx, y1 - dx * t12, x1, y1);
+  }
+  function MonotoneX(context) {
     this._context = context;
   }
-  Natural.prototype = {
+  MonotoneX.prototype = {
     areaStart: function() {
       this._line = 0;
     },
@@ -6493,66 +5955,112 @@
       this._line = NaN;
     },
     lineStart: function() {
-      this._x = [];
-      this._y = [];
+      this._x0 = this._x1 = this._y0 = this._y1 = this._t0 = NaN;
+      this._point = 0;
     },
     lineEnd: function() {
-      var x2 = this._x, y2 = this._y, n = x2.length;
-      if (n) {
-        this._line ? this._context.lineTo(x2[0], y2[0]) : this._context.moveTo(x2[0], y2[0]);
-        if (n === 2) {
-          this._context.lineTo(x2[1], y2[1]);
-        } else {
-          var px = controlPoints(x2), py = controlPoints(y2);
-          for (var i0 = 0, i1 = 1; i1 < n; ++i0, ++i1) {
-            this._context.bezierCurveTo(px[0][i0], py[0][i0], px[1][i0], py[1][i0], x2[i1], y2[i1]);
-          }
-        }
+      switch (this._point) {
+        case 2:
+          this._context.lineTo(this._x1, this._y1);
+          break;
+        case 3:
+          point(this, this._t0, slope2(this, this._t0));
+          break;
       }
-      if (this._line || this._line !== 0 && n === 1)
+      if (this._line || this._line !== 0 && this._point === 1)
         this._context.closePath();
       this._line = 1 - this._line;
-      this._x = this._y = null;
     },
     point: function(x2, y2) {
-      this._x.push(+x2);
-      this._y.push(+y2);
+      var t12 = NaN;
+      x2 = +x2, y2 = +y2;
+      if (x2 === this._x1 && y2 === this._y1)
+        return;
+      switch (this._point) {
+        case 0:
+          this._point = 1;
+          this._line ? this._context.lineTo(x2, y2) : this._context.moveTo(x2, y2);
+          break;
+        case 1:
+          this._point = 2;
+          break;
+        case 2:
+          this._point = 3;
+          point(this, slope2(this, t12 = slope3(this, x2, y2)), t12);
+          break;
+        default:
+          point(this, this._t0, t12 = slope3(this, x2, y2));
+          break;
+      }
+      this._x0 = this._x1, this._x1 = x2;
+      this._y0 = this._y1, this._y1 = y2;
+      this._t0 = t12;
     }
   };
-  function controlPoints(x2) {
-    var i, n = x2.length - 1, m, a = new Array(n), b = new Array(n), r = new Array(n);
-    a[0] = 0, b[0] = 2, r[0] = x2[0] + 2 * x2[1];
-    for (i = 1; i < n - 1; ++i)
-      a[i] = 1, b[i] = 4, r[i] = 4 * x2[i] + 2 * x2[i + 1];
-    a[n - 1] = 2, b[n - 1] = 7, r[n - 1] = 8 * x2[n - 1] + x2[n];
-    for (i = 1; i < n; ++i)
-      m = a[i] / b[i - 1], b[i] -= m, r[i] -= m * r[i - 1];
-    a[n - 1] = r[n - 1] / b[n - 1];
-    for (i = n - 2; i >= 0; --i)
-      a[i] = (r[i] - a[i + 1]) / b[i];
-    b[n - 1] = (x2[n] + a[n - 1]) / 2;
-    for (i = 0; i < n - 1; ++i)
-      b[i] = 2 * x2[i + 1] - a[i + 1];
-    return [a, b];
+  function MonotoneY(context) {
+    this._context = new ReflectContext(context);
   }
-  function natural_default(context) {
-    return new Natural(context);
+  (MonotoneY.prototype = Object.create(MonotoneX.prototype)).point = function(x2, y2) {
+    MonotoneX.prototype.point.call(this, y2, x2);
+  };
+  function ReflectContext(context) {
+    this._context = context;
+  }
+  ReflectContext.prototype = {
+    moveTo: function(x2, y2) {
+      this._context.moveTo(y2, x2);
+    },
+    closePath: function() {
+      this._context.closePath();
+    },
+    lineTo: function(x2, y2) {
+      this._context.lineTo(y2, x2);
+    },
+    bezierCurveTo: function(x1, y1, x2, y2, x3, y3) {
+      this._context.bezierCurveTo(y1, x1, y2, x2, y3, x3);
+    }
+  };
+  function monotoneX(context) {
+    return new MonotoneX(context);
   }
 
-  // src/stats/lineplot.svelte
-  var import_iwanthue2 = __toESM(require_iwanthue());
-  function get_each_context4(ctx, list, i) {
+  // src/stats/scatterplot.svelte
+  var import_iwanthue = __toESM(require_iwanthue());
+  function get_each_context3(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[34] = list[i];
-    child_ctx[36] = i;
+    child_ctx[37] = list[i];
+    child_ctx[39] = i;
     return child_ctx;
   }
-  function create_each_block4(ctx) {
+  function create_if_block(ctx) {
+    let path2;
+    return {
+      c() {
+        path2 = svg_element("path");
+        attr(path2, "d", ctx[16]);
+        attr(path2, "class", "fill-transparent");
+        set_style(path2, "stroke", "grey");
+      },
+      m(target, anchor) {
+        insert(target, path2, anchor);
+      },
+      p(ctx2, dirty) {
+        if (dirty[0] & 65536) {
+          attr(path2, "d", ctx2[16]);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(path2);
+      }
+    };
+  }
+  function create_each_block3(ctx) {
     let div1;
     let div0;
     let t02;
     let p;
-    let t1_value = ctx[34] + "";
+    let t1_value = ctx[37] + "";
     let t12;
     let t2;
     return {
@@ -6564,7 +6072,7 @@
         t12 = text(t1_value);
         t2 = space();
         attr(div0, "class", "z-50 w-3 h-3 rounded-full");
-        set_style(div0, "background-color", ctx[8][ctx[36]]);
+        set_style(div0, "background-color", ctx[9][ctx[39]]);
         attr(p, "class", "text-[#808080]");
         attr(div1, "class", "flex flex-row gap-1 items-center");
       },
@@ -6577,10 +6085,10 @@
         append(div1, t2);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 256) {
-          set_style(div0, "background-color", ctx2[8][ctx2[36]]);
+        if (dirty[0] & 512) {
+          set_style(div0, "background-color", ctx2[9][ctx2[39]]);
         }
-        if (dirty[0] & 128 && t1_value !== (t1_value = ctx2[34] + ""))
+        if (dirty[0] & 256 && t1_value !== (t1_value = ctx2[37] + ""))
           set_data(t12, t1_value);
       },
       d(detaching) {
@@ -6589,7 +6097,7 @@
       }
     };
   }
-  function create_fragment5(ctx) {
+  function create_fragment4(ctx) {
     let div1;
     let h1;
     let t02;
@@ -6609,7 +6117,6 @@
     let updating_height_1;
     let updating_width_1;
     let updating_margin_1;
-    let path2;
     let circles;
     let svg_viewBox_value;
     let t4;
@@ -6624,32 +6131,32 @@
     let t7;
     let current;
     function lineaxis0_scale_binding(value) {
-      ctx[22](value);
+      ctx[25](value);
     }
     function lineaxis0_height_binding(value) {
-      ctx[23](value);
+      ctx[26](value);
     }
     function lineaxis0_width_binding(value) {
-      ctx[24](value);
+      ctx[27](value);
     }
     function lineaxis0_margin_binding(value) {
-      ctx[25](value);
+      ctx[28](value);
     }
     let lineaxis0_props = {
       position: "bottom",
-      formater: ctx[18]
+      formater: ctx[19]
     };
-    if (ctx[12] !== void 0) {
-      lineaxis0_props.scale = ctx[12];
-    }
-    if (ctx[9] !== void 0) {
-      lineaxis0_props.height = ctx[9];
+    if (ctx[13] !== void 0) {
+      lineaxis0_props.scale = ctx[13];
     }
     if (ctx[10] !== void 0) {
-      lineaxis0_props.width = ctx[10];
+      lineaxis0_props.height = ctx[10];
     }
     if (ctx[11] !== void 0) {
-      lineaxis0_props.margin = ctx[11];
+      lineaxis0_props.width = ctx[11];
+    }
+    if (ctx[12] !== void 0) {
+      lineaxis0_props.margin = ctx[12];
     }
     lineaxis0 = new line_axis_default({ props: lineaxis0_props });
     binding_callbacks.push(() => bind(lineaxis0, "scale", lineaxis0_scale_binding));
@@ -6657,32 +6164,32 @@
     binding_callbacks.push(() => bind(lineaxis0, "width", lineaxis0_width_binding));
     binding_callbacks.push(() => bind(lineaxis0, "margin", lineaxis0_margin_binding));
     function lineaxis1_scale_binding(value) {
-      ctx[26](value);
+      ctx[29](value);
     }
     function lineaxis1_height_binding(value) {
-      ctx[27](value);
+      ctx[30](value);
     }
     function lineaxis1_width_binding(value) {
-      ctx[28](value);
+      ctx[31](value);
     }
     function lineaxis1_margin_binding(value) {
-      ctx[29](value);
+      ctx[32](value);
     }
     let lineaxis1_props = {
       position: "left",
-      formater: ctx[19]
+      formater: ctx[20]
     };
-    if (ctx[13] !== void 0) {
-      lineaxis1_props.scale = ctx[13];
-    }
-    if (ctx[9] !== void 0) {
-      lineaxis1_props.height = ctx[9];
+    if (ctx[14] !== void 0) {
+      lineaxis1_props.scale = ctx[14];
     }
     if (ctx[10] !== void 0) {
-      lineaxis1_props.width = ctx[10];
+      lineaxis1_props.height = ctx[10];
     }
     if (ctx[11] !== void 0) {
-      lineaxis1_props.margin = ctx[11];
+      lineaxis1_props.width = ctx[11];
+    }
+    if (ctx[12] !== void 0) {
+      lineaxis1_props.margin = ctx[12];
     }
     lineaxis1 = new line_axis_default({ props: lineaxis1_props });
     binding_callbacks.push(() => bind(lineaxis1, "scale", lineaxis1_scale_binding));
@@ -6692,34 +6199,35 @@
     circles = new circles_default({
       props: {
         mapped_data: ctx[15],
-        mouse_move: ctx[16],
-        mouse_out: ctx[17]
+        mouse_move: ctx[17],
+        mouse_out: ctx[18]
       }
     });
-    let each_value = ctx[7];
+    let if_block = ctx[3] && create_if_block(ctx);
+    let each_value = ctx[8];
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block4(get_each_context4(ctx, each_value, i));
+      each_blocks[i] = create_each_block3(get_each_context3(ctx, each_value, i));
     }
     function popup_mouse_move_binding(value) {
-      ctx[30](value);
+      ctx[33](value);
     }
     function popup_mouse_out_binding(value) {
-      ctx[31](value);
+      ctx[34](value);
     }
     let popup_props = {
       data: ctx[0],
-      groups: ctx[7],
-      hues: ctx[8],
+      groups: ctx[8],
+      hues: ctx[9],
       x_accessor: ctx[1],
       group_accessor: ctx[2],
-      tooltip_accessors: ctx[3]
+      tooltip_accessors: ctx[4]
     };
-    if (ctx[16] !== void 0) {
-      popup_props.mouse_move = ctx[16];
-    }
     if (ctx[17] !== void 0) {
-      popup_props.mouse_out = ctx[17];
+      popup_props.mouse_move = ctx[17];
+    }
+    if (ctx[18] !== void 0) {
+      popup_props.mouse_out = ctx[18];
     }
     popup = new popup_default({ props: popup_props });
     binding_callbacks.push(() => bind(popup, "mouse_move", popup_mouse_move_binding));
@@ -6728,17 +6236,18 @@
       c() {
         div1 = element("div");
         h1 = element("h1");
-        t02 = text(ctx[4]);
+        t02 = text(ctx[5]);
         t12 = space();
         figure = element("figure");
         p0 = element("p");
-        t2 = text(ctx[6]);
+        t2 = text(ctx[7]);
         t3 = space();
         svg = svg_element("svg");
         create_component(lineaxis0.$$.fragment);
         create_component(lineaxis1.$$.fragment);
-        path2 = svg_element("path");
         create_component(circles.$$.fragment);
+        if (if_block)
+          if_block.c();
         t4 = space();
         div0 = element("div");
         for (let i = 0; i < each_blocks.length; i += 1) {
@@ -6748,20 +6257,17 @@
         create_component(popup.$$.fragment);
         t6 = space();
         p1 = element("p");
-        t7 = text(ctx[5]);
+        t7 = text(ctx[6]);
         attr(h1, "class", "text-4xl font-semibold text-indigo-400");
         attr(p0, "class", "whitespace-nowrap -rotate-90 text-[#808080]");
-        attr(path2, "d", ctx[14]);
-        attr(path2, "class", "fill-transparent");
-        set_style(path2, "stroke", "grey");
         attr(svg, "height", "100%");
         attr(svg, "width", "100%");
         set_style(svg, "resize", "both");
-        attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[10] + " " + ctx[9]);
+        attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[11] + " " + ctx[10]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
         attr(div0, "class", "flex flex-col");
         attr(figure, "class", "flex flex-row w-full h-full items-center");
-        add_render_callback(() => ctx[32].call(figure));
+        add_render_callback(() => ctx[35].call(figure));
         attr(p1, "class", "text-[#808080]");
         attr(div1, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
@@ -6777,8 +6283,9 @@
         append(figure, svg);
         mount_component(lineaxis0, svg, null);
         mount_component(lineaxis1, svg, null);
-        append(svg, path2);
         mount_component(circles, svg, null);
+        if (if_block)
+          if_block.m(svg, null);
         append(figure, t4);
         append(figure, div0);
         for (let i = 0; i < each_blocks.length; i += 1) {
@@ -6786,84 +6293,93 @@
         }
         append(figure, t5);
         mount_component(popup, figure, null);
-        figure_resize_listener = add_resize_listener(figure, ctx[32].bind(figure));
+        figure_resize_listener = add_resize_listener(figure, ctx[35].bind(figure));
         append(div1, t6);
         append(div1, p1);
         append(p1, t7);
         current = true;
       },
       p(ctx2, dirty) {
-        if (!current || dirty[0] & 16)
-          set_data(t02, ctx2[4]);
-        if (!current || dirty[0] & 64)
-          set_data(t2, ctx2[6]);
+        if (!current || dirty[0] & 32)
+          set_data(t02, ctx2[5]);
+        if (!current || dirty[0] & 128)
+          set_data(t2, ctx2[7]);
         const lineaxis0_changes = {};
-        if (!updating_scale && dirty[0] & 4096) {
+        if (!updating_scale && dirty[0] & 8192) {
           updating_scale = true;
-          lineaxis0_changes.scale = ctx2[12];
+          lineaxis0_changes.scale = ctx2[13];
           add_flush_callback(() => updating_scale = false);
         }
-        if (!updating_height && dirty[0] & 512) {
+        if (!updating_height && dirty[0] & 1024) {
           updating_height = true;
-          lineaxis0_changes.height = ctx2[9];
+          lineaxis0_changes.height = ctx2[10];
           add_flush_callback(() => updating_height = false);
         }
-        if (!updating_width && dirty[0] & 1024) {
+        if (!updating_width && dirty[0] & 2048) {
           updating_width = true;
-          lineaxis0_changes.width = ctx2[10];
+          lineaxis0_changes.width = ctx2[11];
           add_flush_callback(() => updating_width = false);
         }
-        if (!updating_margin && dirty[0] & 2048) {
+        if (!updating_margin && dirty[0] & 4096) {
           updating_margin = true;
-          lineaxis0_changes.margin = ctx2[11];
+          lineaxis0_changes.margin = ctx2[12];
           add_flush_callback(() => updating_margin = false);
         }
         lineaxis0.$set(lineaxis0_changes);
         const lineaxis1_changes = {};
-        if (!updating_scale_1 && dirty[0] & 8192) {
+        if (!updating_scale_1 && dirty[0] & 16384) {
           updating_scale_1 = true;
-          lineaxis1_changes.scale = ctx2[13];
+          lineaxis1_changes.scale = ctx2[14];
           add_flush_callback(() => updating_scale_1 = false);
         }
-        if (!updating_height_1 && dirty[0] & 512) {
+        if (!updating_height_1 && dirty[0] & 1024) {
           updating_height_1 = true;
-          lineaxis1_changes.height = ctx2[9];
+          lineaxis1_changes.height = ctx2[10];
           add_flush_callback(() => updating_height_1 = false);
         }
-        if (!updating_width_1 && dirty[0] & 1024) {
+        if (!updating_width_1 && dirty[0] & 2048) {
           updating_width_1 = true;
-          lineaxis1_changes.width = ctx2[10];
+          lineaxis1_changes.width = ctx2[11];
           add_flush_callback(() => updating_width_1 = false);
         }
-        if (!updating_margin_1 && dirty[0] & 2048) {
+        if (!updating_margin_1 && dirty[0] & 4096) {
           updating_margin_1 = true;
-          lineaxis1_changes.margin = ctx2[11];
+          lineaxis1_changes.margin = ctx2[12];
           add_flush_callback(() => updating_margin_1 = false);
         }
         lineaxis1.$set(lineaxis1_changes);
-        if (!current || dirty[0] & 16384) {
-          attr(path2, "d", ctx2[14]);
-        }
         const circles_changes = {};
         if (dirty[0] & 32768)
           circles_changes.mapped_data = ctx2[15];
-        if (dirty[0] & 65536)
-          circles_changes.mouse_move = ctx2[16];
         if (dirty[0] & 131072)
-          circles_changes.mouse_out = ctx2[17];
+          circles_changes.mouse_move = ctx2[17];
+        if (dirty[0] & 262144)
+          circles_changes.mouse_out = ctx2[18];
         circles.$set(circles_changes);
-        if (!current || dirty[0] & 1536 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[10] + " " + ctx2[9])) {
+        if (ctx2[3]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block(ctx2);
+            if_block.c();
+            if_block.m(svg, null);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+        if (!current || dirty[0] & 3072 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[11] + " " + ctx2[10])) {
           attr(svg, "viewBox", svg_viewBox_value);
         }
-        if (dirty[0] & 384) {
-          each_value = ctx2[7];
+        if (dirty[0] & 768) {
+          each_value = ctx2[8];
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context4(ctx2, each_value, i);
+            const child_ctx = get_each_context3(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
             } else {
-              each_blocks[i] = create_each_block4(child_ctx);
+              each_blocks[i] = create_each_block3(child_ctx);
               each_blocks[i].c();
               each_blocks[i].m(div0, null);
             }
@@ -6876,29 +6392,29 @@
         const popup_changes = {};
         if (dirty[0] & 1)
           popup_changes.data = ctx2[0];
-        if (dirty[0] & 128)
-          popup_changes.groups = ctx2[7];
         if (dirty[0] & 256)
-          popup_changes.hues = ctx2[8];
+          popup_changes.groups = ctx2[8];
+        if (dirty[0] & 512)
+          popup_changes.hues = ctx2[9];
         if (dirty[0] & 2)
           popup_changes.x_accessor = ctx2[1];
         if (dirty[0] & 4)
           popup_changes.group_accessor = ctx2[2];
-        if (dirty[0] & 8)
-          popup_changes.tooltip_accessors = ctx2[3];
-        if (!updating_mouse_move && dirty[0] & 65536) {
+        if (dirty[0] & 16)
+          popup_changes.tooltip_accessors = ctx2[4];
+        if (!updating_mouse_move && dirty[0] & 131072) {
           updating_mouse_move = true;
-          popup_changes.mouse_move = ctx2[16];
+          popup_changes.mouse_move = ctx2[17];
           add_flush_callback(() => updating_mouse_move = false);
         }
-        if (!updating_mouse_out && dirty[0] & 131072) {
+        if (!updating_mouse_out && dirty[0] & 262144) {
           updating_mouse_out = true;
-          popup_changes.mouse_out = ctx2[17];
+          popup_changes.mouse_out = ctx2[18];
           add_flush_callback(() => updating_mouse_out = false);
         }
         popup.$set(popup_changes);
-        if (!current || dirty[0] & 32)
-          set_data(t7, ctx2[5]);
+        if (!current || dirty[0] & 64)
+          set_data(t7, ctx2[6]);
       },
       i(local) {
         if (current)
@@ -6922,136 +6438,151 @@
         destroy_component(lineaxis0);
         destroy_component(lineaxis1);
         destroy_component(circles);
+        if (if_block)
+          if_block.d();
         destroy_each(each_blocks, detaching);
         destroy_component(popup);
         figure_resize_listener();
       }
     };
   }
-  function instance5($$self, $$props, $$invalidate) {
+  function instance4($$self, $$props, $$invalidate) {
     let { data } = $$props;
+    let { radius = 60 } = $$props;
     let { x_accessor } = $$props;
     let { y_accessor } = $$props;
+    let { r_accessor = void 0 } = $$props;
     let { c_accessor } = $$props;
+    let { draw_line = false } = $$props;
     let { tooltip_accessors } = $$props;
     let { graph_title } = $$props;
     let { x_label } = $$props;
     let { y_label } = $$props;
-    let { r_size = 5 } = $$props;
     let groups2, hues;
-    let [height, width, radius] = [50, 100, 60];
+    let [height, width] = [50, 100];
     let margin = 2 * (radius + 10);
-    let x_scale, y_scale;
-    let line_gen;
+    let x_scale, y_scale, r_scale;
     const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")];
     let mapped_data;
+    const make_line = (x_scale2, y_scale2, x_accessor2, y_accessor2, data2) => line_default().curve(monotoneX).x((d) => x_scale2(x_accessor2(d))).y((d) => y_scale2(y_accessor2(d)))(data2);
+    let line_path;
     let mouse_move, mouse_out;
     function lineaxis0_scale_binding(value) {
       x_scale = value;
-      $$invalidate(12, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(11, margin), $$invalidate(10, width);
+      $$invalidate(13, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(12, margin), $$invalidate(11, width);
     }
     function lineaxis0_height_binding(value) {
       height = value;
-      $$invalidate(9, height);
+      $$invalidate(10, height);
     }
     function lineaxis0_width_binding(value) {
       width = value;
-      $$invalidate(10, width);
+      $$invalidate(11, width);
     }
     function lineaxis0_margin_binding(value) {
       margin = value;
-      $$invalidate(11, margin);
+      $$invalidate(12, margin);
     }
     function lineaxis1_scale_binding(value) {
       y_scale = value;
-      $$invalidate(13, y_scale), $$invalidate(0, data), $$invalidate(20, y_accessor), $$invalidate(9, height), $$invalidate(11, margin);
+      $$invalidate(14, y_scale), $$invalidate(0, data), $$invalidate(22, y_accessor), $$invalidate(10, height), $$invalidate(12, margin);
     }
     function lineaxis1_height_binding(value) {
       height = value;
-      $$invalidate(9, height);
+      $$invalidate(10, height);
     }
     function lineaxis1_width_binding(value) {
       width = value;
-      $$invalidate(10, width);
+      $$invalidate(11, width);
     }
     function lineaxis1_margin_binding(value) {
       margin = value;
-      $$invalidate(11, margin);
+      $$invalidate(12, margin);
     }
     function popup_mouse_move_binding(value) {
       mouse_move = value;
-      $$invalidate(16, mouse_move);
+      $$invalidate(17, mouse_move);
     }
     function popup_mouse_out_binding(value) {
       mouse_out = value;
-      $$invalidate(17, mouse_out);
+      $$invalidate(18, mouse_out);
     }
     function figure_elementresize_handler() {
       height = this.clientHeight;
       width = this.clientWidth;
-      $$invalidate(9, height);
-      $$invalidate(10, width);
+      $$invalidate(10, height);
+      $$invalidate(11, width);
     }
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)
         $$invalidate(0, data = $$props2.data);
+      if ("radius" in $$props2)
+        $$invalidate(21, radius = $$props2.radius);
       if ("x_accessor" in $$props2)
         $$invalidate(1, x_accessor = $$props2.x_accessor);
       if ("y_accessor" in $$props2)
-        $$invalidate(20, y_accessor = $$props2.y_accessor);
+        $$invalidate(22, y_accessor = $$props2.y_accessor);
+      if ("r_accessor" in $$props2)
+        $$invalidate(23, r_accessor = $$props2.r_accessor);
       if ("c_accessor" in $$props2)
         $$invalidate(2, c_accessor = $$props2.c_accessor);
+      if ("draw_line" in $$props2)
+        $$invalidate(3, draw_line = $$props2.draw_line);
       if ("tooltip_accessors" in $$props2)
-        $$invalidate(3, tooltip_accessors = $$props2.tooltip_accessors);
+        $$invalidate(4, tooltip_accessors = $$props2.tooltip_accessors);
       if ("graph_title" in $$props2)
-        $$invalidate(4, graph_title = $$props2.graph_title);
+        $$invalidate(5, graph_title = $$props2.graph_title);
       if ("x_label" in $$props2)
-        $$invalidate(5, x_label = $$props2.x_label);
+        $$invalidate(6, x_label = $$props2.x_label);
       if ("y_label" in $$props2)
-        $$invalidate(6, y_label = $$props2.y_label);
-      if ("r_size" in $$props2)
-        $$invalidate(21, r_size = $$props2.r_size);
+        $$invalidate(7, y_label = $$props2.y_label);
     };
     $$self.$$.update = () => {
       if ($$self.$$.dirty[0] & 5) {
         $:
-          $$invalidate(7, groups2 = Array.from(group(data, c_accessor).keys()));
+          $$invalidate(8, groups2 = Array.from(group(data, c_accessor).keys()));
       }
-      if ($$self.$$.dirty[0] & 128) {
+      if ($$self.$$.dirty[0] & 256) {
         $:
-          $$invalidate(8, hues = (0, import_iwanthue2.default)(groups2.length, {
+          $$invalidate(9, hues = (0, import_iwanthue.default)(groups2.length, {
             "colorSpace": [0, 360, 0, 100, 50, 100],
             "clustering": "force-vector",
             "seed": "exSTATic!"
           }));
       }
-      if ($$self.$$.dirty[0] & 3075) {
+      if ($$self.$$.dirty[0] & 6147) {
         $:
-          $$invalidate(12, x_scale = time().domain(extent(data, x_accessor)).range([margin, width - margin]));
+          $$invalidate(13, x_scale = time().domain(extent(data, x_accessor)).range([margin, width - margin]));
       }
-      if ($$self.$$.dirty[0] & 1051137) {
+      if ($$self.$$.dirty[0] & 4199425) {
         $:
-          $$invalidate(13, y_scale = linear2().domain(extent(data, y_accessor)).range([height - margin, margin]));
+          $$invalidate(14, y_scale = linear2().domain(extent(data, y_accessor)).range([height - margin, margin]));
       }
-      if ($$self.$$.dirty[0] & 1060867) {
+      if ($$self.$$.dirty[0] & 10485761) {
         $:
-          $$invalidate(14, line_gen = line_default().curve(natural_default).x((d) => x_scale(x_accessor(d))).y((d) => y_scale(y_accessor(d)))(data));
+          $$invalidate(24, r_scale = linear2().domain(extent(data, r_accessor)).range([0, radius]));
       }
-      if ($$self.$$.dirty[0] & 3158407) {
+      if ($$self.$$.dirty[0] & 31482631) {
         $:
           $$invalidate(15, mapped_data = data.map((d, i) => ({
             "x": x_scale(x_accessor(d)),
             "y": y_scale(y_accessor(d)),
-            "r": r_size,
+            "r": r_accessor !== void 0 ? r_scale(r_accessor(d)) : radius,
             "c": hues[groups2.indexOf(c_accessor(d))],
             i
           })));
+      }
+      if ($$self.$$.dirty[0] & 4218891) {
+        $:
+          if (draw_line)
+            $$invalidate(16, line_path = make_line(x_scale, y_scale, x_accessor, y_accessor, data));
       }
     };
     return [
       data,
       x_accessor,
       c_accessor,
+      draw_line,
       tooltip_accessors,
       graph_title,
       x_label,
@@ -7063,14 +6594,16 @@
       margin,
       x_scale,
       y_scale,
-      line_gen,
       mapped_data,
+      line_path,
       mouse_move,
       mouse_out,
       x_formatter,
       y_formatter,
+      radius,
       y_accessor,
-      r_size,
+      r_accessor,
+      r_scale,
       lineaxis0_scale_binding,
       lineaxis0_height_binding,
       lineaxis0_width_binding,
@@ -7084,23 +6617,25 @@
       figure_elementresize_handler
     ];
   }
-  var Lineplot = class extends SvelteComponent {
+  var Scatterplot = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment5, safe_not_equal, {
+      init(this, options, instance4, create_fragment4, safe_not_equal, {
         data: 0,
+        radius: 21,
         x_accessor: 1,
-        y_accessor: 20,
+        y_accessor: 22,
+        r_accessor: 23,
         c_accessor: 2,
-        tooltip_accessors: 3,
-        graph_title: 4,
-        x_label: 5,
-        y_label: 6,
-        r_size: 21
+        draw_line: 3,
+        tooltip_accessors: 4,
+        graph_title: 5,
+        x_label: 6,
+        y_label: 7
       }, null, [-1, -1]);
     }
   };
-  var lineplot_default = Lineplot;
+  var scatterplot_default = Scatterplot;
 
   // node_modules/date-fns/esm/_lib/toInteger/index.js
   function toInteger(dirtyNumber) {
@@ -7271,13 +6806,13 @@
     var captures = timezoneString.match(timezoneRegex);
     if (!captures)
       return 0;
-    var sign = captures[1] === "+" ? -1 : 1;
+    var sign2 = captures[1] === "+" ? -1 : 1;
     var hours2 = parseInt(captures[2]);
     var minutes2 = captures[3] && parseInt(captures[3]) || 0;
     if (!validateTimezone(hours2, minutes2)) {
       return NaN;
     }
-    return sign * (hours2 * millisecondsInHour + minutes2 * millisecondsInMinute);
+    return sign2 * (hours2 * millisecondsInHour + minutes2 * millisecondsInMinute);
   }
   function dayOfISOWeekYear(isoWeekYear, week, day2) {
     var date2 = new Date(0);
@@ -7311,15 +6846,15 @@
   }
 
   // src/stats/stats.svelte
-  function create_fragment6(ctx) {
+  function create_fragment5(ctx) {
     let div;
     let scatterplot0;
     let t02;
     let scatterplot1;
     let t12;
-    let lineplot0;
+    let scatterplot2;
     let t2;
-    let lineplot1;
+    let scatterplot3;
     let current;
     scatterplot0 = new scatterplot_default({
       props: {
@@ -7347,24 +6882,28 @@
         y_label: "Time Read"
       }
     });
-    lineplot0 = new lineplot_default({
+    scatterplot2 = new scatterplot_default({
       props: {
         data: ctx[0],
         x_accessor: ctx[7],
         y_accessor: ctx[8],
         c_accessor: func_10,
+        radius: 5,
+        draw_line: true,
         tooltip_accessors: ctx[2],
         graph_title: "Immersion Gains",
         x_label: "Date",
         y_label: "Reading Speed"
       }
     });
-    lineplot1 = new lineplot_default({
+    scatterplot3 = new scatterplot_default({
       props: {
         data: ctx[0],
         x_accessor: ctx[9],
         y_accessor: ctx[10],
         c_accessor: func_13,
+        radius: 5,
+        draw_line: true,
         tooltip_accessors: ctx[2],
         graph_title: "Immersion Quantity",
         x_label: "Date",
@@ -7378,9 +6917,9 @@
         t02 = space();
         create_component(scatterplot1.$$.fragment);
         t12 = space();
-        create_component(lineplot0.$$.fragment);
+        create_component(scatterplot2.$$.fragment);
         t2 = space();
-        create_component(lineplot1.$$.fragment);
+        create_component(scatterplot3.$$.fragment);
         attr(div, "class", "flex flex-col h-full w-full absolute p-20 gap-20");
       },
       m(target, anchor) {
@@ -7389,9 +6928,9 @@
         append(div, t02);
         mount_component(scatterplot1, div, null);
         append(div, t12);
-        mount_component(lineplot0, div, null);
+        mount_component(scatterplot2, div, null);
         append(div, t2);
-        mount_component(lineplot1, div, null);
+        mount_component(scatterplot3, div, null);
         current = true;
       },
       p(ctx2, [dirty]) {
@@ -7403,29 +6942,29 @@
         if (dirty & 1)
           scatterplot1_changes.data = ctx2[0];
         scatterplot1.$set(scatterplot1_changes);
-        const lineplot0_changes = {};
+        const scatterplot2_changes = {};
         if (dirty & 1)
-          lineplot0_changes.data = ctx2[0];
-        lineplot0.$set(lineplot0_changes);
-        const lineplot1_changes = {};
+          scatterplot2_changes.data = ctx2[0];
+        scatterplot2.$set(scatterplot2_changes);
+        const scatterplot3_changes = {};
         if (dirty & 1)
-          lineplot1_changes.data = ctx2[0];
-        lineplot1.$set(lineplot1_changes);
+          scatterplot3_changes.data = ctx2[0];
+        scatterplot3.$set(scatterplot3_changes);
       },
       i(local) {
         if (current)
           return;
         transition_in(scatterplot0.$$.fragment, local);
         transition_in(scatterplot1.$$.fragment, local);
-        transition_in(lineplot0.$$.fragment, local);
-        transition_in(lineplot1.$$.fragment, local);
+        transition_in(scatterplot2.$$.fragment, local);
+        transition_in(scatterplot3.$$.fragment, local);
         current = true;
       },
       o(local) {
         transition_out(scatterplot0.$$.fragment, local);
         transition_out(scatterplot1.$$.fragment, local);
-        transition_out(lineplot0.$$.fragment, local);
-        transition_out(lineplot1.$$.fragment, local);
+        transition_out(scatterplot2.$$.fragment, local);
+        transition_out(scatterplot3.$$.fragment, local);
         current = false;
       },
       d(detaching) {
@@ -7433,8 +6972,8 @@
           detach(div);
         destroy_component(scatterplot0);
         destroy_component(scatterplot1);
-        destroy_component(lineplot0);
-        destroy_component(lineplot1);
+        destroy_component(scatterplot2);
+        destroy_component(scatterplot3);
       }
     };
   }
@@ -7444,7 +6983,7 @@
   var func_7 = (d) => d.name;
   var func_10 = (d) => d.name;
   var func_13 = (d) => d.name;
-  function instance6($$self, $$props, $$invalidate) {
+  function instance5($$self, $$props, $$invalidate) {
     const SECS_TO_HRS = 60 * 60;
     let { data } = $$props;
     const uuid_groups = group(data, (d) => d.uuid);
@@ -7485,7 +7024,7 @@
   var Stats = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment6, safe_not_equal, { data: 0 });
+      init(this, options, instance5, create_fragment5, safe_not_equal, { data: 0 });
     }
   };
   var stats_default = Stats;

@@ -7,13 +7,18 @@
     import { format } from "d3-format"
     import { timeFormat } from "d3-time-format"
     import { scaleLinear, scaleTime } from "d3-scale"
+    import { line, curveMonotoneX } from "d3-shape"
     import iwanthue from "iwanthue"
 
     export let data
+    export let radius = 60
+
     export let x_accessor
     export let y_accessor
-    export let r_accessor
+    export let r_accessor = undefined
     export let c_accessor
+
+    export let draw_line = false
 
     export let tooltip_accessors
 
@@ -29,7 +34,7 @@
         "seed": "exSTATic!"
     })
 
-    let [height, width, radius] = [50, 100, 60]
+    let [height, width] = [50, 100]
     let margin = 2 * (radius + 10)
 
     // Map data (domains) onto physical scales (ranges)
@@ -50,10 +55,19 @@
     $: mapped_data = data.map((d, i) => ({
         "x": x_scale(x_accessor(d)),
         "y": y_scale(y_accessor(d)),
-        "r": r_scale(r_accessor(d)),
+        "r": r_accessor !== undefined ? r_scale(r_accessor(d)) : radius,
         "c": hues[groups.indexOf(c_accessor(d))],
         "i": i
     }))
+
+    const make_line = (x_scale, y_scale, x_accessor, y_accessor, data) => line()
+        .curve(curveMonotoneX)
+        .x(d => x_scale(x_accessor(d)))
+        .y(d => y_scale(y_accessor(d)))
+        (data)
+
+    let line_path
+    $: if (draw_line) line_path = make_line(x_scale, y_scale, x_accessor, y_accessor, data)
 
     let mouse_move, mouse_out
 </script>
@@ -69,6 +83,10 @@
             <LineAxis bind:scale={y_scale} bind:height bind:width bind:margin position="left" formater={y_formatter}/>
 
             <Circles {mapped_data} {mouse_move} {mouse_out}/>
+
+            {#if draw_line}
+                <path d={line_path} class="fill-transparent" style="stroke: grey;"/>
+            {/if}
         </svg>
 
         <div class="flex flex-col">

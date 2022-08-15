@@ -1,6 +1,5 @@
 <script lang="ts">
     import Scatterplot from "./scatterplot.svelte"
-    import Lineplot from "./lineplot.svelte"
 
     import { group, rollup, sum } from "d3-array"
     import { parseISO } from "date-fns"
@@ -38,17 +37,17 @@
         graph_title="Immersion Quantity" x_label="Date" y_label="Time Read"
     />
 
-    <Lineplot
+    <Scatterplot
         data={data}
         x_accessor={d => parseISO(d.date)} y_accessor={d => d.read_speed * SECS_TO_HRS}
-        c_accessor={ d => d.name }
+        c_accessor={ d => d.name } radius={5} draw_line={true}
         tooltip_accessors={tooltip_accessors}
         graph_title="Immersion Gains" x_label="Date" y_label="Reading Speed"
     />
-    <Lineplot
+    <Scatterplot
         data={data}
         x_accessor={d => parseISO(d.date)} y_accessor={d => d.time_read / SECS_TO_HRS}
-        c_accessor={ d => d.name }
+        c_accessor={ d => d.name } radius={5} draw_line={true}
         tooltip_accessors={tooltip_accessors}
         graph_title="Immersion Quantity" x_label="Date" y_label="Time Read"
     />

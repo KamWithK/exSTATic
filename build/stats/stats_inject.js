@@ -7645,7 +7645,7 @@
     new stats_default({
       target: document.documentElement,
       props: {
-        data: await getData()
+        data: (await getData()).sort((first, second2) => parseISO(first["date"]).valueOf() - parseISO(second2["date"]).valueOf())
       }
     });
   };

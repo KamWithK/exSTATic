@@ -2910,569 +2910,36 @@
     return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
   }
 
-  // node_modules/d3-axis/src/identity.js
-  function identity_default(x2) {
-    return x2;
-  }
-
-  // node_modules/d3-axis/src/axis.js
-  var top = 1;
-  var right = 2;
-  var bottom = 3;
-  var left = 4;
-  var epsilon = 1e-6;
-  function translateX(x2) {
-    return "translate(" + x2 + ",0)";
-  }
-  function translateY(y2) {
-    return "translate(0," + y2 + ")";
-  }
-  function number(scale) {
-    return (d) => +scale(d);
-  }
-  function center(scale, offset) {
-    offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
-    if (scale.round())
-      offset = Math.round(offset);
-    return (d) => +scale(d) + offset;
-  }
-  function entering() {
-    return !this.__axis;
-  }
-  function axis(orient, scale) {
-    var tickArguments = [], tickValues = null, tickFormat2 = null, tickSizeInner = 6, tickSizeOuter = 6, tickPadding = 3, offset = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5, k = orient === top || orient === left ? -1 : 1, x2 = orient === left || orient === right ? "x" : "y", transform = orient === top || orient === bottom ? translateX : translateY;
-    function axis2(context) {
-      var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues, format2 = tickFormat2 == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : identity_default : tickFormat2, spacing = Math.max(tickSizeInner, 0) + tickPadding, range = scale.range(), range0 = +range[0] + offset, range1 = +range[range.length - 1] + offset, position = (scale.bandwidth ? center : number)(scale.copy(), offset), selection2 = context.selection ? context.selection() : context, path2 = selection2.selectAll(".domain").data([null]), tick = selection2.selectAll(".tick").data(values, scale).order(), tickExit = tick.exit(), tickEnter = tick.enter().append("g").attr("class", "tick"), line = tick.select("line"), text2 = tick.select("text");
-      path2 = path2.merge(path2.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
-      tick = tick.merge(tickEnter);
-      line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x2 + "2", k * tickSizeInner));
-      text2 = text2.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x2, k * spacing).attr("dy", orient === top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
-      if (context !== selection2) {
-        path2 = path2.transition(context);
-        tick = tick.transition(context);
-        line = line.transition(context);
-        text2 = text2.transition(context);
-        tickExit = tickExit.transition(context).attr("opacity", epsilon).attr("transform", function(d) {
-          return isFinite(d = position(d)) ? transform(d + offset) : this.getAttribute("transform");
-        });
-        tickEnter.attr("opacity", epsilon).attr("transform", function(d) {
-          var p = this.parentNode.__axis;
-          return transform((p && isFinite(p = p(d)) ? p : position(d)) + offset);
-        });
-      }
-      tickExit.remove();
-      path2.attr("d", orient === left || orient === right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H" + offset + "V" + range1 + "H" + k * tickSizeOuter : "M" + offset + "," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V" + offset + "H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + "," + offset + "H" + range1);
-      tick.attr("opacity", 1).attr("transform", function(d) {
-        return transform(position(d) + offset);
-      });
-      line.attr(x2 + "2", k * tickSizeInner);
-      text2.attr(x2, k * spacing).text(format2);
-      selection2.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === right ? "start" : orient === left ? "end" : "middle");
-      selection2.each(function() {
-        this.__axis = position;
-      });
+  // node_modules/@d3fc/d3fc-rebind/src/createReboundMethod.js
+  var createReboundMethod_default = (target, source, name) => {
+    const method = source[name];
+    if (typeof method !== "function") {
+      throw new Error(`Attempt to rebind ${name} which isn't a function on the source object`);
     }
-    axis2.scale = function(_) {
-      return arguments.length ? (scale = _, axis2) : scale;
+    return (...args) => {
+      var value = method.apply(source, args);
+      return value === source ? target : value;
     };
-    axis2.ticks = function() {
-      return tickArguments = Array.from(arguments), axis2;
-    };
-    axis2.tickArguments = function(_) {
-      return arguments.length ? (tickArguments = _ == null ? [] : Array.from(_), axis2) : tickArguments.slice();
-    };
-    axis2.tickValues = function(_) {
-      return arguments.length ? (tickValues = _ == null ? null : Array.from(_), axis2) : tickValues && tickValues.slice();
-    };
-    axis2.tickFormat = function(_) {
-      return arguments.length ? (tickFormat2 = _, axis2) : tickFormat2;
-    };
-    axis2.tickSize = function(_) {
-      return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis2) : tickSizeInner;
-    };
-    axis2.tickSizeInner = function(_) {
-      return arguments.length ? (tickSizeInner = +_, axis2) : tickSizeInner;
-    };
-    axis2.tickSizeOuter = function(_) {
-      return arguments.length ? (tickSizeOuter = +_, axis2) : tickSizeOuter;
-    };
-    axis2.tickPadding = function(_) {
-      return arguments.length ? (tickPadding = +_, axis2) : tickPadding;
-    };
-    axis2.offset = function(_) {
-      return arguments.length ? (offset = +_, axis2) : offset;
-    };
-    return axis2;
-  }
-  function axisTop(scale) {
-    return axis(top, scale);
-  }
-  function axisRight(scale) {
-    return axis(right, scale);
-  }
-  function axisBottom(scale) {
-    return axis(bottom, scale);
-  }
-  function axisLeft(scale) {
-    return axis(left, scale);
-  }
-
-  // src/stats/line_axis.svelte
-  function create_if_block_3(ctx) {
-    let text_1;
-    let t;
-    let text_1_x_value;
-    let text_1_y_value;
-    return {
-      c() {
-        text_1 = svg_element("text");
-        t = text(ctx[4]);
-        attr(text_1, "x", text_1_x_value = (ctx[0] + ctx[2]) * -0.5);
-        attr(text_1, "y", text_1_y_value = ctx[2] - 30);
-        attr(text_1, "fill", "grey");
-        attr(text_1, "transform", "rotate(-90)");
-      },
-      m(target, anchor) {
-        insert(target, text_1, anchor);
-        append(text_1, t);
-      },
-      p(ctx2, dirty) {
-        if (dirty & 16)
-          set_data(t, ctx2[4]);
-        if (dirty & 5 && text_1_x_value !== (text_1_x_value = (ctx2[0] + ctx2[2]) * -0.5)) {
-          attr(text_1, "x", text_1_x_value);
-        }
-        if (dirty & 4 && text_1_y_value !== (text_1_y_value = ctx2[2] - 30)) {
-          attr(text_1, "y", text_1_y_value);
-        }
-      },
-      d(detaching) {
-        if (detaching)
-          detach(text_1);
-      }
-    };
-  }
-  function create_if_block_2(ctx) {
-    let text_1;
-    let t;
-    let text_1_x_value;
-    let text_1_y_value;
-    return {
-      c() {
-        text_1 = svg_element("text");
-        t = text(ctx[4]);
-        attr(text_1, "x", text_1_x_value = (ctx[1] + ctx[2]) / 2);
-        attr(text_1, "y", text_1_y_value = ctx[0] - ctx[2] + 45);
-        attr(text_1, "fill", "grey");
-      },
-      m(target, anchor) {
-        insert(target, text_1, anchor);
-        append(text_1, t);
-      },
-      p(ctx2, dirty) {
-        if (dirty & 16)
-          set_data(t, ctx2[4]);
-        if (dirty & 6 && text_1_x_value !== (text_1_x_value = (ctx2[1] + ctx2[2]) / 2)) {
-          attr(text_1, "x", text_1_x_value);
-        }
-        if (dirty & 5 && text_1_y_value !== (text_1_y_value = ctx2[0] - ctx2[2] + 45)) {
-          attr(text_1, "y", text_1_y_value);
-        }
-      },
-      d(detaching) {
-        if (detaching)
-          detach(text_1);
-      }
-    };
-  }
-  function create_if_block_1(ctx) {
-    let text_1;
-    let t;
-    let text_1_x_value;
-    let text_1_y_value;
-    return {
-      c() {
-        text_1 = svg_element("text");
-        t = text(ctx[4]);
-        attr(text_1, "x", text_1_x_value = (ctx[0] + ctx[2]) * -0.5);
-        attr(text_1, "y", text_1_y_value = ctx[1] - 10);
-        attr(text_1, "fill", "grey");
-        attr(text_1, "transform", "rotate(-90)");
-      },
-      m(target, anchor) {
-        insert(target, text_1, anchor);
-        append(text_1, t);
-      },
-      p(ctx2, dirty) {
-        if (dirty & 16)
-          set_data(t, ctx2[4]);
-        if (dirty & 5 && text_1_x_value !== (text_1_x_value = (ctx2[0] + ctx2[2]) * -0.5)) {
-          attr(text_1, "x", text_1_x_value);
-        }
-        if (dirty & 2 && text_1_y_value !== (text_1_y_value = ctx2[1] - 10)) {
-          attr(text_1, "y", text_1_y_value);
-        }
-      },
-      d(detaching) {
-        if (detaching)
-          detach(text_1);
-      }
-    };
-  }
-  function create_if_block(ctx) {
-    let text_1;
-    let t;
-    let text_1_x_value;
-    let text_1_y_value;
-    return {
-      c() {
-        text_1 = svg_element("text");
-        t = text(ctx[4]);
-        attr(text_1, "x", text_1_x_value = (ctx[1] + ctx[2]) / 2);
-        attr(text_1, "y", text_1_y_value = 30);
-        attr(text_1, "fill", "grey");
-      },
-      m(target, anchor) {
-        insert(target, text_1, anchor);
-        append(text_1, t);
-      },
-      p(ctx2, dirty) {
-        if (dirty & 16)
-          set_data(t, ctx2[4]);
-        if (dirty & 6 && text_1_x_value !== (text_1_x_value = (ctx2[1] + ctx2[2]) / 2)) {
-          attr(text_1, "x", text_1_x_value);
-        }
-      },
-      d(detaching) {
-        if (detaching)
-          detach(text_1);
-      }
-    };
-  }
-  function create_fragment(ctx) {
-    let g;
-    let g_transform_value;
-    let t;
-    let if_block_anchor;
-    function select_block_type(ctx2, dirty) {
-      if (ctx2[3] === "top")
-        return create_if_block;
-      if (ctx2[3] === "right")
-        return create_if_block_1;
-      if (ctx2[3] === "bottom")
-        return create_if_block_2;
-      if (ctx2[3] === "left")
-        return create_if_block_3;
-    }
-    let current_block_type = select_block_type(ctx, -1);
-    let if_block = current_block_type && current_block_type(ctx);
-    return {
-      c() {
-        g = svg_element("g");
-        t = space();
-        if (if_block)
-          if_block.c();
-        if_block_anchor = empty();
-        attr(g, "color", "grey");
-        attr(g, "transform", g_transform_value = "translate(" + ctx[6] + ")");
-      },
-      m(target, anchor) {
-        insert(target, g, anchor);
-        ctx[9](g);
-        insert(target, t, anchor);
-        if (if_block)
-          if_block.m(target, anchor);
-        insert(target, if_block_anchor, anchor);
-      },
-      p(ctx2, [dirty]) {
-        if (dirty & 64 && g_transform_value !== (g_transform_value = "translate(" + ctx2[6] + ")")) {
-          attr(g, "transform", g_transform_value);
-        }
-        if (current_block_type === (current_block_type = select_block_type(ctx2, dirty)) && if_block) {
-          if_block.p(ctx2, dirty);
-        } else {
-          if (if_block)
-            if_block.d(1);
-          if_block = current_block_type && current_block_type(ctx2);
-          if (if_block) {
-            if_block.c();
-            if_block.m(if_block_anchor.parentNode, if_block_anchor);
-          }
-        }
-      },
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(g);
-        ctx[9](null);
-        if (detaching)
-          detach(t);
-        if (if_block) {
-          if_block.d(detaching);
-        }
-        if (detaching)
-          detach(if_block_anchor);
-      }
-    };
-  }
-  function instance($$self, $$props, $$invalidate) {
-    let { scale } = $$props;
-    let { height, width, margin } = $$props;
-    let { position } = $$props;
-    let { formater } = $$props;
-    let { label = "" } = $$props;
-    let axis2;
-    let transform = "0,0";
-    const positionedAxis = (scale2) => {
-      if (position === "top") {
-        return axisTop(scale2);
-      } else if (position == "right") {
-        return axisRight(scale2);
-      } else if (position === "bottom") {
-        return axisBottom(scale2);
-      } else if (position == "left") {
-        return axisLeft(scale2);
-      }
-    };
-    const transitionAxis = () => {
-      if (position === "top") {
-        $$invalidate(6, transform = `0,${margin}`);
-      } else if (position == "right") {
-        $$invalidate(6, transform = `${width - margin},0`);
-      } else if (position === "bottom") {
-        $$invalidate(6, transform = `0,${height - margin}`);
-      } else if (position == "left") {
-        $$invalidate(6, transform = `${margin},0`);
-      }
-    };
-    const enlargedScale = () => {
-      const axis_scale = scale.copy();
-      const range = axis_scale.range();
-      let excess;
-      if (position === "bottom" || position === "top") {
-        excess = width - margin * 2 - (range[1] - range[0]);
-      } else if (position == "left" || position == "right") {
-        excess = height - margin * 2 - (range[1] - range[0]);
-      }
-      const extended_range = [range[0] - excess / 2, range[1] + excess / 2];
-      const extended_domain = [axis_scale.invert(extended_range[0]), axis_scale.invert(extended_range[1])];
-      return axis_scale.domain(extended_domain).range(extended_range).nice();
-    };
-    const setupAxis = () => {
-      const axis_creator = positionedAxis(enlargedScale()).tickSizeOuter(0).tickSize(0).tickFormat(formater);
-      axis_creator(select_default2(axis2));
-      transitionAxis();
-    };
-    function g_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        axis2 = $$value;
-        $$invalidate(5, axis2);
-      });
-    }
-    $$self.$$set = ($$props2) => {
-      if ("scale" in $$props2)
-        $$invalidate(7, scale = $$props2.scale);
-      if ("height" in $$props2)
-        $$invalidate(0, height = $$props2.height);
-      if ("width" in $$props2)
-        $$invalidate(1, width = $$props2.width);
-      if ("margin" in $$props2)
-        $$invalidate(2, margin = $$props2.margin);
-      if ("position" in $$props2)
-        $$invalidate(3, position = $$props2.position);
-      if ("formater" in $$props2)
-        $$invalidate(8, formater = $$props2.formater);
-      if ("label" in $$props2)
-        $$invalidate(4, label = $$props2.label);
-    };
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 431) {
-        $:
-          if (scale && height && width && margin && position && formater && axis2)
-            setupAxis();
-      }
-    };
-    return [
-      height,
-      width,
-      margin,
-      position,
-      label,
-      axis2,
-      transform,
-      scale,
-      formater,
-      g_binding
-    ];
-  }
-  var Line_axis = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance, create_fragment, safe_not_equal, {
-        scale: 7,
-        height: 0,
-        width: 1,
-        margin: 2,
-        position: 3,
-        formater: 8,
-        label: 4
-      });
-    }
   };
-  var line_axis_default = Line_axis;
 
-  // src/stats/circles.svelte
-  function get_each_context(ctx, list, i) {
-    const child_ctx = ctx.slice();
-    child_ctx[3] = list[i].x;
-    child_ctx[4] = list[i].y;
-    child_ctx[5] = list[i].r;
-    child_ctx[6] = list[i].c;
-    child_ctx[7] = list[i].i;
-    return child_ctx;
-  }
-  function create_each_block(ctx) {
-    let circle;
-    let circle_data_index_value;
-    let circle_cx_value;
-    let circle_cy_value;
-    let circle_r_value;
-    let circle_fill_value;
-    let mounted;
-    let dispose;
-    return {
-      c() {
-        circle = svg_element("circle");
-        attr(circle, "data-index", circle_data_index_value = ctx[7]);
-        attr(circle, "cx", circle_cx_value = ctx[3]);
-        attr(circle, "cy", circle_cy_value = ctx[4]);
-        attr(circle, "r", circle_r_value = ctx[5]);
-        attr(circle, "fill", circle_fill_value = ctx[6]);
-        attr(circle, "fill-opacity", "0.8");
-        attr(circle, "class", "z-10");
-      },
-      m(target, anchor) {
-        insert(target, circle, anchor);
-        if (!mounted) {
-          dispose = [
-            listen(circle, "mousemove", function() {
-              if (is_function(ctx[1]))
-                ctx[1].apply(this, arguments);
-            }),
-            listen(circle, "mouseout", function() {
-              if (is_function(ctx[2]))
-                ctx[2].apply(this, arguments);
-            })
-          ];
-          mounted = true;
-        }
-      },
-      p(new_ctx, dirty) {
-        ctx = new_ctx;
-        if (dirty & 1 && circle_data_index_value !== (circle_data_index_value = ctx[7])) {
-          attr(circle, "data-index", circle_data_index_value);
-        }
-        if (dirty & 1 && circle_cx_value !== (circle_cx_value = ctx[3])) {
-          attr(circle, "cx", circle_cx_value);
-        }
-        if (dirty & 1 && circle_cy_value !== (circle_cy_value = ctx[4])) {
-          attr(circle, "cy", circle_cy_value);
-        }
-        if (dirty & 1 && circle_r_value !== (circle_r_value = ctx[5])) {
-          attr(circle, "r", circle_r_value);
-        }
-        if (dirty & 1 && circle_fill_value !== (circle_fill_value = ctx[6])) {
-          attr(circle, "fill", circle_fill_value);
-        }
-      },
-      d(detaching) {
-        if (detaching)
-          detach(circle);
-        mounted = false;
-        run_all(dispose);
+  // node_modules/@d3fc/d3fc-rebind/src/rebindAll.js
+  var createTransform = (transforms) => (name) => transforms.reduce((name2, fn) => name2 && fn(name2), name);
+  var rebindAll_default = (target, source, ...transforms) => {
+    const transform = createTransform(transforms);
+    for (const name of Object.keys(source)) {
+      const result = transform(name);
+      if (result) {
+        target[result] = createReboundMethod_default(target, source, name);
       }
-    };
-  }
-  function create_fragment2(ctx) {
-    let each_1_anchor;
-    let each_value = ctx[0];
-    let each_blocks = [];
-    for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
     }
-    return {
-      c() {
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].c();
-        }
-        each_1_anchor = empty();
-      },
-      m(target, anchor) {
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(target, anchor);
-        }
-        insert(target, each_1_anchor, anchor);
-      },
-      p(ctx2, [dirty]) {
-        if (dirty & 7) {
-          each_value = ctx2[0];
-          let i;
-          for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context(ctx2, each_value, i);
-            if (each_blocks[i]) {
-              each_blocks[i].p(child_ctx, dirty);
-            } else {
-              each_blocks[i] = create_each_block(child_ctx);
-              each_blocks[i].c();
-              each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-            }
-          }
-          for (; i < each_blocks.length; i += 1) {
-            each_blocks[i].d(1);
-          }
-          each_blocks.length = each_value.length;
-        }
-      },
-      i: noop,
-      o: noop,
-      d(detaching) {
-        destroy_each(each_blocks, detaching);
-        if (detaching)
-          detach(each_1_anchor);
-      }
-    };
-  }
-  function instance2($$self, $$props, $$invalidate) {
-    let { mapped_data } = $$props;
-    let { mouse_move, mouse_out } = $$props;
-    $$self.$$set = ($$props2) => {
-      if ("mapped_data" in $$props2)
-        $$invalidate(0, mapped_data = $$props2.mapped_data);
-      if ("mouse_move" in $$props2)
-        $$invalidate(1, mouse_move = $$props2.mouse_move);
-      if ("mouse_out" in $$props2)
-        $$invalidate(2, mouse_out = $$props2.mouse_out);
-    };
-    return [mapped_data, mouse_move, mouse_out];
-  }
-  var Circles = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance2, create_fragment2, safe_not_equal, {
-        mapped_data: 0,
-        mouse_move: 1,
-        mouse_out: 2
-      });
-    }
+    return target;
   };
-  var circles_default = Circles;
 
   // node_modules/d3-path/src/path.js
   var pi = Math.PI;
   var tau = 2 * pi;
-  var epsilon2 = 1e-6;
-  var tauEpsilon = tau - epsilon2;
+  var epsilon = 1e-6;
+  var tauEpsilon = tau - epsilon;
   function Path() {
     this._x0 = this._y0 = this._x1 = this._y1 = null;
     this._ = "";
@@ -3507,13 +2974,13 @@
         throw new Error("negative radius: " + r);
       if (this._x1 === null) {
         this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1);
-      } else if (!(l01_2 > epsilon2))
+      } else if (!(l01_2 > epsilon))
         ;
-      else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon2) || !r) {
+      else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon) || !r) {
         this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1);
       } else {
         var x20 = x2 - x0, y20 = y2 - y0, l21_2 = x21 * x21 + y21 * y21, l20_2 = x20 * x20 + y20 * y20, l21 = Math.sqrt(l21_2), l01 = Math.sqrt(l01_2), l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2), t01 = l / l01, t21 = l / l21;
-        if (Math.abs(t01 - 1) > epsilon2) {
+        if (Math.abs(t01 - 1) > epsilon) {
           this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01);
         }
         this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
@@ -3526,7 +2993,7 @@
         throw new Error("negative radius: " + r);
       if (this._x1 === null) {
         this._ += "M" + x0 + "," + y0;
-      } else if (Math.abs(this._x1 - x0) > epsilon2 || Math.abs(this._y1 - y0) > epsilon2) {
+      } else if (Math.abs(this._x1 - x0) > epsilon || Math.abs(this._y1 - y0) > epsilon) {
         this._ += "L" + x0 + "," + y0;
       }
       if (!r)
@@ -3535,7 +3002,7 @@
         da = da % tau + tau;
       if (da > tauEpsilon) {
         this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x2 - dx) + "," + (y2 - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0);
-      } else if (da > epsilon2) {
+      } else if (da > epsilon) {
         this._ += "A" + r + "," + r + ",0," + +(da >= pi) + "," + cw + "," + (this._x1 = x2 + r * Math.cos(a1)) + "," + (this._y1 = y2 + r * Math.sin(a1));
       }
     },
@@ -3742,6 +3209,708 @@
   function monotoneX(context) {
     return new MonotoneX(context);
   }
+
+  // node_modules/@d3fc/d3fc-data-join/src/dataJoin.js
+  var effectivelyZero = 1e-6;
+  var isTransition = (selectionOrTransition) => selectionOrTransition.selection() !== selectionOrTransition;
+  var dataJoin_default = (element2, className) => {
+    element2 = element2 || "g";
+    let key = (_, i) => i;
+    let explicitTransition = null;
+    const dataJoin = function(container, data) {
+      data = data || ((d) => d);
+      const selection2 = container.selection();
+      const implicitTransition = isTransition(container) ? container : null;
+      const selected = selection2.selectChildren(className == null ? element2 : `${element2}.${className}`);
+      let update2 = selected.data(data, key);
+      const enter = update2.enter().append(element2).attr("class", className);
+      let exit = update2.exit();
+      update2 = update2.merge(enter);
+      const transition = implicitTransition || explicitTransition;
+      if (transition) {
+        update2 = update2.transition(transition).style("opacity", 1);
+        enter.style("opacity", effectivelyZero);
+        exit = exit.transition(transition).style("opacity", effectivelyZero);
+      }
+      exit.remove();
+      update2.enter = () => enter;
+      update2.exit = () => exit;
+      return update2;
+    };
+    dataJoin.element = (...args) => {
+      if (!args.length) {
+        return element2;
+      }
+      element2 = args[0];
+      return dataJoin;
+    };
+    dataJoin.className = (...args) => {
+      if (!args.length) {
+        return className;
+      }
+      className = args[0];
+      return dataJoin;
+    };
+    dataJoin.key = (...args) => {
+      if (!args.length) {
+        return key;
+      }
+      key = args[0];
+      return dataJoin;
+    };
+    dataJoin.transition = (...args) => {
+      if (!args.length) {
+        return explicitTransition;
+      }
+      explicitTransition = args[0];
+      return dataJoin;
+    };
+    return dataJoin;
+  };
+
+  // node_modules/@d3fc/d3fc-axis/src/axisTickUtils.js
+  var identity = (d) => d;
+  var tryApply = (scale, fn, args, defaultVal) => scale[fn] ? scale[fn].apply(scale, args) : defaultVal;
+  var ticksArrayForAxis = (axis2) => axis2.tickValues() ?? tryApply(axis2.scale(), "ticks", axis2.tickArguments(), axis2.scale().domain());
+  var tickFormatterForAxis = (axis2) => axis2.tickFormat() ?? tryApply(axis2.scale(), "tickFormat", axis2.tickArguments(), identity);
+
+  // node_modules/@d3fc/d3fc-axis/src/axisBase.js
+  var identity2 = (d) => d;
+  var axisBase = (orient, scale, custom = {}) => {
+    let tickArguments = [10];
+    let tickValues = null;
+    let decorate = () => {
+    };
+    let tickFormat2 = null;
+    let tickSizeOuter = 6;
+    let tickSizeInner = 6;
+    let tickPadding = 3;
+    const svgDomainLine = line_default();
+    const dataJoin = dataJoin_default("g", "tick").key(identity2);
+    const domainPathDataJoin = dataJoin_default("path", "domain");
+    const defaultLabelOffset = () => ({ offset: [0, tickSizeInner + tickPadding] });
+    const defaultTickPath = () => ({ path: [[0, 0], [0, tickSizeInner]] });
+    const labelOffset = custom.labelOffset || defaultLabelOffset;
+    const tickPath = custom.tickPath || defaultTickPath;
+    const containerTranslate = (scale2, trans) => {
+      let offset = 0;
+      if (scale2.bandwidth) {
+        offset = scale2.bandwidth() / 2;
+        if (scale2.round()) {
+          offset = Math.round(offset);
+        }
+      }
+      return (d) => trans(scale2(d) + offset, 0);
+    };
+    const translate = (x2, y2) => isVertical() ? `translate(${y2}, ${x2})` : `translate(${x2}, ${y2})`;
+    const pathTranspose = (arr) => isVertical() ? arr.map((d) => [d[1], d[0]]) : arr;
+    const isVertical = () => orient === "left" || orient === "right";
+    const axis2 = (selection2) => {
+      if (isTransition(selection2)) {
+        dataJoin.transition(selection2);
+        domainPathDataJoin.transition(selection2);
+      }
+      selection2.each((data, index2, group2) => {
+        const element2 = group2[index2];
+        const container = select_default2(element2);
+        if (!element2.__scale__) {
+          container.attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === "right" ? "start" : orient === "left" ? "end" : "middle");
+        }
+        const scaleOld = element2.__scale__ || scale;
+        element2.__scale__ = scale.copy();
+        const ticksArray = ticksArrayForAxis(axis2);
+        const tickFormatter = tickFormatterForAxis(axis2);
+        const sign2 = orient === "bottom" || orient === "right" ? 1 : -1;
+        const withSign = ([x2, y2]) => [x2, sign2 * y2];
+        const range = scale.range();
+        const domainPathData = pathTranspose([
+          [range[0], sign2 * tickSizeOuter],
+          [range[0], 0],
+          [range[1], 0],
+          [range[1], sign2 * tickSizeOuter]
+        ]);
+        const domainLine = domainPathDataJoin(container, [data]);
+        domainLine.enter().attr("stroke", "#000");
+        domainLine.attr("d", svgDomainLine(domainPathData));
+        const g = dataJoin(container, ticksArray);
+        const labelOffsets = ticksArray.map((d, i) => labelOffset(d, i, ticksArray));
+        const tickPaths = ticksArray.map((d, i) => tickPath(d, i, ticksArray));
+        g.enter().attr("transform", containerTranslate(scaleOld, translate)).append("path").attr("stroke", "#000");
+        g.enter().append("text").attr("transform", (d, i) => translate(...withSign(labelOffsets[i].offset))).attr("fill", "#000");
+        g.exit().attr("transform", containerTranslate(scale, translate));
+        g.select("path").attr("visibility", (d, i) => tickPaths[i].hidden && "hidden").attr("d", (d, i) => svgDomainLine(pathTranspose(tickPaths[i].path.map(withSign))));
+        g.select("text").attr("visibility", (d, i) => labelOffsets[i].hidden && "hidden").attr("transform", (d, i) => translate(...withSign(labelOffsets[i].offset))).attr("dy", () => {
+          let offset = "0em";
+          if (isVertical()) {
+            offset = "0.32em";
+          } else if (orient === "bottom") {
+            offset = "0.71em";
+          }
+          return offset;
+        }).text(tickFormatter);
+        g.attr("transform", containerTranslate(scale, translate));
+        decorate(g, data, index2);
+      });
+    };
+    axis2.tickFormat = (...args) => {
+      if (!args.length) {
+        return tickFormat2;
+      }
+      tickFormat2 = args[0];
+      return axis2;
+    };
+    axis2.tickSize = (...args) => {
+      if (!args.length) {
+        return tickSizeInner;
+      }
+      tickSizeInner = tickSizeOuter = Number(args[0]);
+      return axis2;
+    };
+    axis2.tickSizeInner = (...args) => {
+      if (!args.length) {
+        return tickSizeInner;
+      }
+      tickSizeInner = Number(args[0]);
+      return axis2;
+    };
+    axis2.tickSizeOuter = (...args) => {
+      if (!args.length) {
+        return tickSizeOuter;
+      }
+      tickSizeOuter = Number(args[0]);
+      return axis2;
+    };
+    axis2.tickPadding = (...args) => {
+      if (!args.length) {
+        return tickPadding;
+      }
+      tickPadding = args[0];
+      return axis2;
+    };
+    axis2.decorate = (...args) => {
+      if (!args.length) {
+        return decorate;
+      }
+      decorate = args[0];
+      return axis2;
+    };
+    axis2.scale = (...args) => {
+      if (!args.length) {
+        return scale;
+      }
+      scale = args[0];
+      return axis2;
+    };
+    axis2.ticks = (...args) => {
+      tickArguments = [...args];
+      return axis2;
+    };
+    axis2.tickArguments = (...args) => {
+      if (!args.length) {
+        return tickArguments !== null ? tickArguments.slice() : null;
+      }
+      tickArguments = args[0] == null ? [] : [...args[0]];
+      return axis2;
+    };
+    axis2.tickValues = (...args) => {
+      if (!args.length) {
+        return tickValues !== null ? tickValues.slice() : null;
+      }
+      tickValues = args[0] == null ? [] : [...args[0]];
+      return axis2;
+    };
+    axis2.orient = () => orient;
+    return axis2;
+  };
+
+  // node_modules/@d3fc/d3fc-axis/src/axis.js
+  var axis = (orient, scale) => {
+    let tickCenterLabel = false;
+    const labelOffset = (tick, index2, ticksArray) => {
+      let x2 = 0;
+      let y2 = base.tickSizeInner() + base.tickPadding();
+      let hidden = false;
+      if (tickCenterLabel) {
+        const thisPosition = scale(tick);
+        const nextPosition = index2 < ticksArray.length - 1 ? scale(ticksArray[index2 + 1]) : scale.range()[1];
+        x2 = (nextPosition - thisPosition) / 2;
+        y2 = base.tickPadding();
+        hidden = index2 === ticksArray.length - 1 && thisPosition === nextPosition;
+      }
+      return { offset: [x2, y2], hidden };
+    };
+    const base = axisBase(orient, scale, { labelOffset });
+    const axis2 = (selection2) => {
+      return base(selection2);
+    };
+    axis2.tickCenterLabel = (...args) => {
+      if (!args.length) {
+        return tickCenterLabel;
+      }
+      tickCenterLabel = args[0];
+      return axis2;
+    };
+    rebindAll_default(axis2, base);
+    return axis2;
+  };
+  var axisTop = (scale) => axis("top", scale);
+  var axisBottom = (scale) => axis("bottom", scale);
+  var axisLeft = (scale) => axis("left", scale);
+  var axisRight = (scale) => axis("right", scale);
+
+  // src/stats/line_axis.svelte
+  function create_if_block_3(ctx) {
+    let text_1;
+    let t;
+    let text_1_x_value;
+    let text_1_y_value;
+    return {
+      c() {
+        text_1 = svg_element("text");
+        t = text(ctx[4]);
+        attr(text_1, "x", text_1_x_value = (ctx[0] + ctx[2]) * -0.5);
+        attr(text_1, "y", text_1_y_value = ctx[2] - 30);
+        attr(text_1, "fill", "grey");
+        attr(text_1, "transform", "rotate(-90)");
+      },
+      m(target, anchor) {
+        insert(target, text_1, anchor);
+        append(text_1, t);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 16)
+          set_data(t, ctx2[4]);
+        if (dirty & 5 && text_1_x_value !== (text_1_x_value = (ctx2[0] + ctx2[2]) * -0.5)) {
+          attr(text_1, "x", text_1_x_value);
+        }
+        if (dirty & 4 && text_1_y_value !== (text_1_y_value = ctx2[2] - 30)) {
+          attr(text_1, "y", text_1_y_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(text_1);
+      }
+    };
+  }
+  function create_if_block_2(ctx) {
+    let text_1;
+    let t;
+    let text_1_x_value;
+    let text_1_y_value;
+    return {
+      c() {
+        text_1 = svg_element("text");
+        t = text(ctx[4]);
+        attr(text_1, "x", text_1_x_value = (ctx[1] + ctx[2]) / 2);
+        attr(text_1, "y", text_1_y_value = ctx[0] - ctx[2] + 45);
+        attr(text_1, "fill", "grey");
+      },
+      m(target, anchor) {
+        insert(target, text_1, anchor);
+        append(text_1, t);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 16)
+          set_data(t, ctx2[4]);
+        if (dirty & 6 && text_1_x_value !== (text_1_x_value = (ctx2[1] + ctx2[2]) / 2)) {
+          attr(text_1, "x", text_1_x_value);
+        }
+        if (dirty & 5 && text_1_y_value !== (text_1_y_value = ctx2[0] - ctx2[2] + 45)) {
+          attr(text_1, "y", text_1_y_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(text_1);
+      }
+    };
+  }
+  function create_if_block_1(ctx) {
+    let text_1;
+    let t;
+    let text_1_x_value;
+    let text_1_y_value;
+    return {
+      c() {
+        text_1 = svg_element("text");
+        t = text(ctx[4]);
+        attr(text_1, "x", text_1_x_value = (ctx[0] + ctx[2]) * -0.5);
+        attr(text_1, "y", text_1_y_value = ctx[1] - 10);
+        attr(text_1, "fill", "grey");
+        attr(text_1, "transform", "rotate(-90)");
+      },
+      m(target, anchor) {
+        insert(target, text_1, anchor);
+        append(text_1, t);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 16)
+          set_data(t, ctx2[4]);
+        if (dirty & 5 && text_1_x_value !== (text_1_x_value = (ctx2[0] + ctx2[2]) * -0.5)) {
+          attr(text_1, "x", text_1_x_value);
+        }
+        if (dirty & 2 && text_1_y_value !== (text_1_y_value = ctx2[1] - 10)) {
+          attr(text_1, "y", text_1_y_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(text_1);
+      }
+    };
+  }
+  function create_if_block(ctx) {
+    let text_1;
+    let t;
+    let text_1_x_value;
+    let text_1_y_value;
+    return {
+      c() {
+        text_1 = svg_element("text");
+        t = text(ctx[4]);
+        attr(text_1, "x", text_1_x_value = (ctx[1] + ctx[2]) / 2);
+        attr(text_1, "y", text_1_y_value = 30);
+        attr(text_1, "fill", "grey");
+      },
+      m(target, anchor) {
+        insert(target, text_1, anchor);
+        append(text_1, t);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 16)
+          set_data(t, ctx2[4]);
+        if (dirty & 6 && text_1_x_value !== (text_1_x_value = (ctx2[1] + ctx2[2]) / 2)) {
+          attr(text_1, "x", text_1_x_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(text_1);
+      }
+    };
+  }
+  function create_fragment(ctx) {
+    let g;
+    let g_transform_value;
+    let t;
+    let if_block_anchor;
+    function select_block_type(ctx2, dirty) {
+      if (ctx2[3] === "top")
+        return create_if_block;
+      if (ctx2[3] === "right")
+        return create_if_block_1;
+      if (ctx2[3] === "bottom")
+        return create_if_block_2;
+      if (ctx2[3] === "left")
+        return create_if_block_3;
+    }
+    let current_block_type = select_block_type(ctx, -1);
+    let if_block = current_block_type && current_block_type(ctx);
+    return {
+      c() {
+        g = svg_element("g");
+        t = space();
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+        attr(g, "color", "grey");
+        attr(g, "stroke", "grey");
+        attr(g, "fill", "grey");
+        attr(g, "transform", g_transform_value = "translate(" + ctx[6] + ")");
+      },
+      m(target, anchor) {
+        insert(target, g, anchor);
+        ctx[9](g);
+        insert(target, t, anchor);
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 64 && g_transform_value !== (g_transform_value = "translate(" + ctx2[6] + ")")) {
+          attr(g, "transform", g_transform_value);
+        }
+        if (current_block_type === (current_block_type = select_block_type(ctx2, dirty)) && if_block) {
+          if_block.p(ctx2, dirty);
+        } else {
+          if (if_block)
+            if_block.d(1);
+          if_block = current_block_type && current_block_type(ctx2);
+          if (if_block) {
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(g);
+        ctx[9](null);
+        if (detaching)
+          detach(t);
+        if (if_block) {
+          if_block.d(detaching);
+        }
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
+  function instance($$self, $$props, $$invalidate) {
+    let { scale } = $$props;
+    let { height, width, margin } = $$props;
+    let { position } = $$props;
+    let { formater } = $$props;
+    let { label = "" } = $$props;
+    let axis2;
+    let transform = "0,0";
+    const positionedAxis = (scale2) => {
+      if (position === "top") {
+        return axisTop(scale2);
+      } else if (position == "right") {
+        return axisRight(scale2);
+      } else if (position === "bottom") {
+        return axisBottom(scale2);
+      } else if (position == "left") {
+        return axisLeft(scale2);
+      }
+    };
+    const transitionAxis = () => {
+      if (position === "top") {
+        $$invalidate(6, transform = `0,${margin}`);
+      } else if (position == "right") {
+        $$invalidate(6, transform = `${width - margin},0`);
+      } else if (position === "bottom") {
+        $$invalidate(6, transform = `0,${height - margin}`);
+      } else if (position == "left") {
+        $$invalidate(6, transform = `${margin},0`);
+      }
+    };
+    const enlargedScale = () => {
+      const axis_scale = scale.copy();
+      const range = axis_scale.range();
+      let excess;
+      if (position === "bottom" || position === "top") {
+        excess = width - margin * 2 - (range[1] - range[0]);
+      } else if (position == "left" || position == "right") {
+        excess = height - margin * 2 - (range[1] - range[0]);
+      }
+      const extended_range = [range[0] - excess / 2, range[1] + excess / 2];
+      const extended_domain = [axis_scale.invert(extended_range[0]), axis_scale.invert(extended_range[1])];
+      return axis_scale.domain(extended_domain).range(extended_range).nice();
+    };
+    const setupAxis = () => {
+      const axis_creator = positionedAxis(enlargedScale()).tickSizeOuter(0).tickSize(0).tickCenterLabel(true).tickFormat(formater);
+      axis_creator(select_default2(axis2));
+      transitionAxis();
+      select_default2(axis2).select("path").style("stroke", "grey");
+    };
+    function g_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        axis2 = $$value;
+        $$invalidate(5, axis2);
+      });
+    }
+    $$self.$$set = ($$props2) => {
+      if ("scale" in $$props2)
+        $$invalidate(7, scale = $$props2.scale);
+      if ("height" in $$props2)
+        $$invalidate(0, height = $$props2.height);
+      if ("width" in $$props2)
+        $$invalidate(1, width = $$props2.width);
+      if ("margin" in $$props2)
+        $$invalidate(2, margin = $$props2.margin);
+      if ("position" in $$props2)
+        $$invalidate(3, position = $$props2.position);
+      if ("formater" in $$props2)
+        $$invalidate(8, formater = $$props2.formater);
+      if ("label" in $$props2)
+        $$invalidate(4, label = $$props2.label);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 431) {
+        $:
+          if (scale && height && width && margin && position && formater && axis2)
+            setupAxis();
+      }
+    };
+    return [
+      height,
+      width,
+      margin,
+      position,
+      label,
+      axis2,
+      transform,
+      scale,
+      formater,
+      g_binding
+    ];
+  }
+  var Line_axis = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance, create_fragment, safe_not_equal, {
+        scale: 7,
+        height: 0,
+        width: 1,
+        margin: 2,
+        position: 3,
+        formater: 8,
+        label: 4
+      });
+    }
+  };
+  var line_axis_default = Line_axis;
+
+  // src/stats/circles.svelte
+  function get_each_context(ctx, list, i) {
+    const child_ctx = ctx.slice();
+    child_ctx[3] = list[i].x;
+    child_ctx[4] = list[i].y;
+    child_ctx[5] = list[i].r;
+    child_ctx[6] = list[i].c;
+    child_ctx[7] = list[i].i;
+    return child_ctx;
+  }
+  function create_each_block(ctx) {
+    let circle;
+    let circle_data_index_value;
+    let circle_cx_value;
+    let circle_cy_value;
+    let circle_r_value;
+    let circle_fill_value;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        circle = svg_element("circle");
+        attr(circle, "data-index", circle_data_index_value = ctx[7]);
+        attr(circle, "cx", circle_cx_value = ctx[3]);
+        attr(circle, "cy", circle_cy_value = ctx[4]);
+        attr(circle, "r", circle_r_value = ctx[5]);
+        attr(circle, "fill", circle_fill_value = ctx[6]);
+        attr(circle, "fill-opacity", "0.8");
+        attr(circle, "class", "z-10");
+      },
+      m(target, anchor) {
+        insert(target, circle, anchor);
+        if (!mounted) {
+          dispose = [
+            listen(circle, "mousemove", function() {
+              if (is_function(ctx[1]))
+                ctx[1].apply(this, arguments);
+            }),
+            listen(circle, "mouseout", function() {
+              if (is_function(ctx[2]))
+                ctx[2].apply(this, arguments);
+            })
+          ];
+          mounted = true;
+        }
+      },
+      p(new_ctx, dirty) {
+        ctx = new_ctx;
+        if (dirty & 1 && circle_data_index_value !== (circle_data_index_value = ctx[7])) {
+          attr(circle, "data-index", circle_data_index_value);
+        }
+        if (dirty & 1 && circle_cx_value !== (circle_cx_value = ctx[3])) {
+          attr(circle, "cx", circle_cx_value);
+        }
+        if (dirty & 1 && circle_cy_value !== (circle_cy_value = ctx[4])) {
+          attr(circle, "cy", circle_cy_value);
+        }
+        if (dirty & 1 && circle_r_value !== (circle_r_value = ctx[5])) {
+          attr(circle, "r", circle_r_value);
+        }
+        if (dirty & 1 && circle_fill_value !== (circle_fill_value = ctx[6])) {
+          attr(circle, "fill", circle_fill_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(circle);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function create_fragment2(ctx) {
+    let each_1_anchor;
+    let each_value = ctx[0];
+    let each_blocks = [];
+    for (let i = 0; i < each_value.length; i += 1) {
+      each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    }
+    return {
+      c() {
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].c();
+        }
+        each_1_anchor = empty();
+      },
+      m(target, anchor) {
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].m(target, anchor);
+        }
+        insert(target, each_1_anchor, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (dirty & 7) {
+          each_value = ctx2[0];
+          let i;
+          for (i = 0; i < each_value.length; i += 1) {
+            const child_ctx = get_each_context(ctx2, each_value, i);
+            if (each_blocks[i]) {
+              each_blocks[i].p(child_ctx, dirty);
+            } else {
+              each_blocks[i] = create_each_block(child_ctx);
+              each_blocks[i].c();
+              each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+            }
+          }
+          for (; i < each_blocks.length; i += 1) {
+            each_blocks[i].d(1);
+          }
+          each_blocks.length = each_value.length;
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        destroy_each(each_blocks, detaching);
+        if (detaching)
+          detach(each_1_anchor);
+      }
+    };
+  }
+  function instance2($$self, $$props, $$invalidate) {
+    let { mapped_data } = $$props;
+    let { mouse_move, mouse_out } = $$props;
+    $$self.$$set = ($$props2) => {
+      if ("mapped_data" in $$props2)
+        $$invalidate(0, mapped_data = $$props2.mapped_data);
+      if ("mouse_move" in $$props2)
+        $$invalidate(1, mouse_move = $$props2.mouse_move);
+      if ("mouse_out" in $$props2)
+        $$invalidate(2, mouse_out = $$props2.mouse_out);
+    };
+    return [mapped_data, mouse_move, mouse_out];
+  }
+  var Circles = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance2, create_fragment2, safe_not_equal, {
+        mapped_data: 0,
+        mouse_move: 1,
+        mouse_out: 2
+      });
+    }
+  };
+  var circles_default = Circles;
 
   // src/stats/line.svelte
   function create_fragment3(ctx) {
@@ -4142,7 +4311,7 @@
       compare2 = f;
       delta = f;
     }
-    function left2(a, x2, lo = 0, hi = a.length) {
+    function left(a, x2, lo = 0, hi = a.length) {
       if (lo < hi) {
         if (compare1(x2, x2) !== 0)
           return hi;
@@ -4156,7 +4325,7 @@
       }
       return lo;
     }
-    function right2(a, x2, lo = 0, hi = a.length) {
+    function right(a, x2, lo = 0, hi = a.length) {
       if (lo < hi) {
         if (compare1(x2, x2) !== 0)
           return hi;
@@ -4170,18 +4339,18 @@
       }
       return lo;
     }
-    function center2(a, x2, lo = 0, hi = a.length) {
-      const i = left2(a, x2, lo, hi - 1);
+    function center(a, x2, lo = 0, hi = a.length) {
+      const i = left(a, x2, lo, hi - 1);
       return i > lo && delta(a[i - 1], x2) > -delta(a[i], x2) ? i - 1 : i;
     }
-    return { left: left2, center: center2, right: right2 };
+    return { left, center, right };
   }
   function zero() {
     return 0;
   }
 
   // node_modules/d3-array/src/number.js
-  function number2(x2) {
+  function number(x2) {
     return x2 === null ? NaN : +x2;
   }
 
@@ -4189,7 +4358,7 @@
   var ascendingBisect = bisector(ascending2);
   var bisectRight = ascendingBisect.right;
   var bisectLeft = ascendingBisect.left;
-  var bisectCenter = bisector(number2).center;
+  var bisectCenter = bisector(number).center;
   var bisect_default = bisectRight;
 
   // node_modules/d3-array/src/extent.js
@@ -4275,16 +4444,16 @@
   }
 
   // node_modules/d3-array/src/identity.js
-  function identity(x2) {
+  function identity3(x2) {
     return x2;
   }
 
   // node_modules/d3-array/src/group.js
   function group(values, ...keys) {
-    return nest(values, identity, identity, keys);
+    return nest(values, identity3, identity3, keys);
   }
   function rollup(values, reduce, ...keys) {
-    return nest(values, identity, reduce, keys);
+    return nest(values, identity3, reduce, keys);
   }
   function nest(values, map2, reduce, keys) {
     return function regroup(values2, i) {
@@ -5478,7 +5647,7 @@
   };
 
   // node_modules/d3-format/src/identity.js
-  function identity_default2(x2) {
+  function identity_default(x2) {
     return x2;
   }
 
@@ -5486,7 +5655,7 @@
   var map = Array.prototype.map;
   var prefixes = ["y", "z", "a", "f", "p", "n", "\xB5", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y"];
   function locale_default(locale3) {
-    var group2 = locale3.grouping === void 0 || locale3.thousands === void 0 ? identity_default2 : formatGroup_default(map.call(locale3.grouping, Number), locale3.thousands + ""), currencyPrefix = locale3.currency === void 0 ? "" : locale3.currency[0] + "", currencySuffix = locale3.currency === void 0 ? "" : locale3.currency[1] + "", decimal = locale3.decimal === void 0 ? "." : locale3.decimal + "", numerals = locale3.numerals === void 0 ? identity_default2 : formatNumerals_default(map.call(locale3.numerals, String)), percent = locale3.percent === void 0 ? "%" : locale3.percent + "", minus = locale3.minus === void 0 ? "\u2212" : locale3.minus + "", nan = locale3.nan === void 0 ? "NaN" : locale3.nan + "";
+    var group2 = locale3.grouping === void 0 || locale3.thousands === void 0 ? identity_default : formatGroup_default(map.call(locale3.grouping, Number), locale3.thousands + ""), currencyPrefix = locale3.currency === void 0 ? "" : locale3.currency[0] + "", currencySuffix = locale3.currency === void 0 ? "" : locale3.currency[1] + "", decimal = locale3.decimal === void 0 ? "." : locale3.decimal + "", numerals = locale3.numerals === void 0 ? identity_default : formatNumerals_default(map.call(locale3.numerals, String)), percent = locale3.percent === void 0 ? "%" : locale3.percent + "", minus = locale3.minus === void 0 ? "\u2212" : locale3.minus + "", nan = locale3.nan === void 0 ? "NaN" : locale3.nan + "";
     function newFormat(specifier) {
       specifier = formatSpecifier(specifier);
       var fill = specifier.fill, align = specifier.align, sign2 = specifier.sign, symbol = specifier.symbol, zero3 = specifier.zero, width = specifier.width, comma = specifier.comma, precision = specifier.precision, trim = specifier.trim, type = specifier.type;
@@ -6186,13 +6355,13 @@
   }
 
   // node_modules/d3-scale/src/number.js
-  function number3(x2) {
+  function number2(x2) {
     return +x2;
   }
 
   // node_modules/d3-scale/src/continuous.js
   var unit = [0, 1];
-  function identity2(x2) {
+  function identity4(x2) {
     return x2;
   }
   function normalize(a, b) {
@@ -6237,10 +6406,10 @@
     return target.domain(source.domain()).range(source.range()).interpolate(source.interpolate()).clamp(source.clamp()).unknown(source.unknown());
   }
   function transformer() {
-    var domain = unit, range = unit, interpolate = value_default, transform, untransform, unknown, clamp = identity2, piecewise, output, input;
+    var domain = unit, range = unit, interpolate = value_default, transform, untransform, unknown, clamp = identity4, piecewise, output, input;
     function rescale() {
       var n = Math.min(domain.length, range.length);
-      if (clamp !== identity2)
+      if (clamp !== identity4)
         clamp = clamper(domain[0], domain[n - 1]);
       piecewise = n > 2 ? polymap : bimap;
       output = input = null;
@@ -6253,7 +6422,7 @@
       return clamp(untransform((input || (input = piecewise(range, domain.map(transform), number_default)))(y2)));
     };
     scale.domain = function(_) {
-      return arguments.length ? (domain = Array.from(_, number3), rescale()) : domain.slice();
+      return arguments.length ? (domain = Array.from(_, number2), rescale()) : domain.slice();
     };
     scale.range = function(_) {
       return arguments.length ? (range = Array.from(_), rescale()) : range.slice();
@@ -6262,7 +6431,7 @@
       return range = Array.from(_), interpolate = round_default, rescale();
     };
     scale.clamp = function(_) {
-      return arguments.length ? (clamp = _ ? true : identity2, rescale()) : clamp !== identity2;
+      return arguments.length ? (clamp = _ ? true : identity4, rescale()) : clamp !== identity4;
     };
     scale.interpolate = function(_) {
       return arguments.length ? (interpolate = _, rescale()) : interpolate;
@@ -6276,7 +6445,7 @@
     };
   }
   function continuous() {
-    return transformer()(identity2, identity2);
+    return transformer()(identity4, identity4);
   }
 
   // node_modules/d3-scale/src/tickFormat.js
@@ -6382,7 +6551,7 @@
   function date(t) {
     return new Date(t);
   }
-  function number4(t) {
+  function number3(t) {
     return t instanceof Date ? +t : +new Date(+t);
   }
   function calendar(ticks2, tickInterval, year2, month2, week, day2, hour2, minute2, second2, format2) {
@@ -6395,7 +6564,7 @@
       return new Date(invert(y2));
     };
     scale.domain = function(_) {
-      return arguments.length ? domain(Array.from(_, number4)) : domain().map(date);
+      return arguments.length ? domain(Array.from(_, number3)) : domain().map(date);
     };
     scale.ticks = function(interval) {
       var d = domain();
@@ -7083,11 +7252,11 @@
     if (dirtyNumber === null || dirtyNumber === true || dirtyNumber === false) {
       return NaN;
     }
-    var number5 = Number(dirtyNumber);
-    if (isNaN(number5)) {
-      return number5;
+    var number4 = Number(dirtyNumber);
+    if (isNaN(number4)) {
+      return number4;
     }
-    return number5 < 0 ? Math.ceil(number5) : Math.floor(number5);
+    return number4 < 0 ? Math.ceil(number4) : Math.floor(number4);
   }
 
   // node_modules/date-fns/esm/_lib/requiredArgs/index.js

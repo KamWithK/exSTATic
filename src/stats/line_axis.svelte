@@ -1,6 +1,6 @@
 <script lang="ts">
     import { select } from "d3-selection"
-    import { axisTop, axisRight, axisBottom, axisLeft } from "d3-axis"
+    import { axisTop, axisRight, axisBottom, axisLeft } from "@d3fc/d3fc-axis"
 
     export let scale
     
@@ -68,17 +68,20 @@
     const setupAxis = () => {
         const axis_creator = positionedAxis(enlargedScale())
             .tickSizeOuter(0).tickSize(0)
+            .tickCenterLabel(true)
             .tickFormat(formater)
 
         axis_creator(select(axis))
         transitionAxis()
+
+        select(axis).select("path").style("stroke", "grey")
     }
 
     $: if (scale && height && width && margin && position && formater && axis)
         setupAxis()
 </script>
 
-<g color="grey" bind:this={axis} transform="translate({transform})"/>
+<g color="grey" stroke="grey" fill="grey" bind:this={axis} transform="translate({transform})"/>
 {#if position === "top"}
     <text x={(width + margin) / 2} y={30} fill="grey">{label}</text>
 {:else if position === "right"}

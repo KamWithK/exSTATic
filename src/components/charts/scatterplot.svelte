@@ -37,6 +37,8 @@
 
     let [height, width] = [50, 100]
     let margin = 50
+    $: if (height < 50) height = 50
+    $: if (width < 100) width = 100
 
     // Map data (domains) onto physical scales (ranges)
     // Physical ranges shrink in proport to the maximal circle radius and padding

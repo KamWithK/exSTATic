@@ -7427,6 +7427,16 @@
             "seed": "exSTATic!"
           }));
       }
+      if ($$self.$$.dirty[0] & 2048) {
+        $:
+          if (height < 50)
+            $$invalidate(11, height = 50);
+      }
+      if ($$self.$$.dirty[0] & 4096) {
+        $:
+          if (width < 100)
+            $$invalidate(12, width = 100);
+      }
       if ($$self.$$.dirty[0] & 2109443) {
         $:
           $$invalidate(14, x_scale = time().domain(extent(data, x_accessor)).range([radius + margin, width - radius - margin]));

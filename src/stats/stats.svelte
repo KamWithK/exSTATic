@@ -1,6 +1,6 @@
 <script lang="ts">
-    import AccordionItem from "../components/accordion_item.svelte"
-    import Scatterplot from "./scatterplot.svelte"
+    import AccordionItem from "../components/interface/accordion_item.svelte"
+    import Scatterplot from "../components/charts/scatterplot.svelte"
 
     import { group, rollup, sum } from "d3-array"
     import { parseISO } from "date-fns"

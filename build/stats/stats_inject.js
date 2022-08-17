@@ -2126,7 +2126,7 @@
     }
   };
 
-  // src/components/accordion_item.svelte
+  // src/components/interface/accordion_item.svelte
   function create_if_block(ctx) {
     let current;
     const default_slot_template = ctx[6].default;
@@ -3726,7 +3726,7 @@
   var axisLeft = (scale) => axis("left", scale);
   var axisRight = (scale) => axis("right", scale);
 
-  // src/stats/line_axis.svelte
+  // src/components/charts/line_axis.svelte
   function create_if_block_3(ctx) {
     let text_1;
     let t;
@@ -4034,7 +4034,7 @@
   };
   var line_axis_default = Line_axis;
 
-  // src/stats/circles.svelte
+  // src/components/charts/circles.svelte
   function get_each_context(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[3] = list[i].x;
@@ -4180,7 +4180,7 @@
   };
   var circles_default = Circles;
 
-  // src/stats/line.svelte
+  // src/components/charts/line.svelte
   function create_fragment4(ctx) {
     let path2;
     return {
@@ -5443,7 +5443,7 @@
     return locale;
   }
 
-  // src/stats/popup.svelte
+  // src/components/charts/popup.svelte
   function get_each_context2(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[15] = list[i];
@@ -5657,7 +5657,7 @@
   };
   var popup_default = Popup;
 
-  // src/stats/legend.svelte
+  // src/components/charts/legend.svelte
   function get_each_context3(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[2] = list[i];
@@ -6856,7 +6856,7 @@
     return initRange.apply(calendar(timeTicks, timeTickInterval, year_default, month_default, sunday, day_default, hour_default, minute_default, second_default, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
   }
 
-  // src/stats/scatterplot.svelte
+  // src/components/charts/scatterplot.svelte
   var import_iwanthue = __toESM(require_iwanthue());
   function create_if_block3(ctx) {
     let line;

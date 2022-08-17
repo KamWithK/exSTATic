@@ -2707,7 +2707,7 @@
     }
   }
 
-  // src/components/stat_bar.svelte
+  // src/components/interface/stat_bar.svelte
   function create_else_block(ctx) {
     let t;
     return {
@@ -2967,7 +2967,7 @@
   };
   var stat_bar_default = Stat_bar;
 
-  // src/components/menu_option.svelte
+  // src/components/interface/menu_option.svelte
   function create_if_block2(ctx) {
     let t0_value = " ";
     let t0;
@@ -3183,7 +3183,7 @@
   };
   var menu_option_default = Menu_option;
 
-  // src/components/menu_bar.svelte
+  // src/components/interface/menu_bar.svelte
   function fallback_block(ctx) {
     let menuoption0;
     let t0;
@@ -3349,7 +3349,7 @@
   };
   var menu_bar_default = Menu_bar;
 
-  // src/components/line.svelte
+  // src/components/interface/line.svelte
   function create_fragment4(ctx) {
     let div;
     let p;
@@ -3436,7 +3436,7 @@
   };
   var line_default = Line;
 
-  // src/components/line_holder.svelte
+  // src/components/interface/line_holder.svelte
   function get_each_context(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[6] = list[i][0];

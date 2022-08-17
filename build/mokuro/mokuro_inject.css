@@ -1,4 +1,4 @@
-/* fakecss:C:/Users/kamwi/Development/Projects/exSTATic/src/components/stat_bar.esbuild-svelte-fake-css */
+/* fakecss:C:/Users/kamwi/Development/Projects/exSTATic/src/components/interface/stat_bar.esbuild-svelte-fake-css */
 .stat-numbers.svelte-1127kl9 {
   font-family:
     "ui-monospace",
@@ -590,14 +590,14 @@ select {
   position: -webkit-sticky;
   position: sticky;
 }
+.top-0 {
+  top: 0px;
+}
 .left-0 {
   left: 0px;
 }
 .right-0 {
   right: 0px;
-}
-.top-0 {
-  top: 0px;
 }
 .z-50 {
   z-index: 50;
@@ -629,14 +629,11 @@ select {
 .hidden {
   display: none;
 }
-.h-3 {
-  height: 0.75rem;
+.h-10 {
+  height: 2.5rem;
 }
 .h-full {
   height: 100%;
-}
-.h-10 {
-  height: 2.5rem;
 }
 .h-20 {
   height: 5rem;
@@ -644,8 +641,8 @@ select {
 .h-4 {
   height: 1rem;
 }
-.w-3 {
-  width: 0.75rem;
+.h-3 {
+  height: 0.75rem;
 }
 .w-full {
   width: 100%;
@@ -655,6 +652,9 @@ select {
 }
 .w-4 {
   width: 1rem;
+}
+.w-3 {
+  width: 0.75rem;
 }
 .shrink {
   flex-shrink: 1;
@@ -695,14 +695,14 @@ select {
 .justify-between {
   justify-content: space-between;
 }
+.gap-20 {
+  gap: 5rem;
+}
 .gap-3 {
   gap: 0.75rem;
 }
 .gap-1 {
   gap: 0.25rem;
-}
-.gap-20 {
-  gap: 5rem;
 }
 .self-center {
   align-self: center;
@@ -723,10 +723,6 @@ select {
   --tw-border-opacity:1;
   border-color: rgb(129 140 248 / var(--tw-border-opacity));
 }
-.bg-slate-900 {
-  --tw-bg-opacity:1;
-  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
-}
 .bg-transparent {
   background-color: transparent;
 }
@@ -738,20 +734,15 @@ select {
   --tw-bg-opacity:1;
   background-color: rgb(51 65 85 / var(--tw-bg-opacity));
 }
+.bg-slate-900 {
+  --tw-bg-opacity:1;
+  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+}
 .bg-opacity-70 {
   --tw-bg-opacity:0.7;
 }
 .fill-transparent {
   fill: transparent;
-}
-.p-5 {
-  padding: 1.25rem;
-}
-.p-3 {
-  padding: 0.75rem;
-}
-.p-12 {
-  padding: 3rem;
 }
 .p-20 {
   padding: 5rem;
@@ -762,8 +753,17 @@ select {
 .p-2 {
   padding: 0.5rem;
 }
+.p-3 {
+  padding: 0.75rem;
+}
 .p-1 {
   padding: 0.25rem;
+}
+.p-12 {
+  padding: 3rem;
+}
+.p-5 {
+  padding: 1.25rem;
 }
 .px-12 {
   padding-left: 3rem;
@@ -805,14 +805,6 @@ select {
 .tracking-tighter {
   letter-spacing: -0.05em;
 }
-.text-\[\#808080\] {
-  --tw-text-opacity:1;
-  color: rgb(128 128 128 / var(--tw-text-opacity));
-}
-.text-indigo-400 {
-  --tw-text-opacity:1;
-  color: rgb(129 140 248 / var(--tw-text-opacity));
-}
 .text-indigo-500 {
   --tw-text-opacity:1;
   color: rgb(99 102 241 / var(--tw-text-opacity));
@@ -820,6 +812,14 @@ select {
 .text-white {
   --tw-text-opacity:1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.text-\[\#808080\] {
+  --tw-text-opacity:1;
+  color: rgb(128 128 128 / var(--tw-text-opacity));
+}
+.text-indigo-400 {
+  --tw-text-opacity:1;
+  color: rgb(129 140 248 / var(--tw-text-opacity));
 }
 .blur {
   --tw-blur:blur(8px);

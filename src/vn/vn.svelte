@@ -3,10 +3,10 @@
 	import type { VNStorage } from "./vn_storage"
 	import { exportLines, exportStats } from "../data_wrangling/data_export"
 	import { importLines, importStats } from "../data_wrangling/data_import"
-	import StatBar from "../components/stat_bar.svelte"
-	import MenuBar from "../components/menu_bar.svelte"
-	import MenuOption from "../components/menu_option.svelte"
-	import LineHolder from "../components/line_holder.svelte"
+	import StatBar from "../components/interface/stat_bar.svelte"
+	import MenuBar from "../components/interface/menu_bar.svelte"
+	import MenuOption from "../components/interface/menu_option.svelte"
+	import LineHolder from "../components/interface/line_holder.svelte"
 
 	import { parse } from "papaparse"
 	var browser = require("webextension-polyfill")

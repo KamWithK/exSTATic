@@ -1955,7 +1955,7 @@
     }
   };
 
-  // src/components/stat_bar.svelte
+  // src/components/interface/stat_bar.svelte
   function create_else_block(ctx) {
     let t;
     return {

@@ -7322,7 +7322,7 @@
     }
     function lineaxis0_height_binding(value) {
       height = value;
-      $$invalidate(11, height);
+      $$invalidate(11, height), $$invalidate(12, width);
     }
     function lineaxis0_width_binding(value) {
       width = value;
@@ -7334,11 +7334,11 @@
     }
     function lineaxis1_scale_binding(value) {
       y_scale = value;
-      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(21, radius), $$invalidate(13, margin);
+      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(21, radius), $$invalidate(13, margin), $$invalidate(12, width);
     }
     function lineaxis1_height_binding(value) {
       height = value;
-      $$invalidate(11, height);
+      $$invalidate(11, height), $$invalidate(12, width);
     }
     function lineaxis1_width_binding(value) {
       width = value;
@@ -7366,7 +7366,7 @@
     }
     function line_y_scale_binding(value) {
       y_scale = value;
-      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(21, radius), $$invalidate(13, margin);
+      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(21, radius), $$invalidate(13, margin), $$invalidate(12, width);
     }
     function legend_groups_binding(value) {
       groups2 = value;
@@ -7387,7 +7387,7 @@
     function figure_elementresize_handler() {
       height = this.clientHeight;
       width = this.clientWidth;
-      $$invalidate(11, height);
+      $$invalidate(11, height), $$invalidate(12, width);
       $$invalidate(12, width);
     }
     $$self.$$set = ($$props2) => {
@@ -7436,6 +7436,11 @@
         $:
           if (width < 100)
             $$invalidate(12, width = 100);
+      }
+      if ($$self.$$.dirty[0] & 6144) {
+        $:
+          if (height > width)
+            $$invalidate(11, height = width);
       }
       if ($$self.$$.dirty[0] & 2109443) {
         $:

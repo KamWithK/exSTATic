@@ -22,7 +22,7 @@
         popout_color = hues[groups.indexOf(group_accessor(data[index]))]
 
         Object.entries(tooltip_accessors).forEach(([key, value_accessor]: [string, Function]) => {
-            popup_tooltips[key] = value_accessor(data[index])
+            popup_tooltips[key] = Math.round(value_accessor(data[index]))
         })
 
         show_popup = true

@@ -5595,7 +5595,7 @@
       $$invalidate(5, popup_date = timeFormat("%d %B %Y")(x_accessor(data[index2])));
       $$invalidate(6, popout_color = hues[groups2.indexOf(group_accessor(data[index2]))]);
       Object.entries(tooltip_accessors).forEach(([key, value_accessor]) => {
-        $$invalidate(7, popup_tooltips[key] = value_accessor(data[index2]), popup_tooltips);
+        $$invalidate(7, popup_tooltips[key] = Math.round(value_accessor(data[index2])), popup_tooltips);
       });
       $$invalidate(1, show_popup = true);
     };

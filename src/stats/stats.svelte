@@ -4,7 +4,7 @@
     import MinDataGraphs from "./min_data_graphs.svelte"
     import MediaGraphs from "./media_graphs.svelte"
 
-    import { groups, sum } from "d3-array"
+    import { groups, sum, mean } from "d3-array"
     import { format } from "d3-format"
     import { parseISO } from "date-fns"
     import { subWeeks, subMonths, subYears } from "date-fns"
@@ -28,9 +28,9 @@
     const uuid_groups = groups(data, d => d.uuid)
     const uuid_summary = uuid_groups.map(([, v]) => ({
         "name": v[0].name,
-        "time_read": sum(v, d => d.time_read / SECS_TO_HRS),
+        "time_read": sum(v, d => d.time_read),
         "chars_read": sum(v, d => d.chars_read),
-        "read_speed": sum(v, d => d.read_speed * SECS_TO_HRS)
+        "read_speed": mean(v, d => d.read_speed)
     }))
 
     const name_accessor = d => d.name

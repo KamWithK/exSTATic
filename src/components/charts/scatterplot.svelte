@@ -65,10 +65,10 @@
     let mouse_move, mouse_out
 </script>
 
-<div class="flex flex-col w-fit h-full items-center p-12 bg-slate-900">
+<div class="flex flex-col w-full h-full items-center p-12 bg-slate-900">
     <h1 class="text-4xl font-semibold text-indigo-400">{graph_title}</h1>
 
-    <figure bind:clientHeight={height} bind:clientWidth={width} class="flex flex-row items-center">
+    <figure bind:clientHeight={height} bind:clientWidth={width} class="flex flex-row items-center w-full">
         <svg height="100%" width="100%" class="max-h-[80vh]" style="resize: both;" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">
             <Axis bind:get={x_get} bind:scale={x_scale} scaleType={xScaleType} bind:data bind:accessor={x_accessor} formatter={x_formatter} bind:range={x_range} bind:label={x_label} bind:height bind:width bind:margin position="bottom"/>
             <Axis bind:get={y_get} bind:scale={y_scale} scaleType={yScaleType} bind:data bind:accessor={y_accessor} formatter={y_formatter} bind:range={y_range} bind:label={y_label} bind:height bind:width bind:margin position="left"/>

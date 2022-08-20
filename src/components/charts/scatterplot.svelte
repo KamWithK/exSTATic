@@ -14,6 +14,7 @@
     export let data
     export let radius = 60
 
+    export let [xScaleType, yScaleType, rScaleType] = [scaleTime, scaleLinear, scaleLinear]
     export let x_accessor, y_accessor
     export let r_accessor = undefined, c_accessor
 
@@ -43,7 +44,7 @@
     $: y_range = [height - radius - margin, radius + margin]
 
     let r_scale
-    $: r_scale = scaleLinear()
+    $: r_scale = rScaleType()
         .domain(extent(data, r_accessor))
         .range([0, radius])
 
@@ -69,8 +70,8 @@
 
     <figure bind:clientHeight={height} bind:clientWidth={width} class="flex flex-row w-full h-full items-center">
         <svg height="100%" width="100%" style="resize: both;" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">
-            <Axis bind:get={x_get} bind:scale={x_scale} scaleType={scaleTime} bind:data bind:accessor={x_accessor} formatter={x_formatter} bind:range={x_range} bind:label={x_label} bind:height bind:width bind:margin position="bottom"/>
-            <Axis bind:get={y_get} bind:scale={y_scale} scaleType={scaleLinear} bind:data bind:accessor={y_accessor} formatter={y_formatter} bind:range={y_range} bind:label={y_label} bind:height bind:width bind:margin position="left"/>
+            <Axis bind:get={x_get} bind:scale={x_scale} scaleType={xScaleType} bind:data bind:accessor={x_accessor} formatter={x_formatter} bind:range={x_range} bind:label={x_label} bind:height bind:width bind:margin position="bottom"/>
+            <Axis bind:get={y_get} bind:scale={y_scale} scaleType={yScaleType} bind:data bind:accessor={y_accessor} formatter={y_formatter} bind:range={y_range} bind:label={y_label} bind:height bind:width bind:margin position="left"/>
 
             <Circles {mapped_data} {mouse_move} {mouse_out}/>
 

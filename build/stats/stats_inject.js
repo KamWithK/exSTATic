@@ -7093,23 +7093,23 @@
     let updating_y_get;
     let current;
     function line_data_binding(value) {
-      ctx[46](value);
+      ctx[49](value);
     }
     function line_x_get_binding(value) {
-      ctx[47](value);
+      ctx[50](value);
     }
     function line_y_get_binding(value) {
-      ctx[48](value);
+      ctx[51](value);
     }
     let line_props = {};
     if (ctx[0] !== void 0) {
       line_props.data = ctx[0];
     }
-    if (ctx[15] !== void 0) {
-      line_props.x_get = ctx[15];
-    }
     if (ctx[17] !== void 0) {
-      line_props.y_get = ctx[17];
+      line_props.x_get = ctx[17];
+    }
+    if (ctx[19] !== void 0) {
+      line_props.y_get = ctx[19];
     }
     line = new line_default2({ props: line_props });
     binding_callbacks.push(() => bind(line, "data", line_data_binding));
@@ -7130,14 +7130,14 @@
           line_changes.data = ctx2[0];
           add_flush_callback(() => updating_data = false);
         }
-        if (!updating_x_get && dirty[0] & 32768) {
+        if (!updating_x_get && dirty[0] & 131072) {
           updating_x_get = true;
-          line_changes.x_get = ctx2[15];
+          line_changes.x_get = ctx2[17];
           add_flush_callback(() => updating_x_get = false);
         }
-        if (!updating_y_get && dirty[0] & 131072) {
+        if (!updating_y_get && dirty[0] & 524288) {
           updating_y_get = true;
-          line_changes.y_get = ctx2[17];
+          line_changes.y_get = ctx2[19];
           add_flush_callback(() => updating_y_get = false);
         }
         line.$set(line_changes);
@@ -7197,42 +7197,42 @@
     let figure_resize_listener;
     let current;
     function axis0_get_binding(value) {
-      ctx[28](value);
-    }
-    function axis0_scale_binding(value) {
-      ctx[29](value);
-    }
-    function axis0_data_binding(value) {
-      ctx[30](value);
-    }
-    function axis0_accessor_binding(value) {
       ctx[31](value);
     }
-    function axis0_range_binding(value) {
+    function axis0_scale_binding(value) {
       ctx[32](value);
     }
-    function axis0_label_binding(value) {
+    function axis0_data_binding(value) {
       ctx[33](value);
     }
-    function axis0_height_binding(value) {
+    function axis0_accessor_binding(value) {
       ctx[34](value);
     }
-    function axis0_width_binding(value) {
+    function axis0_range_binding(value) {
       ctx[35](value);
     }
-    function axis0_margin_binding(value) {
+    function axis0_label_binding(value) {
       ctx[36](value);
     }
+    function axis0_height_binding(value) {
+      ctx[37](value);
+    }
+    function axis0_width_binding(value) {
+      ctx[38](value);
+    }
+    function axis0_margin_binding(value) {
+      ctx[39](value);
+    }
     let axis0_props = {
-      scaleType: time,
-      formatter: ctx[23],
+      scaleType: ctx[5],
+      formatter: ctx[25],
       position: "bottom"
     };
-    if (ctx[15] !== void 0) {
-      axis0_props.get = ctx[15];
+    if (ctx[17] !== void 0) {
+      axis0_props.get = ctx[17];
     }
-    if (ctx[14] !== void 0) {
-      axis0_props.scale = ctx[14];
+    if (ctx[16] !== void 0) {
+      axis0_props.scale = ctx[16];
     }
     if (ctx[0] !== void 0) {
       axis0_props.data = ctx[0];
@@ -7240,20 +7240,20 @@
     if (ctx[1] !== void 0) {
       axis0_props.accessor = ctx[1];
     }
-    if (ctx[18] !== void 0) {
-      axis0_props.range = ctx[18];
+    if (ctx[20] !== void 0) {
+      axis0_props.range = ctx[20];
     }
     if (ctx[3] !== void 0) {
       axis0_props.label = ctx[3];
     }
-    if (ctx[11] !== void 0) {
-      axis0_props.height = ctx[11];
-    }
-    if (ctx[12] !== void 0) {
-      axis0_props.width = ctx[12];
-    }
     if (ctx[13] !== void 0) {
-      axis0_props.margin = ctx[13];
+      axis0_props.height = ctx[13];
+    }
+    if (ctx[14] !== void 0) {
+      axis0_props.width = ctx[14];
+    }
+    if (ctx[15] !== void 0) {
+      axis0_props.margin = ctx[15];
     }
     axis0 = new axis_default({ props: axis0_props });
     binding_callbacks.push(() => bind(axis0, "get", axis0_get_binding));
@@ -7266,42 +7266,42 @@
     binding_callbacks.push(() => bind(axis0, "width", axis0_width_binding));
     binding_callbacks.push(() => bind(axis0, "margin", axis0_margin_binding));
     function axis1_get_binding(value) {
-      ctx[37](value);
-    }
-    function axis1_scale_binding(value) {
-      ctx[38](value);
-    }
-    function axis1_data_binding(value) {
-      ctx[39](value);
-    }
-    function axis1_accessor_binding(value) {
       ctx[40](value);
     }
-    function axis1_range_binding(value) {
+    function axis1_scale_binding(value) {
       ctx[41](value);
     }
-    function axis1_label_binding(value) {
+    function axis1_data_binding(value) {
       ctx[42](value);
     }
-    function axis1_height_binding(value) {
+    function axis1_accessor_binding(value) {
       ctx[43](value);
     }
-    function axis1_width_binding(value) {
+    function axis1_range_binding(value) {
       ctx[44](value);
     }
-    function axis1_margin_binding(value) {
+    function axis1_label_binding(value) {
       ctx[45](value);
     }
+    function axis1_height_binding(value) {
+      ctx[46](value);
+    }
+    function axis1_width_binding(value) {
+      ctx[47](value);
+    }
+    function axis1_margin_binding(value) {
+      ctx[48](value);
+    }
     let axis1_props = {
-      scaleType: linear2,
-      formatter: ctx[24],
+      scaleType: ctx[6],
+      formatter: ctx[26],
       position: "left"
     };
-    if (ctx[17] !== void 0) {
-      axis1_props.get = ctx[17];
+    if (ctx[19] !== void 0) {
+      axis1_props.get = ctx[19];
     }
-    if (ctx[16] !== void 0) {
-      axis1_props.scale = ctx[16];
+    if (ctx[18] !== void 0) {
+      axis1_props.scale = ctx[18];
     }
     if (ctx[0] !== void 0) {
       axis1_props.data = ctx[0];
@@ -7309,20 +7309,20 @@
     if (ctx[2] !== void 0) {
       axis1_props.accessor = ctx[2];
     }
-    if (ctx[19] !== void 0) {
-      axis1_props.range = ctx[19];
+    if (ctx[21] !== void 0) {
+      axis1_props.range = ctx[21];
     }
     if (ctx[4] !== void 0) {
       axis1_props.label = ctx[4];
     }
-    if (ctx[11] !== void 0) {
-      axis1_props.height = ctx[11];
-    }
-    if (ctx[12] !== void 0) {
-      axis1_props.width = ctx[12];
-    }
     if (ctx[13] !== void 0) {
-      axis1_props.margin = ctx[13];
+      axis1_props.height = ctx[13];
+    }
+    if (ctx[14] !== void 0) {
+      axis1_props.width = ctx[14];
+    }
+    if (ctx[15] !== void 0) {
+      axis1_props.margin = ctx[15];
     }
     axis1 = new axis_default({ props: axis1_props });
     binding_callbacks.push(() => bind(axis1, "get", axis1_get_binding));
@@ -7336,47 +7336,47 @@
     binding_callbacks.push(() => bind(axis1, "margin", axis1_margin_binding));
     circles = new circles_default({
       props: {
-        mapped_data: ctx[20],
-        mouse_move: ctx[21],
-        mouse_out: ctx[22]
+        mapped_data: ctx[22],
+        mouse_move: ctx[23],
+        mouse_out: ctx[24]
       }
     });
-    let if_block = ctx[6] && create_if_block3(ctx);
+    let if_block = ctx[8] && create_if_block3(ctx);
     function legend_groups_binding(value) {
-      ctx[49](value);
+      ctx[52](value);
     }
     function legend_hues_binding(value) {
-      ctx[50](value);
+      ctx[53](value);
     }
     let legend_props = {};
-    if (ctx[9] !== void 0) {
-      legend_props.groups = ctx[9];
+    if (ctx[11] !== void 0) {
+      legend_props.groups = ctx[11];
     }
-    if (ctx[10] !== void 0) {
-      legend_props.hues = ctx[10];
+    if (ctx[12] !== void 0) {
+      legend_props.hues = ctx[12];
     }
     legend = new legend_default({ props: legend_props });
     binding_callbacks.push(() => bind(legend, "groups", legend_groups_binding));
     binding_callbacks.push(() => bind(legend, "hues", legend_hues_binding));
     function popup_mouse_move_binding(value) {
-      ctx[51](value);
+      ctx[54](value);
     }
     function popup_mouse_out_binding(value) {
-      ctx[52](value);
+      ctx[55](value);
     }
     let popup_props = {
       data: ctx[0],
-      groups: ctx[9],
-      hues: ctx[10],
+      groups: ctx[11],
+      hues: ctx[12],
       x_accessor: ctx[1],
-      group_accessor: ctx[5],
-      tooltip_accessors: ctx[7]
+      group_accessor: ctx[7],
+      tooltip_accessors: ctx[9]
     };
-    if (ctx[21] !== void 0) {
-      popup_props.mouse_move = ctx[21];
+    if (ctx[23] !== void 0) {
+      popup_props.mouse_move = ctx[23];
     }
-    if (ctx[22] !== void 0) {
-      popup_props.mouse_out = ctx[22];
+    if (ctx[24] !== void 0) {
+      popup_props.mouse_out = ctx[24];
     }
     popup = new popup_default({ props: popup_props });
     binding_callbacks.push(() => bind(popup, "mouse_move", popup_mouse_move_binding));
@@ -7385,7 +7385,7 @@
       c() {
         div = element("div");
         h1 = element("h1");
-        t02 = text(ctx[8]);
+        t02 = text(ctx[10]);
         t12 = space();
         figure = element("figure");
         svg = svg_element("svg");
@@ -7402,10 +7402,10 @@
         attr(svg, "height", "100%");
         attr(svg, "width", "100%");
         set_style(svg, "resize", "both");
-        attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[12] + " " + ctx[11]);
+        attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[14] + " " + ctx[13]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
         attr(figure, "class", "flex flex-row w-full h-full items-center");
-        add_render_callback(() => ctx[53].call(figure));
+        add_render_callback(() => ctx[56].call(figure));
         attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
@@ -7424,21 +7424,23 @@
         mount_component(legend, figure, null);
         append(figure, t3);
         mount_component(popup, figure, null);
-        figure_resize_listener = add_resize_listener(figure, ctx[53].bind(figure));
+        figure_resize_listener = add_resize_listener(figure, ctx[56].bind(figure));
         current = true;
       },
       p(ctx2, dirty) {
-        if (!current || dirty[0] & 256)
-          set_data(t02, ctx2[8]);
+        if (!current || dirty[0] & 1024)
+          set_data(t02, ctx2[10]);
         const axis0_changes = {};
-        if (!updating_get && dirty[0] & 32768) {
+        if (dirty[0] & 32)
+          axis0_changes.scaleType = ctx2[5];
+        if (!updating_get && dirty[0] & 131072) {
           updating_get = true;
-          axis0_changes.get = ctx2[15];
+          axis0_changes.get = ctx2[17];
           add_flush_callback(() => updating_get = false);
         }
-        if (!updating_scale && dirty[0] & 16384) {
+        if (!updating_scale && dirty[0] & 65536) {
           updating_scale = true;
-          axis0_changes.scale = ctx2[14];
+          axis0_changes.scale = ctx2[16];
           add_flush_callback(() => updating_scale = false);
         }
         if (!updating_data && dirty[0] & 1) {
@@ -7451,9 +7453,9 @@
           axis0_changes.accessor = ctx2[1];
           add_flush_callback(() => updating_accessor = false);
         }
-        if (!updating_range && dirty[0] & 262144) {
+        if (!updating_range && dirty[0] & 1048576) {
           updating_range = true;
-          axis0_changes.range = ctx2[18];
+          axis0_changes.range = ctx2[20];
           add_flush_callback(() => updating_range = false);
         }
         if (!updating_label && dirty[0] & 8) {
@@ -7461,31 +7463,33 @@
           axis0_changes.label = ctx2[3];
           add_flush_callback(() => updating_label = false);
         }
-        if (!updating_height && dirty[0] & 2048) {
+        if (!updating_height && dirty[0] & 8192) {
           updating_height = true;
-          axis0_changes.height = ctx2[11];
+          axis0_changes.height = ctx2[13];
           add_flush_callback(() => updating_height = false);
         }
-        if (!updating_width && dirty[0] & 4096) {
+        if (!updating_width && dirty[0] & 16384) {
           updating_width = true;
-          axis0_changes.width = ctx2[12];
+          axis0_changes.width = ctx2[14];
           add_flush_callback(() => updating_width = false);
         }
-        if (!updating_margin && dirty[0] & 8192) {
+        if (!updating_margin && dirty[0] & 32768) {
           updating_margin = true;
-          axis0_changes.margin = ctx2[13];
+          axis0_changes.margin = ctx2[15];
           add_flush_callback(() => updating_margin = false);
         }
         axis0.$set(axis0_changes);
         const axis1_changes = {};
-        if (!updating_get_1 && dirty[0] & 131072) {
+        if (dirty[0] & 64)
+          axis1_changes.scaleType = ctx2[6];
+        if (!updating_get_1 && dirty[0] & 524288) {
           updating_get_1 = true;
-          axis1_changes.get = ctx2[17];
+          axis1_changes.get = ctx2[19];
           add_flush_callback(() => updating_get_1 = false);
         }
-        if (!updating_scale_1 && dirty[0] & 65536) {
+        if (!updating_scale_1 && dirty[0] & 262144) {
           updating_scale_1 = true;
-          axis1_changes.scale = ctx2[16];
+          axis1_changes.scale = ctx2[18];
           add_flush_callback(() => updating_scale_1 = false);
         }
         if (!updating_data_1 && dirty[0] & 1) {
@@ -7498,9 +7502,9 @@
           axis1_changes.accessor = ctx2[2];
           add_flush_callback(() => updating_accessor_1 = false);
         }
-        if (!updating_range_1 && dirty[0] & 524288) {
+        if (!updating_range_1 && dirty[0] & 2097152) {
           updating_range_1 = true;
-          axis1_changes.range = ctx2[19];
+          axis1_changes.range = ctx2[21];
           add_flush_callback(() => updating_range_1 = false);
         }
         if (!updating_label_1 && dirty[0] & 16) {
@@ -7508,34 +7512,34 @@
           axis1_changes.label = ctx2[4];
           add_flush_callback(() => updating_label_1 = false);
         }
-        if (!updating_height_1 && dirty[0] & 2048) {
+        if (!updating_height_1 && dirty[0] & 8192) {
           updating_height_1 = true;
-          axis1_changes.height = ctx2[11];
+          axis1_changes.height = ctx2[13];
           add_flush_callback(() => updating_height_1 = false);
         }
-        if (!updating_width_1 && dirty[0] & 4096) {
+        if (!updating_width_1 && dirty[0] & 16384) {
           updating_width_1 = true;
-          axis1_changes.width = ctx2[12];
+          axis1_changes.width = ctx2[14];
           add_flush_callback(() => updating_width_1 = false);
         }
-        if (!updating_margin_1 && dirty[0] & 8192) {
+        if (!updating_margin_1 && dirty[0] & 32768) {
           updating_margin_1 = true;
-          axis1_changes.margin = ctx2[13];
+          axis1_changes.margin = ctx2[15];
           add_flush_callback(() => updating_margin_1 = false);
         }
         axis1.$set(axis1_changes);
         const circles_changes = {};
-        if (dirty[0] & 1048576)
-          circles_changes.mapped_data = ctx2[20];
-        if (dirty[0] & 2097152)
-          circles_changes.mouse_move = ctx2[21];
         if (dirty[0] & 4194304)
-          circles_changes.mouse_out = ctx2[22];
+          circles_changes.mapped_data = ctx2[22];
+        if (dirty[0] & 8388608)
+          circles_changes.mouse_move = ctx2[23];
+        if (dirty[0] & 16777216)
+          circles_changes.mouse_out = ctx2[24];
         circles.$set(circles_changes);
-        if (ctx2[6]) {
+        if (ctx2[8]) {
           if (if_block) {
             if_block.p(ctx2, dirty);
-            if (dirty[0] & 64) {
+            if (dirty[0] & 256) {
               transition_in(if_block, 1);
             }
           } else {
@@ -7551,42 +7555,42 @@
           });
           check_outros();
         }
-        if (!current || dirty[0] & 6144 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[12] + " " + ctx2[11])) {
+        if (!current || dirty[0] & 24576 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[14] + " " + ctx2[13])) {
           attr(svg, "viewBox", svg_viewBox_value);
         }
         const legend_changes = {};
-        if (!updating_groups && dirty[0] & 512) {
+        if (!updating_groups && dirty[0] & 2048) {
           updating_groups = true;
-          legend_changes.groups = ctx2[9];
+          legend_changes.groups = ctx2[11];
           add_flush_callback(() => updating_groups = false);
         }
-        if (!updating_hues && dirty[0] & 1024) {
+        if (!updating_hues && dirty[0] & 4096) {
           updating_hues = true;
-          legend_changes.hues = ctx2[10];
+          legend_changes.hues = ctx2[12];
           add_flush_callback(() => updating_hues = false);
         }
         legend.$set(legend_changes);
         const popup_changes = {};
         if (dirty[0] & 1)
           popup_changes.data = ctx2[0];
-        if (dirty[0] & 512)
-          popup_changes.groups = ctx2[9];
-        if (dirty[0] & 1024)
-          popup_changes.hues = ctx2[10];
+        if (dirty[0] & 2048)
+          popup_changes.groups = ctx2[11];
+        if (dirty[0] & 4096)
+          popup_changes.hues = ctx2[12];
         if (dirty[0] & 2)
           popup_changes.x_accessor = ctx2[1];
-        if (dirty[0] & 32)
-          popup_changes.group_accessor = ctx2[5];
         if (dirty[0] & 128)
-          popup_changes.tooltip_accessors = ctx2[7];
-        if (!updating_mouse_move && dirty[0] & 2097152) {
+          popup_changes.group_accessor = ctx2[7];
+        if (dirty[0] & 512)
+          popup_changes.tooltip_accessors = ctx2[9];
+        if (!updating_mouse_move && dirty[0] & 8388608) {
           updating_mouse_move = true;
-          popup_changes.mouse_move = ctx2[21];
+          popup_changes.mouse_move = ctx2[23];
           add_flush_callback(() => updating_mouse_move = false);
         }
-        if (!updating_mouse_out && dirty[0] & 4194304) {
+        if (!updating_mouse_out && dirty[0] & 16777216) {
           updating_mouse_out = true;
-          popup_changes.mouse_out = ctx2[22];
+          popup_changes.mouse_out = ctx2[24];
           add_flush_callback(() => updating_mouse_out = false);
         }
         popup.$set(popup_changes);
@@ -7628,6 +7632,8 @@
   function instance8($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { radius = 60 } = $$props;
+    let [xScaleType_1, yScaleType_1, rScaleType_1] = [time, linear2, linear2];
+    let { xScaleType = xScaleType_1, yScaleType = yScaleType_1, rScaleType = rScaleType_1 } = $$props;
     let { x_accessor, y_accessor } = $$props;
     let { r_accessor = void 0, c_accessor } = $$props;
     let { draw_line = false } = $$props;
@@ -7645,11 +7651,11 @@
     let mouse_move, mouse_out;
     function axis0_get_binding(value) {
       x_get = value;
-      $$invalidate(15, x_get);
+      $$invalidate(17, x_get);
     }
     function axis0_scale_binding(value) {
       x_scale = value;
-      $$invalidate(14, x_scale);
+      $$invalidate(16, x_scale);
     }
     function axis0_data_binding(value) {
       data = value;
@@ -7661,7 +7667,7 @@
     }
     function axis0_range_binding(value) {
       x_range = value;
-      $$invalidate(18, x_range), $$invalidate(25, radius), $$invalidate(13, margin), $$invalidate(12, width);
+      $$invalidate(20, x_range), $$invalidate(27, radius), $$invalidate(15, margin), $$invalidate(14, width);
     }
     function axis0_label_binding(value) {
       x_label = value;
@@ -7669,23 +7675,23 @@
     }
     function axis0_height_binding(value) {
       height = value;
-      $$invalidate(11, height), $$invalidate(12, width);
+      $$invalidate(13, height), $$invalidate(14, width);
     }
     function axis0_width_binding(value) {
       width = value;
-      $$invalidate(12, width);
+      $$invalidate(14, width);
     }
     function axis0_margin_binding(value) {
       margin = value;
-      $$invalidate(13, margin);
+      $$invalidate(15, margin);
     }
     function axis1_get_binding(value) {
       y_get = value;
-      $$invalidate(17, y_get);
+      $$invalidate(19, y_get);
     }
     function axis1_scale_binding(value) {
       y_scale = value;
-      $$invalidate(16, y_scale);
+      $$invalidate(18, y_scale);
     }
     function axis1_data_binding(value) {
       data = value;
@@ -7697,7 +7703,7 @@
     }
     function axis1_range_binding(value) {
       y_range = value;
-      $$invalidate(19, y_range), $$invalidate(11, height), $$invalidate(25, radius), $$invalidate(13, margin), $$invalidate(12, width);
+      $$invalidate(21, y_range), $$invalidate(13, height), $$invalidate(27, radius), $$invalidate(15, margin), $$invalidate(14, width);
     }
     function axis1_label_binding(value) {
       y_label = value;
@@ -7705,15 +7711,15 @@
     }
     function axis1_height_binding(value) {
       height = value;
-      $$invalidate(11, height), $$invalidate(12, width);
+      $$invalidate(13, height), $$invalidate(14, width);
     }
     function axis1_width_binding(value) {
       width = value;
-      $$invalidate(12, width);
+      $$invalidate(14, width);
     }
     function axis1_margin_binding(value) {
       margin = value;
-      $$invalidate(13, margin);
+      $$invalidate(15, margin);
     }
     function line_data_binding(value) {
       data = value;
@@ -7721,101 +7727,107 @@
     }
     function line_x_get_binding(value) {
       x_get = value;
-      $$invalidate(15, x_get);
+      $$invalidate(17, x_get);
     }
     function line_y_get_binding(value) {
       y_get = value;
-      $$invalidate(17, y_get);
+      $$invalidate(19, y_get);
     }
     function legend_groups_binding(value) {
       groups2 = value;
-      $$invalidate(9, groups2), $$invalidate(0, data), $$invalidate(5, c_accessor);
+      $$invalidate(11, groups2), $$invalidate(0, data), $$invalidate(7, c_accessor);
     }
     function legend_hues_binding(value) {
       hues = value;
-      $$invalidate(10, hues), $$invalidate(9, groups2), $$invalidate(0, data), $$invalidate(5, c_accessor);
+      $$invalidate(12, hues), $$invalidate(11, groups2), $$invalidate(0, data), $$invalidate(7, c_accessor);
     }
     function popup_mouse_move_binding(value) {
       mouse_move = value;
-      $$invalidate(21, mouse_move);
+      $$invalidate(23, mouse_move);
     }
     function popup_mouse_out_binding(value) {
       mouse_out = value;
-      $$invalidate(22, mouse_out);
+      $$invalidate(24, mouse_out);
     }
     function figure_elementresize_handler() {
       height = this.clientHeight;
       width = this.clientWidth;
-      $$invalidate(11, height), $$invalidate(12, width);
-      $$invalidate(12, width);
+      $$invalidate(13, height), $$invalidate(14, width);
+      $$invalidate(14, width);
     }
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)
         $$invalidate(0, data = $$props2.data);
       if ("radius" in $$props2)
-        $$invalidate(25, radius = $$props2.radius);
+        $$invalidate(27, radius = $$props2.radius);
+      if ("xScaleType" in $$props2)
+        $$invalidate(5, xScaleType = $$props2.xScaleType);
+      if ("yScaleType" in $$props2)
+        $$invalidate(6, yScaleType = $$props2.yScaleType);
+      if ("rScaleType" in $$props2)
+        $$invalidate(28, rScaleType = $$props2.rScaleType);
       if ("x_accessor" in $$props2)
         $$invalidate(1, x_accessor = $$props2.x_accessor);
       if ("y_accessor" in $$props2)
         $$invalidate(2, y_accessor = $$props2.y_accessor);
       if ("r_accessor" in $$props2)
-        $$invalidate(26, r_accessor = $$props2.r_accessor);
+        $$invalidate(29, r_accessor = $$props2.r_accessor);
       if ("c_accessor" in $$props2)
-        $$invalidate(5, c_accessor = $$props2.c_accessor);
+        $$invalidate(7, c_accessor = $$props2.c_accessor);
       if ("draw_line" in $$props2)
-        $$invalidate(6, draw_line = $$props2.draw_line);
+        $$invalidate(8, draw_line = $$props2.draw_line);
       if ("tooltip_accessors" in $$props2)
-        $$invalidate(7, tooltip_accessors = $$props2.tooltip_accessors);
+        $$invalidate(9, tooltip_accessors = $$props2.tooltip_accessors);
       if ("graph_title" in $$props2)
-        $$invalidate(8, graph_title = $$props2.graph_title);
+        $$invalidate(10, graph_title = $$props2.graph_title);
       if ("x_label" in $$props2)
         $$invalidate(3, x_label = $$props2.x_label);
       if ("y_label" in $$props2)
         $$invalidate(4, y_label = $$props2.y_label);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & 33) {
+      if ($$self.$$.dirty[0] & 129) {
         $:
-          $$invalidate(9, groups2 = Array.from(group(data, c_accessor).keys()));
+          $$invalidate(11, groups2 = Array.from(group(data, c_accessor).keys()));
       }
-      if ($$self.$$.dirty[0] & 512) {
+      if ($$self.$$.dirty[0] & 2048) {
         $:
-          $$invalidate(10, hues = (0, import_iwanthue.default)(groups2.length, {
+          $$invalidate(12, hues = (0, import_iwanthue.default)(groups2.length, {
             "colorSpace": [0, 360, 0, 100, 50, 100],
             "clustering": "force-vector",
             "seed": "exSTATic!"
           }));
       }
-      if ($$self.$$.dirty[0] & 2048) {
+      if ($$self.$$.dirty[0] & 8192) {
         $:
           if (height < 50)
-            $$invalidate(11, height = 50);
+            $$invalidate(13, height = 50);
       }
-      if ($$self.$$.dirty[0] & 4096) {
+      if ($$self.$$.dirty[0] & 16384) {
         $:
           if (width < 100)
-            $$invalidate(12, width = 100);
+            $$invalidate(14, width = 100);
       }
-      if ($$self.$$.dirty[0] & 6144) {
+      if ($$self.$$.dirty[0] & 24576) {
         $:
           if (height > width)
-            $$invalidate(11, height = width);
+            $$invalidate(13, height = width);
       }
-      if ($$self.$$.dirty[0] & 33566720) {
+      if ($$self.$$.dirty[0] & 134266880) {
         $:
-          $$invalidate(18, x_range = [radius + margin, width - radius - margin]);
+          $$invalidate(20, x_range = [radius + margin, width - radius - margin]);
       }
-      if ($$self.$$.dirty[0] & 33564672) {
+      if ($$self.$$.dirty[0] & 134258688) {
         $:
-          $$invalidate(19, y_range = [height - radius - margin, radius + margin]);
+          $$invalidate(21, y_range = [height - radius - margin, radius + margin]);
       }
-      if ($$self.$$.dirty[0] & 100663297) {
+      if ($$self.$$.dirty[0] & 939524097) {
         $:
-          $$invalidate(27, r_scale = linear2().domain(extent(data, r_accessor)).range([0, radius]));
+          $$invalidate(30, r_scale = rScaleType().domain(extent(data, r_accessor)).range([0, radius]));
       }
-      if ($$self.$$.dirty[0] & 235128353) {
+      if ($$self.$$.dirty[0] & 1745819777) {
         $:
-          $$invalidate(20, mapped_data = data.map((d, i) => ({
+          $$invalidate(22, mapped_data = data.map((d, i) => ({
             "x": x_scale === void 0 ? 0 : x_get(d),
             "y": y_scale === void 0 ? 0 : y_get(d),
             "r": r_accessor !== void 0 ? r_scale(r_accessor(d)) : radius,
@@ -7830,6 +7842,8 @@
       y_accessor,
       x_label,
       y_label,
+      xScaleType,
+      yScaleType,
       c_accessor,
       draw_line,
       tooltip_accessors,
@@ -7851,6 +7865,7 @@
       x_formatter,
       y_formatter,
       radius,
+      rScaleType,
       r_accessor,
       r_scale,
       axis0_get_binding,
@@ -7886,14 +7901,17 @@
       super();
       init(this, options, instance8, create_fragment8, safe_not_equal, {
         data: 0,
-        radius: 25,
+        radius: 27,
+        xScaleType: 5,
+        yScaleType: 6,
+        rScaleType: 28,
         x_accessor: 1,
         y_accessor: 2,
-        r_accessor: 26,
-        c_accessor: 5,
-        draw_line: 6,
-        tooltip_accessors: 7,
-        graph_title: 8,
+        r_accessor: 29,
+        c_accessor: 7,
+        draw_line: 8,
+        tooltip_accessors: 9,
+        graph_title: 10,
         x_label: 3,
         y_label: 4
       }, null, [-1, -1]);

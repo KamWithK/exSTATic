@@ -7,7 +7,7 @@
     let popup_tooltips = {}
     
     export let data, groups, hues
-    export let x_accessor, group_accessor, tooltip_accessors
+    export let x_accessor, group_accessor, tooltip_accessors, tooltip_formatters
 
     Object.keys(tooltip_accessors).forEach(key => popup_tooltips[key] = "")
 
@@ -22,7 +22,7 @@
         popout_color = hues[groups.indexOf(group_accessor(data[index]))]
 
         Object.entries(tooltip_accessors).forEach(([key, value_accessor]: [string, Function]) => {
-            popup_tooltips[key] = Math.round(value_accessor(data[index]))
+            popup_tooltips[key] = tooltip_formatters[key](value_accessor(data[index]))
         })
 
         show_popup = true

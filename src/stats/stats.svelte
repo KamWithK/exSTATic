@@ -5,6 +5,7 @@
     import MediaGraphs from "./media_graphs.svelte"
 
     import { groups, sum } from "d3-array"
+    import { format } from "d3-format"
     import { parseISO } from "date-fns"
     import { subWeeks, subMonths, subYears } from "date-fns"
 
@@ -43,32 +44,38 @@
         "Time Read": time_read_accessor,
         "Read Speed": read_speed_accessor,
     }
+
+    const tooltip_formatters = {
+        "Chars Read": format(",.0f"),
+        "Time Read": format(",.2f"),
+        "Read Speed": format(",.0f")
+    }
 </script>
 
 <div>
     <AccordionItem label="1 Week" bind:group={display_group}>
-        <MinDataGraphs data={one_week_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors}/>
+        <MinDataGraphs data={one_week_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
     </AccordionItem>
 
     <AccordionItem label="1 Month" bind:group={display_group}>
-        <BulkDataGraphs data={one_month_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors}/>
+        <BulkDataGraphs data={one_month_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
     </AccordionItem>
 
     <AccordionItem label="3 Months" bind:group={display_group}>
-        <BulkDataGraphs data={three_months_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors}/>
+        <BulkDataGraphs data={three_months_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
     </AccordionItem>
 
     <AccordionItem label="6 Months" bind:group={display_group}>
-        <BulkDataGraphs data={six_months_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors}/>
+        <BulkDataGraphs data={six_months_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
     </AccordionItem>
 
     <AccordionItem label="1 Year" bind:group={display_group}>
-        <BulkDataGraphs data={one_year_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors}/>
+        <BulkDataGraphs data={one_year_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
     </AccordionItem>
 
     <AccordionItem label="All Time" bind:group={display_group}>
-        <BulkDataGraphs {data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors}/>
-        <MediaGraphs data={uuid_summary} {name_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors}/>
+        <BulkDataGraphs {data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
+        <MediaGraphs data={uuid_summary} {name_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
     </AccordionItem>
 </div>
 

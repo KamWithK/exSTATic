@@ -15,7 +15,7 @@
     export let x_accessor, y_accessor
     export let c_accessor
 
-    export let tooltip_accessors
+    export let tooltip_accessors, tooltip_formatters
 
     export let graph_title
     export let x_label, y_label
@@ -71,6 +71,6 @@
 
         <Legend bind:groups bind:hues/>
 
-        <Popup {data} {groups} {hues} {x_accessor} group_accessor={c_accessor} {tooltip_accessors} bind:mouse_move bind:mouse_out/>
+        <Popup {data} {groups} {hues} {x_accessor} group_accessor={c_accessor} {tooltip_accessors} {tooltip_formatters} bind:mouse_move bind:mouse_out/>
     </figure>
 </div>

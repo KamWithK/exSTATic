@@ -15,7 +15,7 @@
     const MAX_CIRCLE_RADIUS = 7
 </script>
 
-<div class="flex flex-col h-full w-full p-20 gap-20">
+<div class="flex flex-col items-center h-full w-full p-20 gap-20">
     <Scatterplot
         data={data}
         x_accessor={date_accessor} y_accessor={chars_read_accessor}

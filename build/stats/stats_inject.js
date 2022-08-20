@@ -7507,12 +7507,13 @@
         attr(h1, "class", "text-4xl font-semibold text-indigo-400");
         attr(svg, "height", "100%");
         attr(svg, "width", "100%");
+        attr(svg, "class", "max-h-[80vh]");
         set_style(svg, "resize", "both");
         attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[15] + " " + ctx[14]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
-        attr(figure, "class", "flex flex-row max-h-[90vh] items-center");
+        attr(figure, "class", "flex flex-row items-center");
         add_render_callback(() => ctx[57].call(figure));
-        attr(div, "class", "flex flex-col w-full h-full max-h-[90vh] items-center p-12 bg-slate-900");
+        attr(div, "class", "flex flex-col w-fit h-full items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -8072,7 +8073,7 @@
         create_component(scatterplot0.$$.fragment);
         t = space();
         create_component(scatterplot1.$$.fragment);
-        attr(div, "class", "flex flex-col h-full w-full p-20 gap-20");
+        attr(div, "class", "flex flex-col items-center h-full w-full p-20 gap-20");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -8251,7 +8252,7 @@
         create_component(scatterplot1.$$.fragment);
         t12 = space();
         create_component(scatterplot2.$$.fragment);
-        attr(div, "class", "flex flex-col h-full w-full p-20 gap-20");
+        attr(div, "class", "flex flex-col items-center h-full w-full p-20 gap-20");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -9308,7 +9309,7 @@
         create_component(bargraph1.$$.fragment);
         t12 = space();
         create_component(bargraph2.$$.fragment);
-        attr(div, "class", "flex flex-col h-full w-full p-20 gap-20");
+        attr(div, "class", "flex flex-col items-center h-full w-full p-20 gap-20");
       },
       m(target, anchor) {
         insert(target, div, anchor);

@@ -11,7 +11,7 @@
     export let tooltip_accessors, tooltip_formatters
 </script>
 
-<div class="flex flex-col h-full w-full p-20 gap-20">
+<div class="flex flex-col items-center h-full w-full p-20 gap-20">
     <BarGraph
         {data}
         x_accessor={name_accessor} y_accessor={chars_read_accessor}

@@ -2,8 +2,9 @@
     import AccordionItem from "../components/interface/accordion_item.svelte"
     import BulkDataGraphs from "./bulk_data_graphs.svelte"
     import MinDataGraphs from "./min_data_graphs.svelte"
+    import MediaGraphs from "./media_graphs.svelte"
 
-    import { group, rollup, sum } from "d3-array"
+    import { groups, sum } from "d3-array"
     import { parseISO } from "date-fns"
     import { subWeeks, subMonths, subYears } from "date-fns"
 
@@ -23,11 +24,13 @@
     const six_months_data = data.filter(afterTimePredicate(subMonths(time_now, 6)))
     const one_year_data = data.filter(afterTimePredicate(subYears(time_now, 1)))
 
-    const uuid_groups = group(data, d => d.uuid)
-
-    const time_read_per = rollup(data, v => sum(v, d => d.time_read / SECS_TO_HRS), d => d.uuid)
-    const chars_read_per = rollup(data, v => sum(v, d => d.chars_read), d => d.uuid)
-    const read_speed_per = rollup(data, v => sum(v, d => d.read_speed * SECS_TO_HRS), d => d.uuid)
+    const uuid_groups = groups(data, d => d.uuid)
+    const uuid_summary = uuid_groups.map(([, v]) => ({
+        "name": v[0].name,
+        "time_read": sum(v, d => d.time_read / SECS_TO_HRS),
+        "chars_read": sum(v, d => d.chars_read),
+        "read_speed": sum(v, d => d.read_speed * SECS_TO_HRS)
+    }))
 
     const name_accessor = d => d.name
     const date_accessor = d => parseISO(d.date)
@@ -65,6 +68,7 @@
 
     <AccordionItem label="All Time" bind:group={display_group}>
         <BulkDataGraphs {data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors}/>
+        <MediaGraphs data={uuid_summary} {name_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors}/>
     </AccordionItem>
 </div>
 

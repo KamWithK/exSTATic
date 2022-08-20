@@ -2,6 +2,7 @@
     import LineAxis from "../draw/oriented_axis.svelte"
 
     import { extent } from "d3-array"
+    import { scaleBand } from "d3-scale"
 
     export let scaleType
 
@@ -19,7 +20,7 @@
     // Map data (domains) onto physical scales (ranges)
     export let scale
     $: scale = scaleType()
-        .domain(extent(data, accessor))
+        .domain(scaleType === scaleBand ? data.map(accessor) : extent(data, accessor))
         .range(range)
 
     export const get = (d: any) => scale(accessor(d))

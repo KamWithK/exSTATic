@@ -62,11 +62,11 @@
         const extended_domain = [axis_scale.invert(extended_range[0]), axis_scale.invert(extended_range[1])]
 
         // Modify the domain and range to cover the full available section
-        return axis_scale.domain(extended_domain).range(extended_range).nice()
+        return axis_scale.domain(extended_domain).range(extended_range)
     }
 
     const setupAxis = () => {
-        const axis_creator = positionedAxis(enlargedScale())
+        const axis_creator = positionedAxis(scale.invert ? enlargedScale() : scale)
             .tickSizeOuter(0).tickSize(0)
             .tickCenterLabel(true)
             .tickFormat(formatter)

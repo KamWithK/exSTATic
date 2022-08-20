@@ -7749,7 +7749,7 @@
     let { graph_title } = $$props;
     let { x_label, y_label } = $$props;
     let groups2, hues;
-    let [height, width, margin] = [50, 100, 50];
+    let [height, width, margin] = [500, 1e3, 50];
     let [x_range, y_range] = [[0, 0], [0, 0]];
     let r_scale;
     let x_scale, x_get;
@@ -7910,23 +7910,18 @@
       }
       if ($$self.$$.dirty[0] & 16384) {
         $:
-          if (height < 50)
-            $$invalidate(14, height = 50);
+          if (height < 500)
+            $$invalidate(14, height = 500);
       }
       if ($$self.$$.dirty[0] & 32768) {
         $:
-          if (width < 100)
-            $$invalidate(15, width = 100);
+          if (width < 500)
+            $$invalidate(15, width = 500);
       }
       if ($$self.$$.dirty[0] & 49152) {
         $:
           if (height > width)
             $$invalidate(14, height = width);
-      }
-      if ($$self.$$.dirty[0] & 49152) {
-        $:
-          if (height < width * 4)
-            $$invalidate(14, height = width * 4);
       }
       if ($$self.$$.dirty[0] & 268533760) {
         $:
@@ -9005,7 +9000,7 @@
     let { graph_title } = $$props;
     let { x_label, y_label } = $$props;
     let groups2, hues;
-    let [height, width, margin] = [50, 100, 50];
+    let [height, width, margin] = [500, 1e3, 50];
     let [x_range, y_range] = [[0, 0], [0, 0]];
     let x_scale, x_get;
     let y_scale, y_get;
@@ -9146,23 +9141,18 @@
       }
       if ($$self.$$.dirty[0] & 8192) {
         $:
-          if (height < 50)
-            $$invalidate(13, height = 50);
+          if (height < 500)
+            $$invalidate(13, height = 500);
       }
       if ($$self.$$.dirty[0] & 16384) {
         $:
-          if (width < 100)
-            $$invalidate(14, width = 100);
+          if (width < 500)
+            $$invalidate(14, width = 500);
       }
       if ($$self.$$.dirty[0] & 24576) {
         $:
           if (height > width)
             $$invalidate(13, height = width);
-      }
-      if ($$self.$$.dirty[0] & 24576) {
-        $:
-          if (height < width * 4)
-            $$invalidate(13, height = width * 4);
       }
       if ($$self.$$.dirty[0] & 49152) {
         $:

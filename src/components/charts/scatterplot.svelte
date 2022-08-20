@@ -33,11 +33,10 @@
         "seed": "exSTATic!"
     })
 
-    let [height, width, margin] = [50, 100, 50]
-    $: if (height < 50) height = 50
-    $: if (width < 100) width = 100
+    let [height, width, margin] = [500, 1000, 50]
+    $: if (height < 500) height = 500
+    $: if (width < 500) width = 500
     $: if (height > width) height = width
-    $: if (height < width * 4) height = width * 4
 
     // Physical ranges shrink in proport to the maximal circle radius and padding
     let [x_range, y_range]: [[number, number], [number, number]] = [[0, 0], [0, 0]]

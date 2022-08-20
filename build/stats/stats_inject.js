@@ -7103,7 +7103,7 @@
         p = element("p");
         t12 = text(t1_value);
         t2 = space();
-        attr(div0, "class", "z-50 w-3 h-3 rounded-full");
+        attr(div0, "class", "z-50 w-3 h-3 rounded-full shrink-0 grow-0");
         set_style(div0, "background-color", ctx[1][ctx[4]]);
         attr(p, "class", "text-[#808080]");
         attr(div1, "class", "flex flex-row gap-1 items-center");

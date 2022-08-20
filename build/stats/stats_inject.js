@@ -8840,12 +8840,13 @@
         attr(h1, "class", "text-4xl font-semibold text-indigo-400");
         attr(svg, "height", "100%");
         attr(svg, "width", "100%");
+        attr(svg, "class", "max-h-[80vh]");
         set_style(svg, "resize", "both");
         attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[14] + " " + ctx[13]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
-        attr(figure, "class", "flex flex-row w-full h-full max-h-[90vh] items-center");
+        attr(figure, "class", "flex flex-row w-full h-full items-center");
         add_render_callback(() => ctx[50].call(figure));
-        attr(div, "class", "flex flex-col w-full h-full max-h-[90vh] items-center p-12 bg-slate-900");
+        attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
         insert(target, div, anchor);

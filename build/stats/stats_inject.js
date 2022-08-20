@@ -7749,7 +7749,7 @@
     let { graph_title } = $$props;
     let { x_label, y_label } = $$props;
     let groups2, hues;
-    let [height, width, margin] = [500, 1e3, 50];
+    let [height, width, margin] = [1e3, 1200, 50];
     let [x_range, y_range] = [[0, 0], [0, 0]];
     let r_scale;
     let x_scale, x_get;
@@ -9000,7 +9000,7 @@
     let { graph_title } = $$props;
     let { x_label, y_label } = $$props;
     let groups2, hues;
-    let [height, width, margin] = [500, 1e3, 50];
+    let [height, width, margin] = [1e3, 1200, 50];
     let [x_range, y_range] = [[0, 0], [0, 0]];
     let x_scale, x_get;
     let y_scale, y_get;

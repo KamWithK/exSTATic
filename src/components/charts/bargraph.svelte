@@ -28,7 +28,7 @@
         "seed": "exSTATic!"
     })
 
-    let [height, width, margin] = [500, 1000, 50]
+    let [height, width, margin] = [1000, 1200, 50]
     $: if (height < 500) height = 500
     $: if (width < 500) width = 500
     $: if (height > width) height = width

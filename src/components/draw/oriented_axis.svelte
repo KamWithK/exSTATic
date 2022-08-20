@@ -68,7 +68,6 @@
     const setupAxis = () => {
         const axis_creator = positionedAxis(scale.invert ? enlargedScale() : scale)
             .tickSizeOuter(0).tickSize(0)
-            .tickCenterLabel(true)
             .tickFormat(formatter)
 
         axis_creator(select(axis))

@@ -3971,7 +3971,7 @@
       return axis_scale.domain(extended_domain).range(extended_range);
     };
     const setupAxis = () => {
-      const axis_creator = positionedAxis(scale.invert ? enlargedScale() : scale).tickSizeOuter(0).tickSize(0).tickCenterLabel(true).tickFormat(formatter);
+      const axis_creator = positionedAxis(scale.invert ? enlargedScale() : scale).tickSizeOuter(0).tickSize(0).tickFormat(formatter);
       axis_creator(select_default2(axis2));
       transitionAxis();
       select_default2(axis2).select("path").style("stroke", "grey");

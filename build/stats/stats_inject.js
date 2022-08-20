@@ -7923,6 +7923,11 @@
           if (height > width)
             $$invalidate(14, height = width);
       }
+      if ($$self.$$.dirty[0] & 49152) {
+        $:
+          if (height < width * 4)
+            $$invalidate(14, height = width * 4);
+      }
       if ($$self.$$.dirty[0] & 268533760) {
         $:
           $$invalidate(21, x_range = [radius + margin, width - radius - margin]);
@@ -9153,6 +9158,11 @@
         $:
           if (height > width)
             $$invalidate(13, height = width);
+      }
+      if ($$self.$$.dirty[0] & 24576) {
+        $:
+          if (height < width * 4)
+            $$invalidate(13, height = width * 4);
       }
       if ($$self.$$.dirty[0] & 49152) {
         $:

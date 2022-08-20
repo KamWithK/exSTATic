@@ -70,8 +70,8 @@
 
     <figure bind:clientHeight={height} bind:clientWidth={width} class="flex flex-row items-center w-full">
         <svg height="100%" width="100%" class="max-h-[80vh]" style="resize: both;" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">
-            <Axis bind:get={x_get} bind:scale={x_scale} scaleType={xScaleType} bind:data bind:accessor={x_accessor} formatter={x_formatter} bind:range={x_range} bind:label={x_label} bind:height bind:width bind:margin position="bottom"/>
-            <Axis bind:get={y_get} bind:scale={y_scale} scaleType={yScaleType} bind:data bind:accessor={y_accessor} formatter={y_formatter} bind:range={y_range} bind:label={y_label} bind:height bind:width bind:margin position="left"/>
+            <Axis bind:get={x_get} bind:scale={x_scale} scaleType={xScaleType} {data} accessor={x_accessor} formatter={x_formatter} bind:range={x_range} label={x_label} bind:height bind:width {margin} position="bottom"/>
+            <Axis bind:get={y_get} bind:scale={y_scale} scaleType={yScaleType} {data} accessor={y_accessor} formatter={y_formatter} bind:range={y_range} label={y_label} bind:height bind:width {margin} position="left"/>
 
             <Circles {mapped_data} {mouse_move} {mouse_out}/>
 
@@ -80,7 +80,7 @@
             {/if}
         </svg>
 
-        <Legend bind:groups bind:hues/>
+        <Legend {groups} {hues}/>
 
         <Popup {data} {groups} {hues} {x_accessor} group_accessor={c_accessor} {tooltip_accessors} {tooltip_formatters} bind:mouse_move bind:mouse_out/>
     </figure>

@@ -27,6 +27,6 @@
 </script>
 
 <LineAxis
-    bind:scale={scale} bind:height bind:width bind:margin
-    bind:position bind:formatter bind:label
+    bind:scale={scale} bind:height bind:width {margin}
+    {position} {formatter} {label}
 />

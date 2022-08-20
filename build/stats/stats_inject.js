@@ -6442,10 +6442,6 @@
     let updating_scale;
     let updating_height;
     let updating_width;
-    let updating_margin;
-    let updating_position;
-    let updating_formatter;
-    let updating_label;
     let current;
     function lineaxis_scale_binding(value) {
       ctx[12](value);
@@ -6456,48 +6452,25 @@
     function lineaxis_width_binding(value) {
       ctx[14](value);
     }
-    function lineaxis_margin_binding(value) {
-      ctx[15](value);
-    }
-    function lineaxis_position_binding(value) {
-      ctx[16](value);
-    }
-    function lineaxis_formatter_binding(value) {
-      ctx[17](value);
-    }
-    function lineaxis_label_binding(value) {
-      ctx[18](value);
-    }
-    let lineaxis_props = {};
-    if (ctx[6] !== void 0) {
-      lineaxis_props.scale = ctx[6];
-    }
+    let lineaxis_props = {
+      margin: ctx[5],
+      position: ctx[6],
+      formatter: ctx[3],
+      label: ctx[4]
+    };
     if (ctx[2] !== void 0) {
-      lineaxis_props.height = ctx[2];
-    }
-    if (ctx[3] !== void 0) {
-      lineaxis_props.width = ctx[3];
-    }
-    if (ctx[4] !== void 0) {
-      lineaxis_props.margin = ctx[4];
-    }
-    if (ctx[5] !== void 0) {
-      lineaxis_props.position = ctx[5];
+      lineaxis_props.scale = ctx[2];
     }
     if (ctx[0] !== void 0) {
-      lineaxis_props.formatter = ctx[0];
+      lineaxis_props.height = ctx[0];
     }
     if (ctx[1] !== void 0) {
-      lineaxis_props.label = ctx[1];
+      lineaxis_props.width = ctx[1];
     }
     lineaxis = new oriented_axis_default({ props: lineaxis_props });
     binding_callbacks.push(() => bind(lineaxis, "scale", lineaxis_scale_binding));
     binding_callbacks.push(() => bind(lineaxis, "height", lineaxis_height_binding));
     binding_callbacks.push(() => bind(lineaxis, "width", lineaxis_width_binding));
-    binding_callbacks.push(() => bind(lineaxis, "margin", lineaxis_margin_binding));
-    binding_callbacks.push(() => bind(lineaxis, "position", lineaxis_position_binding));
-    binding_callbacks.push(() => bind(lineaxis, "formatter", lineaxis_formatter_binding));
-    binding_callbacks.push(() => bind(lineaxis, "label", lineaxis_label_binding));
     return {
       c() {
         create_component(lineaxis.$$.fragment);
@@ -6508,40 +6481,28 @@
       },
       p(ctx2, [dirty]) {
         const lineaxis_changes = {};
-        if (!updating_scale && dirty & 64) {
+        if (dirty & 32)
+          lineaxis_changes.margin = ctx2[5];
+        if (dirty & 64)
+          lineaxis_changes.position = ctx2[6];
+        if (dirty & 8)
+          lineaxis_changes.formatter = ctx2[3];
+        if (dirty & 16)
+          lineaxis_changes.label = ctx2[4];
+        if (!updating_scale && dirty & 4) {
           updating_scale = true;
-          lineaxis_changes.scale = ctx2[6];
+          lineaxis_changes.scale = ctx2[2];
           add_flush_callback(() => updating_scale = false);
         }
-        if (!updating_height && dirty & 4) {
+        if (!updating_height && dirty & 1) {
           updating_height = true;
-          lineaxis_changes.height = ctx2[2];
+          lineaxis_changes.height = ctx2[0];
           add_flush_callback(() => updating_height = false);
         }
-        if (!updating_width && dirty & 8) {
+        if (!updating_width && dirty & 2) {
           updating_width = true;
-          lineaxis_changes.width = ctx2[3];
+          lineaxis_changes.width = ctx2[1];
           add_flush_callback(() => updating_width = false);
-        }
-        if (!updating_margin && dirty & 16) {
-          updating_margin = true;
-          lineaxis_changes.margin = ctx2[4];
-          add_flush_callback(() => updating_margin = false);
-        }
-        if (!updating_position && dirty & 32) {
-          updating_position = true;
-          lineaxis_changes.position = ctx2[5];
-          add_flush_callback(() => updating_position = false);
-        }
-        if (!updating_formatter && dirty & 1) {
-          updating_formatter = true;
-          lineaxis_changes.formatter = ctx2[0];
-          add_flush_callback(() => updating_formatter = false);
-        }
-        if (!updating_label && dirty & 2) {
-          updating_label = true;
-          lineaxis_changes.label = ctx2[1];
-          add_flush_callback(() => updating_label = false);
         }
         lineaxis.$set(lineaxis_changes);
       },
@@ -6573,31 +6534,15 @@
     const get = (d) => scale(accessor(d));
     function lineaxis_scale_binding(value) {
       scale = value;
-      $$invalidate(6, scale), $$invalidate(7, scaleType), $$invalidate(8, data), $$invalidate(9, accessor), $$invalidate(10, range2);
+      $$invalidate(2, scale), $$invalidate(7, scaleType), $$invalidate(8, data), $$invalidate(9, accessor), $$invalidate(10, range2);
     }
     function lineaxis_height_binding(value) {
       height = value;
-      $$invalidate(2, height);
+      $$invalidate(0, height);
     }
     function lineaxis_width_binding(value) {
       width = value;
-      $$invalidate(3, width);
-    }
-    function lineaxis_margin_binding(value) {
-      margin = value;
-      $$invalidate(4, margin);
-    }
-    function lineaxis_position_binding(value) {
-      position = value;
-      $$invalidate(5, position);
-    }
-    function lineaxis_formatter_binding(value) {
-      formatter = value;
-      $$invalidate(0, formatter);
-    }
-    function lineaxis_label_binding(value) {
-      label = value;
-      $$invalidate(1, label);
+      $$invalidate(1, width);
     }
     $$self.$$set = ($$props2) => {
       if ("scaleType" in $$props2)
@@ -6607,36 +6552,36 @@
       if ("accessor" in $$props2)
         $$invalidate(9, accessor = $$props2.accessor);
       if ("formatter" in $$props2)
-        $$invalidate(0, formatter = $$props2.formatter);
+        $$invalidate(3, formatter = $$props2.formatter);
       if ("range" in $$props2)
         $$invalidate(10, range2 = $$props2.range);
       if ("label" in $$props2)
-        $$invalidate(1, label = $$props2.label);
+        $$invalidate(4, label = $$props2.label);
       if ("height" in $$props2)
-        $$invalidate(2, height = $$props2.height);
+        $$invalidate(0, height = $$props2.height);
       if ("width" in $$props2)
-        $$invalidate(3, width = $$props2.width);
+        $$invalidate(1, width = $$props2.width);
       if ("margin" in $$props2)
-        $$invalidate(4, margin = $$props2.margin);
+        $$invalidate(5, margin = $$props2.margin);
       if ("position" in $$props2)
-        $$invalidate(5, position = $$props2.position);
+        $$invalidate(6, position = $$props2.position);
       if ("scale" in $$props2)
-        $$invalidate(6, scale = $$props2.scale);
+        $$invalidate(2, scale = $$props2.scale);
     };
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 1920) {
         $:
-          $$invalidate(6, scale = scaleType().domain(scaleType === band ? data.map(accessor) : extent(data, accessor)).range(range2));
+          $$invalidate(2, scale = scaleType().domain(scaleType === band ? data.map(accessor) : extent(data, accessor)).range(range2));
       }
     };
     return [
-      formatter,
-      label,
       height,
       width,
+      scale,
+      formatter,
+      label,
       margin,
       position,
-      scale,
       scaleType,
       data,
       accessor,
@@ -6644,11 +6589,7 @@
       get,
       lineaxis_scale_binding,
       lineaxis_height_binding,
-      lineaxis_width_binding,
-      lineaxis_margin_binding,
-      lineaxis_position_binding,
-      lineaxis_formatter_binding,
-      lineaxis_label_binding
+      lineaxis_width_binding
     ];
   }
   var Axis = class extends SvelteComponent {
@@ -6658,14 +6599,14 @@
         scaleType: 7,
         data: 8,
         accessor: 9,
-        formatter: 0,
+        formatter: 3,
         range: 10,
-        label: 1,
-        height: 2,
-        width: 3,
-        margin: 4,
-        position: 5,
-        scale: 6,
+        label: 4,
+        height: 0,
+        width: 1,
+        margin: 5,
+        position: 6,
+        scale: 2,
         get: 11
       });
     }
@@ -7266,29 +7207,29 @@
     let updating_y_scale;
     let current;
     function line_x_get_binding(value) {
-      ctx[50](value);
+      ctx[42](value);
     }
     function line_y_get_binding(value) {
-      ctx[51](value);
+      ctx[43](value);
     }
     function line_x_scale_binding(value) {
-      ctx[52](value);
+      ctx[44](value);
     }
     function line_y_scale_binding(value) {
-      ctx[53](value);
+      ctx[45](value);
     }
     let line_props = { data: ctx[0] };
-    if (ctx[18] !== void 0) {
-      line_props.x_get = ctx[18];
-    }
-    if (ctx[20] !== void 0) {
-      line_props.y_get = ctx[20];
-    }
     if (ctx[17] !== void 0) {
-      line_props.x_scale = ctx[17];
+      line_props.x_get = ctx[17];
     }
     if (ctx[19] !== void 0) {
-      line_props.y_scale = ctx[19];
+      line_props.y_get = ctx[19];
+    }
+    if (ctx[16] !== void 0) {
+      line_props.x_scale = ctx[16];
+    }
+    if (ctx[18] !== void 0) {
+      line_props.y_scale = ctx[18];
     }
     line = new line_default2({ props: line_props });
     binding_callbacks.push(() => bind(line, "x_get", line_x_get_binding));
@@ -7307,24 +7248,24 @@
         const line_changes = {};
         if (dirty[0] & 1)
           line_changes.data = ctx2[0];
-        if (!updating_x_get && dirty[0] & 262144) {
+        if (!updating_x_get && dirty[0] & 131072) {
           updating_x_get = true;
-          line_changes.x_get = ctx2[18];
+          line_changes.x_get = ctx2[17];
           add_flush_callback(() => updating_x_get = false);
         }
-        if (!updating_y_get && dirty[0] & 1048576) {
+        if (!updating_y_get && dirty[0] & 524288) {
           updating_y_get = true;
-          line_changes.y_get = ctx2[20];
+          line_changes.y_get = ctx2[19];
           add_flush_callback(() => updating_y_get = false);
         }
-        if (!updating_x_scale && dirty[0] & 131072) {
+        if (!updating_x_scale && dirty[0] & 65536) {
           updating_x_scale = true;
-          line_changes.x_scale = ctx2[17];
+          line_changes.x_scale = ctx2[16];
           add_flush_callback(() => updating_x_scale = false);
         }
-        if (!updating_y_scale && dirty[0] & 524288) {
+        if (!updating_y_scale && dirty[0] & 262144) {
           updating_y_scale = true;
-          line_changes.y_scale = ctx2[19];
+          line_changes.y_scale = ctx2[18];
           add_flush_callback(() => updating_y_scale = false);
         }
         line.$set(line_changes);
@@ -7354,29 +7295,19 @@
     let axis0;
     let updating_get;
     let updating_scale;
-    let updating_data;
-    let updating_accessor;
     let updating_range;
-    let updating_label;
     let updating_height;
     let updating_width;
-    let updating_margin;
     let axis1;
     let updating_get_1;
     let updating_scale_1;
-    let updating_data_1;
-    let updating_accessor_1;
     let updating_range_1;
-    let updating_label_1;
     let updating_height_1;
     let updating_width_1;
-    let updating_margin_1;
     let circles;
     let svg_viewBox_value;
     let t2;
     let legend;
-    let updating_groups;
-    let updating_hues;
     let t3;
     let popup;
     let updating_mouse_move;
@@ -7389,49 +7320,32 @@
     function axis0_scale_binding(value) {
       ctx[33](value);
     }
-    function axis0_data_binding(value) {
+    function axis0_range_binding(value) {
       ctx[34](value);
     }
-    function axis0_accessor_binding(value) {
+    function axis0_height_binding(value) {
       ctx[35](value);
     }
-    function axis0_range_binding(value) {
+    function axis0_width_binding(value) {
       ctx[36](value);
     }
-    function axis0_label_binding(value) {
-      ctx[37](value);
-    }
-    function axis0_height_binding(value) {
-      ctx[38](value);
-    }
-    function axis0_width_binding(value) {
-      ctx[39](value);
-    }
-    function axis0_margin_binding(value) {
-      ctx[40](value);
-    }
     let axis0_props = {
-      scaleType: ctx[5],
+      scaleType: ctx[1],
+      data: ctx[0],
+      accessor: ctx[3],
       formatter: ctx[26],
+      label: ctx[10],
+      margin: ctx[25],
       position: "bottom"
     };
-    if (ctx[18] !== void 0) {
-      axis0_props.get = ctx[18];
-    }
     if (ctx[17] !== void 0) {
-      axis0_props.scale = ctx[17];
+      axis0_props.get = ctx[17];
     }
-    if (ctx[0] !== void 0) {
-      axis0_props.data = ctx[0];
+    if (ctx[16] !== void 0) {
+      axis0_props.scale = ctx[16];
     }
-    if (ctx[1] !== void 0) {
-      axis0_props.accessor = ctx[1];
-    }
-    if (ctx[21] !== void 0) {
-      axis0_props.range = ctx[21];
-    }
-    if (ctx[3] !== void 0) {
-      axis0_props.label = ctx[3];
+    if (ctx[20] !== void 0) {
+      axis0_props.range = ctx[20];
     }
     if (ctx[14] !== void 0) {
       axis0_props.height = ctx[14];
@@ -7439,68 +7353,44 @@
     if (ctx[15] !== void 0) {
       axis0_props.width = ctx[15];
     }
-    if (ctx[16] !== void 0) {
-      axis0_props.margin = ctx[16];
-    }
     axis0 = new axis_default({ props: axis0_props });
     binding_callbacks.push(() => bind(axis0, "get", axis0_get_binding));
     binding_callbacks.push(() => bind(axis0, "scale", axis0_scale_binding));
-    binding_callbacks.push(() => bind(axis0, "data", axis0_data_binding));
-    binding_callbacks.push(() => bind(axis0, "accessor", axis0_accessor_binding));
     binding_callbacks.push(() => bind(axis0, "range", axis0_range_binding));
-    binding_callbacks.push(() => bind(axis0, "label", axis0_label_binding));
     binding_callbacks.push(() => bind(axis0, "height", axis0_height_binding));
     binding_callbacks.push(() => bind(axis0, "width", axis0_width_binding));
-    binding_callbacks.push(() => bind(axis0, "margin", axis0_margin_binding));
     function axis1_get_binding(value) {
-      ctx[41](value);
+      ctx[37](value);
     }
     function axis1_scale_binding(value) {
-      ctx[42](value);
-    }
-    function axis1_data_binding(value) {
-      ctx[43](value);
-    }
-    function axis1_accessor_binding(value) {
-      ctx[44](value);
+      ctx[38](value);
     }
     function axis1_range_binding(value) {
-      ctx[45](value);
-    }
-    function axis1_label_binding(value) {
-      ctx[46](value);
+      ctx[39](value);
     }
     function axis1_height_binding(value) {
-      ctx[47](value);
+      ctx[40](value);
     }
     function axis1_width_binding(value) {
-      ctx[48](value);
-    }
-    function axis1_margin_binding(value) {
-      ctx[49](value);
+      ctx[41](value);
     }
     let axis1_props = {
-      scaleType: ctx[6],
+      scaleType: ctx[2],
+      data: ctx[0],
+      accessor: ctx[4],
       formatter: ctx[27],
+      label: ctx[11],
+      margin: ctx[25],
       position: "left"
     };
-    if (ctx[20] !== void 0) {
-      axis1_props.get = ctx[20];
-    }
     if (ctx[19] !== void 0) {
-      axis1_props.scale = ctx[19];
+      axis1_props.get = ctx[19];
     }
-    if (ctx[0] !== void 0) {
-      axis1_props.data = ctx[0];
+    if (ctx[18] !== void 0) {
+      axis1_props.scale = ctx[18];
     }
-    if (ctx[2] !== void 0) {
-      axis1_props.accessor = ctx[2];
-    }
-    if (ctx[22] !== void 0) {
-      axis1_props.range = ctx[22];
-    }
-    if (ctx[4] !== void 0) {
-      axis1_props.label = ctx[4];
+    if (ctx[21] !== void 0) {
+      axis1_props.range = ctx[21];
     }
     if (ctx[14] !== void 0) {
       axis1_props.height = ctx[14];
@@ -7508,63 +7398,46 @@
     if (ctx[15] !== void 0) {
       axis1_props.width = ctx[15];
     }
-    if (ctx[16] !== void 0) {
-      axis1_props.margin = ctx[16];
-    }
     axis1 = new axis_default({ props: axis1_props });
     binding_callbacks.push(() => bind(axis1, "get", axis1_get_binding));
     binding_callbacks.push(() => bind(axis1, "scale", axis1_scale_binding));
-    binding_callbacks.push(() => bind(axis1, "data", axis1_data_binding));
-    binding_callbacks.push(() => bind(axis1, "accessor", axis1_accessor_binding));
     binding_callbacks.push(() => bind(axis1, "range", axis1_range_binding));
-    binding_callbacks.push(() => bind(axis1, "label", axis1_label_binding));
     binding_callbacks.push(() => bind(axis1, "height", axis1_height_binding));
     binding_callbacks.push(() => bind(axis1, "width", axis1_width_binding));
-    binding_callbacks.push(() => bind(axis1, "margin", axis1_margin_binding));
     circles = new circles_default({
       props: {
-        mapped_data: ctx[23],
-        mouse_move: ctx[24],
-        mouse_out: ctx[25]
+        mapped_data: ctx[22],
+        mouse_move: ctx[23],
+        mouse_out: ctx[24]
       }
     });
-    let if_block = ctx[8] && create_if_block4(ctx);
-    function legend_groups_binding(value) {
-      ctx[54](value);
-    }
-    function legend_hues_binding(value) {
-      ctx[55](value);
-    }
-    let legend_props = {};
-    if (ctx[12] !== void 0) {
-      legend_props.groups = ctx[12];
-    }
-    if (ctx[13] !== void 0) {
-      legend_props.hues = ctx[13];
-    }
-    legend = new legend_default({ props: legend_props });
-    binding_callbacks.push(() => bind(legend, "groups", legend_groups_binding));
-    binding_callbacks.push(() => bind(legend, "hues", legend_hues_binding));
+    let if_block = ctx[6] && create_if_block4(ctx);
+    legend = new legend_default({
+      props: {
+        groups: ctx[12],
+        hues: ctx[13]
+      }
+    });
     function popup_mouse_move_binding(value) {
-      ctx[56](value);
+      ctx[46](value);
     }
     function popup_mouse_out_binding(value) {
-      ctx[57](value);
+      ctx[47](value);
     }
     let popup_props = {
       data: ctx[0],
       groups: ctx[12],
       hues: ctx[13],
-      x_accessor: ctx[1],
-      group_accessor: ctx[7],
-      tooltip_accessors: ctx[9],
-      tooltip_formatters: ctx[10]
+      x_accessor: ctx[3],
+      group_accessor: ctx[5],
+      tooltip_accessors: ctx[7],
+      tooltip_formatters: ctx[8]
     };
-    if (ctx[24] !== void 0) {
-      popup_props.mouse_move = ctx[24];
+    if (ctx[23] !== void 0) {
+      popup_props.mouse_move = ctx[23];
     }
-    if (ctx[25] !== void 0) {
-      popup_props.mouse_out = ctx[25];
+    if (ctx[24] !== void 0) {
+      popup_props.mouse_out = ctx[24];
     }
     popup = new popup_default({ props: popup_props });
     binding_callbacks.push(() => bind(popup, "mouse_move", popup_mouse_move_binding));
@@ -7573,7 +7446,7 @@
       c() {
         div = element("div");
         h1 = element("h1");
-        t02 = text(ctx[11]);
+        t02 = text(ctx[9]);
         t12 = space();
         figure = element("figure");
         svg = svg_element("svg");
@@ -7594,7 +7467,7 @@
         attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[15] + " " + ctx[14]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
         attr(figure, "class", "flex flex-row items-center w-full");
-        add_render_callback(() => ctx[58].call(figure));
+        add_render_callback(() => ctx[48].call(figure));
         attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
@@ -7613,44 +7486,35 @@
         mount_component(legend, figure, null);
         append(figure, t3);
         mount_component(popup, figure, null);
-        figure_resize_listener = add_resize_listener(figure, ctx[58].bind(figure));
+        figure_resize_listener = add_resize_listener(figure, ctx[48].bind(figure));
         current = true;
       },
       p(ctx2, dirty) {
-        if (!current || dirty[0] & 2048)
-          set_data(t02, ctx2[11]);
+        if (!current || dirty[0] & 512)
+          set_data(t02, ctx2[9]);
         const axis0_changes = {};
-        if (dirty[0] & 32)
-          axis0_changes.scaleType = ctx2[5];
-        if (!updating_get && dirty[0] & 262144) {
+        if (dirty[0] & 2)
+          axis0_changes.scaleType = ctx2[1];
+        if (dirty[0] & 1)
+          axis0_changes.data = ctx2[0];
+        if (dirty[0] & 8)
+          axis0_changes.accessor = ctx2[3];
+        if (dirty[0] & 1024)
+          axis0_changes.label = ctx2[10];
+        if (!updating_get && dirty[0] & 131072) {
           updating_get = true;
-          axis0_changes.get = ctx2[18];
+          axis0_changes.get = ctx2[17];
           add_flush_callback(() => updating_get = false);
         }
-        if (!updating_scale && dirty[0] & 131072) {
+        if (!updating_scale && dirty[0] & 65536) {
           updating_scale = true;
-          axis0_changes.scale = ctx2[17];
+          axis0_changes.scale = ctx2[16];
           add_flush_callback(() => updating_scale = false);
         }
-        if (!updating_data && dirty[0] & 1) {
-          updating_data = true;
-          axis0_changes.data = ctx2[0];
-          add_flush_callback(() => updating_data = false);
-        }
-        if (!updating_accessor && dirty[0] & 2) {
-          updating_accessor = true;
-          axis0_changes.accessor = ctx2[1];
-          add_flush_callback(() => updating_accessor = false);
-        }
-        if (!updating_range && dirty[0] & 2097152) {
+        if (!updating_range && dirty[0] & 1048576) {
           updating_range = true;
-          axis0_changes.range = ctx2[21];
+          axis0_changes.range = ctx2[20];
           add_flush_callback(() => updating_range = false);
-        }
-        if (!updating_label && dirty[0] & 8) {
-          updating_label = true;
-          axis0_changes.label = ctx2[3];
-          add_flush_callback(() => updating_label = false);
         }
         if (!updating_height && dirty[0] & 16384) {
           updating_height = true;
@@ -7662,44 +7526,30 @@
           axis0_changes.width = ctx2[15];
           add_flush_callback(() => updating_width = false);
         }
-        if (!updating_margin && dirty[0] & 65536) {
-          updating_margin = true;
-          axis0_changes.margin = ctx2[16];
-          add_flush_callback(() => updating_margin = false);
-        }
         axis0.$set(axis0_changes);
         const axis1_changes = {};
-        if (dirty[0] & 64)
-          axis1_changes.scaleType = ctx2[6];
-        if (!updating_get_1 && dirty[0] & 1048576) {
+        if (dirty[0] & 4)
+          axis1_changes.scaleType = ctx2[2];
+        if (dirty[0] & 1)
+          axis1_changes.data = ctx2[0];
+        if (dirty[0] & 16)
+          axis1_changes.accessor = ctx2[4];
+        if (dirty[0] & 2048)
+          axis1_changes.label = ctx2[11];
+        if (!updating_get_1 && dirty[0] & 524288) {
           updating_get_1 = true;
-          axis1_changes.get = ctx2[20];
+          axis1_changes.get = ctx2[19];
           add_flush_callback(() => updating_get_1 = false);
         }
-        if (!updating_scale_1 && dirty[0] & 524288) {
+        if (!updating_scale_1 && dirty[0] & 262144) {
           updating_scale_1 = true;
-          axis1_changes.scale = ctx2[19];
+          axis1_changes.scale = ctx2[18];
           add_flush_callback(() => updating_scale_1 = false);
         }
-        if (!updating_data_1 && dirty[0] & 1) {
-          updating_data_1 = true;
-          axis1_changes.data = ctx2[0];
-          add_flush_callback(() => updating_data_1 = false);
-        }
-        if (!updating_accessor_1 && dirty[0] & 4) {
-          updating_accessor_1 = true;
-          axis1_changes.accessor = ctx2[2];
-          add_flush_callback(() => updating_accessor_1 = false);
-        }
-        if (!updating_range_1 && dirty[0] & 4194304) {
+        if (!updating_range_1 && dirty[0] & 2097152) {
           updating_range_1 = true;
-          axis1_changes.range = ctx2[22];
+          axis1_changes.range = ctx2[21];
           add_flush_callback(() => updating_range_1 = false);
-        }
-        if (!updating_label_1 && dirty[0] & 16) {
-          updating_label_1 = true;
-          axis1_changes.label = ctx2[4];
-          add_flush_callback(() => updating_label_1 = false);
         }
         if (!updating_height_1 && dirty[0] & 16384) {
           updating_height_1 = true;
@@ -7711,24 +7561,19 @@
           axis1_changes.width = ctx2[15];
           add_flush_callback(() => updating_width_1 = false);
         }
-        if (!updating_margin_1 && dirty[0] & 65536) {
-          updating_margin_1 = true;
-          axis1_changes.margin = ctx2[16];
-          add_flush_callback(() => updating_margin_1 = false);
-        }
         axis1.$set(axis1_changes);
         const circles_changes = {};
+        if (dirty[0] & 4194304)
+          circles_changes.mapped_data = ctx2[22];
         if (dirty[0] & 8388608)
-          circles_changes.mapped_data = ctx2[23];
+          circles_changes.mouse_move = ctx2[23];
         if (dirty[0] & 16777216)
-          circles_changes.mouse_move = ctx2[24];
-        if (dirty[0] & 33554432)
-          circles_changes.mouse_out = ctx2[25];
+          circles_changes.mouse_out = ctx2[24];
         circles.$set(circles_changes);
-        if (ctx2[8]) {
+        if (ctx2[6]) {
           if (if_block) {
             if_block.p(ctx2, dirty);
-            if (dirty[0] & 256) {
+            if (dirty[0] & 64) {
               transition_in(if_block, 1);
             }
           } else {
@@ -7748,16 +7593,10 @@
           attr(svg, "viewBox", svg_viewBox_value);
         }
         const legend_changes = {};
-        if (!updating_groups && dirty[0] & 4096) {
-          updating_groups = true;
+        if (dirty[0] & 4096)
           legend_changes.groups = ctx2[12];
-          add_flush_callback(() => updating_groups = false);
-        }
-        if (!updating_hues && dirty[0] & 8192) {
-          updating_hues = true;
+        if (dirty[0] & 8192)
           legend_changes.hues = ctx2[13];
-          add_flush_callback(() => updating_hues = false);
-        }
         legend.$set(legend_changes);
         const popup_changes = {};
         if (dirty[0] & 1)
@@ -7766,22 +7605,22 @@
           popup_changes.groups = ctx2[12];
         if (dirty[0] & 8192)
           popup_changes.hues = ctx2[13];
-        if (dirty[0] & 2)
-          popup_changes.x_accessor = ctx2[1];
+        if (dirty[0] & 8)
+          popup_changes.x_accessor = ctx2[3];
+        if (dirty[0] & 32)
+          popup_changes.group_accessor = ctx2[5];
         if (dirty[0] & 128)
-          popup_changes.group_accessor = ctx2[7];
-        if (dirty[0] & 512)
-          popup_changes.tooltip_accessors = ctx2[9];
-        if (dirty[0] & 1024)
-          popup_changes.tooltip_formatters = ctx2[10];
-        if (!updating_mouse_move && dirty[0] & 16777216) {
+          popup_changes.tooltip_accessors = ctx2[7];
+        if (dirty[0] & 256)
+          popup_changes.tooltip_formatters = ctx2[8];
+        if (!updating_mouse_move && dirty[0] & 8388608) {
           updating_mouse_move = true;
-          popup_changes.mouse_move = ctx2[24];
+          popup_changes.mouse_move = ctx2[23];
           add_flush_callback(() => updating_mouse_move = false);
         }
-        if (!updating_mouse_out && dirty[0] & 33554432) {
+        if (!updating_mouse_out && dirty[0] & 16777216) {
           updating_mouse_out = true;
-          popup_changes.mouse_out = ctx2[25];
+          popup_changes.mouse_out = ctx2[24];
           add_flush_callback(() => updating_mouse_out = false);
         }
         popup.$set(popup_changes);
@@ -7842,27 +7681,15 @@
     let mouse_move, mouse_out;
     function axis0_get_binding(value) {
       x_get = value;
-      $$invalidate(18, x_get);
+      $$invalidate(17, x_get);
     }
     function axis0_scale_binding(value) {
       x_scale = value;
-      $$invalidate(17, x_scale);
-    }
-    function axis0_data_binding(value) {
-      data = value;
-      $$invalidate(0, data);
-    }
-    function axis0_accessor_binding(value) {
-      x_accessor = value;
-      $$invalidate(1, x_accessor);
+      $$invalidate(16, x_scale);
     }
     function axis0_range_binding(value) {
       x_range = value;
-      $$invalidate(21, x_range), $$invalidate(28, radius), $$invalidate(16, margin), $$invalidate(15, width);
-    }
-    function axis0_label_binding(value) {
-      x_label = value;
-      $$invalidate(3, x_label);
+      $$invalidate(20, x_range), $$invalidate(28, radius), $$invalidate(25, margin), $$invalidate(15, width);
     }
     function axis0_height_binding(value) {
       height = value;
@@ -7872,33 +7699,17 @@
       width = value;
       $$invalidate(15, width);
     }
-    function axis0_margin_binding(value) {
-      margin = value;
-      $$invalidate(16, margin);
-    }
     function axis1_get_binding(value) {
       y_get = value;
-      $$invalidate(20, y_get);
+      $$invalidate(19, y_get);
     }
     function axis1_scale_binding(value) {
       y_scale = value;
-      $$invalidate(19, y_scale);
-    }
-    function axis1_data_binding(value) {
-      data = value;
-      $$invalidate(0, data);
-    }
-    function axis1_accessor_binding(value) {
-      y_accessor = value;
-      $$invalidate(2, y_accessor);
+      $$invalidate(18, y_scale);
     }
     function axis1_range_binding(value) {
       y_range = value;
-      $$invalidate(22, y_range), $$invalidate(14, height), $$invalidate(28, radius), $$invalidate(16, margin), $$invalidate(15, width);
-    }
-    function axis1_label_binding(value) {
-      y_label = value;
-      $$invalidate(4, y_label);
+      $$invalidate(21, y_range), $$invalidate(14, height), $$invalidate(28, radius), $$invalidate(25, margin), $$invalidate(15, width);
     }
     function axis1_height_binding(value) {
       height = value;
@@ -7908,41 +7719,29 @@
       width = value;
       $$invalidate(15, width);
     }
-    function axis1_margin_binding(value) {
-      margin = value;
-      $$invalidate(16, margin);
-    }
     function line_x_get_binding(value) {
       x_get = value;
-      $$invalidate(18, x_get);
+      $$invalidate(17, x_get);
     }
     function line_y_get_binding(value) {
       y_get = value;
-      $$invalidate(20, y_get);
+      $$invalidate(19, y_get);
     }
     function line_x_scale_binding(value) {
       x_scale = value;
-      $$invalidate(17, x_scale);
+      $$invalidate(16, x_scale);
     }
     function line_y_scale_binding(value) {
       y_scale = value;
-      $$invalidate(19, y_scale);
-    }
-    function legend_groups_binding(value) {
-      groups2 = value;
-      $$invalidate(12, groups2), $$invalidate(0, data), $$invalidate(7, c_accessor);
-    }
-    function legend_hues_binding(value) {
-      hues = value;
-      $$invalidate(13, hues), $$invalidate(12, groups2), $$invalidate(0, data), $$invalidate(7, c_accessor);
+      $$invalidate(18, y_scale);
     }
     function popup_mouse_move_binding(value) {
       mouse_move = value;
-      $$invalidate(24, mouse_move);
+      $$invalidate(23, mouse_move);
     }
     function popup_mouse_out_binding(value) {
       mouse_out = value;
-      $$invalidate(25, mouse_out);
+      $$invalidate(24, mouse_out);
     }
     function figure_elementresize_handler() {
       height = this.clientHeight;
@@ -7956,34 +7755,34 @@
       if ("radius" in $$props2)
         $$invalidate(28, radius = $$props2.radius);
       if ("xScaleType" in $$props2)
-        $$invalidate(5, xScaleType = $$props2.xScaleType);
+        $$invalidate(1, xScaleType = $$props2.xScaleType);
       if ("yScaleType" in $$props2)
-        $$invalidate(6, yScaleType = $$props2.yScaleType);
+        $$invalidate(2, yScaleType = $$props2.yScaleType);
       if ("rScaleType" in $$props2)
         $$invalidate(29, rScaleType = $$props2.rScaleType);
       if ("x_accessor" in $$props2)
-        $$invalidate(1, x_accessor = $$props2.x_accessor);
+        $$invalidate(3, x_accessor = $$props2.x_accessor);
       if ("y_accessor" in $$props2)
-        $$invalidate(2, y_accessor = $$props2.y_accessor);
+        $$invalidate(4, y_accessor = $$props2.y_accessor);
       if ("r_accessor" in $$props2)
         $$invalidate(30, r_accessor = $$props2.r_accessor);
       if ("c_accessor" in $$props2)
-        $$invalidate(7, c_accessor = $$props2.c_accessor);
+        $$invalidate(5, c_accessor = $$props2.c_accessor);
       if ("draw_line" in $$props2)
-        $$invalidate(8, draw_line = $$props2.draw_line);
+        $$invalidate(6, draw_line = $$props2.draw_line);
       if ("tooltip_accessors" in $$props2)
-        $$invalidate(9, tooltip_accessors = $$props2.tooltip_accessors);
+        $$invalidate(7, tooltip_accessors = $$props2.tooltip_accessors);
       if ("tooltip_formatters" in $$props2)
-        $$invalidate(10, tooltip_formatters = $$props2.tooltip_formatters);
+        $$invalidate(8, tooltip_formatters = $$props2.tooltip_formatters);
       if ("graph_title" in $$props2)
-        $$invalidate(11, graph_title = $$props2.graph_title);
+        $$invalidate(9, graph_title = $$props2.graph_title);
       if ("x_label" in $$props2)
-        $$invalidate(3, x_label = $$props2.x_label);
+        $$invalidate(10, x_label = $$props2.x_label);
       if ("y_label" in $$props2)
-        $$invalidate(4, y_label = $$props2.y_label);
+        $$invalidate(11, y_label = $$props2.y_label);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & 129) {
+      if ($$self.$$.dirty[0] & 33) {
         $:
           $$invalidate(12, groups2 = Array.from(group(data, c_accessor).keys()));
       }
@@ -8010,21 +7809,21 @@
           if (height > width)
             $$invalidate(14, height = width);
       }
-      if ($$self.$$.dirty[0] & 268533760) {
+      if ($$self.$$.dirty[0] & 268468224) {
         $:
-          $$invalidate(21, x_range = [radius + margin, width - radius - margin]);
+          $$invalidate(20, x_range = [radius + margin, width - radius - margin]);
       }
-      if ($$self.$$.dirty[0] & 268517376) {
+      if ($$self.$$.dirty[0] & 268451840) {
         $:
-          $$invalidate(22, y_range = [height - radius - margin, radius + margin]);
+          $$invalidate(21, y_range = [height - radius - margin, radius + margin]);
       }
       if ($$self.$$.dirty[0] & 1879048193) {
         $:
           $$invalidate(31, r_scale = rScaleType().domain(extent(data, r_accessor)).range([0, radius]));
       }
-      if ($$self.$$.dirty[0] & 1344155777 | $$self.$$.dirty[1] & 1) {
+      if ($$self.$$.dirty[0] & 1343172641 | $$self.$$.dirty[1] & 1) {
         $:
-          $$invalidate(23, mapped_data = data.map((d, i) => ({
+          $$invalidate(22, mapped_data = data.map((d, i) => ({
             "x": x_scale === void 0 ? 0 : x_get(d),
             "y": y_scale === void 0 ? 0 : y_get(d),
             "r": r_accessor !== void 0 ? r_scale(r_accessor(d)) : radius,
@@ -8035,22 +7834,21 @@
     };
     return [
       data,
-      x_accessor,
-      y_accessor,
-      x_label,
-      y_label,
       xScaleType,
       yScaleType,
+      x_accessor,
+      y_accessor,
       c_accessor,
       draw_line,
       tooltip_accessors,
       tooltip_formatters,
       graph_title,
+      x_label,
+      y_label,
       groups2,
       hues,
       height,
       width,
-      margin,
       x_scale,
       x_get,
       y_scale,
@@ -8060,6 +7858,7 @@
       mapped_data,
       mouse_move,
       mouse_out,
+      margin,
       x_formatter,
       y_formatter,
       radius,
@@ -8068,28 +7867,18 @@
       r_scale,
       axis0_get_binding,
       axis0_scale_binding,
-      axis0_data_binding,
-      axis0_accessor_binding,
       axis0_range_binding,
-      axis0_label_binding,
       axis0_height_binding,
       axis0_width_binding,
-      axis0_margin_binding,
       axis1_get_binding,
       axis1_scale_binding,
-      axis1_data_binding,
-      axis1_accessor_binding,
       axis1_range_binding,
-      axis1_label_binding,
       axis1_height_binding,
       axis1_width_binding,
-      axis1_margin_binding,
       line_x_get_binding,
       line_y_get_binding,
       line_x_scale_binding,
       line_y_scale_binding,
-      legend_groups_binding,
-      legend_hues_binding,
       popup_mouse_move_binding,
       popup_mouse_out_binding,
       figure_elementresize_handler
@@ -8101,19 +7890,19 @@
       init(this, options, instance8, create_fragment8, safe_not_equal, {
         data: 0,
         radius: 28,
-        xScaleType: 5,
-        yScaleType: 6,
+        xScaleType: 1,
+        yScaleType: 2,
         rScaleType: 29,
-        x_accessor: 1,
-        y_accessor: 2,
+        x_accessor: 3,
+        y_accessor: 4,
         r_accessor: 30,
-        c_accessor: 7,
-        draw_line: 8,
-        tooltip_accessors: 9,
-        tooltip_formatters: 10,
-        graph_title: 11,
-        x_label: 3,
-        y_label: 4
+        c_accessor: 5,
+        draw_line: 6,
+        tooltip_accessors: 7,
+        tooltip_formatters: 8,
+        graph_title: 9,
+        x_label: 10,
+        y_label: 11
       }, null, [-1, -1]);
     }
   };
@@ -8638,29 +8427,19 @@
     let axis0;
     let updating_get;
     let updating_scale;
-    let updating_data;
-    let updating_accessor;
     let updating_range;
-    let updating_label;
     let updating_height;
     let updating_width;
-    let updating_margin;
     let axis1;
     let updating_get_1;
     let updating_scale_1;
-    let updating_data_1;
-    let updating_accessor_1;
     let updating_range_1;
-    let updating_label_1;
     let updating_height_1;
     let updating_width_1;
-    let updating_margin_1;
     let bars;
     let svg_viewBox_value;
     let t2;
     let legend;
-    let updating_groups;
-    let updating_hues;
     let t3;
     let popup;
     let updating_mouse_move;
@@ -8673,49 +8452,32 @@
     function axis0_scale_binding(value) {
       ctx[29](value);
     }
-    function axis0_data_binding(value) {
+    function axis0_range_binding(value) {
       ctx[30](value);
     }
-    function axis0_accessor_binding(value) {
+    function axis0_height_binding(value) {
       ctx[31](value);
     }
-    function axis0_range_binding(value) {
+    function axis0_width_binding(value) {
       ctx[32](value);
     }
-    function axis0_label_binding(value) {
-      ctx[33](value);
-    }
-    function axis0_height_binding(value) {
-      ctx[34](value);
-    }
-    function axis0_width_binding(value) {
-      ctx[35](value);
-    }
-    function axis0_margin_binding(value) {
-      ctx[36](value);
-    }
     let axis0_props = {
-      scaleType: ctx[5],
+      scaleType: ctx[1],
+      data: ctx[0],
+      accessor: ctx[3],
       formatter: ctx[26],
+      label: ctx[9],
+      margin: ctx[25],
       position: "bottom"
     };
-    if (ctx[17] !== void 0) {
-      axis0_props.get = ctx[17];
-    }
     if (ctx[16] !== void 0) {
-      axis0_props.scale = ctx[16];
+      axis0_props.get = ctx[16];
     }
-    if (ctx[0] !== void 0) {
-      axis0_props.data = ctx[0];
+    if (ctx[15] !== void 0) {
+      axis0_props.scale = ctx[15];
     }
-    if (ctx[1] !== void 0) {
-      axis0_props.accessor = ctx[1];
-    }
-    if (ctx[20] !== void 0) {
-      axis0_props.range = ctx[20];
-    }
-    if (ctx[3] !== void 0) {
-      axis0_props.label = ctx[3];
+    if (ctx[19] !== void 0) {
+      axis0_props.range = ctx[19];
     }
     if (ctx[13] !== void 0) {
       axis0_props.height = ctx[13];
@@ -8723,68 +8485,44 @@
     if (ctx[14] !== void 0) {
       axis0_props.width = ctx[14];
     }
-    if (ctx[15] !== void 0) {
-      axis0_props.margin = ctx[15];
-    }
     axis0 = new axis_default({ props: axis0_props });
     binding_callbacks.push(() => bind(axis0, "get", axis0_get_binding));
     binding_callbacks.push(() => bind(axis0, "scale", axis0_scale_binding));
-    binding_callbacks.push(() => bind(axis0, "data", axis0_data_binding));
-    binding_callbacks.push(() => bind(axis0, "accessor", axis0_accessor_binding));
     binding_callbacks.push(() => bind(axis0, "range", axis0_range_binding));
-    binding_callbacks.push(() => bind(axis0, "label", axis0_label_binding));
     binding_callbacks.push(() => bind(axis0, "height", axis0_height_binding));
     binding_callbacks.push(() => bind(axis0, "width", axis0_width_binding));
-    binding_callbacks.push(() => bind(axis0, "margin", axis0_margin_binding));
     function axis1_get_binding(value) {
-      ctx[37](value);
+      ctx[33](value);
     }
     function axis1_scale_binding(value) {
-      ctx[38](value);
-    }
-    function axis1_data_binding(value) {
-      ctx[39](value);
-    }
-    function axis1_accessor_binding(value) {
-      ctx[40](value);
+      ctx[34](value);
     }
     function axis1_range_binding(value) {
-      ctx[41](value);
-    }
-    function axis1_label_binding(value) {
-      ctx[42](value);
+      ctx[35](value);
     }
     function axis1_height_binding(value) {
-      ctx[43](value);
+      ctx[36](value);
     }
     function axis1_width_binding(value) {
-      ctx[44](value);
-    }
-    function axis1_margin_binding(value) {
-      ctx[45](value);
+      ctx[37](value);
     }
     let axis1_props = {
-      scaleType: ctx[6],
+      scaleType: ctx[2],
+      data: ctx[0],
+      accessor: ctx[4],
       formatter: ctx[27],
+      label: ctx[10],
+      margin: ctx[25],
       position: "left"
     };
-    if (ctx[19] !== void 0) {
-      axis1_props.get = ctx[19];
-    }
     if (ctx[18] !== void 0) {
-      axis1_props.scale = ctx[18];
+      axis1_props.get = ctx[18];
     }
-    if (ctx[0] !== void 0) {
-      axis1_props.data = ctx[0];
+    if (ctx[17] !== void 0) {
+      axis1_props.scale = ctx[17];
     }
-    if (ctx[2] !== void 0) {
-      axis1_props.accessor = ctx[2];
-    }
-    if (ctx[21] !== void 0) {
-      axis1_props.range = ctx[21];
-    }
-    if (ctx[4] !== void 0) {
-      axis1_props.label = ctx[4];
+    if (ctx[20] !== void 0) {
+      axis1_props.range = ctx[20];
     }
     if (ctx[13] !== void 0) {
       axis1_props.height = ctx[13];
@@ -8792,63 +8530,46 @@
     if (ctx[14] !== void 0) {
       axis1_props.width = ctx[14];
     }
-    if (ctx[15] !== void 0) {
-      axis1_props.margin = ctx[15];
-    }
     axis1 = new axis_default({ props: axis1_props });
     binding_callbacks.push(() => bind(axis1, "get", axis1_get_binding));
     binding_callbacks.push(() => bind(axis1, "scale", axis1_scale_binding));
-    binding_callbacks.push(() => bind(axis1, "data", axis1_data_binding));
-    binding_callbacks.push(() => bind(axis1, "accessor", axis1_accessor_binding));
     binding_callbacks.push(() => bind(axis1, "range", axis1_range_binding));
-    binding_callbacks.push(() => bind(axis1, "label", axis1_label_binding));
     binding_callbacks.push(() => bind(axis1, "height", axis1_height_binding));
     binding_callbacks.push(() => bind(axis1, "width", axis1_width_binding));
-    binding_callbacks.push(() => bind(axis1, "margin", axis1_margin_binding));
     bars = new bars_default({
       props: {
-        mapped_data: ctx[23],
-        bar_width: ctx[22],
-        mouse_move: ctx[24],
-        mouse_out: ctx[25]
+        mapped_data: ctx[22],
+        bar_width: ctx[21],
+        mouse_move: ctx[23],
+        mouse_out: ctx[24]
       }
     });
-    function legend_groups_binding(value) {
-      ctx[46](value);
-    }
-    function legend_hues_binding(value) {
-      ctx[47](value);
-    }
-    let legend_props = {};
-    if (ctx[11] !== void 0) {
-      legend_props.groups = ctx[11];
-    }
-    if (ctx[12] !== void 0) {
-      legend_props.hues = ctx[12];
-    }
-    legend = new legend_default({ props: legend_props });
-    binding_callbacks.push(() => bind(legend, "groups", legend_groups_binding));
-    binding_callbacks.push(() => bind(legend, "hues", legend_hues_binding));
+    legend = new legend_default({
+      props: {
+        groups: ctx[11],
+        hues: ctx[12]
+      }
+    });
     function popup_mouse_move_binding(value) {
-      ctx[48](value);
+      ctx[38](value);
     }
     function popup_mouse_out_binding(value) {
-      ctx[49](value);
+      ctx[39](value);
     }
     let popup_props = {
       data: ctx[0],
       groups: ctx[11],
       hues: ctx[12],
-      x_accessor: ctx[1],
-      group_accessor: ctx[7],
-      tooltip_accessors: ctx[8],
-      tooltip_formatters: ctx[9]
+      x_accessor: ctx[3],
+      group_accessor: ctx[5],
+      tooltip_accessors: ctx[6],
+      tooltip_formatters: ctx[7]
     };
-    if (ctx[24] !== void 0) {
-      popup_props.mouse_move = ctx[24];
+    if (ctx[23] !== void 0) {
+      popup_props.mouse_move = ctx[23];
     }
-    if (ctx[25] !== void 0) {
-      popup_props.mouse_out = ctx[25];
+    if (ctx[24] !== void 0) {
+      popup_props.mouse_out = ctx[24];
     }
     popup = new popup_default({ props: popup_props });
     binding_callbacks.push(() => bind(popup, "mouse_move", popup_mouse_move_binding));
@@ -8857,7 +8578,7 @@
       c() {
         div = element("div");
         h1 = element("h1");
-        t02 = text(ctx[10]);
+        t02 = text(ctx[8]);
         t12 = space();
         figure = element("figure");
         svg = svg_element("svg");
@@ -8876,7 +8597,7 @@
         attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[14] + " " + ctx[13]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
         attr(figure, "class", "flex flex-row w-full h-full items-center");
-        add_render_callback(() => ctx[50].call(figure));
+        add_render_callback(() => ctx[40].call(figure));
         attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
@@ -8893,44 +8614,35 @@
         mount_component(legend, figure, null);
         append(figure, t3);
         mount_component(popup, figure, null);
-        figure_resize_listener = add_resize_listener(figure, ctx[50].bind(figure));
+        figure_resize_listener = add_resize_listener(figure, ctx[40].bind(figure));
         current = true;
       },
       p(ctx2, dirty) {
-        if (!current || dirty[0] & 1024)
-          set_data(t02, ctx2[10]);
+        if (!current || dirty[0] & 256)
+          set_data(t02, ctx2[8]);
         const axis0_changes = {};
-        if (dirty[0] & 32)
-          axis0_changes.scaleType = ctx2[5];
-        if (!updating_get && dirty[0] & 131072) {
+        if (dirty[0] & 2)
+          axis0_changes.scaleType = ctx2[1];
+        if (dirty[0] & 1)
+          axis0_changes.data = ctx2[0];
+        if (dirty[0] & 8)
+          axis0_changes.accessor = ctx2[3];
+        if (dirty[0] & 512)
+          axis0_changes.label = ctx2[9];
+        if (!updating_get && dirty[0] & 65536) {
           updating_get = true;
-          axis0_changes.get = ctx2[17];
+          axis0_changes.get = ctx2[16];
           add_flush_callback(() => updating_get = false);
         }
-        if (!updating_scale && dirty[0] & 65536) {
+        if (!updating_scale && dirty[0] & 32768) {
           updating_scale = true;
-          axis0_changes.scale = ctx2[16];
+          axis0_changes.scale = ctx2[15];
           add_flush_callback(() => updating_scale = false);
         }
-        if (!updating_data && dirty[0] & 1) {
-          updating_data = true;
-          axis0_changes.data = ctx2[0];
-          add_flush_callback(() => updating_data = false);
-        }
-        if (!updating_accessor && dirty[0] & 2) {
-          updating_accessor = true;
-          axis0_changes.accessor = ctx2[1];
-          add_flush_callback(() => updating_accessor = false);
-        }
-        if (!updating_range && dirty[0] & 1048576) {
+        if (!updating_range && dirty[0] & 524288) {
           updating_range = true;
-          axis0_changes.range = ctx2[20];
+          axis0_changes.range = ctx2[19];
           add_flush_callback(() => updating_range = false);
-        }
-        if (!updating_label && dirty[0] & 8) {
-          updating_label = true;
-          axis0_changes.label = ctx2[3];
-          add_flush_callback(() => updating_label = false);
         }
         if (!updating_height && dirty[0] & 8192) {
           updating_height = true;
@@ -8942,44 +8654,30 @@
           axis0_changes.width = ctx2[14];
           add_flush_callback(() => updating_width = false);
         }
-        if (!updating_margin && dirty[0] & 32768) {
-          updating_margin = true;
-          axis0_changes.margin = ctx2[15];
-          add_flush_callback(() => updating_margin = false);
-        }
         axis0.$set(axis0_changes);
         const axis1_changes = {};
-        if (dirty[0] & 64)
-          axis1_changes.scaleType = ctx2[6];
-        if (!updating_get_1 && dirty[0] & 524288) {
+        if (dirty[0] & 4)
+          axis1_changes.scaleType = ctx2[2];
+        if (dirty[0] & 1)
+          axis1_changes.data = ctx2[0];
+        if (dirty[0] & 16)
+          axis1_changes.accessor = ctx2[4];
+        if (dirty[0] & 1024)
+          axis1_changes.label = ctx2[10];
+        if (!updating_get_1 && dirty[0] & 262144) {
           updating_get_1 = true;
-          axis1_changes.get = ctx2[19];
+          axis1_changes.get = ctx2[18];
           add_flush_callback(() => updating_get_1 = false);
         }
-        if (!updating_scale_1 && dirty[0] & 262144) {
+        if (!updating_scale_1 && dirty[0] & 131072) {
           updating_scale_1 = true;
-          axis1_changes.scale = ctx2[18];
+          axis1_changes.scale = ctx2[17];
           add_flush_callback(() => updating_scale_1 = false);
         }
-        if (!updating_data_1 && dirty[0] & 1) {
-          updating_data_1 = true;
-          axis1_changes.data = ctx2[0];
-          add_flush_callback(() => updating_data_1 = false);
-        }
-        if (!updating_accessor_1 && dirty[0] & 4) {
-          updating_accessor_1 = true;
-          axis1_changes.accessor = ctx2[2];
-          add_flush_callback(() => updating_accessor_1 = false);
-        }
-        if (!updating_range_1 && dirty[0] & 2097152) {
+        if (!updating_range_1 && dirty[0] & 1048576) {
           updating_range_1 = true;
-          axis1_changes.range = ctx2[21];
+          axis1_changes.range = ctx2[20];
           add_flush_callback(() => updating_range_1 = false);
-        }
-        if (!updating_label_1 && dirty[0] & 16) {
-          updating_label_1 = true;
-          axis1_changes.label = ctx2[4];
-          add_flush_callback(() => updating_label_1 = false);
         }
         if (!updating_height_1 && dirty[0] & 8192) {
           updating_height_1 = true;
@@ -8991,36 +8689,25 @@
           axis1_changes.width = ctx2[14];
           add_flush_callback(() => updating_width_1 = false);
         }
-        if (!updating_margin_1 && dirty[0] & 32768) {
-          updating_margin_1 = true;
-          axis1_changes.margin = ctx2[15];
-          add_flush_callback(() => updating_margin_1 = false);
-        }
         axis1.$set(axis1_changes);
         const bars_changes = {};
-        if (dirty[0] & 8388608)
-          bars_changes.mapped_data = ctx2[23];
         if (dirty[0] & 4194304)
-          bars_changes.bar_width = ctx2[22];
+          bars_changes.mapped_data = ctx2[22];
+        if (dirty[0] & 2097152)
+          bars_changes.bar_width = ctx2[21];
+        if (dirty[0] & 8388608)
+          bars_changes.mouse_move = ctx2[23];
         if (dirty[0] & 16777216)
-          bars_changes.mouse_move = ctx2[24];
-        if (dirty[0] & 33554432)
-          bars_changes.mouse_out = ctx2[25];
+          bars_changes.mouse_out = ctx2[24];
         bars.$set(bars_changes);
         if (!current || dirty[0] & 24576 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[14] + " " + ctx2[13])) {
           attr(svg, "viewBox", svg_viewBox_value);
         }
         const legend_changes = {};
-        if (!updating_groups && dirty[0] & 2048) {
-          updating_groups = true;
+        if (dirty[0] & 2048)
           legend_changes.groups = ctx2[11];
-          add_flush_callback(() => updating_groups = false);
-        }
-        if (!updating_hues && dirty[0] & 4096) {
-          updating_hues = true;
+        if (dirty[0] & 4096)
           legend_changes.hues = ctx2[12];
-          add_flush_callback(() => updating_hues = false);
-        }
         legend.$set(legend_changes);
         const popup_changes = {};
         if (dirty[0] & 1)
@@ -9029,22 +8716,22 @@
           popup_changes.groups = ctx2[11];
         if (dirty[0] & 4096)
           popup_changes.hues = ctx2[12];
-        if (dirty[0] & 2)
-          popup_changes.x_accessor = ctx2[1];
+        if (dirty[0] & 8)
+          popup_changes.x_accessor = ctx2[3];
+        if (dirty[0] & 32)
+          popup_changes.group_accessor = ctx2[5];
+        if (dirty[0] & 64)
+          popup_changes.tooltip_accessors = ctx2[6];
         if (dirty[0] & 128)
-          popup_changes.group_accessor = ctx2[7];
-        if (dirty[0] & 256)
-          popup_changes.tooltip_accessors = ctx2[8];
-        if (dirty[0] & 512)
-          popup_changes.tooltip_formatters = ctx2[9];
-        if (!updating_mouse_move && dirty[0] & 16777216) {
+          popup_changes.tooltip_formatters = ctx2[7];
+        if (!updating_mouse_move && dirty[0] & 8388608) {
           updating_mouse_move = true;
-          popup_changes.mouse_move = ctx2[24];
+          popup_changes.mouse_move = ctx2[23];
           add_flush_callback(() => updating_mouse_move = false);
         }
-        if (!updating_mouse_out && dirty[0] & 33554432) {
+        if (!updating_mouse_out && dirty[0] & 16777216) {
           updating_mouse_out = true;
-          popup_changes.mouse_out = ctx2[25];
+          popup_changes.mouse_out = ctx2[24];
           add_flush_callback(() => updating_mouse_out = false);
         }
         popup.$set(popup_changes);
@@ -9099,27 +8786,15 @@
     let mouse_move, mouse_out;
     function axis0_get_binding(value) {
       x_get = value;
-      $$invalidate(17, x_get);
+      $$invalidate(16, x_get);
     }
     function axis0_scale_binding(value) {
       x_scale = value;
-      $$invalidate(16, x_scale);
-    }
-    function axis0_data_binding(value) {
-      data = value;
-      $$invalidate(0, data);
-    }
-    function axis0_accessor_binding(value) {
-      x_accessor = value;
-      $$invalidate(1, x_accessor);
+      $$invalidate(15, x_scale);
     }
     function axis0_range_binding(value) {
       x_range = value;
-      $$invalidate(20, x_range), $$invalidate(15, margin), $$invalidate(14, width);
-    }
-    function axis0_label_binding(value) {
-      x_label = value;
-      $$invalidate(3, x_label);
+      $$invalidate(19, x_range), $$invalidate(25, margin), $$invalidate(14, width);
     }
     function axis0_height_binding(value) {
       height = value;
@@ -9129,33 +8804,17 @@
       width = value;
       $$invalidate(14, width);
     }
-    function axis0_margin_binding(value) {
-      margin = value;
-      $$invalidate(15, margin);
-    }
     function axis1_get_binding(value) {
       y_get = value;
-      $$invalidate(19, y_get);
+      $$invalidate(18, y_get);
     }
     function axis1_scale_binding(value) {
       y_scale = value;
-      $$invalidate(18, y_scale);
-    }
-    function axis1_data_binding(value) {
-      data = value;
-      $$invalidate(0, data);
-    }
-    function axis1_accessor_binding(value) {
-      y_accessor = value;
-      $$invalidate(2, y_accessor);
+      $$invalidate(17, y_scale);
     }
     function axis1_range_binding(value) {
       y_range = value;
-      $$invalidate(21, y_range), $$invalidate(13, height), $$invalidate(15, margin), $$invalidate(14, width);
-    }
-    function axis1_label_binding(value) {
-      y_label = value;
-      $$invalidate(4, y_label);
+      $$invalidate(20, y_range), $$invalidate(13, height), $$invalidate(25, margin), $$invalidate(14, width);
     }
     function axis1_height_binding(value) {
       height = value;
@@ -9165,25 +8824,13 @@
       width = value;
       $$invalidate(14, width);
     }
-    function axis1_margin_binding(value) {
-      margin = value;
-      $$invalidate(15, margin);
-    }
-    function legend_groups_binding(value) {
-      groups2 = value;
-      $$invalidate(11, groups2), $$invalidate(0, data), $$invalidate(7, c_accessor);
-    }
-    function legend_hues_binding(value) {
-      hues = value;
-      $$invalidate(12, hues), $$invalidate(11, groups2), $$invalidate(0, data), $$invalidate(7, c_accessor);
-    }
     function popup_mouse_move_binding(value) {
       mouse_move = value;
-      $$invalidate(24, mouse_move);
+      $$invalidate(23, mouse_move);
     }
     function popup_mouse_out_binding(value) {
       mouse_out = value;
-      $$invalidate(25, mouse_out);
+      $$invalidate(24, mouse_out);
     }
     function figure_elementresize_handler() {
       height = this.clientHeight;
@@ -9195,28 +8842,28 @@
       if ("data" in $$props2)
         $$invalidate(0, data = $$props2.data);
       if ("xScaleType" in $$props2)
-        $$invalidate(5, xScaleType = $$props2.xScaleType);
+        $$invalidate(1, xScaleType = $$props2.xScaleType);
       if ("yScaleType" in $$props2)
-        $$invalidate(6, yScaleType = $$props2.yScaleType);
+        $$invalidate(2, yScaleType = $$props2.yScaleType);
       if ("x_accessor" in $$props2)
-        $$invalidate(1, x_accessor = $$props2.x_accessor);
+        $$invalidate(3, x_accessor = $$props2.x_accessor);
       if ("y_accessor" in $$props2)
-        $$invalidate(2, y_accessor = $$props2.y_accessor);
+        $$invalidate(4, y_accessor = $$props2.y_accessor);
       if ("c_accessor" in $$props2)
-        $$invalidate(7, c_accessor = $$props2.c_accessor);
+        $$invalidate(5, c_accessor = $$props2.c_accessor);
       if ("tooltip_accessors" in $$props2)
-        $$invalidate(8, tooltip_accessors = $$props2.tooltip_accessors);
+        $$invalidate(6, tooltip_accessors = $$props2.tooltip_accessors);
       if ("tooltip_formatters" in $$props2)
-        $$invalidate(9, tooltip_formatters = $$props2.tooltip_formatters);
+        $$invalidate(7, tooltip_formatters = $$props2.tooltip_formatters);
       if ("graph_title" in $$props2)
-        $$invalidate(10, graph_title = $$props2.graph_title);
+        $$invalidate(8, graph_title = $$props2.graph_title);
       if ("x_label" in $$props2)
-        $$invalidate(3, x_label = $$props2.x_label);
+        $$invalidate(9, x_label = $$props2.x_label);
       if ("y_label" in $$props2)
-        $$invalidate(4, y_label = $$props2.y_label);
+        $$invalidate(10, y_label = $$props2.y_label);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & 129) {
+      if ($$self.$$.dirty[0] & 33) {
         $:
           $$invalidate(11, groups2 = Array.from(group(data, c_accessor).keys()));
       }
@@ -9243,22 +8890,22 @@
           if (height > width)
             $$invalidate(13, height = width);
       }
-      if ($$self.$$.dirty[0] & 49152) {
+      if ($$self.$$.dirty[0] & 16384) {
         $:
-          $$invalidate(20, x_range = [margin, width - margin]);
+          $$invalidate(19, x_range = [margin, width - margin]);
       }
-      if ($$self.$$.dirty[0] & 40960) {
+      if ($$self.$$.dirty[0] & 8192) {
         $:
-          $$invalidate(21, y_range = [height - margin, margin]);
+          $$invalidate(20, y_range = [height - margin, margin]);
       }
-      if ($$self.$$.dirty[0] & 65536) {
+      if ($$self.$$.dirty[0] & 32768) {
         $:
           if (x_scale)
-            $$invalidate(22, bar_width = x_scale.bandwidth());
+            $$invalidate(21, bar_width = x_scale.bandwidth());
       }
-      if ($$self.$$.dirty[0] & 1030273) {
+      if ($$self.$$.dirty[0] & 505889) {
         $:
-          $$invalidate(23, mapped_data = data.map((d, i) => ({
+          $$invalidate(22, mapped_data = data.map((d, i) => ({
             "x": x_scale === void 0 ? 0 : x_get(d),
             "y": y_scale === void 0 ? 0 : y_get(d),
             "h": y_scale === void 0 ? 0 : Math.max(0, height - margin - y_get(d)),
@@ -9269,21 +8916,20 @@
     };
     return [
       data,
-      x_accessor,
-      y_accessor,
-      x_label,
-      y_label,
       xScaleType,
       yScaleType,
+      x_accessor,
+      y_accessor,
       c_accessor,
       tooltip_accessors,
       tooltip_formatters,
       graph_title,
+      x_label,
+      y_label,
       groups2,
       hues,
       height,
       width,
-      margin,
       x_scale,
       x_get,
       y_scale,
@@ -9294,28 +8940,19 @@
       mapped_data,
       mouse_move,
       mouse_out,
+      margin,
       x_formatter,
       y_formatter,
       axis0_get_binding,
       axis0_scale_binding,
-      axis0_data_binding,
-      axis0_accessor_binding,
       axis0_range_binding,
-      axis0_label_binding,
       axis0_height_binding,
       axis0_width_binding,
-      axis0_margin_binding,
       axis1_get_binding,
       axis1_scale_binding,
-      axis1_data_binding,
-      axis1_accessor_binding,
       axis1_range_binding,
-      axis1_label_binding,
       axis1_height_binding,
       axis1_width_binding,
-      axis1_margin_binding,
-      legend_groups_binding,
-      legend_hues_binding,
       popup_mouse_move_binding,
       popup_mouse_out_binding,
       figure_elementresize_handler
@@ -9326,16 +8963,16 @@
       super();
       init(this, options, instance12, create_fragment12, safe_not_equal, {
         data: 0,
-        xScaleType: 5,
-        yScaleType: 6,
-        x_accessor: 1,
-        y_accessor: 2,
-        c_accessor: 7,
-        tooltip_accessors: 8,
-        tooltip_formatters: 9,
-        graph_title: 10,
-        x_label: 3,
-        y_label: 4
+        xScaleType: 1,
+        yScaleType: 2,
+        x_accessor: 3,
+        y_accessor: 4,
+        c_accessor: 5,
+        tooltip_accessors: 6,
+        tooltip_formatters: 7,
+        graph_title: 8,
+        x_label: 9,
+        y_label: 10
       }, null, [-1, -1]);
     }
   };

@@ -622,6 +622,9 @@ select {
 .h-3 {
   height: 0.75rem;
 }
+.max-h-\[90vh\] {
+  max-height: 90vh;
+}
 .w-full {
   width: 100%;
 }

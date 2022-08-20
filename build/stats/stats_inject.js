@@ -7510,9 +7510,9 @@
         set_style(svg, "resize", "both");
         attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[15] + " " + ctx[14]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
-        attr(figure, "class", "flex flex-row w-full h-full items-center");
+        attr(figure, "class", "flex flex-row max-h-[90vh] items-center");
         add_render_callback(() => ctx[57].call(figure));
-        attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
+        attr(div, "class", "flex flex-col w-full h-full max-h-[90vh] items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -8786,9 +8786,9 @@
         set_style(svg, "resize", "both");
         attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[14] + " " + ctx[13]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
-        attr(figure, "class", "flex flex-row w-full h-full items-center");
+        attr(figure, "class", "flex flex-row w-full h-full max-h-[90vh] items-center");
         add_render_callback(() => ctx[50].call(figure));
-        attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
+        attr(div, "class", "flex flex-col w-full h-full max-h-[90vh] items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
         insert(target, div, anchor);

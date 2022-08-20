@@ -4425,8 +4425,7 @@
     let { formatter } = $$props;
     let { range } = $$props;
     let { label } = $$props;
-    let { height, width } = $$props;
-    let { margin } = $$props;
+    let { height, width, margin } = $$props;
     let { position } = $$props;
     let { scale } = $$props;
     const get = (d) => scale(accessor(d));
@@ -7629,20 +7628,15 @@
   function instance8($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { radius = 60 } = $$props;
-    let { x_accessor } = $$props;
-    let { y_accessor } = $$props;
-    let { r_accessor = void 0 } = $$props;
-    let { c_accessor } = $$props;
+    let { x_accessor, y_accessor } = $$props;
+    let { r_accessor = void 0, c_accessor } = $$props;
     let { draw_line = false } = $$props;
     let { tooltip_accessors } = $$props;
     let { graph_title } = $$props;
-    let { x_label } = $$props;
-    let { y_label } = $$props;
+    let { x_label, y_label } = $$props;
     let groups2, hues;
-    let [height, width] = [50, 100];
-    let margin = 50;
-    let x_range = [0, 0];
-    let y_range = [0, 0];
+    let [height, width, margin] = [50, 100, 50];
+    let [x_range, y_range] = [[0, 0], [0, 0]];
     let r_scale;
     let x_scale, x_get;
     let y_scale, y_get;

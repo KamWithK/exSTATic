@@ -14,18 +14,15 @@
     export let data
     export let radius = 60
 
-    export let x_accessor
-    export let y_accessor
-    export let r_accessor = undefined
-    export let c_accessor
+    export let x_accessor, y_accessor
+    export let r_accessor = undefined, c_accessor
 
     export let draw_line = false
 
     export let tooltip_accessors
 
     export let graph_title
-    export let x_label
-    export let y_label
+    export let x_label, y_label
 
     let groups, hues
     $: groups = Array.from(group(data, c_accessor).keys())
@@ -35,15 +32,13 @@
         "seed": "exSTATic!"
     })
 
-    let [height, width] = [50, 100]
-    let margin = 50
+    let [height, width, margin] = [50, 100, 50]
     $: if (height < 50) height = 50
     $: if (width < 100) width = 100
     $: if (height > width) height = width
 
     // Physical ranges shrink in proport to the maximal circle radius and padding
-    let x_range: [number, number] = [0, 0]
-    let y_range: [number, number] = [0, 0]
+    let [x_range, y_range]: [[number, number], [number, number]] = [[0, 0], [0, 0]]
     $: x_range = [radius + margin, width - radius - margin]
     $: y_range = [height - radius - margin, radius + margin]
 

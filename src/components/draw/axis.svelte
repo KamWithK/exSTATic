@@ -13,8 +13,7 @@
 
     export let label: string
 
-    export let height: number, width: number
-    export let margin: number
+    export let height: number, width: number, margin: number
     export let position: "top" | "right" | "bottom" | "left"
 
     // Map data (domains) onto physical scales (ranges)

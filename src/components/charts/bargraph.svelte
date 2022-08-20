@@ -48,7 +48,7 @@
     $: mapped_data = data.map((d, i) => ({
         "x": x_scale === undefined ? 0 : x_get(d),
         "y": y_scale === undefined ? 0 : y_get(d),
-        "h": y_scale === undefined ? 0 : height - margin - y_get(d),
+        "h": y_scale === undefined ? 0 : Math.max(0, height - margin - y_get(d)),
         "c": hues[groups.indexOf(c_accessor(d))],
         "i": i
     }))

@@ -6980,7 +6980,7 @@
         attr(p, "id", "popup_title");
         attr(p, "class", "font-semibold");
         attr(div, "id", "popup");
-        attr(div, "class", div_class_value = (ctx[1] ? "absolute" : "hidden") + " p-3");
+        attr(div, "class", div_class_value = (ctx[1] ? "absolute" : "hidden") + " p-3 z-50");
         set_style(div, "left", ctx[2] + "px");
         set_style(div, "top", ctx[3] + "px");
         set_style(div, "background-color", ctx[6]);
@@ -7032,7 +7032,7 @@
           }
           each_blocks.length = each_value.length;
         }
-        if (dirty & 2 && div_class_value !== (div_class_value = (ctx2[1] ? "absolute" : "hidden") + " p-3")) {
+        if (dirty & 2 && div_class_value !== (div_class_value = (ctx2[1] ? "absolute" : "hidden") + " p-3 z-50")) {
           attr(div, "class", div_class_value);
         }
         if (dirty & 4) {
@@ -9261,7 +9261,7 @@
           $$invalidate(23, mapped_data = data.map((d, i) => ({
             "x": x_scale === void 0 ? 0 : x_get(d),
             "y": y_scale === void 0 ? 0 : y_get(d),
-            "h": y_scale === void 0 ? 0 : height - margin - y_get(d),
+            "h": y_scale === void 0 ? 0 : Math.max(0, height - margin - y_get(d)),
             "c": hues[groups2.indexOf(c_accessor(d))],
             i
           })));

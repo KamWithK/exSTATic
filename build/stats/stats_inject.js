@@ -6850,6 +6850,7 @@
   function instance5($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { x_get, y_get } = $$props;
+    let { x_scale, y_scale } = $$props;
     let line_path;
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)
@@ -6858,20 +6859,30 @@
         $$invalidate(2, x_get = $$props2.x_get);
       if ("y_get" in $$props2)
         $$invalidate(3, y_get = $$props2.y_get);
+      if ("x_scale" in $$props2)
+        $$invalidate(4, x_scale = $$props2.x_scale);
+      if ("y_scale" in $$props2)
+        $$invalidate(5, y_scale = $$props2.y_scale);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 14) {
+      if ($$self.$$.dirty & 62) {
         $:
           if (x_get && y_get)
-            $$invalidate(0, line_path = line_default().curve(monotoneX).x(x_get).y(y_get)(data));
+            $$invalidate(0, line_path = line_default().curve(monotoneX).x(x_get).y(y_get)(data)), x_scale, y_scale;
       }
     };
-    return [line_path, data, x_get, y_get];
+    return [line_path, data, x_get, y_get, x_scale, y_scale];
   }
   var Line = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment5, safe_not_equal, { data: 1, x_get: 2, y_get: 3 });
+      init(this, options, instance5, create_fragment5, safe_not_equal, {
+        data: 1,
+        x_get: 2,
+        y_get: 3,
+        x_scale: 4,
+        y_scale: 5
+      });
     }
   };
   var line_default2 = Line;
@@ -7249,33 +7260,41 @@
   var import_iwanthue = __toESM(require_iwanthue());
   function create_if_block4(ctx) {
     let line;
-    let updating_data;
     let updating_x_get;
     let updating_y_get;
+    let updating_x_scale;
+    let updating_y_scale;
     let current;
-    function line_data_binding(value) {
+    function line_x_get_binding(value) {
       ctx[50](value);
     }
-    function line_x_get_binding(value) {
+    function line_y_get_binding(value) {
       ctx[51](value);
     }
-    function line_y_get_binding(value) {
+    function line_x_scale_binding(value) {
       ctx[52](value);
     }
-    let line_props = {};
-    if (ctx[0] !== void 0) {
-      line_props.data = ctx[0];
+    function line_y_scale_binding(value) {
+      ctx[53](value);
     }
+    let line_props = { data: ctx[0] };
     if (ctx[18] !== void 0) {
       line_props.x_get = ctx[18];
     }
     if (ctx[20] !== void 0) {
       line_props.y_get = ctx[20];
     }
+    if (ctx[17] !== void 0) {
+      line_props.x_scale = ctx[17];
+    }
+    if (ctx[19] !== void 0) {
+      line_props.y_scale = ctx[19];
+    }
     line = new line_default2({ props: line_props });
-    binding_callbacks.push(() => bind(line, "data", line_data_binding));
     binding_callbacks.push(() => bind(line, "x_get", line_x_get_binding));
     binding_callbacks.push(() => bind(line, "y_get", line_y_get_binding));
+    binding_callbacks.push(() => bind(line, "x_scale", line_x_scale_binding));
+    binding_callbacks.push(() => bind(line, "y_scale", line_y_scale_binding));
     return {
       c() {
         create_component(line.$$.fragment);
@@ -7286,11 +7305,8 @@
       },
       p(ctx2, dirty) {
         const line_changes = {};
-        if (!updating_data && dirty[0] & 1) {
-          updating_data = true;
+        if (dirty[0] & 1)
           line_changes.data = ctx2[0];
-          add_flush_callback(() => updating_data = false);
-        }
         if (!updating_x_get && dirty[0] & 262144) {
           updating_x_get = true;
           line_changes.x_get = ctx2[18];
@@ -7300,6 +7316,16 @@
           updating_y_get = true;
           line_changes.y_get = ctx2[20];
           add_flush_callback(() => updating_y_get = false);
+        }
+        if (!updating_x_scale && dirty[0] & 131072) {
+          updating_x_scale = true;
+          line_changes.x_scale = ctx2[17];
+          add_flush_callback(() => updating_x_scale = false);
+        }
+        if (!updating_y_scale && dirty[0] & 524288) {
+          updating_y_scale = true;
+          line_changes.y_scale = ctx2[19];
+          add_flush_callback(() => updating_y_scale = false);
         }
         line.$set(line_changes);
       },
@@ -7504,10 +7530,10 @@
     });
     let if_block = ctx[8] && create_if_block4(ctx);
     function legend_groups_binding(value) {
-      ctx[53](value);
+      ctx[54](value);
     }
     function legend_hues_binding(value) {
-      ctx[54](value);
+      ctx[55](value);
     }
     let legend_props = {};
     if (ctx[12] !== void 0) {
@@ -7520,10 +7546,10 @@
     binding_callbacks.push(() => bind(legend, "groups", legend_groups_binding));
     binding_callbacks.push(() => bind(legend, "hues", legend_hues_binding));
     function popup_mouse_move_binding(value) {
-      ctx[55](value);
+      ctx[56](value);
     }
     function popup_mouse_out_binding(value) {
-      ctx[56](value);
+      ctx[57](value);
     }
     let popup_props = {
       data: ctx[0],
@@ -7568,7 +7594,7 @@
         attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[15] + " " + ctx[14]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
         attr(figure, "class", "flex flex-row items-center w-full");
-        add_render_callback(() => ctx[57].call(figure));
+        add_render_callback(() => ctx[58].call(figure));
         attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
@@ -7587,7 +7613,7 @@
         mount_component(legend, figure, null);
         append(figure, t3);
         mount_component(popup, figure, null);
-        figure_resize_listener = add_resize_listener(figure, ctx[57].bind(figure));
+        figure_resize_listener = add_resize_listener(figure, ctx[58].bind(figure));
         current = true;
       },
       p(ctx2, dirty) {
@@ -7886,10 +7912,6 @@
       margin = value;
       $$invalidate(16, margin);
     }
-    function line_data_binding(value) {
-      data = value;
-      $$invalidate(0, data);
-    }
     function line_x_get_binding(value) {
       x_get = value;
       $$invalidate(18, x_get);
@@ -7897,6 +7919,14 @@
     function line_y_get_binding(value) {
       y_get = value;
       $$invalidate(20, y_get);
+    }
+    function line_x_scale_binding(value) {
+      x_scale = value;
+      $$invalidate(17, x_scale);
+    }
+    function line_y_scale_binding(value) {
+      y_scale = value;
+      $$invalidate(19, y_scale);
     }
     function legend_groups_binding(value) {
       groups2 = value;
@@ -8054,9 +8084,10 @@
       axis1_height_binding,
       axis1_width_binding,
       axis1_margin_binding,
-      line_data_binding,
       line_x_get_binding,
       line_y_get_binding,
+      line_x_scale_binding,
+      line_y_scale_binding,
       legend_groups_binding,
       legend_hues_binding,
       popup_mouse_move_binding,

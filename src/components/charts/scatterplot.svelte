@@ -76,7 +76,7 @@
             <Circles {mapped_data} {mouse_move} {mouse_out}/>
 
             {#if draw_line}
-                <Line bind:data bind:x_get bind:y_get/>
+                <Line {data} bind:x_get bind:y_get bind:x_scale={x_scale} bind:y_scale={y_scale}/>
             {/if}
         </svg>
 

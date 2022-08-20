@@ -3,10 +3,10 @@
     import { axisTop, axisRight, axisBottom, axisLeft } from "@d3fc/d3fc-axis"
 
     export let scale
-    
+
     export let height, width, margin
     export let position: "top" | "right" | "bottom" | "left"
-    export let formater
+    export let formatter
 
     export let label = ""
     
@@ -69,7 +69,7 @@
         const axis_creator = positionedAxis(enlargedScale())
             .tickSizeOuter(0).tickSize(0)
             .tickCenterLabel(true)
-            .tickFormat(formater)
+            .tickFormat(formatter)
 
         axis_creator(select(axis))
         transitionAxis()
@@ -77,7 +77,7 @@
         select(axis).select("path").style("stroke", "grey")
     }
 
-    $: if (scale && height && width && margin && position && formater && axis)
+    $: if (scale && height && width && margin && position && formatter && axis)
         setupAxis()
 </script>
 

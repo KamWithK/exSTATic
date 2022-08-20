@@ -2007,7 +2007,7 @@
     }
     component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
   }
-  function init(component, options, instance11, create_fragment11, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance12, create_fragment12, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -2030,7 +2030,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance11 ? instance11(component, options.props || {}, (i, ret, ...rest) => {
+    $$.ctx = instance12 ? instance12(component, options.props || {}, (i, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
         if (!$$.skip_bound && $$.bound[i])
@@ -2043,7 +2043,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment11 ? create_fragment11($$.ctx) : false;
+    $$.fragment = create_fragment12 ? create_fragment12($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -3726,7 +3726,7 @@
   var axisLeft = (scale) => axis("left", scale);
   var axisRight = (scale) => axis("right", scale);
 
-  // src/components/charts/line_axis.svelte
+  // src/components/draw/oriented_axis.svelte
   function create_if_block_3(ctx) {
     let text_1;
     let t;
@@ -3931,7 +3931,7 @@
     let { scale } = $$props;
     let { height, width, margin } = $$props;
     let { position } = $$props;
-    let { formater } = $$props;
+    let { formatter } = $$props;
     let { label = "" } = $$props;
     let axis2;
     let transform = "0,0";
@@ -3971,7 +3971,7 @@
       return axis_scale.domain(extended_domain).range(extended_range).nice();
     };
     const setupAxis = () => {
-      const axis_creator = positionedAxis(enlargedScale()).tickSizeOuter(0).tickSize(0).tickCenterLabel(true).tickFormat(formater);
+      const axis_creator = positionedAxis(enlargedScale()).tickSizeOuter(0).tickSize(0).tickCenterLabel(true).tickFormat(formatter);
       axis_creator(select_default2(axis2));
       transitionAxis();
       select_default2(axis2).select("path").style("stroke", "grey");
@@ -3993,15 +3993,15 @@
         $$invalidate(2, margin = $$props2.margin);
       if ("position" in $$props2)
         $$invalidate(3, position = $$props2.position);
-      if ("formater" in $$props2)
-        $$invalidate(8, formater = $$props2.formater);
+      if ("formatter" in $$props2)
+        $$invalidate(8, formatter = $$props2.formatter);
       if ("label" in $$props2)
         $$invalidate(4, label = $$props2.label);
     };
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 431) {
         $:
-          if (scale && height && width && margin && position && formater && axis2)
+          if (scale && height && width && margin && position && formatter && axis2)
             setupAxis();
       }
     };
@@ -4014,11 +4014,11 @@
       axis2,
       transform,
       scale,
-      formater,
+      formatter,
       g_binding
     ];
   }
-  var Line_axis = class extends SvelteComponent {
+  var Oriented_axis = class extends SvelteComponent {
     constructor(options) {
       super();
       init(this, options, instance2, create_fragment2, safe_not_equal, {
@@ -4027,14 +4027,514 @@
         width: 1,
         margin: 2,
         position: 3,
-        formater: 8,
+        formatter: 8,
         label: 4
       });
     }
   };
-  var line_axis_default = Line_axis;
+  var oriented_axis_default = Oriented_axis;
 
-  // src/components/charts/circles.svelte
+  // node_modules/d3-array/src/ascending.js
+  function ascending2(a, b) {
+    return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+  }
+
+  // node_modules/d3-array/src/descending.js
+  function descending(a, b) {
+    return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+  }
+
+  // node_modules/d3-array/src/bisector.js
+  function bisector(f) {
+    let compare1, compare2, delta;
+    if (f.length !== 2) {
+      compare1 = ascending2;
+      compare2 = (d, x2) => ascending2(f(d), x2);
+      delta = (d, x2) => f(d) - x2;
+    } else {
+      compare1 = f === ascending2 || f === descending ? f : zero;
+      compare2 = f;
+      delta = f;
+    }
+    function left(a, x2, lo = 0, hi = a.length) {
+      if (lo < hi) {
+        if (compare1(x2, x2) !== 0)
+          return hi;
+        do {
+          const mid = lo + hi >>> 1;
+          if (compare2(a[mid], x2) < 0)
+            lo = mid + 1;
+          else
+            hi = mid;
+        } while (lo < hi);
+      }
+      return lo;
+    }
+    function right(a, x2, lo = 0, hi = a.length) {
+      if (lo < hi) {
+        if (compare1(x2, x2) !== 0)
+          return hi;
+        do {
+          const mid = lo + hi >>> 1;
+          if (compare2(a[mid], x2) <= 0)
+            lo = mid + 1;
+          else
+            hi = mid;
+        } while (lo < hi);
+      }
+      return lo;
+    }
+    function center(a, x2, lo = 0, hi = a.length) {
+      const i = left(a, x2, lo, hi - 1);
+      return i > lo && delta(a[i - 1], x2) > -delta(a[i], x2) ? i - 1 : i;
+    }
+    return { left, center, right };
+  }
+  function zero() {
+    return 0;
+  }
+
+  // node_modules/d3-array/src/number.js
+  function number(x2) {
+    return x2 === null ? NaN : +x2;
+  }
+
+  // node_modules/d3-array/src/bisect.js
+  var ascendingBisect = bisector(ascending2);
+  var bisectRight = ascendingBisect.right;
+  var bisectLeft = ascendingBisect.left;
+  var bisectCenter = bisector(number).center;
+  var bisect_default = bisectRight;
+
+  // node_modules/d3-array/src/extent.js
+  function extent(values, valueof) {
+    let min;
+    let max;
+    if (valueof === void 0) {
+      for (const value of values) {
+        if (value != null) {
+          if (min === void 0) {
+            if (value >= value)
+              min = max = value;
+          } else {
+            if (min > value)
+              min = value;
+            if (max < value)
+              max = value;
+          }
+        }
+      }
+    } else {
+      let index2 = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index2, values)) != null) {
+          if (min === void 0) {
+            if (value >= value)
+              min = max = value;
+          } else {
+            if (min > value)
+              min = value;
+            if (max < value)
+              max = value;
+          }
+        }
+      }
+    }
+    return [min, max];
+  }
+
+  // node_modules/internmap/src/index.js
+  var InternMap = class extends Map {
+    constructor(entries, key = keyof) {
+      super();
+      Object.defineProperties(this, { _intern: { value: /* @__PURE__ */ new Map() }, _key: { value: key } });
+      if (entries != null)
+        for (const [key2, value] of entries)
+          this.set(key2, value);
+    }
+    get(key) {
+      return super.get(intern_get(this, key));
+    }
+    has(key) {
+      return super.has(intern_get(this, key));
+    }
+    set(key, value) {
+      return super.set(intern_set(this, key), value);
+    }
+    delete(key) {
+      return super.delete(intern_delete(this, key));
+    }
+  };
+  function intern_get({ _intern, _key }, value) {
+    const key = _key(value);
+    return _intern.has(key) ? _intern.get(key) : value;
+  }
+  function intern_set({ _intern, _key }, value) {
+    const key = _key(value);
+    if (_intern.has(key))
+      return _intern.get(key);
+    _intern.set(key, value);
+    return value;
+  }
+  function intern_delete({ _intern, _key }, value) {
+    const key = _key(value);
+    if (_intern.has(key)) {
+      value = _intern.get(key);
+      _intern.delete(key);
+    }
+    return value;
+  }
+  function keyof(value) {
+    return value !== null && typeof value === "object" ? value.valueOf() : value;
+  }
+
+  // node_modules/d3-array/src/identity.js
+  function identity3(x2) {
+    return x2;
+  }
+
+  // node_modules/d3-array/src/group.js
+  function group(values, ...keys) {
+    return nest(values, identity3, identity3, keys);
+  }
+  function rollup(values, reduce, ...keys) {
+    return nest(values, identity3, reduce, keys);
+  }
+  function nest(values, map2, reduce, keys) {
+    return function regroup(values2, i) {
+      if (i >= keys.length)
+        return reduce(values2);
+      const groups2 = new InternMap();
+      const keyof2 = keys[i++];
+      let index2 = -1;
+      for (const value of values2) {
+        const key = keyof2(value, ++index2, values2);
+        const group2 = groups2.get(key);
+        if (group2)
+          group2.push(value);
+        else
+          groups2.set(key, [value]);
+      }
+      for (const [key, values3] of groups2) {
+        groups2.set(key, regroup(values3, i));
+      }
+      return map2(groups2);
+    }(values, 0);
+  }
+
+  // node_modules/d3-array/src/ticks.js
+  var e10 = Math.sqrt(50);
+  var e5 = Math.sqrt(10);
+  var e2 = Math.sqrt(2);
+  function ticks(start, stop, count) {
+    var reverse, i = -1, n, ticks2, step;
+    stop = +stop, start = +start, count = +count;
+    if (start === stop && count > 0)
+      return [start];
+    if (reverse = stop < start)
+      n = start, start = stop, stop = n;
+    if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step))
+      return [];
+    if (step > 0) {
+      let r0 = Math.round(start / step), r1 = Math.round(stop / step);
+      if (r0 * step < start)
+        ++r0;
+      if (r1 * step > stop)
+        --r1;
+      ticks2 = new Array(n = r1 - r0 + 1);
+      while (++i < n)
+        ticks2[i] = (r0 + i) * step;
+    } else {
+      step = -step;
+      let r0 = Math.round(start * step), r1 = Math.round(stop * step);
+      if (r0 / step < start)
+        ++r0;
+      if (r1 / step > stop)
+        --r1;
+      ticks2 = new Array(n = r1 - r0 + 1);
+      while (++i < n)
+        ticks2[i] = (r0 + i) / step;
+    }
+    if (reverse)
+      ticks2.reverse();
+    return ticks2;
+  }
+  function tickIncrement(start, stop, count) {
+    var step = (stop - start) / Math.max(0, count), power = Math.floor(Math.log(step) / Math.LN10), error = step / Math.pow(10, power);
+    return power >= 0 ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power) : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
+  }
+  function tickStep(start, stop, count) {
+    var step0 = Math.abs(stop - start) / Math.max(0, count), step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)), error = step0 / step1;
+    if (error >= e10)
+      step1 *= 10;
+    else if (error >= e5)
+      step1 *= 5;
+    else if (error >= e2)
+      step1 *= 2;
+    return stop < start ? -step1 : step1;
+  }
+
+  // node_modules/d3-array/src/sum.js
+  function sum(values, valueof) {
+    let sum2 = 0;
+    if (valueof === void 0) {
+      for (let value of values) {
+        if (value = +value) {
+          sum2 += value;
+        }
+      }
+    } else {
+      let index2 = -1;
+      for (let value of values) {
+        if (value = +valueof(value, ++index2, values)) {
+          sum2 += value;
+        }
+      }
+    }
+    return sum2;
+  }
+
+  // src/components/draw/axis.svelte
+  function create_fragment3(ctx) {
+    let lineaxis;
+    let updating_scale;
+    let updating_height;
+    let updating_width;
+    let updating_margin;
+    let updating_position;
+    let updating_formatter;
+    let updating_label;
+    let current;
+    function lineaxis_scale_binding(value) {
+      ctx[12](value);
+    }
+    function lineaxis_height_binding(value) {
+      ctx[13](value);
+    }
+    function lineaxis_width_binding(value) {
+      ctx[14](value);
+    }
+    function lineaxis_margin_binding(value) {
+      ctx[15](value);
+    }
+    function lineaxis_position_binding(value) {
+      ctx[16](value);
+    }
+    function lineaxis_formatter_binding(value) {
+      ctx[17](value);
+    }
+    function lineaxis_label_binding(value) {
+      ctx[18](value);
+    }
+    let lineaxis_props = {};
+    if (ctx[6] !== void 0) {
+      lineaxis_props.scale = ctx[6];
+    }
+    if (ctx[2] !== void 0) {
+      lineaxis_props.height = ctx[2];
+    }
+    if (ctx[3] !== void 0) {
+      lineaxis_props.width = ctx[3];
+    }
+    if (ctx[4] !== void 0) {
+      lineaxis_props.margin = ctx[4];
+    }
+    if (ctx[5] !== void 0) {
+      lineaxis_props.position = ctx[5];
+    }
+    if (ctx[0] !== void 0) {
+      lineaxis_props.formatter = ctx[0];
+    }
+    if (ctx[1] !== void 0) {
+      lineaxis_props.label = ctx[1];
+    }
+    lineaxis = new oriented_axis_default({ props: lineaxis_props });
+    binding_callbacks.push(() => bind(lineaxis, "scale", lineaxis_scale_binding));
+    binding_callbacks.push(() => bind(lineaxis, "height", lineaxis_height_binding));
+    binding_callbacks.push(() => bind(lineaxis, "width", lineaxis_width_binding));
+    binding_callbacks.push(() => bind(lineaxis, "margin", lineaxis_margin_binding));
+    binding_callbacks.push(() => bind(lineaxis, "position", lineaxis_position_binding));
+    binding_callbacks.push(() => bind(lineaxis, "formatter", lineaxis_formatter_binding));
+    binding_callbacks.push(() => bind(lineaxis, "label", lineaxis_label_binding));
+    return {
+      c() {
+        create_component(lineaxis.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(lineaxis, target, anchor);
+        current = true;
+      },
+      p(ctx2, [dirty]) {
+        const lineaxis_changes = {};
+        if (!updating_scale && dirty & 64) {
+          updating_scale = true;
+          lineaxis_changes.scale = ctx2[6];
+          add_flush_callback(() => updating_scale = false);
+        }
+        if (!updating_height && dirty & 4) {
+          updating_height = true;
+          lineaxis_changes.height = ctx2[2];
+          add_flush_callback(() => updating_height = false);
+        }
+        if (!updating_width && dirty & 8) {
+          updating_width = true;
+          lineaxis_changes.width = ctx2[3];
+          add_flush_callback(() => updating_width = false);
+        }
+        if (!updating_margin && dirty & 16) {
+          updating_margin = true;
+          lineaxis_changes.margin = ctx2[4];
+          add_flush_callback(() => updating_margin = false);
+        }
+        if (!updating_position && dirty & 32) {
+          updating_position = true;
+          lineaxis_changes.position = ctx2[5];
+          add_flush_callback(() => updating_position = false);
+        }
+        if (!updating_formatter && dirty & 1) {
+          updating_formatter = true;
+          lineaxis_changes.formatter = ctx2[0];
+          add_flush_callback(() => updating_formatter = false);
+        }
+        if (!updating_label && dirty & 2) {
+          updating_label = true;
+          lineaxis_changes.label = ctx2[1];
+          add_flush_callback(() => updating_label = false);
+        }
+        lineaxis.$set(lineaxis_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(lineaxis.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(lineaxis.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(lineaxis, detaching);
+      }
+    };
+  }
+  function instance3($$self, $$props, $$invalidate) {
+    let { scaleType } = $$props;
+    let { data } = $$props;
+    let { accessor } = $$props;
+    let { formatter } = $$props;
+    let { range } = $$props;
+    let { label } = $$props;
+    let { height, width } = $$props;
+    let { margin } = $$props;
+    let { position } = $$props;
+    let { scale } = $$props;
+    const get = (d) => scale(accessor(d));
+    function lineaxis_scale_binding(value) {
+      scale = value;
+      $$invalidate(6, scale), $$invalidate(7, scaleType), $$invalidate(8, data), $$invalidate(9, accessor), $$invalidate(10, range);
+    }
+    function lineaxis_height_binding(value) {
+      height = value;
+      $$invalidate(2, height);
+    }
+    function lineaxis_width_binding(value) {
+      width = value;
+      $$invalidate(3, width);
+    }
+    function lineaxis_margin_binding(value) {
+      margin = value;
+      $$invalidate(4, margin);
+    }
+    function lineaxis_position_binding(value) {
+      position = value;
+      $$invalidate(5, position);
+    }
+    function lineaxis_formatter_binding(value) {
+      formatter = value;
+      $$invalidate(0, formatter);
+    }
+    function lineaxis_label_binding(value) {
+      label = value;
+      $$invalidate(1, label);
+    }
+    $$self.$$set = ($$props2) => {
+      if ("scaleType" in $$props2)
+        $$invalidate(7, scaleType = $$props2.scaleType);
+      if ("data" in $$props2)
+        $$invalidate(8, data = $$props2.data);
+      if ("accessor" in $$props2)
+        $$invalidate(9, accessor = $$props2.accessor);
+      if ("formatter" in $$props2)
+        $$invalidate(0, formatter = $$props2.formatter);
+      if ("range" in $$props2)
+        $$invalidate(10, range = $$props2.range);
+      if ("label" in $$props2)
+        $$invalidate(1, label = $$props2.label);
+      if ("height" in $$props2)
+        $$invalidate(2, height = $$props2.height);
+      if ("width" in $$props2)
+        $$invalidate(3, width = $$props2.width);
+      if ("margin" in $$props2)
+        $$invalidate(4, margin = $$props2.margin);
+      if ("position" in $$props2)
+        $$invalidate(5, position = $$props2.position);
+      if ("scale" in $$props2)
+        $$invalidate(6, scale = $$props2.scale);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 1920) {
+        $:
+          $$invalidate(6, scale = scaleType().domain(extent(data, accessor)).range(range));
+      }
+    };
+    return [
+      formatter,
+      label,
+      height,
+      width,
+      margin,
+      position,
+      scale,
+      scaleType,
+      data,
+      accessor,
+      range,
+      get,
+      lineaxis_scale_binding,
+      lineaxis_height_binding,
+      lineaxis_width_binding,
+      lineaxis_margin_binding,
+      lineaxis_position_binding,
+      lineaxis_formatter_binding,
+      lineaxis_label_binding
+    ];
+  }
+  var Axis = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance3, create_fragment3, safe_not_equal, {
+        scaleType: 7,
+        data: 8,
+        accessor: 9,
+        formatter: 0,
+        range: 10,
+        label: 1,
+        height: 2,
+        width: 3,
+        margin: 4,
+        position: 5,
+        scale: 6,
+        get: 11
+      });
+    }
+    get get() {
+      return this.$$.ctx[11];
+    }
+  };
+  var axis_default = Axis;
+
+  // src/components/draw/circles.svelte
   function get_each_context(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[3] = list[i].x;
@@ -4106,7 +4606,7 @@
       }
     };
   }
-  function create_fragment3(ctx) {
+  function create_fragment4(ctx) {
     let each_1_anchor;
     let each_value = ctx[0];
     let each_blocks = [];
@@ -4155,7 +4655,7 @@
       }
     };
   }
-  function instance3($$self, $$props, $$invalidate) {
+  function instance4($$self, $$props, $$invalidate) {
     let { mapped_data } = $$props;
     let { mouse_move, mouse_out } = $$props;
     $$self.$$set = ($$props2) => {
@@ -4171,7 +4671,7 @@
   var Circles = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance3, create_fragment3, safe_not_equal, {
+      init(this, options, instance4, create_fragment4, safe_not_equal, {
         mapped_data: 0,
         mouse_move: 1,
         mouse_out: 2
@@ -4180,8 +4680,8 @@
   };
   var circles_default = Circles;
 
-  // src/components/charts/line.svelte
-  function create_fragment4(ctx) {
+  // src/components/draw/line.svelte
+  function create_fragment5(ctx) {
     let path2;
     return {
       c() {
@@ -4206,42 +4706,31 @@
       }
     };
   }
-  function instance4($$self, $$props, $$invalidate) {
+  function instance5($$self, $$props, $$invalidate) {
     let { data } = $$props;
-    let { x_accessor, y_accessor } = $$props;
-    let { x_scale, y_scale } = $$props;
-    const make_line = (x_accessor2, y_accessor2, x_scale2, y_scale2, data2) => line_default().curve(monotoneX).x((d) => x_scale2(x_accessor2(d))).y((d) => y_scale2(y_accessor2(d)))(data2);
+    let { x_get, y_get } = $$props;
     let line_path;
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)
         $$invalidate(1, data = $$props2.data);
-      if ("x_accessor" in $$props2)
-        $$invalidate(2, x_accessor = $$props2.x_accessor);
-      if ("y_accessor" in $$props2)
-        $$invalidate(3, y_accessor = $$props2.y_accessor);
-      if ("x_scale" in $$props2)
-        $$invalidate(4, x_scale = $$props2.x_scale);
-      if ("y_scale" in $$props2)
-        $$invalidate(5, y_scale = $$props2.y_scale);
+      if ("x_get" in $$props2)
+        $$invalidate(2, x_get = $$props2.x_get);
+      if ("y_get" in $$props2)
+        $$invalidate(3, y_get = $$props2.y_get);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 62) {
+      if ($$self.$$.dirty & 14) {
         $:
-          $$invalidate(0, line_path = make_line(x_accessor, y_accessor, x_scale, y_scale, data));
+          if (x_get && y_get)
+            $$invalidate(0, line_path = line_default().curve(monotoneX).x(x_get).y(y_get)(data));
       }
     };
-    return [line_path, data, x_accessor, y_accessor, x_scale, y_scale];
+    return [line_path, data, x_get, y_get];
   }
   var Line = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance4, create_fragment4, safe_not_equal, {
-        data: 1,
-        x_accessor: 2,
-        y_accessor: 3,
-        x_scale: 4,
-        y_scale: 5
-      });
+      init(this, options, instance5, create_fragment5, safe_not_equal, { data: 1, x_get: 2, y_get: 3 });
     }
   };
   var line_default2 = Line;
@@ -4556,266 +5045,6 @@
   };
   var utcYear_default = utcYear;
   var utcYears = utcYear.range;
-
-  // node_modules/d3-array/src/ascending.js
-  function ascending2(a, b) {
-    return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-  }
-
-  // node_modules/d3-array/src/descending.js
-  function descending(a, b) {
-    return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
-  }
-
-  // node_modules/d3-array/src/bisector.js
-  function bisector(f) {
-    let compare1, compare2, delta;
-    if (f.length !== 2) {
-      compare1 = ascending2;
-      compare2 = (d, x2) => ascending2(f(d), x2);
-      delta = (d, x2) => f(d) - x2;
-    } else {
-      compare1 = f === ascending2 || f === descending ? f : zero;
-      compare2 = f;
-      delta = f;
-    }
-    function left(a, x2, lo = 0, hi = a.length) {
-      if (lo < hi) {
-        if (compare1(x2, x2) !== 0)
-          return hi;
-        do {
-          const mid = lo + hi >>> 1;
-          if (compare2(a[mid], x2) < 0)
-            lo = mid + 1;
-          else
-            hi = mid;
-        } while (lo < hi);
-      }
-      return lo;
-    }
-    function right(a, x2, lo = 0, hi = a.length) {
-      if (lo < hi) {
-        if (compare1(x2, x2) !== 0)
-          return hi;
-        do {
-          const mid = lo + hi >>> 1;
-          if (compare2(a[mid], x2) <= 0)
-            lo = mid + 1;
-          else
-            hi = mid;
-        } while (lo < hi);
-      }
-      return lo;
-    }
-    function center(a, x2, lo = 0, hi = a.length) {
-      const i = left(a, x2, lo, hi - 1);
-      return i > lo && delta(a[i - 1], x2) > -delta(a[i], x2) ? i - 1 : i;
-    }
-    return { left, center, right };
-  }
-  function zero() {
-    return 0;
-  }
-
-  // node_modules/d3-array/src/number.js
-  function number(x2) {
-    return x2 === null ? NaN : +x2;
-  }
-
-  // node_modules/d3-array/src/bisect.js
-  var ascendingBisect = bisector(ascending2);
-  var bisectRight = ascendingBisect.right;
-  var bisectLeft = ascendingBisect.left;
-  var bisectCenter = bisector(number).center;
-  var bisect_default = bisectRight;
-
-  // node_modules/d3-array/src/extent.js
-  function extent(values, valueof) {
-    let min;
-    let max;
-    if (valueof === void 0) {
-      for (const value of values) {
-        if (value != null) {
-          if (min === void 0) {
-            if (value >= value)
-              min = max = value;
-          } else {
-            if (min > value)
-              min = value;
-            if (max < value)
-              max = value;
-          }
-        }
-      }
-    } else {
-      let index2 = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index2, values)) != null) {
-          if (min === void 0) {
-            if (value >= value)
-              min = max = value;
-          } else {
-            if (min > value)
-              min = value;
-            if (max < value)
-              max = value;
-          }
-        }
-      }
-    }
-    return [min, max];
-  }
-
-  // node_modules/internmap/src/index.js
-  var InternMap = class extends Map {
-    constructor(entries, key = keyof) {
-      super();
-      Object.defineProperties(this, { _intern: { value: /* @__PURE__ */ new Map() }, _key: { value: key } });
-      if (entries != null)
-        for (const [key2, value] of entries)
-          this.set(key2, value);
-    }
-    get(key) {
-      return super.get(intern_get(this, key));
-    }
-    has(key) {
-      return super.has(intern_get(this, key));
-    }
-    set(key, value) {
-      return super.set(intern_set(this, key), value);
-    }
-    delete(key) {
-      return super.delete(intern_delete(this, key));
-    }
-  };
-  function intern_get({ _intern, _key }, value) {
-    const key = _key(value);
-    return _intern.has(key) ? _intern.get(key) : value;
-  }
-  function intern_set({ _intern, _key }, value) {
-    const key = _key(value);
-    if (_intern.has(key))
-      return _intern.get(key);
-    _intern.set(key, value);
-    return value;
-  }
-  function intern_delete({ _intern, _key }, value) {
-    const key = _key(value);
-    if (_intern.has(key)) {
-      value = _intern.get(key);
-      _intern.delete(key);
-    }
-    return value;
-  }
-  function keyof(value) {
-    return value !== null && typeof value === "object" ? value.valueOf() : value;
-  }
-
-  // node_modules/d3-array/src/identity.js
-  function identity3(x2) {
-    return x2;
-  }
-
-  // node_modules/d3-array/src/group.js
-  function group(values, ...keys) {
-    return nest(values, identity3, identity3, keys);
-  }
-  function rollup(values, reduce, ...keys) {
-    return nest(values, identity3, reduce, keys);
-  }
-  function nest(values, map2, reduce, keys) {
-    return function regroup(values2, i) {
-      if (i >= keys.length)
-        return reduce(values2);
-      const groups2 = new InternMap();
-      const keyof2 = keys[i++];
-      let index2 = -1;
-      for (const value of values2) {
-        const key = keyof2(value, ++index2, values2);
-        const group2 = groups2.get(key);
-        if (group2)
-          group2.push(value);
-        else
-          groups2.set(key, [value]);
-      }
-      for (const [key, values3] of groups2) {
-        groups2.set(key, regroup(values3, i));
-      }
-      return map2(groups2);
-    }(values, 0);
-  }
-
-  // node_modules/d3-array/src/ticks.js
-  var e10 = Math.sqrt(50);
-  var e5 = Math.sqrt(10);
-  var e2 = Math.sqrt(2);
-  function ticks(start, stop, count) {
-    var reverse, i = -1, n, ticks2, step;
-    stop = +stop, start = +start, count = +count;
-    if (start === stop && count > 0)
-      return [start];
-    if (reverse = stop < start)
-      n = start, start = stop, stop = n;
-    if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step))
-      return [];
-    if (step > 0) {
-      let r0 = Math.round(start / step), r1 = Math.round(stop / step);
-      if (r0 * step < start)
-        ++r0;
-      if (r1 * step > stop)
-        --r1;
-      ticks2 = new Array(n = r1 - r0 + 1);
-      while (++i < n)
-        ticks2[i] = (r0 + i) * step;
-    } else {
-      step = -step;
-      let r0 = Math.round(start * step), r1 = Math.round(stop * step);
-      if (r0 / step < start)
-        ++r0;
-      if (r1 / step > stop)
-        --r1;
-      ticks2 = new Array(n = r1 - r0 + 1);
-      while (++i < n)
-        ticks2[i] = (r0 + i) / step;
-    }
-    if (reverse)
-      ticks2.reverse();
-    return ticks2;
-  }
-  function tickIncrement(start, stop, count) {
-    var step = (stop - start) / Math.max(0, count), power = Math.floor(Math.log(step) / Math.LN10), error = step / Math.pow(10, power);
-    return power >= 0 ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power) : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
-  }
-  function tickStep(start, stop, count) {
-    var step0 = Math.abs(stop - start) / Math.max(0, count), step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)), error = step0 / step1;
-    if (error >= e10)
-      step1 *= 10;
-    else if (error >= e5)
-      step1 *= 5;
-    else if (error >= e2)
-      step1 *= 2;
-    return stop < start ? -step1 : step1;
-  }
-
-  // node_modules/d3-array/src/sum.js
-  function sum(values, valueof) {
-    let sum2 = 0;
-    if (valueof === void 0) {
-      for (let value of values) {
-        if (value = +value) {
-          sum2 += value;
-        }
-      }
-    } else {
-      let index2 = -1;
-      for (let value of values) {
-        if (value = +valueof(value, ++index2, values)) {
-          sum2 += value;
-        }
-      }
-    }
-    return sum2;
-  }
 
   // node_modules/d3-time/src/ticks.js
   function ticker(year2, month2, week, day2, hour2, minute2) {
@@ -5481,7 +5710,7 @@
       }
     };
   }
-  function create_fragment5(ctx) {
+  function create_fragment6(ctx) {
     let div;
     let p0;
     let t02;
@@ -5579,7 +5808,7 @@
       }
     };
   }
-  function instance5($$self, $$props, $$invalidate) {
+  function instance6($$self, $$props, $$invalidate) {
     let show_popup = false;
     let [popup_x, popup_y] = [0, 0];
     let [popup_name, popup_date, popout_color] = ["", "", ""];
@@ -5637,7 +5866,7 @@
   var Popup = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment5, safe_not_equal, {
+      init(this, options, instance6, create_fragment6, safe_not_equal, {
         data: 8,
         groups: 9,
         hues: 10,
@@ -5657,7 +5886,7 @@
   };
   var popup_default = Popup;
 
-  // src/components/charts/legend.svelte
+  // src/components/draw/legend.svelte
   function get_each_context3(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[2] = list[i];
@@ -5706,7 +5935,7 @@
       }
     };
   }
-  function create_fragment6(ctx) {
+  function create_fragment7(ctx) {
     let div;
     let each_value = ctx[0];
     let each_blocks = [];
@@ -5756,7 +5985,7 @@
       }
     };
   }
-  function instance6($$self, $$props, $$invalidate) {
+  function instance7($$self, $$props, $$invalidate) {
     let { groups: groups2, hues } = $$props;
     $$self.$$set = ($$props2) => {
       if ("groups" in $$props2)
@@ -5769,7 +5998,7 @@
   var Legend = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment6, safe_not_equal, { groups: 0, hues: 1 });
+      init(this, options, instance7, create_fragment7, safe_not_equal, { groups: 0, hues: 1 });
     }
   };
   var legend_default = Legend;
@@ -6861,48 +7090,32 @@
   function create_if_block3(ctx) {
     let line;
     let updating_data;
-    let updating_x_accessor;
-    let updating_y_accessor;
-    let updating_x_scale;
-    let updating_y_scale;
+    let updating_x_get;
+    let updating_y_get;
     let current;
     function line_data_binding(value) {
-      ctx[32](value);
+      ctx[46](value);
     }
-    function line_x_accessor_binding(value) {
-      ctx[33](value);
+    function line_x_get_binding(value) {
+      ctx[47](value);
     }
-    function line_y_accessor_binding(value) {
-      ctx[34](value);
-    }
-    function line_x_scale_binding(value) {
-      ctx[35](value);
-    }
-    function line_y_scale_binding(value) {
-      ctx[36](value);
+    function line_y_get_binding(value) {
+      ctx[48](value);
     }
     let line_props = {};
     if (ctx[0] !== void 0) {
       line_props.data = ctx[0];
     }
-    if (ctx[1] !== void 0) {
-      line_props.x_accessor = ctx[1];
-    }
-    if (ctx[2] !== void 0) {
-      line_props.y_accessor = ctx[2];
-    }
-    if (ctx[14] !== void 0) {
-      line_props.x_scale = ctx[14];
-    }
     if (ctx[15] !== void 0) {
-      line_props.y_scale = ctx[15];
+      line_props.x_get = ctx[15];
+    }
+    if (ctx[17] !== void 0) {
+      line_props.y_get = ctx[17];
     }
     line = new line_default2({ props: line_props });
     binding_callbacks.push(() => bind(line, "data", line_data_binding));
-    binding_callbacks.push(() => bind(line, "x_accessor", line_x_accessor_binding));
-    binding_callbacks.push(() => bind(line, "y_accessor", line_y_accessor_binding));
-    binding_callbacks.push(() => bind(line, "x_scale", line_x_scale_binding));
-    binding_callbacks.push(() => bind(line, "y_scale", line_y_scale_binding));
+    binding_callbacks.push(() => bind(line, "x_get", line_x_get_binding));
+    binding_callbacks.push(() => bind(line, "y_get", line_y_get_binding));
     return {
       c() {
         create_component(line.$$.fragment);
@@ -6918,25 +7131,15 @@
           line_changes.data = ctx2[0];
           add_flush_callback(() => updating_data = false);
         }
-        if (!updating_x_accessor && dirty[0] & 2) {
-          updating_x_accessor = true;
-          line_changes.x_accessor = ctx2[1];
-          add_flush_callback(() => updating_x_accessor = false);
+        if (!updating_x_get && dirty[0] & 32768) {
+          updating_x_get = true;
+          line_changes.x_get = ctx2[15];
+          add_flush_callback(() => updating_x_get = false);
         }
-        if (!updating_y_accessor && dirty[0] & 4) {
-          updating_y_accessor = true;
-          line_changes.y_accessor = ctx2[2];
-          add_flush_callback(() => updating_y_accessor = false);
-        }
-        if (!updating_x_scale && dirty[0] & 16384) {
-          updating_x_scale = true;
-          line_changes.x_scale = ctx2[14];
-          add_flush_callback(() => updating_x_scale = false);
-        }
-        if (!updating_y_scale && dirty[0] & 32768) {
-          updating_y_scale = true;
-          line_changes.y_scale = ctx2[15];
-          add_flush_callback(() => updating_y_scale = false);
+        if (!updating_y_get && dirty[0] & 131072) {
+          updating_y_get = true;
+          line_changes.y_get = ctx2[17];
+          add_flush_callback(() => updating_y_get = false);
         }
         line.$set(line_changes);
       },
@@ -6955,20 +7158,30 @@
       }
     };
   }
-  function create_fragment7(ctx) {
+  function create_fragment8(ctx) {
     let div;
     let h1;
     let t02;
     let t12;
     let figure;
     let svg;
-    let lineaxis0;
+    let axis0;
+    let updating_get;
     let updating_scale;
+    let updating_data;
+    let updating_accessor;
+    let updating_range;
+    let updating_label;
     let updating_height;
     let updating_width;
     let updating_margin;
-    let lineaxis1;
+    let axis1;
+    let updating_get_1;
     let updating_scale_1;
+    let updating_data_1;
+    let updating_accessor_1;
+    let updating_range_1;
+    let updating_label_1;
     let updating_height_1;
     let updating_width_1;
     let updating_margin_1;
@@ -6984,87 +7197,157 @@
     let updating_mouse_out;
     let figure_resize_listener;
     let current;
-    function lineaxis0_scale_binding(value) {
-      ctx[24](value);
-    }
-    function lineaxis0_height_binding(value) {
-      ctx[25](value);
-    }
-    function lineaxis0_width_binding(value) {
-      ctx[26](value);
-    }
-    function lineaxis0_margin_binding(value) {
-      ctx[27](value);
-    }
-    let lineaxis0_props = {
-      position: "bottom",
-      formater: ctx[19],
-      label: ctx[7]
-    };
-    if (ctx[14] !== void 0) {
-      lineaxis0_props.scale = ctx[14];
-    }
-    if (ctx[11] !== void 0) {
-      lineaxis0_props.height = ctx[11];
-    }
-    if (ctx[12] !== void 0) {
-      lineaxis0_props.width = ctx[12];
-    }
-    if (ctx[13] !== void 0) {
-      lineaxis0_props.margin = ctx[13];
-    }
-    lineaxis0 = new line_axis_default({ props: lineaxis0_props });
-    binding_callbacks.push(() => bind(lineaxis0, "scale", lineaxis0_scale_binding));
-    binding_callbacks.push(() => bind(lineaxis0, "height", lineaxis0_height_binding));
-    binding_callbacks.push(() => bind(lineaxis0, "width", lineaxis0_width_binding));
-    binding_callbacks.push(() => bind(lineaxis0, "margin", lineaxis0_margin_binding));
-    function lineaxis1_scale_binding(value) {
+    function axis0_get_binding(value) {
       ctx[28](value);
     }
-    function lineaxis1_height_binding(value) {
+    function axis0_scale_binding(value) {
       ctx[29](value);
     }
-    function lineaxis1_width_binding(value) {
+    function axis0_data_binding(value) {
       ctx[30](value);
     }
-    function lineaxis1_margin_binding(value) {
+    function axis0_accessor_binding(value) {
       ctx[31](value);
     }
-    let lineaxis1_props = {
-      position: "left",
-      formater: ctx[20],
-      label: ctx[8]
+    function axis0_range_binding(value) {
+      ctx[32](value);
+    }
+    function axis0_label_binding(value) {
+      ctx[33](value);
+    }
+    function axis0_height_binding(value) {
+      ctx[34](value);
+    }
+    function axis0_width_binding(value) {
+      ctx[35](value);
+    }
+    function axis0_margin_binding(value) {
+      ctx[36](value);
+    }
+    let axis0_props = {
+      scaleType: time,
+      formatter: ctx[23],
+      position: "bottom"
     };
     if (ctx[15] !== void 0) {
-      lineaxis1_props.scale = ctx[15];
+      axis0_props.get = ctx[15];
+    }
+    if (ctx[14] !== void 0) {
+      axis0_props.scale = ctx[14];
+    }
+    if (ctx[0] !== void 0) {
+      axis0_props.data = ctx[0];
+    }
+    if (ctx[1] !== void 0) {
+      axis0_props.accessor = ctx[1];
+    }
+    if (ctx[18] !== void 0) {
+      axis0_props.range = ctx[18];
+    }
+    if (ctx[3] !== void 0) {
+      axis0_props.label = ctx[3];
     }
     if (ctx[11] !== void 0) {
-      lineaxis1_props.height = ctx[11];
+      axis0_props.height = ctx[11];
     }
     if (ctx[12] !== void 0) {
-      lineaxis1_props.width = ctx[12];
+      axis0_props.width = ctx[12];
     }
     if (ctx[13] !== void 0) {
-      lineaxis1_props.margin = ctx[13];
+      axis0_props.margin = ctx[13];
     }
-    lineaxis1 = new line_axis_default({ props: lineaxis1_props });
-    binding_callbacks.push(() => bind(lineaxis1, "scale", lineaxis1_scale_binding));
-    binding_callbacks.push(() => bind(lineaxis1, "height", lineaxis1_height_binding));
-    binding_callbacks.push(() => bind(lineaxis1, "width", lineaxis1_width_binding));
-    binding_callbacks.push(() => bind(lineaxis1, "margin", lineaxis1_margin_binding));
-    circles = new circles_default({
-      props: {
-        mapped_data: ctx[16],
-        mouse_move: ctx[17],
-        mouse_out: ctx[18]
-      }
-    });
-    let if_block = ctx[4] && create_if_block3(ctx);
-    function legend_groups_binding(value) {
+    axis0 = new axis_default({ props: axis0_props });
+    binding_callbacks.push(() => bind(axis0, "get", axis0_get_binding));
+    binding_callbacks.push(() => bind(axis0, "scale", axis0_scale_binding));
+    binding_callbacks.push(() => bind(axis0, "data", axis0_data_binding));
+    binding_callbacks.push(() => bind(axis0, "accessor", axis0_accessor_binding));
+    binding_callbacks.push(() => bind(axis0, "range", axis0_range_binding));
+    binding_callbacks.push(() => bind(axis0, "label", axis0_label_binding));
+    binding_callbacks.push(() => bind(axis0, "height", axis0_height_binding));
+    binding_callbacks.push(() => bind(axis0, "width", axis0_width_binding));
+    binding_callbacks.push(() => bind(axis0, "margin", axis0_margin_binding));
+    function axis1_get_binding(value) {
       ctx[37](value);
     }
-    function legend_hues_binding(value) {
+    function axis1_scale_binding(value) {
       ctx[38](value);
+    }
+    function axis1_data_binding(value) {
+      ctx[39](value);
+    }
+    function axis1_accessor_binding(value) {
+      ctx[40](value);
+    }
+    function axis1_range_binding(value) {
+      ctx[41](value);
+    }
+    function axis1_label_binding(value) {
+      ctx[42](value);
+    }
+    function axis1_height_binding(value) {
+      ctx[43](value);
+    }
+    function axis1_width_binding(value) {
+      ctx[44](value);
+    }
+    function axis1_margin_binding(value) {
+      ctx[45](value);
+    }
+    let axis1_props = {
+      scaleType: linear2,
+      formatter: ctx[24],
+      position: "left"
+    };
+    if (ctx[17] !== void 0) {
+      axis1_props.get = ctx[17];
+    }
+    if (ctx[16] !== void 0) {
+      axis1_props.scale = ctx[16];
+    }
+    if (ctx[0] !== void 0) {
+      axis1_props.data = ctx[0];
+    }
+    if (ctx[2] !== void 0) {
+      axis1_props.accessor = ctx[2];
+    }
+    if (ctx[19] !== void 0) {
+      axis1_props.range = ctx[19];
+    }
+    if (ctx[4] !== void 0) {
+      axis1_props.label = ctx[4];
+    }
+    if (ctx[11] !== void 0) {
+      axis1_props.height = ctx[11];
+    }
+    if (ctx[12] !== void 0) {
+      axis1_props.width = ctx[12];
+    }
+    if (ctx[13] !== void 0) {
+      axis1_props.margin = ctx[13];
+    }
+    axis1 = new axis_default({ props: axis1_props });
+    binding_callbacks.push(() => bind(axis1, "get", axis1_get_binding));
+    binding_callbacks.push(() => bind(axis1, "scale", axis1_scale_binding));
+    binding_callbacks.push(() => bind(axis1, "data", axis1_data_binding));
+    binding_callbacks.push(() => bind(axis1, "accessor", axis1_accessor_binding));
+    binding_callbacks.push(() => bind(axis1, "range", axis1_range_binding));
+    binding_callbacks.push(() => bind(axis1, "label", axis1_label_binding));
+    binding_callbacks.push(() => bind(axis1, "height", axis1_height_binding));
+    binding_callbacks.push(() => bind(axis1, "width", axis1_width_binding));
+    binding_callbacks.push(() => bind(axis1, "margin", axis1_margin_binding));
+    circles = new circles_default({
+      props: {
+        mapped_data: ctx[20],
+        mouse_move: ctx[21],
+        mouse_out: ctx[22]
+      }
+    });
+    let if_block = ctx[6] && create_if_block3(ctx);
+    function legend_groups_binding(value) {
+      ctx[49](value);
+    }
+    function legend_hues_binding(value) {
+      ctx[50](value);
     }
     let legend_props = {};
     if (ctx[9] !== void 0) {
@@ -7077,24 +7360,24 @@
     binding_callbacks.push(() => bind(legend, "groups", legend_groups_binding));
     binding_callbacks.push(() => bind(legend, "hues", legend_hues_binding));
     function popup_mouse_move_binding(value) {
-      ctx[39](value);
+      ctx[51](value);
     }
     function popup_mouse_out_binding(value) {
-      ctx[40](value);
+      ctx[52](value);
     }
     let popup_props = {
       data: ctx[0],
       groups: ctx[9],
       hues: ctx[10],
       x_accessor: ctx[1],
-      group_accessor: ctx[3],
-      tooltip_accessors: ctx[5]
+      group_accessor: ctx[5],
+      tooltip_accessors: ctx[7]
     };
-    if (ctx[17] !== void 0) {
-      popup_props.mouse_move = ctx[17];
+    if (ctx[21] !== void 0) {
+      popup_props.mouse_move = ctx[21];
     }
-    if (ctx[18] !== void 0) {
-      popup_props.mouse_out = ctx[18];
+    if (ctx[22] !== void 0) {
+      popup_props.mouse_out = ctx[22];
     }
     popup = new popup_default({ props: popup_props });
     binding_callbacks.push(() => bind(popup, "mouse_move", popup_mouse_move_binding));
@@ -7103,12 +7386,12 @@
       c() {
         div = element("div");
         h1 = element("h1");
-        t02 = text(ctx[6]);
+        t02 = text(ctx[8]);
         t12 = space();
         figure = element("figure");
         svg = svg_element("svg");
-        create_component(lineaxis0.$$.fragment);
-        create_component(lineaxis1.$$.fragment);
+        create_component(axis0.$$.fragment);
+        create_component(axis1.$$.fragment);
         create_component(circles.$$.fragment);
         if (if_block)
           if_block.c();
@@ -7123,7 +7406,7 @@
         attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[12] + " " + ctx[11]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
         attr(figure, "class", "flex flex-row w-full h-full items-center");
-        add_render_callback(() => ctx[41].call(figure));
+        add_render_callback(() => ctx[53].call(figure));
         attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
@@ -7133,8 +7416,8 @@
         append(div, t12);
         append(div, figure);
         append(figure, svg);
-        mount_component(lineaxis0, svg, null);
-        mount_component(lineaxis1, svg, null);
+        mount_component(axis0, svg, null);
+        mount_component(axis1, svg, null);
         mount_component(circles, svg, null);
         if (if_block)
           if_block.m(svg, null);
@@ -7142,72 +7425,118 @@
         mount_component(legend, figure, null);
         append(figure, t3);
         mount_component(popup, figure, null);
-        figure_resize_listener = add_resize_listener(figure, ctx[41].bind(figure));
+        figure_resize_listener = add_resize_listener(figure, ctx[53].bind(figure));
         current = true;
       },
       p(ctx2, dirty) {
-        if (!current || dirty[0] & 64)
-          set_data(t02, ctx2[6]);
-        const lineaxis0_changes = {};
-        if (dirty[0] & 128)
-          lineaxis0_changes.label = ctx2[7];
+        if (!current || dirty[0] & 256)
+          set_data(t02, ctx2[8]);
+        const axis0_changes = {};
+        if (!updating_get && dirty[0] & 32768) {
+          updating_get = true;
+          axis0_changes.get = ctx2[15];
+          add_flush_callback(() => updating_get = false);
+        }
         if (!updating_scale && dirty[0] & 16384) {
           updating_scale = true;
-          lineaxis0_changes.scale = ctx2[14];
+          axis0_changes.scale = ctx2[14];
           add_flush_callback(() => updating_scale = false);
+        }
+        if (!updating_data && dirty[0] & 1) {
+          updating_data = true;
+          axis0_changes.data = ctx2[0];
+          add_flush_callback(() => updating_data = false);
+        }
+        if (!updating_accessor && dirty[0] & 2) {
+          updating_accessor = true;
+          axis0_changes.accessor = ctx2[1];
+          add_flush_callback(() => updating_accessor = false);
+        }
+        if (!updating_range && dirty[0] & 262144) {
+          updating_range = true;
+          axis0_changes.range = ctx2[18];
+          add_flush_callback(() => updating_range = false);
+        }
+        if (!updating_label && dirty[0] & 8) {
+          updating_label = true;
+          axis0_changes.label = ctx2[3];
+          add_flush_callback(() => updating_label = false);
         }
         if (!updating_height && dirty[0] & 2048) {
           updating_height = true;
-          lineaxis0_changes.height = ctx2[11];
+          axis0_changes.height = ctx2[11];
           add_flush_callback(() => updating_height = false);
         }
         if (!updating_width && dirty[0] & 4096) {
           updating_width = true;
-          lineaxis0_changes.width = ctx2[12];
+          axis0_changes.width = ctx2[12];
           add_flush_callback(() => updating_width = false);
         }
         if (!updating_margin && dirty[0] & 8192) {
           updating_margin = true;
-          lineaxis0_changes.margin = ctx2[13];
+          axis0_changes.margin = ctx2[13];
           add_flush_callback(() => updating_margin = false);
         }
-        lineaxis0.$set(lineaxis0_changes);
-        const lineaxis1_changes = {};
-        if (dirty[0] & 256)
-          lineaxis1_changes.label = ctx2[8];
-        if (!updating_scale_1 && dirty[0] & 32768) {
+        axis0.$set(axis0_changes);
+        const axis1_changes = {};
+        if (!updating_get_1 && dirty[0] & 131072) {
+          updating_get_1 = true;
+          axis1_changes.get = ctx2[17];
+          add_flush_callback(() => updating_get_1 = false);
+        }
+        if (!updating_scale_1 && dirty[0] & 65536) {
           updating_scale_1 = true;
-          lineaxis1_changes.scale = ctx2[15];
+          axis1_changes.scale = ctx2[16];
           add_flush_callback(() => updating_scale_1 = false);
+        }
+        if (!updating_data_1 && dirty[0] & 1) {
+          updating_data_1 = true;
+          axis1_changes.data = ctx2[0];
+          add_flush_callback(() => updating_data_1 = false);
+        }
+        if (!updating_accessor_1 && dirty[0] & 4) {
+          updating_accessor_1 = true;
+          axis1_changes.accessor = ctx2[2];
+          add_flush_callback(() => updating_accessor_1 = false);
+        }
+        if (!updating_range_1 && dirty[0] & 524288) {
+          updating_range_1 = true;
+          axis1_changes.range = ctx2[19];
+          add_flush_callback(() => updating_range_1 = false);
+        }
+        if (!updating_label_1 && dirty[0] & 16) {
+          updating_label_1 = true;
+          axis1_changes.label = ctx2[4];
+          add_flush_callback(() => updating_label_1 = false);
         }
         if (!updating_height_1 && dirty[0] & 2048) {
           updating_height_1 = true;
-          lineaxis1_changes.height = ctx2[11];
+          axis1_changes.height = ctx2[11];
           add_flush_callback(() => updating_height_1 = false);
         }
         if (!updating_width_1 && dirty[0] & 4096) {
           updating_width_1 = true;
-          lineaxis1_changes.width = ctx2[12];
+          axis1_changes.width = ctx2[12];
           add_flush_callback(() => updating_width_1 = false);
         }
         if (!updating_margin_1 && dirty[0] & 8192) {
           updating_margin_1 = true;
-          lineaxis1_changes.margin = ctx2[13];
+          axis1_changes.margin = ctx2[13];
           add_flush_callback(() => updating_margin_1 = false);
         }
-        lineaxis1.$set(lineaxis1_changes);
+        axis1.$set(axis1_changes);
         const circles_changes = {};
-        if (dirty[0] & 65536)
-          circles_changes.mapped_data = ctx2[16];
-        if (dirty[0] & 131072)
-          circles_changes.mouse_move = ctx2[17];
-        if (dirty[0] & 262144)
-          circles_changes.mouse_out = ctx2[18];
+        if (dirty[0] & 1048576)
+          circles_changes.mapped_data = ctx2[20];
+        if (dirty[0] & 2097152)
+          circles_changes.mouse_move = ctx2[21];
+        if (dirty[0] & 4194304)
+          circles_changes.mouse_out = ctx2[22];
         circles.$set(circles_changes);
-        if (ctx2[4]) {
+        if (ctx2[6]) {
           if (if_block) {
             if_block.p(ctx2, dirty);
-            if (dirty[0] & 16) {
+            if (dirty[0] & 64) {
               transition_in(if_block, 1);
             }
           } else {
@@ -7247,18 +7576,18 @@
           popup_changes.hues = ctx2[10];
         if (dirty[0] & 2)
           popup_changes.x_accessor = ctx2[1];
-        if (dirty[0] & 8)
-          popup_changes.group_accessor = ctx2[3];
         if (dirty[0] & 32)
-          popup_changes.tooltip_accessors = ctx2[5];
-        if (!updating_mouse_move && dirty[0] & 131072) {
+          popup_changes.group_accessor = ctx2[5];
+        if (dirty[0] & 128)
+          popup_changes.tooltip_accessors = ctx2[7];
+        if (!updating_mouse_move && dirty[0] & 2097152) {
           updating_mouse_move = true;
-          popup_changes.mouse_move = ctx2[17];
+          popup_changes.mouse_move = ctx2[21];
           add_flush_callback(() => updating_mouse_move = false);
         }
-        if (!updating_mouse_out && dirty[0] & 262144) {
+        if (!updating_mouse_out && dirty[0] & 4194304) {
           updating_mouse_out = true;
-          popup_changes.mouse_out = ctx2[18];
+          popup_changes.mouse_out = ctx2[22];
           add_flush_callback(() => updating_mouse_out = false);
         }
         popup.$set(popup_changes);
@@ -7266,8 +7595,8 @@
       i(local) {
         if (current)
           return;
-        transition_in(lineaxis0.$$.fragment, local);
-        transition_in(lineaxis1.$$.fragment, local);
+        transition_in(axis0.$$.fragment, local);
+        transition_in(axis1.$$.fragment, local);
         transition_in(circles.$$.fragment, local);
         transition_in(if_block);
         transition_in(legend.$$.fragment, local);
@@ -7275,8 +7604,8 @@
         current = true;
       },
       o(local) {
-        transition_out(lineaxis0.$$.fragment, local);
-        transition_out(lineaxis1.$$.fragment, local);
+        transition_out(axis0.$$.fragment, local);
+        transition_out(axis1.$$.fragment, local);
         transition_out(circles.$$.fragment, local);
         transition_out(if_block);
         transition_out(legend.$$.fragment, local);
@@ -7286,8 +7615,8 @@
       d(detaching) {
         if (detaching)
           detach(div);
-        destroy_component(lineaxis0);
-        destroy_component(lineaxis1);
+        destroy_component(axis0);
+        destroy_component(axis1);
         destroy_component(circles);
         if (if_block)
           if_block.d();
@@ -7297,7 +7626,7 @@
       }
     };
   }
-  function instance7($$self, $$props, $$invalidate) {
+  function instance8($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { radius = 60 } = $$props;
     let { x_accessor } = $$props;
@@ -7312,39 +7641,83 @@
     let groups2, hues;
     let [height, width] = [50, 100];
     let margin = 50;
-    let x_scale, y_scale, r_scale;
-    const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")];
+    let x_range = [0, 0];
+    let y_range = [0, 0];
+    let r_scale;
+    let x_scale, x_get;
+    let y_scale, y_get;
     let mapped_data;
+    const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")];
     let mouse_move, mouse_out;
-    function lineaxis0_scale_binding(value) {
-      x_scale = value;
-      $$invalidate(14, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(21, radius), $$invalidate(13, margin), $$invalidate(12, width);
+    function axis0_get_binding(value) {
+      x_get = value;
+      $$invalidate(15, x_get);
     }
-    function lineaxis0_height_binding(value) {
+    function axis0_scale_binding(value) {
+      x_scale = value;
+      $$invalidate(14, x_scale);
+    }
+    function axis0_data_binding(value) {
+      data = value;
+      $$invalidate(0, data);
+    }
+    function axis0_accessor_binding(value) {
+      x_accessor = value;
+      $$invalidate(1, x_accessor);
+    }
+    function axis0_range_binding(value) {
+      x_range = value;
+      $$invalidate(18, x_range), $$invalidate(25, radius), $$invalidate(13, margin), $$invalidate(12, width);
+    }
+    function axis0_label_binding(value) {
+      x_label = value;
+      $$invalidate(3, x_label);
+    }
+    function axis0_height_binding(value) {
       height = value;
       $$invalidate(11, height), $$invalidate(12, width);
     }
-    function lineaxis0_width_binding(value) {
+    function axis0_width_binding(value) {
       width = value;
       $$invalidate(12, width);
     }
-    function lineaxis0_margin_binding(value) {
+    function axis0_margin_binding(value) {
       margin = value;
       $$invalidate(13, margin);
     }
-    function lineaxis1_scale_binding(value) {
-      y_scale = value;
-      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(21, radius), $$invalidate(13, margin), $$invalidate(12, width);
+    function axis1_get_binding(value) {
+      y_get = value;
+      $$invalidate(17, y_get);
     }
-    function lineaxis1_height_binding(value) {
+    function axis1_scale_binding(value) {
+      y_scale = value;
+      $$invalidate(16, y_scale);
+    }
+    function axis1_data_binding(value) {
+      data = value;
+      $$invalidate(0, data);
+    }
+    function axis1_accessor_binding(value) {
+      y_accessor = value;
+      $$invalidate(2, y_accessor);
+    }
+    function axis1_range_binding(value) {
+      y_range = value;
+      $$invalidate(19, y_range), $$invalidate(11, height), $$invalidate(25, radius), $$invalidate(13, margin), $$invalidate(12, width);
+    }
+    function axis1_label_binding(value) {
+      y_label = value;
+      $$invalidate(4, y_label);
+    }
+    function axis1_height_binding(value) {
       height = value;
       $$invalidate(11, height), $$invalidate(12, width);
     }
-    function lineaxis1_width_binding(value) {
+    function axis1_width_binding(value) {
       width = value;
       $$invalidate(12, width);
     }
-    function lineaxis1_margin_binding(value) {
+    function axis1_margin_binding(value) {
       margin = value;
       $$invalidate(13, margin);
     }
@@ -7352,37 +7725,29 @@
       data = value;
       $$invalidate(0, data);
     }
-    function line_x_accessor_binding(value) {
-      x_accessor = value;
-      $$invalidate(1, x_accessor);
+    function line_x_get_binding(value) {
+      x_get = value;
+      $$invalidate(15, x_get);
     }
-    function line_y_accessor_binding(value) {
-      y_accessor = value;
-      $$invalidate(2, y_accessor);
-    }
-    function line_x_scale_binding(value) {
-      x_scale = value;
-      $$invalidate(14, x_scale), $$invalidate(0, data), $$invalidate(1, x_accessor), $$invalidate(21, radius), $$invalidate(13, margin), $$invalidate(12, width);
-    }
-    function line_y_scale_binding(value) {
-      y_scale = value;
-      $$invalidate(15, y_scale), $$invalidate(0, data), $$invalidate(2, y_accessor), $$invalidate(11, height), $$invalidate(21, radius), $$invalidate(13, margin), $$invalidate(12, width);
+    function line_y_get_binding(value) {
+      y_get = value;
+      $$invalidate(17, y_get);
     }
     function legend_groups_binding(value) {
       groups2 = value;
-      $$invalidate(9, groups2), $$invalidate(0, data), $$invalidate(3, c_accessor);
+      $$invalidate(9, groups2), $$invalidate(0, data), $$invalidate(5, c_accessor);
     }
     function legend_hues_binding(value) {
       hues = value;
-      $$invalidate(10, hues), $$invalidate(9, groups2), $$invalidate(0, data), $$invalidate(3, c_accessor);
+      $$invalidate(10, hues), $$invalidate(9, groups2), $$invalidate(0, data), $$invalidate(5, c_accessor);
     }
     function popup_mouse_move_binding(value) {
       mouse_move = value;
-      $$invalidate(17, mouse_move);
+      $$invalidate(21, mouse_move);
     }
     function popup_mouse_out_binding(value) {
       mouse_out = value;
-      $$invalidate(18, mouse_out);
+      $$invalidate(22, mouse_out);
     }
     function figure_elementresize_handler() {
       height = this.clientHeight;
@@ -7394,28 +7759,28 @@
       if ("data" in $$props2)
         $$invalidate(0, data = $$props2.data);
       if ("radius" in $$props2)
-        $$invalidate(21, radius = $$props2.radius);
+        $$invalidate(25, radius = $$props2.radius);
       if ("x_accessor" in $$props2)
         $$invalidate(1, x_accessor = $$props2.x_accessor);
       if ("y_accessor" in $$props2)
         $$invalidate(2, y_accessor = $$props2.y_accessor);
       if ("r_accessor" in $$props2)
-        $$invalidate(22, r_accessor = $$props2.r_accessor);
+        $$invalidate(26, r_accessor = $$props2.r_accessor);
       if ("c_accessor" in $$props2)
-        $$invalidate(3, c_accessor = $$props2.c_accessor);
+        $$invalidate(5, c_accessor = $$props2.c_accessor);
       if ("draw_line" in $$props2)
-        $$invalidate(4, draw_line = $$props2.draw_line);
+        $$invalidate(6, draw_line = $$props2.draw_line);
       if ("tooltip_accessors" in $$props2)
-        $$invalidate(5, tooltip_accessors = $$props2.tooltip_accessors);
+        $$invalidate(7, tooltip_accessors = $$props2.tooltip_accessors);
       if ("graph_title" in $$props2)
-        $$invalidate(6, graph_title = $$props2.graph_title);
+        $$invalidate(8, graph_title = $$props2.graph_title);
       if ("x_label" in $$props2)
-        $$invalidate(7, x_label = $$props2.x_label);
+        $$invalidate(3, x_label = $$props2.x_label);
       if ("y_label" in $$props2)
-        $$invalidate(8, y_label = $$props2.y_label);
+        $$invalidate(4, y_label = $$props2.y_label);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & 9) {
+      if ($$self.$$.dirty[0] & 33) {
         $:
           $$invalidate(9, groups2 = Array.from(group(data, c_accessor).keys()));
       }
@@ -7442,23 +7807,23 @@
           if (height > width)
             $$invalidate(11, height = width);
       }
-      if ($$self.$$.dirty[0] & 2109443) {
+      if ($$self.$$.dirty[0] & 33566720) {
         $:
-          $$invalidate(14, x_scale = time().domain(extent(data, x_accessor)).range([radius + margin, width - radius - margin]));
+          $$invalidate(18, x_range = [radius + margin, width - radius - margin]);
       }
-      if ($$self.$$.dirty[0] & 2107397) {
+      if ($$self.$$.dirty[0] & 33564672) {
         $:
-          $$invalidate(15, y_scale = linear2().domain(extent(data, y_accessor)).range([height - radius - margin, radius + margin]));
+          $$invalidate(19, y_range = [height - radius - margin, radius + margin]);
       }
-      if ($$self.$$.dirty[0] & 6291457) {
+      if ($$self.$$.dirty[0] & 100663297) {
         $:
-          $$invalidate(23, r_scale = linear2().domain(extent(data, r_accessor)).range([0, radius]));
+          $$invalidate(27, r_scale = linear2().domain(extent(data, r_accessor)).range([0, radius]));
       }
-      if ($$self.$$.dirty[0] & 14730767) {
+      if ($$self.$$.dirty[0] & 235128353) {
         $:
-          $$invalidate(16, mapped_data = data.map((d, i) => ({
-            "x": x_scale(x_accessor(d)),
-            "y": y_scale(y_accessor(d)),
+          $$invalidate(20, mapped_data = data.map((d, i) => ({
+            "x": x_scale === void 0 ? 0 : x_get(d),
+            "y": y_scale === void 0 ? 0 : y_get(d),
             "r": r_accessor !== void 0 ? r_scale(r_accessor(d)) : radius,
             "c": hues[groups2.indexOf(c_accessor(d))],
             i
@@ -7469,19 +7834,23 @@
       data,
       x_accessor,
       y_accessor,
+      x_label,
+      y_label,
       c_accessor,
       draw_line,
       tooltip_accessors,
       graph_title,
-      x_label,
-      y_label,
       groups2,
       hues,
       height,
       width,
       margin,
       x_scale,
+      x_get,
       y_scale,
+      y_get,
+      x_range,
+      y_range,
       mapped_data,
       mouse_move,
       mouse_out,
@@ -7490,19 +7859,27 @@
       radius,
       r_accessor,
       r_scale,
-      lineaxis0_scale_binding,
-      lineaxis0_height_binding,
-      lineaxis0_width_binding,
-      lineaxis0_margin_binding,
-      lineaxis1_scale_binding,
-      lineaxis1_height_binding,
-      lineaxis1_width_binding,
-      lineaxis1_margin_binding,
+      axis0_get_binding,
+      axis0_scale_binding,
+      axis0_data_binding,
+      axis0_accessor_binding,
+      axis0_range_binding,
+      axis0_label_binding,
+      axis0_height_binding,
+      axis0_width_binding,
+      axis0_margin_binding,
+      axis1_get_binding,
+      axis1_scale_binding,
+      axis1_data_binding,
+      axis1_accessor_binding,
+      axis1_range_binding,
+      axis1_label_binding,
+      axis1_height_binding,
+      axis1_width_binding,
+      axis1_margin_binding,
       line_data_binding,
-      line_x_accessor_binding,
-      line_y_accessor_binding,
-      line_x_scale_binding,
-      line_y_scale_binding,
+      line_x_get_binding,
+      line_y_get_binding,
       legend_groups_binding,
       legend_hues_binding,
       popup_mouse_move_binding,
@@ -7513,25 +7890,25 @@
   var Scatterplot = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment7, safe_not_equal, {
+      init(this, options, instance8, create_fragment8, safe_not_equal, {
         data: 0,
-        radius: 21,
+        radius: 25,
         x_accessor: 1,
         y_accessor: 2,
-        r_accessor: 22,
-        c_accessor: 3,
-        draw_line: 4,
-        tooltip_accessors: 5,
-        graph_title: 6,
-        x_label: 7,
-        y_label: 8
+        r_accessor: 26,
+        c_accessor: 5,
+        draw_line: 6,
+        tooltip_accessors: 7,
+        graph_title: 8,
+        x_label: 3,
+        y_label: 4
       }, null, [-1, -1]);
     }
   };
   var scatterplot_default = Scatterplot;
 
   // src/stats/bulk_data_graphs.svelte
-  function create_fragment8(ctx) {
+  function create_fragment9(ctx) {
     let div;
     let scatterplot0;
     let t;
@@ -7628,7 +8005,7 @@
       }
     };
   }
-  function instance8($$self, $$props, $$invalidate) {
+  function instance9($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { name_accessor } = $$props;
     let { date_accessor } = $$props;
@@ -7665,7 +8042,7 @@
   var Bulk_data_graphs = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance8, create_fragment8, safe_not_equal, {
+      init(this, options, instance9, create_fragment9, safe_not_equal, {
         data: 0,
         name_accessor: 1,
         date_accessor: 2,
@@ -7679,7 +8056,7 @@
   var bulk_data_graphs_default = Bulk_data_graphs;
 
   // src/stats/min_data_graphs.svelte
-  function create_fragment9(ctx) {
+  function create_fragment10(ctx) {
     let div;
     let scatterplot0;
     let t02;
@@ -7810,7 +8187,7 @@
     };
   }
   var MAX_CIRCLE_RADIUS = 7;
-  function instance9($$self, $$props, $$invalidate) {
+  function instance10($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { name_accessor } = $$props;
     let { date_accessor } = $$props;
@@ -7847,7 +8224,7 @@
   var Min_data_graphs = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance9, create_fragment9, safe_not_equal, {
+      init(this, options, instance10, create_fragment10, safe_not_equal, {
         data: 0,
         name_accessor: 1,
         date_accessor: 2,
@@ -8400,7 +8777,7 @@
       }
     };
   }
-  function create_fragment10(ctx) {
+  function create_fragment11(ctx) {
     let div;
     let accordionitem0;
     let updating_group;
@@ -8622,7 +8999,7 @@
       }
     };
   }
-  function instance10($$self, $$props, $$invalidate) {
+  function instance11($$self, $$props, $$invalidate) {
     const SECS_TO_HRS = 60 * 60;
     let { data } = $$props;
     let display_group = void 0;
@@ -8700,7 +9077,7 @@
   var Stats = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance10, create_fragment10, safe_not_equal, { data: 0 });
+      init(this, options, instance11, create_fragment11, safe_not_equal, { data: 0 });
     }
   };
   var stats_default = Stats;

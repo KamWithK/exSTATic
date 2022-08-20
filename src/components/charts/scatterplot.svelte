@@ -1,9 +1,9 @@
 <script lang="ts">
-    import LineAxis from "./line_axis.svelte"
-    import Circles from "./circles.svelte"
-    import Line from "./line.svelte"
+    import Axis from "../draw/axis.svelte"
+    import Circles from "../draw/circles.svelte"
+    import Line from "../draw/line.svelte"
     import Popup from "./popup.svelte"
-    import Legend from "./legend.svelte"
+    import Legend from "../draw/legend.svelte"
 
     import { extent, group } from "d3-array"
     import { format } from "d3-format"
@@ -41,29 +41,30 @@
     $: if (width < 100) width = 100
     $: if (height > width) height = width
 
-    // Map data (domains) onto physical scales (ranges)
     // Physical ranges shrink in proport to the maximal circle radius and padding
-    let x_scale, y_scale, r_scale
-    $: x_scale = scaleTime()
-        .domain(extent(data, x_accessor))
-        .range([radius + margin, width - radius - margin])
-    $: y_scale = scaleLinear()
-        .domain(extent(data, y_accessor))
-        .range([height - radius - margin, radius + margin])
+    let x_range: [number, number] = [0, 0]
+    let y_range: [number, number] = [0, 0]
+    $: x_range = [radius + margin, width - radius - margin]
+    $: y_range = [height - radius - margin, radius + margin]
+
+    let r_scale
     $: r_scale = scaleLinear()
         .domain(extent(data, r_accessor))
         .range([0, radius])
 
-    const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")]
+    let x_scale, x_get
+    let y_scale, y_get
 
     let mapped_data
     $: mapped_data = data.map((d, i) => ({
-        "x": x_scale(x_accessor(d)),
-        "y": y_scale(y_accessor(d)),
+        "x": x_scale === undefined ? 0 : x_get(d),
+        "y": y_scale === undefined ? 0 : y_get(d),
         "r": r_accessor !== undefined ? r_scale(r_accessor(d)) : radius,
         "c": hues[groups.indexOf(c_accessor(d))],
         "i": i
     }))
+
+    const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")]
 
     let mouse_move, mouse_out
 </script>
@@ -73,13 +74,13 @@
 
     <figure bind:clientHeight={height} bind:clientWidth={width} class="flex flex-row w-full h-full items-center">
         <svg height="100%" width="100%" style="resize: both;" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">
-            <LineAxis bind:scale={x_scale} bind:height bind:width bind:margin position="bottom" formater={x_formatter} label={x_label}/>
-            <LineAxis bind:scale={y_scale} bind:height bind:width bind:margin position="left" formater={y_formatter} label={y_label}/>
+            <Axis bind:get={x_get} bind:scale={x_scale} scaleType={scaleTime} bind:data bind:accessor={x_accessor} formatter={x_formatter} bind:range={x_range} bind:label={x_label} bind:height bind:width bind:margin position="bottom"/>
+            <Axis bind:get={y_get} bind:scale={y_scale} scaleType={scaleLinear} bind:data bind:accessor={y_accessor} formatter={y_formatter} bind:range={y_range} bind:label={y_label} bind:height bind:width bind:margin position="left"/>
 
             <Circles {mapped_data} {mouse_move} {mouse_out}/>
 
             {#if draw_line}
-                <Line bind:data bind:x_accessor bind:y_accessor bind:x_scale bind:y_scale/>
+                <Line bind:data bind:x_get bind:y_get/>
             {/if}
         </svg>
 

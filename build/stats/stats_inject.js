@@ -6860,6 +6860,29 @@
     child_ctx[16] = list[i];
     return child_ctx;
   }
+  function create_if_block3(ctx) {
+    let p;
+    let t;
+    return {
+      c() {
+        p = element("p");
+        t = text(ctx[5]);
+        attr(p, "id", "popup_date");
+      },
+      m(target, anchor) {
+        insert(target, p, anchor);
+        append(p, t);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 32)
+          set_data(t, ctx2[5]);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(p);
+      }
+    };
+  }
   function create_each_block2(ctx) {
     let p;
     let t0_value = ctx[16] + "";
@@ -6894,15 +6917,14 @@
   }
   function create_fragment6(ctx) {
     let div;
-    let p0;
+    let p;
     let t02;
     let t12;
-    let p1;
     let t2;
-    let t3;
     let br;
-    let t4;
+    let t3;
     let div_class_value;
+    let if_block = ctx[5] != void 0 && ctx[5] !== "" && create_if_block3(ctx);
     let each_value = Object.keys(ctx[0]);
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
@@ -6911,20 +6933,19 @@
     return {
       c() {
         div = element("div");
-        p0 = element("p");
+        p = element("p");
         t02 = text(ctx[4]);
         t12 = space();
-        p1 = element("p");
-        t2 = text(ctx[5]);
-        t3 = space();
+        if (if_block)
+          if_block.c();
+        t2 = space();
         br = element("br");
-        t4 = space();
+        t3 = space();
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
-        attr(p0, "id", "popup_title");
-        attr(p0, "class", "font-semibold");
-        attr(p1, "id", "popup_date");
+        attr(p, "id", "popup_title");
+        attr(p, "class", "font-semibold");
         attr(div, "id", "popup");
         attr(div, "class", div_class_value = (ctx[1] ? "absolute" : "hidden") + " p-3");
         set_style(div, "left", ctx[2] + "px");
@@ -6933,14 +6954,14 @@
       },
       m(target, anchor) {
         insert(target, div, anchor);
-        append(div, p0);
-        append(p0, t02);
+        append(div, p);
+        append(p, t02);
         append(div, t12);
-        append(div, p1);
-        append(p1, t2);
-        append(div, t3);
+        if (if_block)
+          if_block.m(div, null);
+        append(div, t2);
         append(div, br);
-        append(div, t4);
+        append(div, t3);
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].m(div, null);
         }
@@ -6948,8 +6969,18 @@
       p(ctx2, [dirty]) {
         if (dirty & 16)
           set_data(t02, ctx2[4]);
-        if (dirty & 32)
-          set_data(t2, ctx2[5]);
+        if (ctx2[5] != void 0 && ctx2[5] !== "") {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block3(ctx2);
+            if_block.c();
+            if_block.m(div, t2);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
         if (dirty & 129) {
           each_value = Object.keys(ctx2[0]);
           let i;
@@ -6986,6 +7017,8 @@
       d(detaching) {
         if (detaching)
           detach(div);
+        if (if_block)
+          if_block.d();
         destroy_each(each_blocks, detaching);
       }
     };
@@ -7003,7 +7036,8 @@
       $$invalidate(2, popup_x = event.layerX);
       $$invalidate(3, popup_y = event.layerY);
       $$invalidate(4, popup_name = group_accessor(data[index2]));
-      $$invalidate(5, popup_date = timeFormat("%d %B %Y")(x_accessor(data[index2])));
+      if (popup_date != void 0 && popup_date !== "")
+        $$invalidate(5, popup_date = timeFormat("%d %B %Y")(x_accessor(data[index2])));
       $$invalidate(6, popout_color = hues[groups2.indexOf(group_accessor(data[index2]))]);
       Object.entries(tooltip_accessors).forEach(([key, value_accessor]) => {
         $$invalidate(7, popup_tooltips[key] = tooltip_formatters[key](value_accessor(data[index2])), popup_tooltips);
@@ -7191,7 +7225,7 @@
 
   // src/components/charts/scatterplot.svelte
   var import_iwanthue = __toESM(require_iwanthue());
-  function create_if_block3(ctx) {
+  function create_if_block4(ctx) {
     let line;
     let updating_data;
     let updating_x_get;
@@ -7446,7 +7480,7 @@
         mouse_out: ctx[25]
       }
     });
-    let if_block = ctx[8] && create_if_block3(ctx);
+    let if_block = ctx[8] && create_if_block4(ctx);
     function legend_groups_binding(value) {
       ctx[53](value);
     }
@@ -7650,7 +7684,7 @@
               transition_in(if_block, 1);
             }
           } else {
-            if_block = create_if_block3(ctx2);
+            if_block = create_if_block4(ctx2);
             if_block.c();
             transition_in(if_block, 1);
             if_block.m(svg, null);

@@ -8,9 +8,12 @@ exSTATic is a new project currently in its early stages and so is currently focu
 The core web extension lies in this repository, whilst additional addons allow integration with various platoforms:
 
 * [TextractorSender](https://github.com/KamWithK/TextractorSender) - hooks VN lines and send them directly to exSTATic (or potentially other applications which wish to use the WebSocket connection, this doesn't impede/use a clipboard)
+* Mokuro - included in the core extension
 
 
 *Going forwards in the future, to account for other immersion mediums, integrations with other platforms like TTU, YouTube and maybe even Anki will be considered*
+
+![Main UI](example_screenshots/main_ui.jpg)
 
 # Install Instructions
 
@@ -35,16 +38,32 @@ exSTATic works just like any other reading application for the most part, with a
 2. **Inactivity Indicators** - A slight blur over your media is added when the timer is off to ensure you always read with it on and have it off afterwards
 3. **Stats and Graphs** - Data is taken for each media on a daily basis, and progress is visualised in various ways for various timeframes
 
+![Immersion Gains](example_screenshots/immersion_gains_graph.png)
+![Immersion Quantity](example_screenshots/immersion_quantity_graph.png)
+![Chars Per](example_screenshots/chars_per_graph.png)
+![Time Per](example_screenshots/time_per_graph.png)
+![Pace Per](example_screenshots/pace_per_graph.png)
+
+*On a side note exSTATic makes use of modern technology to additionally eliminate a few other common painpoints with reading workflows like needing to use a clipboard (exSTATic doesn't use the clipboard and instead makes use of custom integrations)!*
+
 # Manual Data Overrides
 
 If you'd like to bring old data into exSTATic or modify the records in any way simply use teh built in import/export buttons on the VN tracker UI (this works for all media forms).
 Data should be formatted as csv and must look identical to the export (look at an export to see how it should look, some columns may be ignored).
 
-## Contributions
+# Mokuro Integration Notes
+
+Mokuro support is currently being tested.
+If you would like to give this a go please find your `manifest.json` file (within the exSTATic extension folder whereever that it) and alter the `matches` entries to match where you store your manga.
+By default it is pre-set to pick up any manga within a folder anywhere called "Manga" (or any of its subdirectories, this may be removed and need to be manually entered in in future releases).
+
+**NOTE:** Only single page mode works, double page mode is currently bugged
+
+# Contributions
 Feel free to fork this repository, create GitHub issues and pull requests.
 More than happy to take a look into anything/approve PRs 😄!
 
-## Credits
+# Credits
 Huge shoutout to everyone who helped on this project.
 Thanks to Mae for helping design the UI (making sure it looks lit), helping with testing and giving lots of ideas for potentially useful features.
 

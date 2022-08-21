@@ -1,6 +1,6 @@
 <script lang="ts">
     import { select } from "d3-selection"
-    import { axisTop, axisRight, axisBottom, axisLeft } from "@d3fc/d3fc-axis"
+    import { axisTop, axisRight, axisBottom, axisLeft, axisLabelRotate } from "@d3fc/d3fc-axis"
 
     export let scale
 
@@ -15,16 +15,16 @@
 
     const positionedAxis = (scale: Function) => {
         if (position === "top") {
-            return axisTop(scale)
+            return axisLabelRotate(axisTop(scale))
         }
         else if (position == "right") {
-            return axisRight(scale)
+            return axisLabelRotate(axisRight(scale))
         }
         else if (position === "bottom") {
-            return axisBottom(scale)
+            return axisLabelRotate(axisBottom(scale))
         }
         else if (position == "left") {
-            return axisLeft(scale)
+            return axisLabelRotate(axisLeft(scale))
         }
     }
 

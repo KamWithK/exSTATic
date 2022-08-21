@@ -3203,6 +3203,15 @@
     return target;
   };
 
+  // node_modules/@d3fc/d3fc-rebind/src/transform/regexify.js
+  var regexify_default = (strsOrRegexes) => strsOrRegexes.map((strOrRegex) => typeof strOrRegex === "string" ? new RegExp(`^${strOrRegex}$`) : strOrRegex);
+
+  // node_modules/@d3fc/d3fc-rebind/src/transform/exclude.js
+  var exclude_default = (...exclusions) => {
+    exclusions = regexify_default(exclusions);
+    return (name) => exclusions.every((exclusion) => !exclusion.test(name)) && name;
+  };
+
   // node_modules/d3-path/src/path.js
   var pi = Math.PI;
   var tau = 2 * pi;
@@ -3726,6 +3735,92 @@
   var axisLeft = (scale) => axis("left", scale);
   var axisRight = (scale) => axis("right", scale);
 
+  // node_modules/@d3fc/d3fc-axis/src/measureLabels.js
+  var measureLabels_default = (axis2) => {
+    const measure = (selection2) => {
+      const ticks2 = ticksArrayForAxis(axis2);
+      const tickFormatter = tickFormatterForAxis(axis2);
+      const labels = ticks2.map(tickFormatter);
+      const tester = selection2.append("text");
+      const boundingBoxes = labels.map((l) => tester.text(l).node().getBBox());
+      const maxHeight = Math.max(...boundingBoxes.map((b) => b.height));
+      const maxWidth = Math.max(...boundingBoxes.map((b) => b.width));
+      tester.remove();
+      return {
+        maxHeight,
+        maxWidth,
+        labelCount: labels.length
+      };
+    };
+    return measure;
+  };
+
+  // node_modules/@d3fc/d3fc-axis/src/axisLabelRotate.js
+  var axisLabelRotate_default = (adaptee) => {
+    let labelRotate = "auto";
+    let decorate = () => {
+    };
+    const isVertical = () => adaptee.orient() === "left" || adaptee.orient() === "right";
+    const sign2 = () => adaptee.orient() === "top" || adaptee.orient() === "left" ? -1 : 1;
+    const labelAnchor = () => {
+      switch (adaptee.orient()) {
+        case "top":
+        case "right":
+          return "start";
+        default:
+          return "end";
+      }
+    };
+    const calculateRotation = (s) => {
+      const { maxHeight, maxWidth, labelCount } = measureLabels_default(adaptee)(s);
+      const measuredSize = labelCount * maxWidth;
+      let rotate;
+      if (labelRotate === "auto") {
+        const range2 = adaptee.scale().range()[1];
+        rotate = range2 < measuredSize ? 90 * Math.min(1, (measuredSize / range2 - 0.8) / 2) : 0;
+      } else {
+        rotate = labelRotate;
+      }
+      return {
+        rotate: isVertical() ? Math.floor(sign2() * (90 - rotate)) : Math.floor(-rotate),
+        maxHeight,
+        maxWidth,
+        anchor: rotate ? labelAnchor() : "middle"
+      };
+    };
+    const decorateRotation = (sel) => {
+      const { rotate, maxHeight, anchor } = calculateRotation(sel);
+      const text2 = sel.select("text");
+      const existingTransform = text2.attr("transform");
+      const offset = sign2() * Math.floor(maxHeight / 2);
+      const offsetTransform = isVertical() ? `translate(${offset}, 0)` : `translate(0, ${offset})`;
+      text2.style("text-anchor", anchor).attr("transform", `${existingTransform} ${offsetTransform} rotate(${rotate} 0 0)`);
+    };
+    const axisLabelRotate = (arg) => {
+      adaptee(arg);
+    };
+    adaptee.decorate((s) => {
+      decorateRotation(s);
+      decorate(s);
+    });
+    axisLabelRotate.decorate = (...args) => {
+      if (!args.length) {
+        return decorate;
+      }
+      decorate = args[0];
+      return axisLabelRotate;
+    };
+    axisLabelRotate.labelRotate = (...args) => {
+      if (!args.length) {
+        return labelRotate;
+      }
+      labelRotate = args[0];
+      return axisLabelRotate;
+    };
+    rebindAll_default(axisLabelRotate, adaptee, exclude_default("decorate"));
+    return axisLabelRotate;
+  };
+
   // src/components/draw/oriented_axis.svelte
   function create_if_block_3(ctx) {
     let text_1;
@@ -3937,13 +4032,13 @@
     let transform = "0,0";
     const positionedAxis = (scale2) => {
       if (position === "top") {
-        return axisTop(scale2);
+        return axisLabelRotate_default(axisTop(scale2));
       } else if (position == "right") {
-        return axisRight(scale2);
+        return axisLabelRotate_default(axisRight(scale2));
       } else if (position === "bottom") {
-        return axisBottom(scale2);
+        return axisLabelRotate_default(axisBottom(scale2));
       } else if (position == "left") {
-        return axisLeft(scale2);
+        return axisLabelRotate_default(axisLeft(scale2));
       }
     };
     const transitionAxis = () => {

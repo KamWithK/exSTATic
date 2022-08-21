@@ -29,7 +29,7 @@
     }
 
     export const mouse_out = () => {
-        show_popup = false
+        if (window["chrome"] === undefined) show_popup = false
     }
 </script>
 

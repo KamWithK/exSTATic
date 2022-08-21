@@ -7154,7 +7154,8 @@
       $$invalidate(1, show_popup = true);
     };
     const mouse_out = () => {
-      $$invalidate(1, show_popup = false);
+      if (window["chrome"] === void 0)
+        $$invalidate(1, show_popup = false);
     };
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)

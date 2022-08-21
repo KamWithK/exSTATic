@@ -3755,70 +3755,43 @@
     return measure;
   };
 
-  // node_modules/@d3fc/d3fc-axis/src/axisLabelRotate.js
-  var axisLabelRotate_default = (adaptee) => {
-    let labelRotate = "auto";
+  // node_modules/@d3fc/d3fc-axis/src/axisLabelOffset.js
+  var axisLabelOffset_default = (adaptee) => {
+    let labelOffsetDepth = "auto";
     let decorate = () => {
     };
     const isVertical = () => adaptee.orient() === "left" || adaptee.orient() === "right";
     const sign2 = () => adaptee.orient() === "top" || adaptee.orient() === "left" ? -1 : 1;
-    const labelAnchor = () => {
-      switch (adaptee.orient()) {
-        case "top":
-        case "right":
-          return "start";
-        default:
-          return "end";
-      }
-    };
-    const calculateRotation = (s) => {
-      const { maxHeight, maxWidth, labelCount } = measureLabels_default(adaptee)(s);
-      const measuredSize = labelCount * maxWidth;
-      let rotate;
-      if (labelRotate === "auto") {
-        const range2 = adaptee.scale().range()[1];
-        rotate = range2 < measuredSize ? 90 * Math.min(1, (measuredSize / range2 - 0.8) / 2) : 0;
-      } else {
-        rotate = labelRotate;
-      }
-      return {
-        rotate: isVertical() ? Math.floor(sign2() * (90 - rotate)) : Math.floor(-rotate),
-        maxHeight,
-        maxWidth,
-        anchor: rotate ? labelAnchor() : "middle"
-      };
-    };
-    const decorateRotation = (sel) => {
-      const { rotate, maxHeight, anchor } = calculateRotation(sel);
+    const decorateOffset = (sel) => {
+      const { maxHeight, maxWidth, labelCount } = measureLabels_default(adaptee)(sel);
+      const range2 = adaptee.scale().range()[1];
+      const offsetLevels = labelOffsetDepth === "auto" ? Math.floor((isVertical() ? maxHeight : maxWidth) * labelCount / range2) + 1 : labelOffsetDepth;
       const text2 = sel.select("text");
       const existingTransform = text2.attr("transform");
-      const offset = sign2() * Math.floor(maxHeight / 2);
-      const offsetTransform = isVertical() ? `translate(${offset}, 0)` : `translate(0, ${offset})`;
-      text2.style("text-anchor", anchor).attr("transform", `${existingTransform} ${offsetTransform} rotate(${rotate} 0 0)`);
+      const transform = (i) => isVertical() ? `translate(${i % offsetLevels * maxWidth * sign2()}, 0)` : `translate(0, ${i % offsetLevels * maxHeight * sign2()})`;
+      text2.attr("transform", (_, i) => `${existingTransform} ${transform(i)}`);
     };
-    const axisLabelRotate = (arg) => {
-      adaptee(arg);
-    };
+    const axisLabelOffset = (arg) => adaptee(arg);
     adaptee.decorate((s) => {
-      decorateRotation(s);
+      decorateOffset(s);
       decorate(s);
     });
-    axisLabelRotate.decorate = (...args) => {
+    axisLabelOffset.decorate = (...args) => {
       if (!args.length) {
         return decorate;
       }
       decorate = args[0];
-      return axisLabelRotate;
+      return axisLabelOffset;
     };
-    axisLabelRotate.labelRotate = (...args) => {
+    axisLabelOffset.labelOffsetDepth = (...args) => {
       if (!args.length) {
-        return labelRotate;
+        return labelOffsetDepth;
       }
-      labelRotate = args[0];
-      return axisLabelRotate;
+      labelOffsetDepth = args[0];
+      return axisLabelOffset;
     };
-    rebindAll_default(axisLabelRotate, adaptee, exclude_default("decorate"));
-    return axisLabelRotate;
+    rebindAll_default(axisLabelOffset, adaptee, exclude_default("decorate"));
+    return axisLabelOffset;
   };
 
   // src/components/draw/oriented_axis.svelte
@@ -4032,11 +4005,11 @@
     let transform = "0,0";
     const positionedAxis = (scale2) => {
       if (position === "top") {
-        return axisLabelRotate_default(axisTop(scale2));
+        return axisLabelOffset_default(axisTop(scale2));
       } else if (position == "right") {
         return axisRight(scale2);
       } else if (position === "bottom") {
-        return axisLabelRotate_default(axisBottom(scale2));
+        return axisLabelOffset_default(axisBottom(scale2));
       } else if (position == "left") {
         return axisLeft(scale2);
       }

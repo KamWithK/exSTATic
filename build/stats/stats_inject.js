@@ -4034,11 +4034,11 @@
       if (position === "top") {
         return axisLabelRotate_default(axisTop(scale2));
       } else if (position == "right") {
-        return axisLabelRotate_default(axisRight(scale2));
+        return axisRight(scale2);
       } else if (position === "bottom") {
         return axisLabelRotate_default(axisBottom(scale2));
       } else if (position == "left") {
-        return axisLabelRotate_default(axisLeft(scale2));
+        return axisLeft(scale2);
       }
     };
     const transitionAxis = () => {

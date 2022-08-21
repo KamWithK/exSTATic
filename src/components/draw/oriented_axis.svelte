@@ -18,13 +18,13 @@
             return axisLabelRotate(axisTop(scale))
         }
         else if (position == "right") {
-            return axisLabelRotate(axisRight(scale))
+            return axisRight(scale)
         }
         else if (position === "bottom") {
             return axisLabelRotate(axisBottom(scale))
         }
         else if (position == "left") {
-            return axisLabelRotate(axisLeft(scale))
+            return axisLeft(scale)
         }
     }
 

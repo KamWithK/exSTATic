@@ -7201,15 +7201,15 @@
   var import_iwanthue = __toESM(require_iwanthue());
   function create_if_block4(ctx) {
     let line;
-    let updating_x_get;
-    let updating_y_get;
+    let updating_xGet;
+    let updating_yGet;
     let updating_x_scale;
     let updating_y_scale;
     let current;
-    function line_x_get_binding(value) {
+    function line_xGet_binding(value) {
       ctx[42](value);
     }
-    function line_y_get_binding(value) {
+    function line_yGet_binding(value) {
       ctx[43](value);
     }
     function line_x_scale_binding(value) {
@@ -7220,10 +7220,10 @@
     }
     let line_props = { data: ctx[0] };
     if (ctx[17] !== void 0) {
-      line_props.x_get = ctx[17];
+      line_props.xGet = ctx[17];
     }
     if (ctx[19] !== void 0) {
-      line_props.y_get = ctx[19];
+      line_props.yGet = ctx[19];
     }
     if (ctx[16] !== void 0) {
       line_props.x_scale = ctx[16];
@@ -7232,8 +7232,8 @@
       line_props.y_scale = ctx[18];
     }
     line = new line_default2({ props: line_props });
-    binding_callbacks.push(() => bind(line, "x_get", line_x_get_binding));
-    binding_callbacks.push(() => bind(line, "y_get", line_y_get_binding));
+    binding_callbacks.push(() => bind(line, "xGet", line_xGet_binding));
+    binding_callbacks.push(() => bind(line, "yGet", line_yGet_binding));
     binding_callbacks.push(() => bind(line, "x_scale", line_x_scale_binding));
     binding_callbacks.push(() => bind(line, "y_scale", line_y_scale_binding));
     return {
@@ -7248,15 +7248,15 @@
         const line_changes = {};
         if (dirty[0] & 1)
           line_changes.data = ctx2[0];
-        if (!updating_x_get && dirty[0] & 131072) {
-          updating_x_get = true;
-          line_changes.x_get = ctx2[17];
-          add_flush_callback(() => updating_x_get = false);
+        if (!updating_xGet && dirty[0] & 131072) {
+          updating_xGet = true;
+          line_changes.xGet = ctx2[17];
+          add_flush_callback(() => updating_xGet = false);
         }
-        if (!updating_y_get && dirty[0] & 524288) {
-          updating_y_get = true;
-          line_changes.y_get = ctx2[19];
-          add_flush_callback(() => updating_y_get = false);
+        if (!updating_yGet && dirty[0] & 524288) {
+          updating_yGet = true;
+          line_changes.yGet = ctx2[19];
+          add_flush_callback(() => updating_yGet = false);
         }
         if (!updating_x_scale && dirty[0] & 65536) {
           updating_x_scale = true;
@@ -7674,14 +7674,14 @@
     let [height, width, margin] = [1e3, 1200, 50];
     let [x_range, y_range] = [[0, 0], [0, 0]];
     let r_scale;
-    let x_scale, x_get;
-    let y_scale, y_get;
+    let x_scale, xGet;
+    let y_scale, yGet;
     let mapped_data;
     const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")];
     let mouse_move, mouse_out;
     function axis0_get_binding(value) {
-      x_get = value;
-      $$invalidate(17, x_get);
+      xGet = value;
+      $$invalidate(17, xGet);
     }
     function axis0_scale_binding(value) {
       x_scale = value;
@@ -7700,8 +7700,8 @@
       $$invalidate(15, width);
     }
     function axis1_get_binding(value) {
-      y_get = value;
-      $$invalidate(19, y_get);
+      yGet = value;
+      $$invalidate(19, yGet);
     }
     function axis1_scale_binding(value) {
       y_scale = value;
@@ -7719,13 +7719,13 @@
       width = value;
       $$invalidate(15, width);
     }
-    function line_x_get_binding(value) {
-      x_get = value;
-      $$invalidate(17, x_get);
+    function line_xGet_binding(value) {
+      xGet = value;
+      $$invalidate(17, xGet);
     }
-    function line_y_get_binding(value) {
-      y_get = value;
-      $$invalidate(19, y_get);
+    function line_yGet_binding(value) {
+      yGet = value;
+      $$invalidate(19, yGet);
     }
     function line_x_scale_binding(value) {
       x_scale = value;
@@ -7824,8 +7824,8 @@
       if ($$self.$$.dirty[0] & 1343172641 | $$self.$$.dirty[1] & 1) {
         $:
           $$invalidate(22, mapped_data = data.map((d, i) => ({
-            "x": x_scale === void 0 ? 0 : x_get(d),
-            "y": y_scale === void 0 ? 0 : y_get(d),
+            "x": x_scale === void 0 ? 0 : xGet(d),
+            "y": y_scale === void 0 ? 0 : yGet(d),
             "r": r_accessor !== void 0 ? r_scale(r_accessor(d)) : radius,
             "c": hues[groups2.indexOf(c_accessor(d))],
             i
@@ -7850,9 +7850,9 @@
       height,
       width,
       x_scale,
-      x_get,
+      xGet,
       y_scale,
-      y_get,
+      yGet,
       x_range,
       y_range,
       mapped_data,
@@ -7875,8 +7875,8 @@
       axis1_range_binding,
       axis1_height_binding,
       axis1_width_binding,
-      line_x_get_binding,
-      line_y_get_binding,
+      line_xGet_binding,
+      line_yGet_binding,
       line_x_scale_binding,
       line_y_scale_binding,
       popup_mouse_move_binding,

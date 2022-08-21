@@ -48,13 +48,13 @@
         .domain(extent(data, r_accessor))
         .range([0, radius])
 
-    let x_scale, x_get
-    let y_scale, y_get
+    let x_scale, xGet
+    let y_scale, yGet
 
     let mapped_data
     $: mapped_data = data.map((d, i) => ({
-        "x": x_scale === undefined ? 0 : x_get(d),
-        "y": y_scale === undefined ? 0 : y_get(d),
+        "x": x_scale === undefined ? 0 : xGet(d),
+        "y": y_scale === undefined ? 0 : yGet(d),
         "r": r_accessor !== undefined ? r_scale(r_accessor(d)) : radius,
         "c": hues[groups.indexOf(c_accessor(d))],
         "i": i
@@ -70,13 +70,13 @@
 
     <figure bind:clientHeight={height} bind:clientWidth={width} class="flex flex-row items-center w-full">
         <svg height="100%" width="100%" class="max-h-[80vh]" style="resize: both;" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">
-            <Axis bind:get={x_get} bind:scale={x_scale} scaleType={xScaleType} {data} accessor={x_accessor} formatter={x_formatter} bind:range={x_range} label={x_label} bind:height bind:width {margin} position="bottom"/>
-            <Axis bind:get={y_get} bind:scale={y_scale} scaleType={yScaleType} {data} accessor={y_accessor} formatter={y_formatter} bind:range={y_range} label={y_label} bind:height bind:width {margin} position="left"/>
+            <Axis bind:get={xGet} bind:scale={x_scale} scaleType={xScaleType} {data} accessor={x_accessor} formatter={x_formatter} bind:range={x_range} label={x_label} bind:height bind:width {margin} position="bottom"/>
+            <Axis bind:get={yGet} bind:scale={y_scale} scaleType={yScaleType} {data} accessor={y_accessor} formatter={y_formatter} bind:range={y_range} label={y_label} bind:height bind:width {margin} position="left"/>
 
             <Circles {mapped_data} {mouse_move} {mouse_out}/>
 
             {#if draw_line}
-                <Line {data} bind:x_get bind:y_get bind:x_scale={x_scale} bind:y_scale={y_scale}/>
+                <Line {data} bind:xGet bind:yGet bind:x_scale={x_scale} bind:y_scale={y_scale}/>
             {/if}
         </svg>
 

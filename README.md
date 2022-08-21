@@ -71,6 +71,8 @@ By default it is pre-set to pick up any manga within a folder anywhere called "M
 Feel free to fork this repository, create GitHub issues and pull requests.
 More than happy to take a look into anything/approve PRs 😄!
 
+Here's [my Ko-Fi](https://ko-fi.com/kamwithk) if you'd like to support.
+
 # Credits
 Huge shoutout to everyone who helped on this project.
 Thanks to Mae for helping design the UI (making sure it looks lit), helping with testing and giving lots of ideas for potentially useful features.

@@ -16,6 +16,10 @@ The core web extension lies in this repository, whilst additional addons allow i
 ![Main UI](example_screenshots/main_ui.jpg)
 ![Mokuro UI](example_screenshots/mokuro_ui.png)
 
+# Download Links
+* Core WebExtension - [exSTATic](https://github.com/KamWithK/exSTATic/releases/latest)
+* Textractor Extension - [TextractorSender](https://github.com/KamWithK/TextractorSender/releases/latest)
+
 # Install Instructions
 
 Setup is split into two parts:
@@ -46,6 +50,8 @@ exSTATic works just like any other reading application for the most part, with a
 ![Pace Per](example_screenshots/pace_per_graph.png)
 
 *On a side note exSTATic makes use of modern technology to additionally eliminate a few other common painpoints with reading workflows like needing to use a clipboard (exSTATic doesn't use the clipboard and instead makes use of custom integrations)!*
+
+**WARNING:** Textractor needs to be open with the TextractorSender extension at all times otherwise the extension will crash
 
 # Manual Data Overrides
 

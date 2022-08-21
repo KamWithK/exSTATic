@@ -54,7 +54,7 @@
 
 	const requestImportStats = event => {
         const confirmed = confirm(
-            "Are you sure you'd like to import lines?\nThe imported lines will be inserted after the current ones in storage...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"
+            "Are you sure you'd like to import stats?\nThe imported stats will replace conflicting entries (i.e. on the same days for the same media)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"
         )
     
         if (!confirmed) return
@@ -64,7 +64,7 @@
             "dynamicTyping": true,
             "complete": async result => {
                 await importStats(result.data)
-                alert("Finished importing lines successfully!\nPlease refresh all exSTATic pages now...")
+                alert("Finished importing stats successfully!\nPlease refresh all exSTATic pages now...")
             }
         })
     }

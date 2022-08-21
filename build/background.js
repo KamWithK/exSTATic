@@ -1041,7 +1041,7 @@
       return new Date(argument);
     } else {
       if ((typeof argument === "string" || argStr === "[object String]") && typeof console !== "undefined") {
-        console.warn("Starting with v2.0.0-beta.1 date-fns doesn't accept strings as date arguments. Please use `parseISO` to parse strings. See: https://git.io/fjule");
+        console.warn("Starting with v2.0.0-beta.1 date-fns doesn't accept strings as date arguments. Please use `parseISO` to parse strings. See: https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#string-arguments");
         console.warn(new Error().stack);
       }
       return new Date(NaN);
@@ -1060,13 +1060,14 @@
 
   // node_modules/date-fns/esm/formatISO/index.js
   function formatISO(date, options) {
+    var _options$format, _options$representati;
     requiredArgs(1, arguments);
     var originalDate = toDate(date);
     if (isNaN(originalDate.getTime())) {
       throw new RangeError("Invalid time value");
     }
-    var format = !(options !== null && options !== void 0 && options.format) ? "extended" : String(options.format);
-    var representation = !(options !== null && options !== void 0 && options.representation) ? "complete" : String(options.representation);
+    var format = String((_options$format = options === null || options === void 0 ? void 0 : options.format) !== null && _options$format !== void 0 ? _options$format : "extended");
+    var representation = String((_options$representati = options === null || options === void 0 ? void 0 : options.representation) !== null && _options$representati !== void 0 ? _options$representati : "complete");
     if (format !== "extended" && format !== "basic") {
       throw new RangeError("format must be 'extended' or 'basic'");
     }

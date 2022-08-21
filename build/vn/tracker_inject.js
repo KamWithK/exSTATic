@@ -1572,7 +1572,7 @@
       return new Date(argument);
     } else {
       if ((typeof argument === "string" || argStr === "[object String]") && typeof console !== "undefined") {
-        console.warn("Starting with v2.0.0-beta.1 date-fns doesn't accept strings as date arguments. Please use `parseISO` to parse strings. See: https://git.io/fjule");
+        console.warn("Starting with v2.0.0-beta.1 date-fns doesn't accept strings as date arguments. Please use `parseISO` to parse strings. See: https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#string-arguments");
         console.warn(new Error().stack);
       }
       return new Date(NaN);
@@ -1591,13 +1591,14 @@
 
   // node_modules/date-fns/esm/formatISO/index.js
   function formatISO(date, options) {
+    var _options$format, _options$representati;
     requiredArgs(1, arguments);
     var originalDate = toDate(date);
     if (isNaN(originalDate.getTime())) {
       throw new RangeError("Invalid time value");
     }
-    var format = !(options !== null && options !== void 0 && options.format) ? "extended" : String(options.format);
-    var representation = !(options !== null && options !== void 0 && options.representation) ? "complete" : String(options.representation);
+    var format = String((_options$format = options === null || options === void 0 ? void 0 : options.format) !== null && _options$format !== void 0 ? _options$format : "extended");
+    var representation = String((_options$representati = options === null || options === void 0 ? void 0 : options.representation) !== null && _options$representati !== void 0 ? _options$representati : "complete");
     if (format !== "extended" && format !== "basic") {
       throw new RangeError("format must be 'extended' or 'basic'");
     }
@@ -2579,8 +2580,7 @@
     }
   };
 
-  // src/data_wrangling/data_extraction.js
-  var import_papaparse = __toESM(require_papaparse_min());
+  // src/data_wrangling/data_extraction.ts
   var browser5 = require_browser_polyfill();
   async function getDateData(date) {
     const uuids = (await browser5.storage.local.get(date))[date];
@@ -2613,15 +2613,6 @@
     const data = await Promise.all(dates["immersion_dates"].map(getDateData));
     return data.flat();
   }
-  async function exportStats() {
-    const data = await getData();
-    chrome.runtime.sendMessage({
-      "action": "export_csv",
-      "csv": [(0, import_papaparse.unparse)(data)],
-      "blob_options": { "type": "text/csv" },
-      "filename": "exSTATic_stats.csv"
-    });
-  }
   async function getInstanceData([uuid, details]) {
     if (!details.hasOwnProperty("last_line_added")) {
       return;
@@ -2638,20 +2629,36 @@
       };
     });
   }
+
+  // src/data_wrangling/data_export.ts
+  var import_papaparse = __toESM(require_papaparse_min());
+  var browser6 = require_browser_polyfill();
+  async function exportStats() {
+    const data = await getData();
+    browser6.runtime.sendMessage({
+      "action": "export_csv",
+      "csv": [(0, import_papaparse.unparse)(data)],
+      "blob_options": { "type": "text/csv" },
+      "filename": "exSTATic_stats.csv"
+    });
+  }
   async function exportLines() {
-    const media = await browser5.storage.local.get("media");
+    const media = await browser6.storage.local.get("media");
     if (!media.hasOwnProperty("media")) {
       return;
     }
-    const detail_entries = await browser5.storage.local.get(Object.values(media["media"]));
+    const detail_entries = await browser6.storage.local.get(Object.values(media["media"]));
     const data = await Promise.all(Object.entries(detail_entries).map(getInstanceData));
-    chrome.runtime.sendMessage({
+    browser6.runtime.sendMessage({
       "action": "export_csv",
       "csv": [(0, import_papaparse.unparse)(data.flat())],
       "blob_options": { "type": "text/csv;charset=utf-8" },
       "filename": "exSTATic_lines.csv"
     });
   }
+
+  // src/data_wrangling/data_import.ts
+  var browser7 = require_browser_polyfill();
   async function importStats(data) {
     for (const entry of data) {
       if (!entry.hasOwnProperty("type") || !entry.hasOwnProperty("date") || !entry.hasOwnProperty("given_identifier")) {
@@ -2696,11 +2703,11 @@
       await instance_storage.updateDetails({
         "last_line_added": next_line
       });
-      await browser5.storage.local.set(line_entry);
+      await browser7.storage.local.set(line_entry);
     }
   }
 
-  // src/components/stat_bar.svelte
+  // src/components/interface/stat_bar.svelte
   function create_else_block(ctx) {
     let t;
     return {
@@ -2960,7 +2967,7 @@
   };
   var stat_bar_default = Stat_bar;
 
-  // src/components/menu_option.svelte
+  // src/components/interface/menu_option.svelte
   function create_if_block2(ctx) {
     let t0_value = " ";
     let t0;
@@ -3176,7 +3183,7 @@
   };
   var menu_option_default = Menu_option;
 
-  // src/components/menu_bar.svelte
+  // src/components/interface/menu_bar.svelte
   function fallback_block(ctx) {
     let menuoption0;
     let t0;
@@ -3342,7 +3349,7 @@
   };
   var menu_bar_default = Menu_bar;
 
-  // src/components/line.svelte
+  // src/components/interface/line.svelte
   function create_fragment4(ctx) {
     let div;
     let p;
@@ -3429,7 +3436,7 @@
   };
   var line_default = Line;
 
-  // src/components/line_holder.svelte
+  // src/components/interface/line_holder.svelte
   function get_each_context(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[6] = list[i][0];
@@ -4091,7 +4098,7 @@
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var browser7 = require_browser_polyfill();
+    var browser9 = require_browser_polyfill();
     let { vn_storage } = $$props;
     let title = "Game";
     let lines = [];
@@ -4149,7 +4156,7 @@
       });
     };
     const openStats = () => {
-      browser7.runtime.sendMessage({
+      browser9.runtime.sendMessage({
         "action": "open_tab",
         "url": "https://kamwithk.github.io/exSTATic/stats.html"
       });
@@ -4230,10 +4237,10 @@ Char and line statistics will be modified accordingly however time read won't ch
 
   // src/vn/tracker_inject.ts
   console.log("Injected");
-  var browser6 = require_browser_polyfill();
+  var browser8 = require_browser_polyfill();
   var setup = async () => {
     const vn_storage = await VNStorage.build(true);
-    const port = browser6.runtime.connect({ "name": "vn_lines" });
+    const port = browser8.runtime.connect({ "name": "vn_lines" });
     port.onMessage.addListener(async (data) => {
       await vn_storage.changeInstance(void 0, data["process_path"]);
       await vn_storage.addLine(data["line"], data["date"], data["time"]);

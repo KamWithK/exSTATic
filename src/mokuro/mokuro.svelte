@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { MokuroStorage } from "./mokuro_storage.js"
-    import StatBar from "../components/stat_bar.svelte"
+    import StatBar from "../components/interface/stat_bar.svelte"
     
     export let mokuro_storage: MokuroStorage
 

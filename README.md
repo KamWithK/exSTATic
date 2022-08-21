@@ -5,7 +5,7 @@
 exSTATic aims to make it easy for language learners to immerse in their target language without sacrificing high quality progress tracking.
 exSTATic is a new project currently in its early stages and so is currently focused on smoothening out the Visual Novel (VN) reading experience.
 
-The core web extension lies in this repository, whilst additional addons allow integration with various platoforms:
+The core web extension lies in this repository, whilst additional addons allow integration with various platforms:
 
 * [TextractorSender](https://github.com/KamWithK/TextractorSender) - hooks VN lines and send them directly to exSTATic (or potentially other applications which wish to use the WebSocket connection, this doesn't impede/use a clipboard)
 * Mokuro - included in the core extension
@@ -55,7 +55,7 @@ exSTATic works just like any other reading application for the most part, with a
 
 # Manual Data Overrides
 
-If you'd like to bring old data into exSTATic or modify the records in any way simply use teh built in import/export buttons on the VN tracker UI (this works for all media forms).
+If you'd like to bring old data into exSTATic or modify the records in any way simply use the built in import/export buttons on the VN tracker UI (this works for all media forms).
 Data should be formatted as csv and must look identical to the export (look at an export to see how it should look, some columns may be ignored).
 
 # Mokuro Integration Notes

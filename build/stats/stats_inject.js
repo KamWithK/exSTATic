@@ -6458,14 +6458,14 @@
       formatter: ctx[3],
       label: ctx[4]
     };
-    if (ctx[2] !== void 0) {
-      lineaxis_props.scale = ctx[2];
-    }
     if (ctx[0] !== void 0) {
-      lineaxis_props.height = ctx[0];
+      lineaxis_props.scale = ctx[0];
     }
     if (ctx[1] !== void 0) {
-      lineaxis_props.width = ctx[1];
+      lineaxis_props.height = ctx[1];
+    }
+    if (ctx[2] !== void 0) {
+      lineaxis_props.width = ctx[2];
     }
     lineaxis = new oriented_axis_default({ props: lineaxis_props });
     binding_callbacks.push(() => bind(lineaxis, "scale", lineaxis_scale_binding));
@@ -6489,19 +6489,19 @@
           lineaxis_changes.formatter = ctx2[3];
         if (dirty & 16)
           lineaxis_changes.label = ctx2[4];
-        if (!updating_scale && dirty & 4) {
+        if (!updating_scale && dirty & 1) {
           updating_scale = true;
-          lineaxis_changes.scale = ctx2[2];
+          lineaxis_changes.scale = ctx2[0];
           add_flush_callback(() => updating_scale = false);
         }
-        if (!updating_height && dirty & 1) {
+        if (!updating_height && dirty & 2) {
           updating_height = true;
-          lineaxis_changes.height = ctx2[0];
+          lineaxis_changes.height = ctx2[1];
           add_flush_callback(() => updating_height = false);
         }
-        if (!updating_width && dirty & 2) {
+        if (!updating_width && dirty & 4) {
           updating_width = true;
-          lineaxis_changes.width = ctx2[1];
+          lineaxis_changes.width = ctx2[2];
           add_flush_callback(() => updating_width = false);
         }
         lineaxis.$set(lineaxis_changes);
@@ -6534,15 +6534,15 @@
     const get = (d) => scale(accessor(d));
     function lineaxis_scale_binding(value) {
       scale = value;
-      $$invalidate(2, scale), $$invalidate(7, scaleType), $$invalidate(8, data), $$invalidate(9, accessor), $$invalidate(10, range2);
+      $$invalidate(0, scale), $$invalidate(7, scaleType), $$invalidate(8, data), $$invalidate(9, accessor), $$invalidate(10, range2);
     }
     function lineaxis_height_binding(value) {
       height = value;
-      $$invalidate(0, height);
+      $$invalidate(1, height);
     }
     function lineaxis_width_binding(value) {
       width = value;
-      $$invalidate(1, width);
+      $$invalidate(2, width);
     }
     $$self.$$set = ($$props2) => {
       if ("scaleType" in $$props2)
@@ -6558,26 +6558,31 @@
       if ("label" in $$props2)
         $$invalidate(4, label = $$props2.label);
       if ("height" in $$props2)
-        $$invalidate(0, height = $$props2.height);
+        $$invalidate(1, height = $$props2.height);
       if ("width" in $$props2)
-        $$invalidate(1, width = $$props2.width);
+        $$invalidate(2, width = $$props2.width);
       if ("margin" in $$props2)
         $$invalidate(5, margin = $$props2.margin);
       if ("position" in $$props2)
         $$invalidate(6, position = $$props2.position);
       if ("scale" in $$props2)
-        $$invalidate(2, scale = $$props2.scale);
+        $$invalidate(0, scale = $$props2.scale);
     };
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 1920) {
         $:
-          $$invalidate(2, scale = scaleType().domain(scaleType === band ? data.map(accessor) : extent(data, accessor)).range(range2));
+          $$invalidate(0, scale = scaleType().domain(scaleType === band ? data.map(accessor) : extent(data, accessor)).range(range2));
+      }
+      if ($$self.$$.dirty & 1) {
+        $:
+          if (scale.nice !== void 0)
+            $$invalidate(0, scale = scale.nice());
       }
     };
     return [
+      scale,
       height,
       width,
-      scale,
       formatter,
       label,
       margin,
@@ -6602,11 +6607,11 @@
         formatter: 3,
         range: 10,
         label: 4,
-        height: 0,
-        width: 1,
+        height: 1,
+        width: 2,
         margin: 5,
         position: 6,
-        scale: 2,
+        scale: 0,
         get: 11
       });
     }

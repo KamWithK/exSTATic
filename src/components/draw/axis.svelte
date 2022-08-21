@@ -22,6 +22,7 @@
     $: scale = scaleType()
         .domain(scaleType === scaleBand ? data.map(accessor) : extent(data, accessor))
         .range(range)
+    $: if (scale.nice !== undefined) scale = scale.nice()
 
     export const get = (d: any) => scale(accessor(d))
 </script>

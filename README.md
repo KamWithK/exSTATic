@@ -41,7 +41,8 @@ exSTATic works just like any other reading application for the most part, with a
 
 1. **Activity Timer** - Whenever you read what you're taking in will be recorded in the background and as you stop the time will stop being recorded
 2. **Inactivity Indicators** - A slight blur over your media is added when the timer is off to ensure you always read with it on and have it off afterwards
-3. **Stats and Graphs** - Data is taken for each media on a daily basis, and progress is visualised in various ways for various timeframes
+3. **Manual Timer Toggling** - Double click the screen to manually toggle the timer on/off
+4. **Stats and Graphs** - Data is taken for each media on a daily basis, and progress is visualised in various ways for various timeframes
 
 ![Immersion Gains](example_screenshots/immersion_gains_graph.png)
 ![Immersion Quantity](example_screenshots/immersion_quantity_graph.png)

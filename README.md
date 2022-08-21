@@ -14,6 +14,7 @@ The core web extension lies in this repository, whilst additional addons allow i
 *Going forwards in the future, to account for other immersion mediums, integrations with other platforms like TTU, YouTube and maybe even Anki will be considered*
 
 ![Main UI](example_screenshots/main_ui.jpg)
+![Mokuro UI](example_screenshots/mokuro_ui.png)
 
 # Install Instructions
 

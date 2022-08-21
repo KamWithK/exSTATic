@@ -1,12 +1,16 @@
 <script lang="ts">
     export let data
     export let xGet, yGet, rGet, cGet
+    export let x_scale, y_scale
 
     export let mouse_move, mouse_out
 
     let ready: boolean = false
-    $: ready = xGet !== undefined && yGet !== undefined
+    $: ready = x_scale !== undefined && y_scale !== undefined
         && rGet !== undefined && cGet !== undefined
+
+    // Forced refreshes on resize
+    $: if (x_scale && y_scale) data = data
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->

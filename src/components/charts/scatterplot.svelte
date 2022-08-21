@@ -67,10 +67,10 @@
             <Axis bind:get={xGet} bind:scale={x_scale} scaleType={xScaleType} {data} accessor={x_accessor} formatter={x_formatter} bind:range={x_range} label={x_label} bind:height bind:width {margin} position="bottom"/>
             <Axis bind:get={yGet} bind:scale={y_scale} scaleType={yScaleType} {data} accessor={y_accessor} formatter={y_formatter} bind:range={y_range} label={y_label} bind:height bind:width {margin} position="left"/>
 
-            <Circles {data} {xGet} {yGet} {rGet} {cGet} {mouse_move} {mouse_out}/>
+            <Circles {data} {xGet} {yGet} {rGet} {cGet} {x_scale} {y_scale} {mouse_move} {mouse_out}/>
 
             {#if draw_line}
-                <Line {data} bind:xGet bind:yGet bind:x_scale={x_scale} bind:y_scale={y_scale}/>
+                <Line {data} {xGet} {yGet} {x_scale} {y_scale}/>
             {/if}
         </svg>
 

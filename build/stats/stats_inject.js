@@ -6692,8 +6692,8 @@
   // src/components/draw/circles.svelte
   function get_each_context(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[8] = list[i];
-    child_ctx[10] = i;
+    child_ctx[10] = list[i];
+    child_ctx[12] = i;
     return child_ctx;
   }
   function create_if_block3(ctx) {
@@ -6755,11 +6755,11 @@
     return {
       c() {
         circle = svg_element("circle");
-        attr(circle, "data-index", circle_data_index_value = ctx[10]);
-        attr(circle, "cx", circle_cx_value = ctx[1](ctx[8]));
-        attr(circle, "cy", circle_cy_value = ctx[2](ctx[8]));
-        attr(circle, "r", circle_r_value = ctx[3](ctx[8]));
-        attr(circle, "fill", circle_fill_value = ctx[4](ctx[8]));
+        attr(circle, "data-index", circle_data_index_value = ctx[12]);
+        attr(circle, "cx", circle_cx_value = ctx[1](ctx[10]));
+        attr(circle, "cy", circle_cy_value = ctx[2](ctx[10]));
+        attr(circle, "r", circle_r_value = ctx[3](ctx[10]));
+        attr(circle, "fill", circle_fill_value = ctx[4](ctx[10]));
         attr(circle, "fill-opacity", "0.8");
         attr(circle, "class", "z-10");
       },
@@ -6781,16 +6781,16 @@
       },
       p(new_ctx, dirty) {
         ctx = new_ctx;
-        if (dirty & 3 && circle_cx_value !== (circle_cx_value = ctx[1](ctx[8]))) {
+        if (dirty & 3 && circle_cx_value !== (circle_cx_value = ctx[1](ctx[10]))) {
           attr(circle, "cx", circle_cx_value);
         }
-        if (dirty & 5 && circle_cy_value !== (circle_cy_value = ctx[2](ctx[8]))) {
+        if (dirty & 5 && circle_cy_value !== (circle_cy_value = ctx[2](ctx[10]))) {
           attr(circle, "cy", circle_cy_value);
         }
-        if (dirty & 9 && circle_r_value !== (circle_r_value = ctx[3](ctx[8]))) {
+        if (dirty & 9 && circle_r_value !== (circle_r_value = ctx[3](ctx[10]))) {
           attr(circle, "r", circle_r_value);
         }
-        if (dirty & 17 && circle_fill_value !== (circle_fill_value = ctx[4](ctx[8]))) {
+        if (dirty & 17 && circle_fill_value !== (circle_fill_value = ctx[4](ctx[10]))) {
           attr(circle, "fill", circle_fill_value);
         }
       },
@@ -6843,6 +6843,7 @@
   function instance4($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { xGet, yGet, rGet, cGet } = $$props;
+    let { x_scale, y_scale } = $$props;
     let { mouse_move, mouse_out } = $$props;
     let ready = false;
     $$self.$$set = ($$props2) => {
@@ -6856,18 +6857,27 @@
         $$invalidate(3, rGet = $$props2.rGet);
       if ("cGet" in $$props2)
         $$invalidate(4, cGet = $$props2.cGet);
+      if ("x_scale" in $$props2)
+        $$invalidate(8, x_scale = $$props2.x_scale);
+      if ("y_scale" in $$props2)
+        $$invalidate(9, y_scale = $$props2.y_scale);
       if ("mouse_move" in $$props2)
         $$invalidate(5, mouse_move = $$props2.mouse_move);
       if ("mouse_out" in $$props2)
         $$invalidate(6, mouse_out = $$props2.mouse_out);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 30) {
+      if ($$self.$$.dirty & 792) {
         $:
-          $$invalidate(7, ready = xGet !== void 0 && yGet !== void 0 && rGet !== void 0 && cGet !== void 0);
+          $$invalidate(7, ready = x_scale !== void 0 && y_scale !== void 0 && rGet !== void 0 && cGet !== void 0);
+      }
+      if ($$self.$$.dirty & 769) {
+        $:
+          if (x_scale && y_scale)
+            $$invalidate(0, data), $$invalidate(8, x_scale), $$invalidate(9, y_scale);
       }
     };
-    return [data, xGet, yGet, rGet, cGet, mouse_move, mouse_out, ready];
+    return [data, xGet, yGet, rGet, cGet, mouse_move, mouse_out, ready, x_scale, y_scale];
   }
   var Circles = class extends SvelteComponent {
     constructor(options) {
@@ -6878,6 +6888,8 @@
         yGet: 2,
         rGet: 3,
         cGet: 4,
+        x_scale: 8,
+        y_scale: 9,
         mouse_move: 5,
         mouse_out: 6
       });
@@ -6931,8 +6943,8 @@
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 62) {
         $:
-          if (xGet && yGet)
-            $$invalidate(0, line_path = line_default().curve(monotoneX).x(xGet).y(yGet)(data)), x_scale, y_scale;
+          if (x_scale && y_scale)
+            $$invalidate(0, line_path = line_default().curve(monotoneX).x(xGet).y(yGet)(data));
       }
     };
     return [line_path, data, xGet, yGet, x_scale, y_scale];
@@ -7324,41 +7336,16 @@
   var import_iwanthue = __toESM(require_iwanthue());
   function create_if_block5(ctx) {
     let line;
-    let updating_xGet;
-    let updating_yGet;
-    let updating_x_scale;
-    let updating_y_scale;
     let current;
-    function line_xGet_binding(value) {
-      ctx[42](value);
-    }
-    function line_yGet_binding(value) {
-      ctx[43](value);
-    }
-    function line_x_scale_binding(value) {
-      ctx[44](value);
-    }
-    function line_y_scale_binding(value) {
-      ctx[45](value);
-    }
-    let line_props = { data: ctx[0] };
-    if (ctx[19] !== void 0) {
-      line_props.xGet = ctx[19];
-    }
-    if (ctx[21] !== void 0) {
-      line_props.yGet = ctx[21];
-    }
-    if (ctx[18] !== void 0) {
-      line_props.x_scale = ctx[18];
-    }
-    if (ctx[20] !== void 0) {
-      line_props.y_scale = ctx[20];
-    }
-    line = new line_default2({ props: line_props });
-    binding_callbacks.push(() => bind(line, "xGet", line_xGet_binding));
-    binding_callbacks.push(() => bind(line, "yGet", line_yGet_binding));
-    binding_callbacks.push(() => bind(line, "x_scale", line_x_scale_binding));
-    binding_callbacks.push(() => bind(line, "y_scale", line_y_scale_binding));
+    line = new line_default2({
+      props: {
+        data: ctx[0],
+        xGet: ctx[19],
+        yGet: ctx[21],
+        x_scale: ctx[18],
+        y_scale: ctx[20]
+      }
+    });
     return {
       c() {
         create_component(line.$$.fragment);
@@ -7371,26 +7358,14 @@
         const line_changes = {};
         if (dirty[0] & 1)
           line_changes.data = ctx2[0];
-        if (!updating_xGet && dirty[0] & 524288) {
-          updating_xGet = true;
+        if (dirty[0] & 524288)
           line_changes.xGet = ctx2[19];
-          add_flush_callback(() => updating_xGet = false);
-        }
-        if (!updating_yGet && dirty[0] & 2097152) {
-          updating_yGet = true;
+        if (dirty[0] & 2097152)
           line_changes.yGet = ctx2[21];
-          add_flush_callback(() => updating_yGet = false);
-        }
-        if (!updating_x_scale && dirty[0] & 262144) {
-          updating_x_scale = true;
+        if (dirty[0] & 262144)
           line_changes.x_scale = ctx2[18];
-          add_flush_callback(() => updating_x_scale = false);
-        }
-        if (!updating_y_scale && dirty[0] & 1048576) {
-          updating_y_scale = true;
+        if (dirty[0] & 1048576)
           line_changes.y_scale = ctx2[20];
-          add_flush_callback(() => updating_y_scale = false);
-        }
         line.$set(line_changes);
       },
       i(local) {
@@ -7534,6 +7509,8 @@
         yGet: ctx[21],
         rGet: ctx[25],
         cGet: ctx[26],
+        x_scale: ctx[18],
+        y_scale: ctx[20],
         mouse_move: ctx[22],
         mouse_out: ctx[23]
       }
@@ -7546,10 +7523,10 @@
       }
     });
     function popup_mouse_move_binding(value) {
-      ctx[46](value);
+      ctx[42](value);
     }
     function popup_mouse_out_binding(value) {
-      ctx[47](value);
+      ctx[43](value);
     }
     let popup_props = {
       data: ctx[0],
@@ -7594,7 +7571,7 @@
         attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[14] + " " + ctx[13]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
         attr(figure, "class", "flex flex-row items-center w-full");
-        add_render_callback(() => ctx[48].call(figure));
+        add_render_callback(() => ctx[44].call(figure));
         attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
@@ -7613,7 +7590,7 @@
         mount_component(legend, figure, null);
         append(figure, t3);
         mount_component(popup, figure, null);
-        figure_resize_listener = add_resize_listener(figure, ctx[48].bind(figure));
+        figure_resize_listener = add_resize_listener(figure, ctx[44].bind(figure));
         current = true;
       },
       p(ctx2, dirty) {
@@ -7696,6 +7673,10 @@
           circles_changes.xGet = ctx2[19];
         if (dirty[0] & 2097152)
           circles_changes.yGet = ctx2[21];
+        if (dirty[0] & 262144)
+          circles_changes.x_scale = ctx2[18];
+        if (dirty[0] & 1048576)
+          circles_changes.y_scale = ctx2[20];
         if (dirty[0] & 4194304)
           circles_changes.mouse_move = ctx2[22];
         if (dirty[0] & 8388608)
@@ -7851,22 +7832,6 @@
       width = value;
       $$invalidate(14, width);
     }
-    function line_xGet_binding(value) {
-      xGet = value;
-      $$invalidate(19, xGet);
-    }
-    function line_yGet_binding(value) {
-      yGet = value;
-      $$invalidate(21, yGet);
-    }
-    function line_x_scale_binding(value) {
-      x_scale = value;
-      $$invalidate(18, x_scale);
-    }
-    function line_y_scale_binding(value) {
-      y_scale = value;
-      $$invalidate(20, y_scale);
-    }
     function popup_mouse_move_binding(value) {
       mouse_move = value;
       $$invalidate(22, mouse_move);
@@ -7997,10 +7962,6 @@
       axis1_range_binding,
       axis1_height_binding,
       axis1_width_binding,
-      line_xGet_binding,
-      line_yGet_binding,
-      line_x_scale_binding,
-      line_y_scale_binding,
       popup_mouse_move_binding,
       popup_mouse_out_binding,
       figure_elementresize_handler
@@ -8386,8 +8347,8 @@
   // src/components/draw/bars.svelte
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[9] = list[i];
-    child_ctx[11] = i;
+    child_ctx[11] = list[i];
+    child_ctx[13] = i;
     return child_ctx;
   }
   function create_if_block6(ctx) {
@@ -8449,12 +8410,12 @@
     return {
       c() {
         rect = svg_element("rect");
-        attr(rect, "data-index", rect_data_index_value = ctx[11]);
-        attr(rect, "x", rect_x_value = ctx[1](ctx[9]));
-        attr(rect, "y", rect_y_value = ctx[2](ctx[9]));
-        attr(rect, "height", rect_height_value = ctx[3](ctx[9]));
+        attr(rect, "data-index", rect_data_index_value = ctx[13]);
+        attr(rect, "x", rect_x_value = ctx[1](ctx[11]));
+        attr(rect, "y", rect_y_value = ctx[2](ctx[11]));
+        attr(rect, "height", rect_height_value = ctx[3](ctx[11]));
         attr(rect, "width", ctx[5]);
-        attr(rect, "fill", rect_fill_value = ctx[4](ctx[9]));
+        attr(rect, "fill", rect_fill_value = ctx[4](ctx[11]));
         attr(rect, "fill-opacity", "0.8");
         attr(rect, "class", "z-10");
       },
@@ -8476,19 +8437,19 @@
       },
       p(new_ctx, dirty) {
         ctx = new_ctx;
-        if (dirty & 3 && rect_x_value !== (rect_x_value = ctx[1](ctx[9]))) {
+        if (dirty & 3 && rect_x_value !== (rect_x_value = ctx[1](ctx[11]))) {
           attr(rect, "x", rect_x_value);
         }
-        if (dirty & 5 && rect_y_value !== (rect_y_value = ctx[2](ctx[9]))) {
+        if (dirty & 5 && rect_y_value !== (rect_y_value = ctx[2](ctx[11]))) {
           attr(rect, "y", rect_y_value);
         }
-        if (dirty & 9 && rect_height_value !== (rect_height_value = ctx[3](ctx[9]))) {
+        if (dirty & 9 && rect_height_value !== (rect_height_value = ctx[3](ctx[11]))) {
           attr(rect, "height", rect_height_value);
         }
         if (dirty & 32) {
           attr(rect, "width", ctx[5]);
         }
-        if (dirty & 17 && rect_fill_value !== (rect_fill_value = ctx[4](ctx[9]))) {
+        if (dirty & 17 && rect_fill_value !== (rect_fill_value = ctx[4](ctx[11]))) {
           attr(rect, "fill", rect_fill_value);
         }
       },
@@ -8541,6 +8502,7 @@
   function instance11($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { xGet, yGet, hGet, cGet } = $$props;
+    let { x_scale, y_scale } = $$props;
     let { bar_width } = $$props;
     let { mouse_move, mouse_out } = $$props;
     let ready = false;
@@ -8555,6 +8517,10 @@
         $$invalidate(3, hGet = $$props2.hGet);
       if ("cGet" in $$props2)
         $$invalidate(4, cGet = $$props2.cGet);
+      if ("x_scale" in $$props2)
+        $$invalidate(9, x_scale = $$props2.x_scale);
+      if ("y_scale" in $$props2)
+        $$invalidate(10, y_scale = $$props2.y_scale);
       if ("bar_width" in $$props2)
         $$invalidate(5, bar_width = $$props2.bar_width);
       if ("mouse_move" in $$props2)
@@ -8563,12 +8529,29 @@
         $$invalidate(7, mouse_out = $$props2.mouse_out);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 30) {
+      if ($$self.$$.dirty & 1566) {
         $:
-          $$invalidate(8, ready = xGet !== void 0 && yGet !== void 0 && hGet !== void 0 && cGet !== void 0);
+          $$invalidate(8, ready = xGet !== void 0 && yGet !== void 0 && hGet !== void 0 && cGet !== void 0), x_scale, y_scale;
+      }
+      if ($$self.$$.dirty & 1537) {
+        $:
+          if (x_scale && y_scale)
+            $$invalidate(0, data), $$invalidate(9, x_scale), $$invalidate(10, y_scale);
       }
     };
-    return [data, xGet, yGet, hGet, cGet, bar_width, mouse_move, mouse_out, ready];
+    return [
+      data,
+      xGet,
+      yGet,
+      hGet,
+      cGet,
+      bar_width,
+      mouse_move,
+      mouse_out,
+      ready,
+      x_scale,
+      y_scale
+    ];
   }
   var Bars = class extends SvelteComponent {
     constructor(options) {
@@ -8579,6 +8562,8 @@
         yGet: 2,
         hGet: 3,
         cGet: 4,
+        x_scale: 9,
+        y_scale: 10,
         bar_width: 5,
         mouse_move: 6,
         mouse_out: 7
@@ -8715,6 +8700,8 @@
         yGet: ctx[20],
         hGet: ctx[26],
         cGet: ctx[25],
+        x_scale: ctx[14],
+        y_scale: ctx[19],
         bar_width: ctx[21],
         mouse_move: ctx[22],
         mouse_out: ctx[23]
@@ -8873,6 +8860,10 @@
           bars_changes.xGet = ctx2[18];
         if (dirty[0] & 1048576)
           bars_changes.yGet = ctx2[20];
+        if (dirty[0] & 16384)
+          bars_changes.x_scale = ctx2[14];
+        if (dirty[0] & 524288)
+          bars_changes.y_scale = ctx2[19];
         if (dirty[0] & 2097152)
           bars_changes.bar_width = ctx2[21];
         if (dirty[0] & 4194304)

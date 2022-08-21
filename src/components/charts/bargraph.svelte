@@ -60,7 +60,7 @@
             <Axis bind:get={xGet} bind:scale={x_scale} scaleType={xScaleType} {data} accessor={x_accessor} formatter={x_formatter} bind:range={x_range} label={x_label} bind:height bind:width {margin} position="bottom"/>
             <Axis bind:get={yGet} bind:scale={y_scale} scaleType={yScaleType} {data} accessor={y_accessor} formatter={y_formatter} bind:range={y_range} label={y_label} bind:height bind:width {margin} position="left"/>
 
-            <Bars {data} {xGet} {yGet} {hGet} {cGet} {bar_width} {mouse_move} {mouse_out}/>
+            <Bars {data} {xGet} {yGet} {hGet} {cGet} {x_scale} {y_scale} {bar_width} {mouse_move} {mouse_out}/>
         </svg>
 
         <Legend {groups} {hues}/>

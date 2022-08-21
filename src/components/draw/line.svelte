@@ -6,11 +6,10 @@
     export let x_scale, y_scale
 
     let line_path
-    $: if (xGet && yGet) line_path = line()
+    $: if (x_scale && y_scale) line_path = line()
         .curve(curveMonotoneX)
         .x(xGet).y(yGet)
-        (data),
-        x_scale, y_scale
+        (data)
 </script>
 
 <path d={line_path} class="fill-transparent" style="stroke: grey;"/>

@@ -38,20 +38,14 @@
     $: x_range = [margin, width - margin]
     $: y_range = [height - margin, margin]
 
-    let x_scale, x_get
-    let y_scale, y_get
+    let x_scale, xGet
+    let y_scale, yGet
+
+    const cGet = d => hues[groups.indexOf(c_accessor(d))]
+    const hGet = d => y_scale === undefined ? 0 : Math.max(0, height - margin - yGet(d))
 
     let bar_width = 0
     $: if (x_scale) bar_width = x_scale.bandwidth()
-
-    let mapped_data
-    $: mapped_data = data.map((d, i) => ({
-        "x": x_scale === undefined ? 0 : x_get(d),
-        "y": y_scale === undefined ? 0 : y_get(d),
-        "h": y_scale === undefined ? 0 : Math.max(0, height - margin - y_get(d)),
-        "c": hues[groups.indexOf(c_accessor(d))],
-        "i": i
-    }))
 
     const [x_formatter, y_formatter] = [x_value => x_value, format(".2s")]
 
@@ -63,10 +57,10 @@
 
     <figure bind:clientHeight={height} bind:clientWidth={width} class="flex flex-row w-full h-full items-center">
         <svg height="100%" width="100%" class="max-h-[80vh]" style="resize: both;" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">
-            <Axis bind:get={x_get} bind:scale={x_scale} scaleType={xScaleType} {data} accessor={x_accessor} formatter={x_formatter} bind:range={x_range} label={x_label} bind:height bind:width {margin} position="bottom"/>
-            <Axis bind:get={y_get} bind:scale={y_scale} scaleType={yScaleType} {data} accessor={y_accessor} formatter={y_formatter} bind:range={y_range} label={y_label} bind:height bind:width {margin} position="left"/>
+            <Axis bind:get={xGet} bind:scale={x_scale} scaleType={xScaleType} {data} accessor={x_accessor} formatter={x_formatter} bind:range={x_range} label={x_label} bind:height bind:width {margin} position="bottom"/>
+            <Axis bind:get={yGet} bind:scale={y_scale} scaleType={yScaleType} {data} accessor={y_accessor} formatter={y_formatter} bind:range={y_range} label={y_label} bind:height bind:width {margin} position="left"/>
 
-            <Bars {mapped_data} {bar_width} {mouse_move} {mouse_out}/>
+            <Bars {data} {xGet} {yGet} {hGet} {cGet} {bar_width} {mouse_move} {mouse_out}/>
         </svg>
 
         <Legend {groups} {hues}/>

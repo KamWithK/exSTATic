@@ -2,13 +2,13 @@
     import { line, curveMonotoneX } from "d3-shape"
 
     export let data
-    export let x_get, y_get
+    export let xGet, yGet
     export let x_scale, y_scale
 
     let line_path
-    $: if (x_get && y_get) line_path = line()
+    $: if (xGet && yGet) line_path = line()
         .curve(curveMonotoneX)
-        .x(x_get).y(y_get)
+        .x(xGet).y(yGet)
         (data),
         x_scale, y_scale
 </script>

@@ -1,9 +1,21 @@
 <script lang="ts">
-    export let mapped_data
+    export let data
+    export let xGet, yGet, rGet, cGet
+
     export let mouse_move, mouse_out
+
+    let ready: boolean = false
+    $: ready = xGet !== undefined && yGet !== undefined
+        && rGet !== undefined && cGet !== undefined
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-{#each mapped_data as { x, y, r, c, i } }
-    <circle data-index={i} cx={x} cy={y} r={r} fill={c} fill-opacity=0.8 class="z-10" on:mousemove={mouse_move} on:mouseout={mouse_out}/>
-{/each}
+{#if ready}
+    {#each data as d, i }
+        <circle data-index={i}
+            cx={xGet(d)} cy={yGet(d)} r={rGet(d)}
+            fill={cGet(d)} fill-opacity=0.8 class="z-10"
+            on:mousemove={mouse_move} on:mouseout={mouse_out}
+        />
+    {/each}
+{/if}

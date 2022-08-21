@@ -6619,76 +6619,11 @@
   // src/components/draw/circles.svelte
   function get_each_context(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[3] = list[i].x;
-    child_ctx[4] = list[i].y;
-    child_ctx[5] = list[i].r;
-    child_ctx[6] = list[i].c;
-    child_ctx[7] = list[i].i;
+    child_ctx[8] = list[i];
+    child_ctx[10] = i;
     return child_ctx;
   }
-  function create_each_block(ctx) {
-    let circle;
-    let circle_data_index_value;
-    let circle_cx_value;
-    let circle_cy_value;
-    let circle_r_value;
-    let circle_fill_value;
-    let mounted;
-    let dispose;
-    return {
-      c() {
-        circle = svg_element("circle");
-        attr(circle, "data-index", circle_data_index_value = ctx[7]);
-        attr(circle, "cx", circle_cx_value = ctx[3]);
-        attr(circle, "cy", circle_cy_value = ctx[4]);
-        attr(circle, "r", circle_r_value = ctx[5]);
-        attr(circle, "fill", circle_fill_value = ctx[6]);
-        attr(circle, "fill-opacity", "0.8");
-        attr(circle, "class", "z-10");
-      },
-      m(target, anchor) {
-        insert(target, circle, anchor);
-        if (!mounted) {
-          dispose = [
-            listen(circle, "mousemove", function() {
-              if (is_function(ctx[1]))
-                ctx[1].apply(this, arguments);
-            }),
-            listen(circle, "mouseout", function() {
-              if (is_function(ctx[2]))
-                ctx[2].apply(this, arguments);
-            })
-          ];
-          mounted = true;
-        }
-      },
-      p(new_ctx, dirty) {
-        ctx = new_ctx;
-        if (dirty & 1 && circle_data_index_value !== (circle_data_index_value = ctx[7])) {
-          attr(circle, "data-index", circle_data_index_value);
-        }
-        if (dirty & 1 && circle_cx_value !== (circle_cx_value = ctx[3])) {
-          attr(circle, "cx", circle_cx_value);
-        }
-        if (dirty & 1 && circle_cy_value !== (circle_cy_value = ctx[4])) {
-          attr(circle, "cy", circle_cy_value);
-        }
-        if (dirty & 1 && circle_r_value !== (circle_r_value = ctx[5])) {
-          attr(circle, "r", circle_r_value);
-        }
-        if (dirty & 1 && circle_fill_value !== (circle_fill_value = ctx[6])) {
-          attr(circle, "fill", circle_fill_value);
-        }
-      },
-      d(detaching) {
-        if (detaching)
-          detach(circle);
-        mounted = false;
-        run_all(dispose);
-      }
-    };
-  }
-  function create_fragment4(ctx) {
+  function create_if_block3(ctx) {
     let each_1_anchor;
     let each_value = ctx[0];
     let each_blocks = [];
@@ -6708,8 +6643,8 @@
         }
         insert(target, each_1_anchor, anchor);
       },
-      p(ctx2, [dirty]) {
-        if (dirty & 7) {
+      p(ctx2, dirty) {
+        if (dirty & 127) {
           each_value = ctx2[0];
           let i;
           for (i = 0; i < each_value.length; i += 1) {
@@ -6728,8 +6663,6 @@
           each_blocks.length = each_value.length;
         }
       },
-      i: noop,
-      o: noop,
       d(detaching) {
         destroy_each(each_blocks, detaching);
         if (detaching)
@@ -6737,26 +6670,143 @@
       }
     };
   }
-  function instance4($$self, $$props, $$invalidate) {
-    let { mapped_data } = $$props;
-    let { mouse_move, mouse_out } = $$props;
-    $$self.$$set = ($$props2) => {
-      if ("mapped_data" in $$props2)
-        $$invalidate(0, mapped_data = $$props2.mapped_data);
-      if ("mouse_move" in $$props2)
-        $$invalidate(1, mouse_move = $$props2.mouse_move);
-      if ("mouse_out" in $$props2)
-        $$invalidate(2, mouse_out = $$props2.mouse_out);
+  function create_each_block(ctx) {
+    let circle;
+    let circle_data_index_value;
+    let circle_cx_value;
+    let circle_cy_value;
+    let circle_r_value;
+    let circle_fill_value;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        circle = svg_element("circle");
+        attr(circle, "data-index", circle_data_index_value = ctx[10]);
+        attr(circle, "cx", circle_cx_value = ctx[1](ctx[8]));
+        attr(circle, "cy", circle_cy_value = ctx[2](ctx[8]));
+        attr(circle, "r", circle_r_value = ctx[3](ctx[8]));
+        attr(circle, "fill", circle_fill_value = ctx[4](ctx[8]));
+        attr(circle, "fill-opacity", "0.8");
+        attr(circle, "class", "z-10");
+      },
+      m(target, anchor) {
+        insert(target, circle, anchor);
+        if (!mounted) {
+          dispose = [
+            listen(circle, "mousemove", function() {
+              if (is_function(ctx[5]))
+                ctx[5].apply(this, arguments);
+            }),
+            listen(circle, "mouseout", function() {
+              if (is_function(ctx[6]))
+                ctx[6].apply(this, arguments);
+            })
+          ];
+          mounted = true;
+        }
+      },
+      p(new_ctx, dirty) {
+        ctx = new_ctx;
+        if (dirty & 3 && circle_cx_value !== (circle_cx_value = ctx[1](ctx[8]))) {
+          attr(circle, "cx", circle_cx_value);
+        }
+        if (dirty & 5 && circle_cy_value !== (circle_cy_value = ctx[2](ctx[8]))) {
+          attr(circle, "cy", circle_cy_value);
+        }
+        if (dirty & 9 && circle_r_value !== (circle_r_value = ctx[3](ctx[8]))) {
+          attr(circle, "r", circle_r_value);
+        }
+        if (dirty & 17 && circle_fill_value !== (circle_fill_value = ctx[4](ctx[8]))) {
+          attr(circle, "fill", circle_fill_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(circle);
+        mounted = false;
+        run_all(dispose);
+      }
     };
-    return [mapped_data, mouse_move, mouse_out];
+  }
+  function create_fragment4(ctx) {
+    let if_block_anchor;
+    let if_block = ctx[7] && create_if_block3(ctx);
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (ctx2[7]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block3(ctx2);
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
+  function instance4($$self, $$props, $$invalidate) {
+    let { data } = $$props;
+    let { xGet, yGet, rGet, cGet } = $$props;
+    let { mouse_move, mouse_out } = $$props;
+    let ready = false;
+    $$self.$$set = ($$props2) => {
+      if ("data" in $$props2)
+        $$invalidate(0, data = $$props2.data);
+      if ("xGet" in $$props2)
+        $$invalidate(1, xGet = $$props2.xGet);
+      if ("yGet" in $$props2)
+        $$invalidate(2, yGet = $$props2.yGet);
+      if ("rGet" in $$props2)
+        $$invalidate(3, rGet = $$props2.rGet);
+      if ("cGet" in $$props2)
+        $$invalidate(4, cGet = $$props2.cGet);
+      if ("mouse_move" in $$props2)
+        $$invalidate(5, mouse_move = $$props2.mouse_move);
+      if ("mouse_out" in $$props2)
+        $$invalidate(6, mouse_out = $$props2.mouse_out);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 30) {
+        $:
+          $$invalidate(7, ready = xGet !== void 0 && yGet !== void 0 && rGet !== void 0 && cGet !== void 0);
+      }
+    };
+    return [data, xGet, yGet, rGet, cGet, mouse_move, mouse_out, ready];
   }
   var Circles = class extends SvelteComponent {
     constructor(options) {
       super();
       init(this, options, instance4, create_fragment4, safe_not_equal, {
-        mapped_data: 0,
-        mouse_move: 1,
-        mouse_out: 2
+        data: 0,
+        xGet: 1,
+        yGet: 2,
+        rGet: 3,
+        cGet: 4,
+        mouse_move: 5,
+        mouse_out: 6
       });
     }
   };
@@ -6790,16 +6840,16 @@
   }
   function instance5($$self, $$props, $$invalidate) {
     let { data } = $$props;
-    let { x_get, y_get } = $$props;
+    let { xGet, yGet } = $$props;
     let { x_scale, y_scale } = $$props;
     let line_path;
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)
         $$invalidate(1, data = $$props2.data);
-      if ("x_get" in $$props2)
-        $$invalidate(2, x_get = $$props2.x_get);
-      if ("y_get" in $$props2)
-        $$invalidate(3, y_get = $$props2.y_get);
+      if ("xGet" in $$props2)
+        $$invalidate(2, xGet = $$props2.xGet);
+      if ("yGet" in $$props2)
+        $$invalidate(3, yGet = $$props2.yGet);
       if ("x_scale" in $$props2)
         $$invalidate(4, x_scale = $$props2.x_scale);
       if ("y_scale" in $$props2)
@@ -6808,19 +6858,19 @@
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 62) {
         $:
-          if (x_get && y_get)
-            $$invalidate(0, line_path = line_default().curve(monotoneX).x(x_get).y(y_get)(data)), x_scale, y_scale;
+          if (xGet && yGet)
+            $$invalidate(0, line_path = line_default().curve(monotoneX).x(xGet).y(yGet)(data)), x_scale, y_scale;
       }
     };
-    return [line_path, data, x_get, y_get, x_scale, y_scale];
+    return [line_path, data, xGet, yGet, x_scale, y_scale];
   }
   var Line = class extends SvelteComponent {
     constructor(options) {
       super();
       init(this, options, instance5, create_fragment5, safe_not_equal, {
         data: 1,
-        x_get: 2,
-        y_get: 3,
+        xGet: 2,
+        yGet: 3,
         x_scale: 4,
         y_scale: 5
       });
@@ -6834,7 +6884,7 @@
     child_ctx[16] = list[i];
     return child_ctx;
   }
-  function create_if_block3(ctx) {
+  function create_if_block4(ctx) {
     let p;
     let t;
     return {
@@ -6898,7 +6948,7 @@
     let br;
     let t3;
     let div_class_value;
-    let if_block = ctx[5] != void 0 && ctx[5] !== "" && create_if_block3(ctx);
+    let if_block = ctx[5] != void 0 && ctx[5] !== "" && create_if_block4(ctx);
     let each_value = Object.keys(ctx[0]);
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
@@ -6947,7 +6997,7 @@
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
-            if_block = create_if_block3(ctx2);
+            if_block = create_if_block4(ctx2);
             if_block.c();
             if_block.m(div, t2);
           }
@@ -7199,7 +7249,7 @@
 
   // src/components/charts/scatterplot.svelte
   var import_iwanthue = __toESM(require_iwanthue());
-  function create_if_block4(ctx) {
+  function create_if_block5(ctx) {
     let line;
     let updating_xGet;
     let updating_yGet;
@@ -7219,17 +7269,17 @@
       ctx[45](value);
     }
     let line_props = { data: ctx[0] };
-    if (ctx[17] !== void 0) {
-      line_props.xGet = ctx[17];
-    }
     if (ctx[19] !== void 0) {
-      line_props.yGet = ctx[19];
+      line_props.xGet = ctx[19];
     }
-    if (ctx[16] !== void 0) {
-      line_props.x_scale = ctx[16];
+    if (ctx[21] !== void 0) {
+      line_props.yGet = ctx[21];
     }
     if (ctx[18] !== void 0) {
-      line_props.y_scale = ctx[18];
+      line_props.x_scale = ctx[18];
+    }
+    if (ctx[20] !== void 0) {
+      line_props.y_scale = ctx[20];
     }
     line = new line_default2({ props: line_props });
     binding_callbacks.push(() => bind(line, "xGet", line_xGet_binding));
@@ -7248,24 +7298,24 @@
         const line_changes = {};
         if (dirty[0] & 1)
           line_changes.data = ctx2[0];
-        if (!updating_xGet && dirty[0] & 131072) {
+        if (!updating_xGet && dirty[0] & 524288) {
           updating_xGet = true;
-          line_changes.xGet = ctx2[17];
+          line_changes.xGet = ctx2[19];
           add_flush_callback(() => updating_xGet = false);
         }
-        if (!updating_yGet && dirty[0] & 524288) {
+        if (!updating_yGet && dirty[0] & 2097152) {
           updating_yGet = true;
-          line_changes.yGet = ctx2[19];
+          line_changes.yGet = ctx2[21];
           add_flush_callback(() => updating_yGet = false);
         }
-        if (!updating_x_scale && dirty[0] & 65536) {
+        if (!updating_x_scale && dirty[0] & 262144) {
           updating_x_scale = true;
-          line_changes.x_scale = ctx2[16];
+          line_changes.x_scale = ctx2[18];
           add_flush_callback(() => updating_x_scale = false);
         }
-        if (!updating_y_scale && dirty[0] & 262144) {
+        if (!updating_y_scale && dirty[0] & 1048576) {
           updating_y_scale = true;
-          line_changes.y_scale = ctx2[18];
+          line_changes.y_scale = ctx2[20];
           add_flush_callback(() => updating_y_scale = false);
         }
         line.$set(line_changes);
@@ -7333,25 +7383,25 @@
       scaleType: ctx[1],
       data: ctx[0],
       accessor: ctx[3],
-      formatter: ctx[26],
+      formatter: ctx[27],
       label: ctx[10],
-      margin: ctx[25],
+      margin: ctx[24],
       position: "bottom"
     };
-    if (ctx[17] !== void 0) {
-      axis0_props.get = ctx[17];
+    if (ctx[19] !== void 0) {
+      axis0_props.get = ctx[19];
+    }
+    if (ctx[18] !== void 0) {
+      axis0_props.scale = ctx[18];
     }
     if (ctx[16] !== void 0) {
-      axis0_props.scale = ctx[16];
+      axis0_props.range = ctx[16];
     }
-    if (ctx[20] !== void 0) {
-      axis0_props.range = ctx[20];
+    if (ctx[13] !== void 0) {
+      axis0_props.height = ctx[13];
     }
     if (ctx[14] !== void 0) {
-      axis0_props.height = ctx[14];
-    }
-    if (ctx[15] !== void 0) {
-      axis0_props.width = ctx[15];
+      axis0_props.width = ctx[14];
     }
     axis0 = new axis_default({ props: axis0_props });
     binding_callbacks.push(() => bind(axis0, "get", axis0_get_binding));
@@ -7378,25 +7428,25 @@
       scaleType: ctx[2],
       data: ctx[0],
       accessor: ctx[4],
-      formatter: ctx[27],
+      formatter: ctx[28],
       label: ctx[11],
-      margin: ctx[25],
+      margin: ctx[24],
       position: "left"
     };
-    if (ctx[19] !== void 0) {
-      axis1_props.get = ctx[19];
-    }
-    if (ctx[18] !== void 0) {
-      axis1_props.scale = ctx[18];
-    }
     if (ctx[21] !== void 0) {
-      axis1_props.range = ctx[21];
+      axis1_props.get = ctx[21];
+    }
+    if (ctx[20] !== void 0) {
+      axis1_props.scale = ctx[20];
+    }
+    if (ctx[17] !== void 0) {
+      axis1_props.range = ctx[17];
+    }
+    if (ctx[13] !== void 0) {
+      axis1_props.height = ctx[13];
     }
     if (ctx[14] !== void 0) {
-      axis1_props.height = ctx[14];
-    }
-    if (ctx[15] !== void 0) {
-      axis1_props.width = ctx[15];
+      axis1_props.width = ctx[14];
     }
     axis1 = new axis_default({ props: axis1_props });
     binding_callbacks.push(() => bind(axis1, "get", axis1_get_binding));
@@ -7406,16 +7456,20 @@
     binding_callbacks.push(() => bind(axis1, "width", axis1_width_binding));
     circles = new circles_default({
       props: {
-        mapped_data: ctx[22],
-        mouse_move: ctx[23],
-        mouse_out: ctx[24]
+        data: ctx[0],
+        xGet: ctx[19],
+        yGet: ctx[21],
+        rGet: ctx[25],
+        cGet: ctx[26],
+        mouse_move: ctx[22],
+        mouse_out: ctx[23]
       }
     });
-    let if_block = ctx[6] && create_if_block4(ctx);
+    let if_block = ctx[6] && create_if_block5(ctx);
     legend = new legend_default({
       props: {
         groups: ctx[12],
-        hues: ctx[13]
+        hues: ctx[15]
       }
     });
     function popup_mouse_move_binding(value) {
@@ -7427,17 +7481,17 @@
     let popup_props = {
       data: ctx[0],
       groups: ctx[12],
-      hues: ctx[13],
+      hues: ctx[15],
       x_accessor: ctx[3],
       group_accessor: ctx[5],
       tooltip_accessors: ctx[7],
       tooltip_formatters: ctx[8]
     };
-    if (ctx[23] !== void 0) {
-      popup_props.mouse_move = ctx[23];
+    if (ctx[22] !== void 0) {
+      popup_props.mouse_move = ctx[22];
     }
-    if (ctx[24] !== void 0) {
-      popup_props.mouse_out = ctx[24];
+    if (ctx[23] !== void 0) {
+      popup_props.mouse_out = ctx[23];
     }
     popup = new popup_default({ props: popup_props });
     binding_callbacks.push(() => bind(popup, "mouse_move", popup_mouse_move_binding));
@@ -7464,7 +7518,7 @@
         attr(svg, "width", "100%");
         attr(svg, "class", "max-h-[80vh]");
         set_style(svg, "resize", "both");
-        attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[15] + " " + ctx[14]);
+        attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[14] + " " + ctx[13]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
         attr(figure, "class", "flex flex-row items-center w-full");
         add_render_callback(() => ctx[48].call(figure));
@@ -7501,29 +7555,29 @@
           axis0_changes.accessor = ctx2[3];
         if (dirty[0] & 1024)
           axis0_changes.label = ctx2[10];
-        if (!updating_get && dirty[0] & 131072) {
+        if (!updating_get && dirty[0] & 524288) {
           updating_get = true;
-          axis0_changes.get = ctx2[17];
+          axis0_changes.get = ctx2[19];
           add_flush_callback(() => updating_get = false);
         }
-        if (!updating_scale && dirty[0] & 65536) {
+        if (!updating_scale && dirty[0] & 262144) {
           updating_scale = true;
-          axis0_changes.scale = ctx2[16];
+          axis0_changes.scale = ctx2[18];
           add_flush_callback(() => updating_scale = false);
         }
-        if (!updating_range && dirty[0] & 1048576) {
+        if (!updating_range && dirty[0] & 65536) {
           updating_range = true;
-          axis0_changes.range = ctx2[20];
+          axis0_changes.range = ctx2[16];
           add_flush_callback(() => updating_range = false);
         }
-        if (!updating_height && dirty[0] & 16384) {
+        if (!updating_height && dirty[0] & 8192) {
           updating_height = true;
-          axis0_changes.height = ctx2[14];
+          axis0_changes.height = ctx2[13];
           add_flush_callback(() => updating_height = false);
         }
-        if (!updating_width && dirty[0] & 32768) {
+        if (!updating_width && dirty[0] & 16384) {
           updating_width = true;
-          axis0_changes.width = ctx2[15];
+          axis0_changes.width = ctx2[14];
           add_flush_callback(() => updating_width = false);
         }
         axis0.$set(axis0_changes);
@@ -7536,39 +7590,43 @@
           axis1_changes.accessor = ctx2[4];
         if (dirty[0] & 2048)
           axis1_changes.label = ctx2[11];
-        if (!updating_get_1 && dirty[0] & 524288) {
+        if (!updating_get_1 && dirty[0] & 2097152) {
           updating_get_1 = true;
-          axis1_changes.get = ctx2[19];
+          axis1_changes.get = ctx2[21];
           add_flush_callback(() => updating_get_1 = false);
         }
-        if (!updating_scale_1 && dirty[0] & 262144) {
+        if (!updating_scale_1 && dirty[0] & 1048576) {
           updating_scale_1 = true;
-          axis1_changes.scale = ctx2[18];
+          axis1_changes.scale = ctx2[20];
           add_flush_callback(() => updating_scale_1 = false);
         }
-        if (!updating_range_1 && dirty[0] & 2097152) {
+        if (!updating_range_1 && dirty[0] & 131072) {
           updating_range_1 = true;
-          axis1_changes.range = ctx2[21];
+          axis1_changes.range = ctx2[17];
           add_flush_callback(() => updating_range_1 = false);
         }
-        if (!updating_height_1 && dirty[0] & 16384) {
+        if (!updating_height_1 && dirty[0] & 8192) {
           updating_height_1 = true;
-          axis1_changes.height = ctx2[14];
+          axis1_changes.height = ctx2[13];
           add_flush_callback(() => updating_height_1 = false);
         }
-        if (!updating_width_1 && dirty[0] & 32768) {
+        if (!updating_width_1 && dirty[0] & 16384) {
           updating_width_1 = true;
-          axis1_changes.width = ctx2[15];
+          axis1_changes.width = ctx2[14];
           add_flush_callback(() => updating_width_1 = false);
         }
         axis1.$set(axis1_changes);
         const circles_changes = {};
+        if (dirty[0] & 1)
+          circles_changes.data = ctx2[0];
+        if (dirty[0] & 524288)
+          circles_changes.xGet = ctx2[19];
+        if (dirty[0] & 2097152)
+          circles_changes.yGet = ctx2[21];
         if (dirty[0] & 4194304)
-          circles_changes.mapped_data = ctx2[22];
+          circles_changes.mouse_move = ctx2[22];
         if (dirty[0] & 8388608)
-          circles_changes.mouse_move = ctx2[23];
-        if (dirty[0] & 16777216)
-          circles_changes.mouse_out = ctx2[24];
+          circles_changes.mouse_out = ctx2[23];
         circles.$set(circles_changes);
         if (ctx2[6]) {
           if (if_block) {
@@ -7577,7 +7635,7 @@
               transition_in(if_block, 1);
             }
           } else {
-            if_block = create_if_block4(ctx2);
+            if_block = create_if_block5(ctx2);
             if_block.c();
             transition_in(if_block, 1);
             if_block.m(svg, null);
@@ -7589,22 +7647,22 @@
           });
           check_outros();
         }
-        if (!current || dirty[0] & 49152 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[15] + " " + ctx2[14])) {
+        if (!current || dirty[0] & 24576 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[14] + " " + ctx2[13])) {
           attr(svg, "viewBox", svg_viewBox_value);
         }
         const legend_changes = {};
         if (dirty[0] & 4096)
           legend_changes.groups = ctx2[12];
-        if (dirty[0] & 8192)
-          legend_changes.hues = ctx2[13];
+        if (dirty[0] & 32768)
+          legend_changes.hues = ctx2[15];
         legend.$set(legend_changes);
         const popup_changes = {};
         if (dirty[0] & 1)
           popup_changes.data = ctx2[0];
         if (dirty[0] & 4096)
           popup_changes.groups = ctx2[12];
-        if (dirty[0] & 8192)
-          popup_changes.hues = ctx2[13];
+        if (dirty[0] & 32768)
+          popup_changes.hues = ctx2[15];
         if (dirty[0] & 8)
           popup_changes.x_accessor = ctx2[3];
         if (dirty[0] & 32)
@@ -7613,14 +7671,14 @@
           popup_changes.tooltip_accessors = ctx2[7];
         if (dirty[0] & 256)
           popup_changes.tooltip_formatters = ctx2[8];
-        if (!updating_mouse_move && dirty[0] & 8388608) {
+        if (!updating_mouse_move && dirty[0] & 4194304) {
           updating_mouse_move = true;
-          popup_changes.mouse_move = ctx2[23];
+          popup_changes.mouse_move = ctx2[22];
           add_flush_callback(() => updating_mouse_move = false);
         }
-        if (!updating_mouse_out && dirty[0] & 16777216) {
+        if (!updating_mouse_out && dirty[0] & 8388608) {
           updating_mouse_out = true;
-          popup_changes.mouse_out = ctx2[24];
+          popup_changes.mouse_out = ctx2[23];
           add_flush_callback(() => updating_mouse_out = false);
         }
         popup.$set(popup_changes);
@@ -7676,96 +7734,97 @@
     let r_scale;
     let x_scale, xGet;
     let y_scale, yGet;
-    let mapped_data;
+    const rGet = (d) => r_accessor !== void 0 ? r_scale(r_accessor(d)) : radius;
+    const cGet = (d) => hues[groups2.indexOf(c_accessor(d))];
     const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")];
     let mouse_move, mouse_out;
     function axis0_get_binding(value) {
       xGet = value;
-      $$invalidate(17, xGet);
+      $$invalidate(19, xGet);
     }
     function axis0_scale_binding(value) {
       x_scale = value;
-      $$invalidate(16, x_scale);
+      $$invalidate(18, x_scale);
     }
     function axis0_range_binding(value) {
       x_range = value;
-      $$invalidate(20, x_range), $$invalidate(28, radius), $$invalidate(25, margin), $$invalidate(15, width);
+      $$invalidate(16, x_range), $$invalidate(29, radius), $$invalidate(24, margin), $$invalidate(14, width);
     }
     function axis0_height_binding(value) {
       height = value;
-      $$invalidate(14, height), $$invalidate(15, width);
+      $$invalidate(13, height), $$invalidate(14, width);
     }
     function axis0_width_binding(value) {
       width = value;
-      $$invalidate(15, width);
+      $$invalidate(14, width);
     }
     function axis1_get_binding(value) {
       yGet = value;
-      $$invalidate(19, yGet);
+      $$invalidate(21, yGet);
     }
     function axis1_scale_binding(value) {
       y_scale = value;
-      $$invalidate(18, y_scale);
+      $$invalidate(20, y_scale);
     }
     function axis1_range_binding(value) {
       y_range = value;
-      $$invalidate(21, y_range), $$invalidate(14, height), $$invalidate(28, radius), $$invalidate(25, margin), $$invalidate(15, width);
+      $$invalidate(17, y_range), $$invalidate(13, height), $$invalidate(29, radius), $$invalidate(24, margin), $$invalidate(14, width);
     }
     function axis1_height_binding(value) {
       height = value;
-      $$invalidate(14, height), $$invalidate(15, width);
+      $$invalidate(13, height), $$invalidate(14, width);
     }
     function axis1_width_binding(value) {
       width = value;
-      $$invalidate(15, width);
+      $$invalidate(14, width);
     }
     function line_xGet_binding(value) {
       xGet = value;
-      $$invalidate(17, xGet);
+      $$invalidate(19, xGet);
     }
     function line_yGet_binding(value) {
       yGet = value;
-      $$invalidate(19, yGet);
+      $$invalidate(21, yGet);
     }
     function line_x_scale_binding(value) {
       x_scale = value;
-      $$invalidate(16, x_scale);
+      $$invalidate(18, x_scale);
     }
     function line_y_scale_binding(value) {
       y_scale = value;
-      $$invalidate(18, y_scale);
+      $$invalidate(20, y_scale);
     }
     function popup_mouse_move_binding(value) {
       mouse_move = value;
-      $$invalidate(23, mouse_move);
+      $$invalidate(22, mouse_move);
     }
     function popup_mouse_out_binding(value) {
       mouse_out = value;
-      $$invalidate(24, mouse_out);
+      $$invalidate(23, mouse_out);
     }
     function figure_elementresize_handler() {
       height = this.clientHeight;
       width = this.clientWidth;
-      $$invalidate(14, height), $$invalidate(15, width);
-      $$invalidate(15, width);
+      $$invalidate(13, height), $$invalidate(14, width);
+      $$invalidate(14, width);
     }
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)
         $$invalidate(0, data = $$props2.data);
       if ("radius" in $$props2)
-        $$invalidate(28, radius = $$props2.radius);
+        $$invalidate(29, radius = $$props2.radius);
       if ("xScaleType" in $$props2)
         $$invalidate(1, xScaleType = $$props2.xScaleType);
       if ("yScaleType" in $$props2)
         $$invalidate(2, yScaleType = $$props2.yScaleType);
       if ("rScaleType" in $$props2)
-        $$invalidate(29, rScaleType = $$props2.rScaleType);
+        $$invalidate(30, rScaleType = $$props2.rScaleType);
       if ("x_accessor" in $$props2)
         $$invalidate(3, x_accessor = $$props2.x_accessor);
       if ("y_accessor" in $$props2)
         $$invalidate(4, y_accessor = $$props2.y_accessor);
       if ("r_accessor" in $$props2)
-        $$invalidate(30, r_accessor = $$props2.r_accessor);
+        $$invalidate(31, r_accessor = $$props2.r_accessor);
       if ("c_accessor" in $$props2)
         $$invalidate(5, c_accessor = $$props2.c_accessor);
       if ("draw_line" in $$props2)
@@ -7788,48 +7847,38 @@
       }
       if ($$self.$$.dirty[0] & 4096) {
         $:
-          $$invalidate(13, hues = (0, import_iwanthue.default)(groups2.length, {
+          $$invalidate(15, hues = (0, import_iwanthue.default)(groups2.length, {
             "colorSpace": [0, 360, 0, 100, 50, 100],
             "clustering": "force-vector",
             "seed": "exSTATic!"
           }));
       }
-      if ($$self.$$.dirty[0] & 16384) {
+      if ($$self.$$.dirty[0] & 8192) {
         $:
           if (height < 500)
-            $$invalidate(14, height = 500);
+            $$invalidate(13, height = 500);
       }
-      if ($$self.$$.dirty[0] & 32768) {
+      if ($$self.$$.dirty[0] & 16384) {
         $:
           if (width < 500)
-            $$invalidate(15, width = 500);
+            $$invalidate(14, width = 500);
       }
-      if ($$self.$$.dirty[0] & 49152) {
+      if ($$self.$$.dirty[0] & 24576) {
         $:
           if (height > width)
-            $$invalidate(14, height = width);
+            $$invalidate(13, height = width);
       }
-      if ($$self.$$.dirty[0] & 268468224) {
+      if ($$self.$$.dirty[0] & 536887296) {
         $:
-          $$invalidate(20, x_range = [radius + margin, width - radius - margin]);
+          $$invalidate(16, x_range = [radius + margin, width - radius - margin]);
       }
-      if ($$self.$$.dirty[0] & 268451840) {
+      if ($$self.$$.dirty[0] & 536879104) {
         $:
-          $$invalidate(21, y_range = [height - radius - margin, radius + margin]);
+          $$invalidate(17, y_range = [height - radius - margin, radius + margin]);
       }
-      if ($$self.$$.dirty[0] & 1879048193) {
+      if ($$self.$$.dirty[0] & 1610612737 | $$self.$$.dirty[1] & 1) {
         $:
-          $$invalidate(31, r_scale = rScaleType().domain(extent(data, r_accessor)).range([0, radius]));
-      }
-      if ($$self.$$.dirty[0] & 1343172641 | $$self.$$.dirty[1] & 1) {
-        $:
-          $$invalidate(22, mapped_data = data.map((d, i) => ({
-            "x": x_scale === void 0 ? 0 : xGet(d),
-            "y": y_scale === void 0 ? 0 : yGet(d),
-            "r": r_accessor !== void 0 ? r_scale(r_accessor(d)) : radius,
-            "c": hues[groups2.indexOf(c_accessor(d))],
-            i
-          })));
+          r_scale = rScaleType().domain(extent(data, r_accessor)).range([0, radius]);
       }
     };
     return [
@@ -7846,25 +7895,25 @@
       x_label,
       y_label,
       groups2,
-      hues,
       height,
       width,
+      hues,
+      x_range,
+      y_range,
       x_scale,
       xGet,
       y_scale,
       yGet,
-      x_range,
-      y_range,
-      mapped_data,
       mouse_move,
       mouse_out,
       margin,
+      rGet,
+      cGet,
       x_formatter,
       y_formatter,
       radius,
       rScaleType,
       r_accessor,
-      r_scale,
       axis0_get_binding,
       axis0_scale_binding,
       axis0_range_binding,
@@ -7889,13 +7938,13 @@
       super();
       init(this, options, instance8, create_fragment8, safe_not_equal, {
         data: 0,
-        radius: 28,
+        radius: 29,
         xScaleType: 1,
         yScaleType: 2,
-        rScaleType: 29,
+        rScaleType: 30,
         x_accessor: 3,
         y_accessor: 4,
-        r_accessor: 30,
+        r_accessor: 31,
         c_accessor: 5,
         draw_line: 6,
         tooltip_accessors: 7,
@@ -8264,80 +8313,11 @@
   // src/components/draw/bars.svelte
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[4] = list[i].x;
-    child_ctx[5] = list[i].y;
-    child_ctx[6] = list[i].h;
-    child_ctx[7] = list[i].c;
-    child_ctx[8] = list[i].i;
+    child_ctx[9] = list[i];
+    child_ctx[11] = i;
     return child_ctx;
   }
-  function create_each_block4(ctx) {
-    let rect;
-    let rect_data_index_value;
-    let rect_x_value;
-    let rect_y_value;
-    let rect_height_value;
-    let rect_fill_value;
-    let mounted;
-    let dispose;
-    return {
-      c() {
-        rect = svg_element("rect");
-        attr(rect, "data-index", rect_data_index_value = ctx[8]);
-        attr(rect, "x", rect_x_value = ctx[4]);
-        attr(rect, "y", rect_y_value = ctx[5]);
-        attr(rect, "height", rect_height_value = ctx[6]);
-        attr(rect, "width", ctx[1]);
-        attr(rect, "fill", rect_fill_value = ctx[7]);
-        attr(rect, "fill-opacity", "0.8");
-        attr(rect, "class", "z-10");
-      },
-      m(target, anchor) {
-        insert(target, rect, anchor);
-        if (!mounted) {
-          dispose = [
-            listen(rect, "mousemove", function() {
-              if (is_function(ctx[2]))
-                ctx[2].apply(this, arguments);
-            }),
-            listen(rect, "mouseout", function() {
-              if (is_function(ctx[3]))
-                ctx[3].apply(this, arguments);
-            })
-          ];
-          mounted = true;
-        }
-      },
-      p(new_ctx, dirty) {
-        ctx = new_ctx;
-        if (dirty & 1 && rect_data_index_value !== (rect_data_index_value = ctx[8])) {
-          attr(rect, "data-index", rect_data_index_value);
-        }
-        if (dirty & 1 && rect_x_value !== (rect_x_value = ctx[4])) {
-          attr(rect, "x", rect_x_value);
-        }
-        if (dirty & 1 && rect_y_value !== (rect_y_value = ctx[5])) {
-          attr(rect, "y", rect_y_value);
-        }
-        if (dirty & 1 && rect_height_value !== (rect_height_value = ctx[6])) {
-          attr(rect, "height", rect_height_value);
-        }
-        if (dirty & 2) {
-          attr(rect, "width", ctx[1]);
-        }
-        if (dirty & 1 && rect_fill_value !== (rect_fill_value = ctx[7])) {
-          attr(rect, "fill", rect_fill_value);
-        }
-      },
-      d(detaching) {
-        if (detaching)
-          detach(rect);
-        mounted = false;
-        run_all(dispose);
-      }
-    };
-  }
-  function create_fragment11(ctx) {
+  function create_if_block6(ctx) {
     let each_1_anchor;
     let each_value = ctx[0];
     let each_blocks = [];
@@ -8357,8 +8337,8 @@
         }
         insert(target, each_1_anchor, anchor);
       },
-      p(ctx2, [dirty]) {
-        if (dirty & 15) {
+      p(ctx2, dirty) {
+        if (dirty & 255) {
           each_value = ctx2[0];
           let i;
           for (i = 0; i < each_value.length; i += 1) {
@@ -8377,8 +8357,6 @@
           each_blocks.length = each_value.length;
         }
       },
-      i: noop,
-      o: noop,
       d(detaching) {
         destroy_each(each_blocks, detaching);
         if (detaching)
@@ -8386,30 +8364,151 @@
       }
     };
   }
+  function create_each_block4(ctx) {
+    let rect;
+    let rect_data_index_value;
+    let rect_x_value;
+    let rect_y_value;
+    let rect_height_value;
+    let rect_fill_value;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        rect = svg_element("rect");
+        attr(rect, "data-index", rect_data_index_value = ctx[11]);
+        attr(rect, "x", rect_x_value = ctx[1](ctx[9]));
+        attr(rect, "y", rect_y_value = ctx[2](ctx[9]));
+        attr(rect, "height", rect_height_value = ctx[3](ctx[9]));
+        attr(rect, "width", ctx[5]);
+        attr(rect, "fill", rect_fill_value = ctx[4](ctx[9]));
+        attr(rect, "fill-opacity", "0.8");
+        attr(rect, "class", "z-10");
+      },
+      m(target, anchor) {
+        insert(target, rect, anchor);
+        if (!mounted) {
+          dispose = [
+            listen(rect, "mousemove", function() {
+              if (is_function(ctx[6]))
+                ctx[6].apply(this, arguments);
+            }),
+            listen(rect, "mouseout", function() {
+              if (is_function(ctx[7]))
+                ctx[7].apply(this, arguments);
+            })
+          ];
+          mounted = true;
+        }
+      },
+      p(new_ctx, dirty) {
+        ctx = new_ctx;
+        if (dirty & 3 && rect_x_value !== (rect_x_value = ctx[1](ctx[9]))) {
+          attr(rect, "x", rect_x_value);
+        }
+        if (dirty & 5 && rect_y_value !== (rect_y_value = ctx[2](ctx[9]))) {
+          attr(rect, "y", rect_y_value);
+        }
+        if (dirty & 9 && rect_height_value !== (rect_height_value = ctx[3](ctx[9]))) {
+          attr(rect, "height", rect_height_value);
+        }
+        if (dirty & 32) {
+          attr(rect, "width", ctx[5]);
+        }
+        if (dirty & 17 && rect_fill_value !== (rect_fill_value = ctx[4](ctx[9]))) {
+          attr(rect, "fill", rect_fill_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(rect);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function create_fragment11(ctx) {
+    let if_block_anchor;
+    let if_block = ctx[8] && create_if_block6(ctx);
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, [dirty]) {
+        if (ctx2[8]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block6(ctx2);
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
   function instance11($$self, $$props, $$invalidate) {
-    let { mapped_data } = $$props;
+    let { data } = $$props;
+    let { xGet, yGet, hGet, cGet } = $$props;
     let { bar_width } = $$props;
     let { mouse_move, mouse_out } = $$props;
+    let ready = false;
     $$self.$$set = ($$props2) => {
-      if ("mapped_data" in $$props2)
-        $$invalidate(0, mapped_data = $$props2.mapped_data);
+      if ("data" in $$props2)
+        $$invalidate(0, data = $$props2.data);
+      if ("xGet" in $$props2)
+        $$invalidate(1, xGet = $$props2.xGet);
+      if ("yGet" in $$props2)
+        $$invalidate(2, yGet = $$props2.yGet);
+      if ("hGet" in $$props2)
+        $$invalidate(3, hGet = $$props2.hGet);
+      if ("cGet" in $$props2)
+        $$invalidate(4, cGet = $$props2.cGet);
       if ("bar_width" in $$props2)
-        $$invalidate(1, bar_width = $$props2.bar_width);
+        $$invalidate(5, bar_width = $$props2.bar_width);
       if ("mouse_move" in $$props2)
-        $$invalidate(2, mouse_move = $$props2.mouse_move);
+        $$invalidate(6, mouse_move = $$props2.mouse_move);
       if ("mouse_out" in $$props2)
-        $$invalidate(3, mouse_out = $$props2.mouse_out);
+        $$invalidate(7, mouse_out = $$props2.mouse_out);
     };
-    return [mapped_data, bar_width, mouse_move, mouse_out];
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 30) {
+        $:
+          $$invalidate(8, ready = xGet !== void 0 && yGet !== void 0 && hGet !== void 0 && cGet !== void 0);
+      }
+    };
+    return [data, xGet, yGet, hGet, cGet, bar_width, mouse_move, mouse_out, ready];
   }
   var Bars = class extends SvelteComponent {
     constructor(options) {
       super();
       init(this, options, instance11, create_fragment11, safe_not_equal, {
-        mapped_data: 0,
-        bar_width: 1,
-        mouse_move: 2,
-        mouse_out: 3
+        data: 0,
+        xGet: 1,
+        yGet: 2,
+        hGet: 3,
+        cGet: 4,
+        bar_width: 5,
+        mouse_move: 6,
+        mouse_out: 7
       });
     }
   };
@@ -8447,43 +8546,43 @@
     let figure_resize_listener;
     let current;
     function axis0_get_binding(value) {
-      ctx[28](value);
-    }
-    function axis0_scale_binding(value) {
       ctx[29](value);
     }
-    function axis0_range_binding(value) {
+    function axis0_scale_binding(value) {
       ctx[30](value);
     }
-    function axis0_height_binding(value) {
+    function axis0_range_binding(value) {
       ctx[31](value);
     }
-    function axis0_width_binding(value) {
+    function axis0_height_binding(value) {
       ctx[32](value);
+    }
+    function axis0_width_binding(value) {
+      ctx[33](value);
     }
     let axis0_props = {
       scaleType: ctx[1],
       data: ctx[0],
       accessor: ctx[3],
-      formatter: ctx[26],
+      formatter: ctx[27],
       label: ctx[9],
-      margin: ctx[25],
+      margin: ctx[24],
       position: "bottom"
     };
-    if (ctx[16] !== void 0) {
-      axis0_props.get = ctx[16];
-    }
-    if (ctx[15] !== void 0) {
-      axis0_props.scale = ctx[15];
-    }
-    if (ctx[19] !== void 0) {
-      axis0_props.range = ctx[19];
-    }
-    if (ctx[13] !== void 0) {
-      axis0_props.height = ctx[13];
+    if (ctx[18] !== void 0) {
+      axis0_props.get = ctx[18];
     }
     if (ctx[14] !== void 0) {
-      axis0_props.width = ctx[14];
+      axis0_props.scale = ctx[14];
+    }
+    if (ctx[16] !== void 0) {
+      axis0_props.range = ctx[16];
+    }
+    if (ctx[12] !== void 0) {
+      axis0_props.height = ctx[12];
+    }
+    if (ctx[13] !== void 0) {
+      axis0_props.width = ctx[13];
     }
     axis0 = new axis_default({ props: axis0_props });
     binding_callbacks.push(() => bind(axis0, "get", axis0_get_binding));
@@ -8492,43 +8591,43 @@
     binding_callbacks.push(() => bind(axis0, "height", axis0_height_binding));
     binding_callbacks.push(() => bind(axis0, "width", axis0_width_binding));
     function axis1_get_binding(value) {
-      ctx[33](value);
-    }
-    function axis1_scale_binding(value) {
       ctx[34](value);
     }
-    function axis1_range_binding(value) {
+    function axis1_scale_binding(value) {
       ctx[35](value);
     }
-    function axis1_height_binding(value) {
+    function axis1_range_binding(value) {
       ctx[36](value);
     }
-    function axis1_width_binding(value) {
+    function axis1_height_binding(value) {
       ctx[37](value);
+    }
+    function axis1_width_binding(value) {
+      ctx[38](value);
     }
     let axis1_props = {
       scaleType: ctx[2],
       data: ctx[0],
       accessor: ctx[4],
-      formatter: ctx[27],
+      formatter: ctx[28],
       label: ctx[10],
-      margin: ctx[25],
+      margin: ctx[24],
       position: "left"
     };
-    if (ctx[18] !== void 0) {
-      axis1_props.get = ctx[18];
+    if (ctx[20] !== void 0) {
+      axis1_props.get = ctx[20];
+    }
+    if (ctx[19] !== void 0) {
+      axis1_props.scale = ctx[19];
     }
     if (ctx[17] !== void 0) {
-      axis1_props.scale = ctx[17];
+      axis1_props.range = ctx[17];
     }
-    if (ctx[20] !== void 0) {
-      axis1_props.range = ctx[20];
+    if (ctx[12] !== void 0) {
+      axis1_props.height = ctx[12];
     }
     if (ctx[13] !== void 0) {
-      axis1_props.height = ctx[13];
-    }
-    if (ctx[14] !== void 0) {
-      axis1_props.width = ctx[14];
+      axis1_props.width = ctx[13];
     }
     axis1 = new axis_default({ props: axis1_props });
     binding_callbacks.push(() => bind(axis1, "get", axis1_get_binding));
@@ -8538,38 +8637,42 @@
     binding_callbacks.push(() => bind(axis1, "width", axis1_width_binding));
     bars = new bars_default({
       props: {
-        mapped_data: ctx[22],
+        data: ctx[0],
+        xGet: ctx[18],
+        yGet: ctx[20],
+        hGet: ctx[26],
+        cGet: ctx[25],
         bar_width: ctx[21],
-        mouse_move: ctx[23],
-        mouse_out: ctx[24]
+        mouse_move: ctx[22],
+        mouse_out: ctx[23]
       }
     });
     legend = new legend_default({
       props: {
         groups: ctx[11],
-        hues: ctx[12]
+        hues: ctx[15]
       }
     });
     function popup_mouse_move_binding(value) {
-      ctx[38](value);
+      ctx[39](value);
     }
     function popup_mouse_out_binding(value) {
-      ctx[39](value);
+      ctx[40](value);
     }
     let popup_props = {
       data: ctx[0],
       groups: ctx[11],
-      hues: ctx[12],
+      hues: ctx[15],
       x_accessor: ctx[3],
       group_accessor: ctx[5],
       tooltip_accessors: ctx[6],
       tooltip_formatters: ctx[7]
     };
-    if (ctx[23] !== void 0) {
-      popup_props.mouse_move = ctx[23];
+    if (ctx[22] !== void 0) {
+      popup_props.mouse_move = ctx[22];
     }
-    if (ctx[24] !== void 0) {
-      popup_props.mouse_out = ctx[24];
+    if (ctx[23] !== void 0) {
+      popup_props.mouse_out = ctx[23];
     }
     popup = new popup_default({ props: popup_props });
     binding_callbacks.push(() => bind(popup, "mouse_move", popup_mouse_move_binding));
@@ -8594,10 +8697,10 @@
         attr(svg, "width", "100%");
         attr(svg, "class", "max-h-[80vh]");
         set_style(svg, "resize", "both");
-        attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[14] + " " + ctx[13]);
+        attr(svg, "viewBox", svg_viewBox_value = "0 0 " + ctx[13] + " " + ctx[12]);
         attr(svg, "preserveAspectRatio", "xMidYMid meet");
         attr(figure, "class", "flex flex-row w-full h-full items-center");
-        add_render_callback(() => ctx[40].call(figure));
+        add_render_callback(() => ctx[41].call(figure));
         attr(div, "class", "flex flex-col w-full h-full items-center p-12 bg-slate-900");
       },
       m(target, anchor) {
@@ -8614,7 +8717,7 @@
         mount_component(legend, figure, null);
         append(figure, t3);
         mount_component(popup, figure, null);
-        figure_resize_listener = add_resize_listener(figure, ctx[40].bind(figure));
+        figure_resize_listener = add_resize_listener(figure, ctx[41].bind(figure));
         current = true;
       },
       p(ctx2, dirty) {
@@ -8629,29 +8732,29 @@
           axis0_changes.accessor = ctx2[3];
         if (dirty[0] & 512)
           axis0_changes.label = ctx2[9];
-        if (!updating_get && dirty[0] & 65536) {
+        if (!updating_get && dirty[0] & 262144) {
           updating_get = true;
-          axis0_changes.get = ctx2[16];
+          axis0_changes.get = ctx2[18];
           add_flush_callback(() => updating_get = false);
         }
-        if (!updating_scale && dirty[0] & 32768) {
+        if (!updating_scale && dirty[0] & 16384) {
           updating_scale = true;
-          axis0_changes.scale = ctx2[15];
+          axis0_changes.scale = ctx2[14];
           add_flush_callback(() => updating_scale = false);
         }
-        if (!updating_range && dirty[0] & 524288) {
+        if (!updating_range && dirty[0] & 65536) {
           updating_range = true;
-          axis0_changes.range = ctx2[19];
+          axis0_changes.range = ctx2[16];
           add_flush_callback(() => updating_range = false);
         }
-        if (!updating_height && dirty[0] & 8192) {
+        if (!updating_height && dirty[0] & 4096) {
           updating_height = true;
-          axis0_changes.height = ctx2[13];
+          axis0_changes.height = ctx2[12];
           add_flush_callback(() => updating_height = false);
         }
-        if (!updating_width && dirty[0] & 16384) {
+        if (!updating_width && dirty[0] & 8192) {
           updating_width = true;
-          axis0_changes.width = ctx2[14];
+          axis0_changes.width = ctx2[13];
           add_flush_callback(() => updating_width = false);
         }
         axis0.$set(axis0_changes);
@@ -8664,58 +8767,62 @@
           axis1_changes.accessor = ctx2[4];
         if (dirty[0] & 1024)
           axis1_changes.label = ctx2[10];
-        if (!updating_get_1 && dirty[0] & 262144) {
+        if (!updating_get_1 && dirty[0] & 1048576) {
           updating_get_1 = true;
-          axis1_changes.get = ctx2[18];
+          axis1_changes.get = ctx2[20];
           add_flush_callback(() => updating_get_1 = false);
         }
-        if (!updating_scale_1 && dirty[0] & 131072) {
+        if (!updating_scale_1 && dirty[0] & 524288) {
           updating_scale_1 = true;
-          axis1_changes.scale = ctx2[17];
+          axis1_changes.scale = ctx2[19];
           add_flush_callback(() => updating_scale_1 = false);
         }
-        if (!updating_range_1 && dirty[0] & 1048576) {
+        if (!updating_range_1 && dirty[0] & 131072) {
           updating_range_1 = true;
-          axis1_changes.range = ctx2[20];
+          axis1_changes.range = ctx2[17];
           add_flush_callback(() => updating_range_1 = false);
         }
-        if (!updating_height_1 && dirty[0] & 8192) {
+        if (!updating_height_1 && dirty[0] & 4096) {
           updating_height_1 = true;
-          axis1_changes.height = ctx2[13];
+          axis1_changes.height = ctx2[12];
           add_flush_callback(() => updating_height_1 = false);
         }
-        if (!updating_width_1 && dirty[0] & 16384) {
+        if (!updating_width_1 && dirty[0] & 8192) {
           updating_width_1 = true;
-          axis1_changes.width = ctx2[14];
+          axis1_changes.width = ctx2[13];
           add_flush_callback(() => updating_width_1 = false);
         }
         axis1.$set(axis1_changes);
         const bars_changes = {};
-        if (dirty[0] & 4194304)
-          bars_changes.mapped_data = ctx2[22];
+        if (dirty[0] & 1)
+          bars_changes.data = ctx2[0];
+        if (dirty[0] & 262144)
+          bars_changes.xGet = ctx2[18];
+        if (dirty[0] & 1048576)
+          bars_changes.yGet = ctx2[20];
         if (dirty[0] & 2097152)
           bars_changes.bar_width = ctx2[21];
+        if (dirty[0] & 4194304)
+          bars_changes.mouse_move = ctx2[22];
         if (dirty[0] & 8388608)
-          bars_changes.mouse_move = ctx2[23];
-        if (dirty[0] & 16777216)
-          bars_changes.mouse_out = ctx2[24];
+          bars_changes.mouse_out = ctx2[23];
         bars.$set(bars_changes);
-        if (!current || dirty[0] & 24576 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[14] + " " + ctx2[13])) {
+        if (!current || dirty[0] & 12288 && svg_viewBox_value !== (svg_viewBox_value = "0 0 " + ctx2[13] + " " + ctx2[12])) {
           attr(svg, "viewBox", svg_viewBox_value);
         }
         const legend_changes = {};
         if (dirty[0] & 2048)
           legend_changes.groups = ctx2[11];
-        if (dirty[0] & 4096)
-          legend_changes.hues = ctx2[12];
+        if (dirty[0] & 32768)
+          legend_changes.hues = ctx2[15];
         legend.$set(legend_changes);
         const popup_changes = {};
         if (dirty[0] & 1)
           popup_changes.data = ctx2[0];
         if (dirty[0] & 2048)
           popup_changes.groups = ctx2[11];
-        if (dirty[0] & 4096)
-          popup_changes.hues = ctx2[12];
+        if (dirty[0] & 32768)
+          popup_changes.hues = ctx2[15];
         if (dirty[0] & 8)
           popup_changes.x_accessor = ctx2[3];
         if (dirty[0] & 32)
@@ -8724,14 +8831,14 @@
           popup_changes.tooltip_accessors = ctx2[6];
         if (dirty[0] & 128)
           popup_changes.tooltip_formatters = ctx2[7];
-        if (!updating_mouse_move && dirty[0] & 8388608) {
+        if (!updating_mouse_move && dirty[0] & 4194304) {
           updating_mouse_move = true;
-          popup_changes.mouse_move = ctx2[23];
+          popup_changes.mouse_move = ctx2[22];
           add_flush_callback(() => updating_mouse_move = false);
         }
-        if (!updating_mouse_out && dirty[0] & 16777216) {
+        if (!updating_mouse_out && dirty[0] & 8388608) {
           updating_mouse_out = true;
-          popup_changes.mouse_out = ctx2[24];
+          popup_changes.mouse_out = ctx2[23];
           add_flush_callback(() => updating_mouse_out = false);
         }
         popup.$set(popup_changes);
@@ -8778,65 +8885,66 @@
     let groups2, hues;
     let [height, width, margin] = [1e3, 1200, 50];
     let [x_range, y_range] = [[0, 0], [0, 0]];
-    let x_scale, x_get;
-    let y_scale, y_get;
+    let x_scale, xGet;
+    let y_scale, yGet;
+    const cGet = (d) => hues[groups2.indexOf(c_accessor(d))];
+    const hGet = (d) => y_scale === void 0 ? 0 : Math.max(0, height - margin - yGet(d));
     let bar_width = 0;
-    let mapped_data;
     const [x_formatter, y_formatter] = [(x_value) => x_value, format(".2s")];
     let mouse_move, mouse_out;
     function axis0_get_binding(value) {
-      x_get = value;
-      $$invalidate(16, x_get);
+      xGet = value;
+      $$invalidate(18, xGet);
     }
     function axis0_scale_binding(value) {
       x_scale = value;
-      $$invalidate(15, x_scale);
+      $$invalidate(14, x_scale);
     }
     function axis0_range_binding(value) {
       x_range = value;
-      $$invalidate(19, x_range), $$invalidate(25, margin), $$invalidate(14, width);
+      $$invalidate(16, x_range), $$invalidate(24, margin), $$invalidate(13, width);
     }
     function axis0_height_binding(value) {
       height = value;
-      $$invalidate(13, height), $$invalidate(14, width);
+      $$invalidate(12, height), $$invalidate(13, width);
     }
     function axis0_width_binding(value) {
       width = value;
-      $$invalidate(14, width);
+      $$invalidate(13, width);
     }
     function axis1_get_binding(value) {
-      y_get = value;
-      $$invalidate(18, y_get);
+      yGet = value;
+      $$invalidate(20, yGet);
     }
     function axis1_scale_binding(value) {
       y_scale = value;
-      $$invalidate(17, y_scale);
+      $$invalidate(19, y_scale);
     }
     function axis1_range_binding(value) {
       y_range = value;
-      $$invalidate(20, y_range), $$invalidate(13, height), $$invalidate(25, margin), $$invalidate(14, width);
+      $$invalidate(17, y_range), $$invalidate(12, height), $$invalidate(24, margin), $$invalidate(13, width);
     }
     function axis1_height_binding(value) {
       height = value;
-      $$invalidate(13, height), $$invalidate(14, width);
+      $$invalidate(12, height), $$invalidate(13, width);
     }
     function axis1_width_binding(value) {
       width = value;
-      $$invalidate(14, width);
+      $$invalidate(13, width);
     }
     function popup_mouse_move_binding(value) {
       mouse_move = value;
-      $$invalidate(23, mouse_move);
+      $$invalidate(22, mouse_move);
     }
     function popup_mouse_out_binding(value) {
       mouse_out = value;
-      $$invalidate(24, mouse_out);
+      $$invalidate(23, mouse_out);
     }
     function figure_elementresize_handler() {
       height = this.clientHeight;
       width = this.clientWidth;
-      $$invalidate(13, height), $$invalidate(14, width);
-      $$invalidate(14, width);
+      $$invalidate(12, height), $$invalidate(13, width);
+      $$invalidate(13, width);
     }
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)
@@ -8869,49 +8977,39 @@
       }
       if ($$self.$$.dirty[0] & 2048) {
         $:
-          $$invalidate(12, hues = (0, import_iwanthue2.default)(groups2.length, {
+          $$invalidate(15, hues = (0, import_iwanthue2.default)(groups2.length, {
             "colorSpace": [0, 360, 0, 100, 50, 100],
             "clustering": "force-vector",
             "seed": "exSTATic!"
           }));
       }
-      if ($$self.$$.dirty[0] & 8192) {
+      if ($$self.$$.dirty[0] & 4096) {
         $:
           if (height < 500)
-            $$invalidate(13, height = 500);
-      }
-      if ($$self.$$.dirty[0] & 16384) {
-        $:
-          if (width < 500)
-            $$invalidate(14, width = 500);
-      }
-      if ($$self.$$.dirty[0] & 24576) {
-        $:
-          if (height > width)
-            $$invalidate(13, height = width);
-      }
-      if ($$self.$$.dirty[0] & 16384) {
-        $:
-          $$invalidate(19, x_range = [margin, width - margin]);
+            $$invalidate(12, height = 500);
       }
       if ($$self.$$.dirty[0] & 8192) {
         $:
-          $$invalidate(20, y_range = [height - margin, margin]);
+          if (width < 500)
+            $$invalidate(13, width = 500);
       }
-      if ($$self.$$.dirty[0] & 32768) {
+      if ($$self.$$.dirty[0] & 12288) {
+        $:
+          if (height > width)
+            $$invalidate(12, height = width);
+      }
+      if ($$self.$$.dirty[0] & 8192) {
+        $:
+          $$invalidate(16, x_range = [margin, width - margin]);
+      }
+      if ($$self.$$.dirty[0] & 4096) {
+        $:
+          $$invalidate(17, y_range = [height - margin, margin]);
+      }
+      if ($$self.$$.dirty[0] & 16384) {
         $:
           if (x_scale)
             $$invalidate(21, bar_width = x_scale.bandwidth());
-      }
-      if ($$self.$$.dirty[0] & 505889) {
-        $:
-          $$invalidate(22, mapped_data = data.map((d, i) => ({
-            "x": x_scale === void 0 ? 0 : x_get(d),
-            "y": y_scale === void 0 ? 0 : y_get(d),
-            "h": y_scale === void 0 ? 0 : Math.max(0, height - margin - y_get(d)),
-            "c": hues[groups2.indexOf(c_accessor(d))],
-            i
-          })));
       }
     };
     return [
@@ -8927,20 +9025,21 @@
       x_label,
       y_label,
       groups2,
-      hues,
       height,
       width,
       x_scale,
-      x_get,
-      y_scale,
-      y_get,
+      hues,
       x_range,
       y_range,
+      xGet,
+      y_scale,
+      yGet,
       bar_width,
-      mapped_data,
       mouse_move,
       mouse_out,
       margin,
+      cGet,
+      hGet,
       x_formatter,
       y_formatter,
       axis0_get_binding,

@@ -73,6 +73,12 @@ More than happy to take a look into anything/approve PRs 😄!
 
 Here's [my Ko-Fi](https://ko-fi.com/kamwithk) if you'd like to support.
 
+To test and develop run:
+
+1. `npm install` to set up the required packages
+2. `web-ext run` to start a temporary instance of the extension, watch for changes and auto refresh the extension when they occur (OPTIONAL, manually import and refresh the extension otherwise)
+3. `npm run build` to use the esbuild bundler
+
 # Credits
 Huge shoutout to everyone who helped on this project.
 Thanks to Mae for helping design the UI (making sure it looks lit), helping with testing and giving lots of ideas for potentially useful features.

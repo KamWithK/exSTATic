@@ -31,6 +31,8 @@ Once you download the files simply add them to your addons.
 Start each one up and then navigate to the [main page](https://kamwithk.github.io/exSTATic/tracker.html).
 Your stats should from then on be recorded!
 
+[Video Tutorial](https://www.youtube.com/watch?v=MV2IlasgQQ4) (slightly outdated, light mode now works fine)
+
 **WARNING:** If the main page isn't open your stats might not be recorded correctly, this has not yet been tested
 
 **NOTE:** You may be warned on Chromium browsers that this extension uses the outdated Manifest V2 format, ignore this, Manifest V2 is officially still supported on both Firefox and Brave and so for the foreseeable future there are no plans to upgrade to V3 (due to technical complications)
@@ -86,3 +88,4 @@ Thanks to Mae for helping design the UI (making sure it looks lit), helping with
 Cheers to Mae, Marv and Alex from The Moe Way for providing me with sample data to use for testing and showcasing stats for this project!
 
 Credit to Tiberiu for providing some sample code for how TTU integration may work in the future.
+Thanks ChibiDon for making a tutorial video for exSTATic.

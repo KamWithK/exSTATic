@@ -22,6 +22,8 @@ The core web extension lies in this repository, whilst additional addons allow i
 
 # Install Instructions
 
+[Quick Setup YouTube Video](https://www.youtube.com/watch?v=7CKvvYVgTjo)
+
 Setup is split into two parts:
 
 1) Downloading & importing the browser extension - from this repository
@@ -30,8 +32,6 @@ Setup is split into two parts:
 Once you download the files simply add them to your addons.
 Start each one up and then navigate to the [main page](https://kamwithk.github.io/exSTATic/tracker.html).
 Your stats should from then on be recorded!
-
-[Video Tutorial](https://www.youtube.com/watch?v=MV2IlasgQQ4) (slightly outdated, light mode now works fine)
 
 **WARNING:** If the main page isn't open your stats might not be recorded correctly, this has not yet been tested
 

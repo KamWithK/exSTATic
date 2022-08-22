@@ -53,30 +53,42 @@
 </script>
 
 <div>
-    <AccordionItem label="1 Week" bind:group={display_group}>
-        <MinDataGraphs data={one_week_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-    </AccordionItem>
+    {#if one_week_data.length >= 1}
+        <AccordionItem label="1 Week" bind:group={display_group}>
+            <MinDataGraphs data={one_week_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
+        </AccordionItem>
+    {/if}
 
-    <AccordionItem label="1 Month" bind:group={display_group}>
-        <BulkDataGraphs data={one_month_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-    </AccordionItem>
+    {#if one_month_data.length >=1}
+        <AccordionItem label="1 Month" bind:group={display_group}>
+            <BulkDataGraphs data={one_month_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
+        </AccordionItem>
+    {/if}
 
-    <AccordionItem label="3 Months" bind:group={display_group}>
-        <BulkDataGraphs data={three_months_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-    </AccordionItem>
+    {#if three_months_data.length >=1}
+        <AccordionItem label="3 Months" bind:group={display_group}>
+            <BulkDataGraphs data={three_months_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
+        </AccordionItem>
+    {/if}
 
-    <AccordionItem label="6 Months" bind:group={display_group}>
-        <BulkDataGraphs data={six_months_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-    </AccordionItem>
+    {#if six_months_data.length >=1}
+        <AccordionItem label="6 Months" bind:group={display_group}>
+            <BulkDataGraphs data={six_months_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
+        </AccordionItem>
+    {/if}
 
-    <AccordionItem label="1 Year" bind:group={display_group}>
-        <BulkDataGraphs data={one_year_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-    </AccordionItem>
+    {#if one_year_data.length >=1}
+        <AccordionItem label="1 Year" bind:group={display_group}>
+            <BulkDataGraphs data={one_year_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
+        </AccordionItem>
+    {/if}
 
-    <AccordionItem label="All Time" bind:group={display_group}>
-        <BulkDataGraphs {data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-        <MediaGraphs data={uuid_summary} {name_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-    </AccordionItem>
+    {#if data.length >= 1}
+        <AccordionItem label="All Time" bind:group={display_group}>
+            <BulkDataGraphs {data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
+            <MediaGraphs data={uuid_summary} {name_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
+        </AccordionItem>
+    {/if}
 </div>
 
 

@@ -9632,6 +9632,58 @@
   }
 
   // src/stats/stats.svelte
+  function create_if_block_5(ctx) {
+    let accordionitem;
+    let updating_group;
+    let current;
+    function accordionitem_group_binding(value) {
+      ctx[15](value);
+    }
+    let accordionitem_props = {
+      label: "1 Week",
+      $$slots: { default: [create_default_slot_5] },
+      $$scope: { ctx }
+    };
+    if (ctx[1] !== void 0) {
+      accordionitem_props.group = ctx[1];
+    }
+    accordionitem = new accordion_item_default({ props: accordionitem_props });
+    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding));
+    return {
+      c() {
+        create_component(accordionitem.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(accordionitem, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const accordionitem_changes = {};
+        if (dirty & 33554432) {
+          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
+        }
+        if (!updating_group && dirty & 2) {
+          updating_group = true;
+          accordionitem_changes.group = ctx2[1];
+          add_flush_callback(() => updating_group = false);
+        }
+        accordionitem.$set(accordionitem_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(accordionitem.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(accordionitem.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(accordionitem, detaching);
+      }
+    };
+  }
   function create_default_slot_5(ctx) {
     let mindatagraphs;
     let current;
@@ -9668,6 +9720,58 @@
       },
       d(detaching) {
         destroy_component(mindatagraphs, detaching);
+      }
+    };
+  }
+  function create_if_block_4(ctx) {
+    let accordionitem;
+    let updating_group;
+    let current;
+    function accordionitem_group_binding_1(value) {
+      ctx[16](value);
+    }
+    let accordionitem_props = {
+      label: "1 Month",
+      $$slots: { default: [create_default_slot_4] },
+      $$scope: { ctx }
+    };
+    if (ctx[1] !== void 0) {
+      accordionitem_props.group = ctx[1];
+    }
+    accordionitem = new accordion_item_default({ props: accordionitem_props });
+    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding_1));
+    return {
+      c() {
+        create_component(accordionitem.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(accordionitem, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const accordionitem_changes = {};
+        if (dirty & 33554432) {
+          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
+        }
+        if (!updating_group && dirty & 2) {
+          updating_group = true;
+          accordionitem_changes.group = ctx2[1];
+          add_flush_callback(() => updating_group = false);
+        }
+        accordionitem.$set(accordionitem_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(accordionitem.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(accordionitem.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(accordionitem, detaching);
       }
     };
   }
@@ -9710,6 +9814,58 @@
       }
     };
   }
+  function create_if_block_32(ctx) {
+    let accordionitem;
+    let updating_group;
+    let current;
+    function accordionitem_group_binding_2(value) {
+      ctx[17](value);
+    }
+    let accordionitem_props = {
+      label: "3 Months",
+      $$slots: { default: [create_default_slot_3] },
+      $$scope: { ctx }
+    };
+    if (ctx[1] !== void 0) {
+      accordionitem_props.group = ctx[1];
+    }
+    accordionitem = new accordion_item_default({ props: accordionitem_props });
+    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding_2));
+    return {
+      c() {
+        create_component(accordionitem.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(accordionitem, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const accordionitem_changes = {};
+        if (dirty & 33554432) {
+          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
+        }
+        if (!updating_group && dirty & 2) {
+          updating_group = true;
+          accordionitem_changes.group = ctx2[1];
+          add_flush_callback(() => updating_group = false);
+        }
+        accordionitem.$set(accordionitem_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(accordionitem.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(accordionitem.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(accordionitem, detaching);
+      }
+    };
+  }
   function create_default_slot_3(ctx) {
     let bulkdatagraphs;
     let current;
@@ -9746,6 +9902,58 @@
       },
       d(detaching) {
         destroy_component(bulkdatagraphs, detaching);
+      }
+    };
+  }
+  function create_if_block_22(ctx) {
+    let accordionitem;
+    let updating_group;
+    let current;
+    function accordionitem_group_binding_3(value) {
+      ctx[18](value);
+    }
+    let accordionitem_props = {
+      label: "6 Months",
+      $$slots: { default: [create_default_slot_2] },
+      $$scope: { ctx }
+    };
+    if (ctx[1] !== void 0) {
+      accordionitem_props.group = ctx[1];
+    }
+    accordionitem = new accordion_item_default({ props: accordionitem_props });
+    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding_3));
+    return {
+      c() {
+        create_component(accordionitem.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(accordionitem, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const accordionitem_changes = {};
+        if (dirty & 33554432) {
+          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
+        }
+        if (!updating_group && dirty & 2) {
+          updating_group = true;
+          accordionitem_changes.group = ctx2[1];
+          add_flush_callback(() => updating_group = false);
+        }
+        accordionitem.$set(accordionitem_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(accordionitem.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(accordionitem.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(accordionitem, detaching);
       }
     };
   }
@@ -9788,6 +9996,58 @@
       }
     };
   }
+  function create_if_block_12(ctx) {
+    let accordionitem;
+    let updating_group;
+    let current;
+    function accordionitem_group_binding_4(value) {
+      ctx[19](value);
+    }
+    let accordionitem_props = {
+      label: "1 Year",
+      $$slots: { default: [create_default_slot_1] },
+      $$scope: { ctx }
+    };
+    if (ctx[1] !== void 0) {
+      accordionitem_props.group = ctx[1];
+    }
+    accordionitem = new accordion_item_default({ props: accordionitem_props });
+    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding_4));
+    return {
+      c() {
+        create_component(accordionitem.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(accordionitem, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const accordionitem_changes = {};
+        if (dirty & 33554432) {
+          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
+        }
+        if (!updating_group && dirty & 2) {
+          updating_group = true;
+          accordionitem_changes.group = ctx2[1];
+          add_flush_callback(() => updating_group = false);
+        }
+        accordionitem.$set(accordionitem_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(accordionitem.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(accordionitem.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(accordionitem, detaching);
+      }
+    };
+  }
   function create_default_slot_1(ctx) {
     let bulkdatagraphs;
     let current;
@@ -9824,6 +10084,58 @@
       },
       d(detaching) {
         destroy_component(bulkdatagraphs, detaching);
+      }
+    };
+  }
+  function create_if_block7(ctx) {
+    let accordionitem;
+    let updating_group;
+    let current;
+    function accordionitem_group_binding_5(value) {
+      ctx[20](value);
+    }
+    let accordionitem_props = {
+      label: "All Time",
+      $$slots: { default: [create_default_slot] },
+      $$scope: { ctx }
+    };
+    if (ctx[1] !== void 0) {
+      accordionitem_props.group = ctx[1];
+    }
+    accordionitem = new accordion_item_default({ props: accordionitem_props });
+    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding_5));
+    return {
+      c() {
+        create_component(accordionitem.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(accordionitem, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const accordionitem_changes = {};
+        if (dirty & 33554433) {
+          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
+        }
+        if (!updating_group && dirty & 2) {
+          updating_group = true;
+          accordionitem_changes.group = ctx2[1];
+          add_flush_callback(() => updating_group = false);
+        }
+        accordionitem.$set(accordionitem_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(accordionitem.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(accordionitem.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(accordionitem, detaching);
       }
     };
   }
@@ -9895,223 +10207,126 @@
   }
   function create_fragment14(ctx) {
     let div;
-    let accordionitem0;
-    let updating_group;
     let t02;
-    let accordionitem1;
-    let updating_group_1;
     let t12;
-    let accordionitem2;
-    let updating_group_2;
     let t2;
-    let accordionitem3;
-    let updating_group_3;
     let t3;
-    let accordionitem4;
-    let updating_group_4;
     let t4;
-    let accordionitem5;
-    let updating_group_5;
     let current;
-    function accordionitem0_group_binding(value) {
-      ctx[15](value);
-    }
-    let accordionitem0_props = {
-      label: "1 Week",
-      $$slots: { default: [create_default_slot_5] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem0_props.group = ctx[1];
-    }
-    accordionitem0 = new accordion_item_default({ props: accordionitem0_props });
-    binding_callbacks.push(() => bind(accordionitem0, "group", accordionitem0_group_binding));
-    function accordionitem1_group_binding(value) {
-      ctx[16](value);
-    }
-    let accordionitem1_props = {
-      label: "1 Month",
-      $$slots: { default: [create_default_slot_4] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem1_props.group = ctx[1];
-    }
-    accordionitem1 = new accordion_item_default({ props: accordionitem1_props });
-    binding_callbacks.push(() => bind(accordionitem1, "group", accordionitem1_group_binding));
-    function accordionitem2_group_binding(value) {
-      ctx[17](value);
-    }
-    let accordionitem2_props = {
-      label: "3 Months",
-      $$slots: { default: [create_default_slot_3] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem2_props.group = ctx[1];
-    }
-    accordionitem2 = new accordion_item_default({ props: accordionitem2_props });
-    binding_callbacks.push(() => bind(accordionitem2, "group", accordionitem2_group_binding));
-    function accordionitem3_group_binding(value) {
-      ctx[18](value);
-    }
-    let accordionitem3_props = {
-      label: "6 Months",
-      $$slots: { default: [create_default_slot_2] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem3_props.group = ctx[1];
-    }
-    accordionitem3 = new accordion_item_default({ props: accordionitem3_props });
-    binding_callbacks.push(() => bind(accordionitem3, "group", accordionitem3_group_binding));
-    function accordionitem4_group_binding(value) {
-      ctx[19](value);
-    }
-    let accordionitem4_props = {
-      label: "1 Year",
-      $$slots: { default: [create_default_slot_1] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem4_props.group = ctx[1];
-    }
-    accordionitem4 = new accordion_item_default({ props: accordionitem4_props });
-    binding_callbacks.push(() => bind(accordionitem4, "group", accordionitem4_group_binding));
-    function accordionitem5_group_binding(value) {
-      ctx[20](value);
-    }
-    let accordionitem5_props = {
-      label: "All Time",
-      $$slots: { default: [create_default_slot] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem5_props.group = ctx[1];
-    }
-    accordionitem5 = new accordion_item_default({ props: accordionitem5_props });
-    binding_callbacks.push(() => bind(accordionitem5, "group", accordionitem5_group_binding));
+    let if_block0 = ctx[2].length >= 1 && create_if_block_5(ctx);
+    let if_block1 = ctx[3].length >= 1 && create_if_block_4(ctx);
+    let if_block2 = ctx[4].length >= 1 && create_if_block_32(ctx);
+    let if_block3 = ctx[5].length >= 1 && create_if_block_22(ctx);
+    let if_block4 = ctx[6].length >= 1 && create_if_block_12(ctx);
+    let if_block5 = ctx[0].length >= 1 && create_if_block7(ctx);
     return {
       c() {
         div = element("div");
-        create_component(accordionitem0.$$.fragment);
+        if (if_block0)
+          if_block0.c();
         t02 = space();
-        create_component(accordionitem1.$$.fragment);
+        if (if_block1)
+          if_block1.c();
         t12 = space();
-        create_component(accordionitem2.$$.fragment);
+        if (if_block2)
+          if_block2.c();
         t2 = space();
-        create_component(accordionitem3.$$.fragment);
+        if (if_block3)
+          if_block3.c();
         t3 = space();
-        create_component(accordionitem4.$$.fragment);
+        if (if_block4)
+          if_block4.c();
         t4 = space();
-        create_component(accordionitem5.$$.fragment);
+        if (if_block5)
+          if_block5.c();
       },
       m(target, anchor) {
         insert(target, div, anchor);
-        mount_component(accordionitem0, div, null);
+        if (if_block0)
+          if_block0.m(div, null);
         append(div, t02);
-        mount_component(accordionitem1, div, null);
+        if (if_block1)
+          if_block1.m(div, null);
         append(div, t12);
-        mount_component(accordionitem2, div, null);
+        if (if_block2)
+          if_block2.m(div, null);
         append(div, t2);
-        mount_component(accordionitem3, div, null);
+        if (if_block3)
+          if_block3.m(div, null);
         append(div, t3);
-        mount_component(accordionitem4, div, null);
+        if (if_block4)
+          if_block4.m(div, null);
         append(div, t4);
-        mount_component(accordionitem5, div, null);
+        if (if_block5)
+          if_block5.m(div, null);
         current = true;
       },
       p(ctx2, [dirty]) {
-        const accordionitem0_changes = {};
-        if (dirty & 33554432) {
-          accordionitem0_changes.$$scope = { dirty, ctx: ctx2 };
+        if (ctx2[2].length >= 1)
+          if_block0.p(ctx2, dirty);
+        if (ctx2[3].length >= 1)
+          if_block1.p(ctx2, dirty);
+        if (ctx2[4].length >= 1)
+          if_block2.p(ctx2, dirty);
+        if (ctx2[5].length >= 1)
+          if_block3.p(ctx2, dirty);
+        if (ctx2[6].length >= 1)
+          if_block4.p(ctx2, dirty);
+        if (ctx2[0].length >= 1) {
+          if (if_block5) {
+            if_block5.p(ctx2, dirty);
+            if (dirty & 1) {
+              transition_in(if_block5, 1);
+            }
+          } else {
+            if_block5 = create_if_block7(ctx2);
+            if_block5.c();
+            transition_in(if_block5, 1);
+            if_block5.m(div, null);
+          }
+        } else if (if_block5) {
+          group_outros();
+          transition_out(if_block5, 1, 1, () => {
+            if_block5 = null;
+          });
+          check_outros();
         }
-        if (!updating_group && dirty & 2) {
-          updating_group = true;
-          accordionitem0_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group = false);
-        }
-        accordionitem0.$set(accordionitem0_changes);
-        const accordionitem1_changes = {};
-        if (dirty & 33554432) {
-          accordionitem1_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        if (!updating_group_1 && dirty & 2) {
-          updating_group_1 = true;
-          accordionitem1_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group_1 = false);
-        }
-        accordionitem1.$set(accordionitem1_changes);
-        const accordionitem2_changes = {};
-        if (dirty & 33554432) {
-          accordionitem2_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        if (!updating_group_2 && dirty & 2) {
-          updating_group_2 = true;
-          accordionitem2_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group_2 = false);
-        }
-        accordionitem2.$set(accordionitem2_changes);
-        const accordionitem3_changes = {};
-        if (dirty & 33554432) {
-          accordionitem3_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        if (!updating_group_3 && dirty & 2) {
-          updating_group_3 = true;
-          accordionitem3_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group_3 = false);
-        }
-        accordionitem3.$set(accordionitem3_changes);
-        const accordionitem4_changes = {};
-        if (dirty & 33554432) {
-          accordionitem4_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        if (!updating_group_4 && dirty & 2) {
-          updating_group_4 = true;
-          accordionitem4_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group_4 = false);
-        }
-        accordionitem4.$set(accordionitem4_changes);
-        const accordionitem5_changes = {};
-        if (dirty & 33554433) {
-          accordionitem5_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        if (!updating_group_5 && dirty & 2) {
-          updating_group_5 = true;
-          accordionitem5_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group_5 = false);
-        }
-        accordionitem5.$set(accordionitem5_changes);
       },
       i(local) {
         if (current)
           return;
-        transition_in(accordionitem0.$$.fragment, local);
-        transition_in(accordionitem1.$$.fragment, local);
-        transition_in(accordionitem2.$$.fragment, local);
-        transition_in(accordionitem3.$$.fragment, local);
-        transition_in(accordionitem4.$$.fragment, local);
-        transition_in(accordionitem5.$$.fragment, local);
+        transition_in(if_block0);
+        transition_in(if_block1);
+        transition_in(if_block2);
+        transition_in(if_block3);
+        transition_in(if_block4);
+        transition_in(if_block5);
         current = true;
       },
       o(local) {
-        transition_out(accordionitem0.$$.fragment, local);
-        transition_out(accordionitem1.$$.fragment, local);
-        transition_out(accordionitem2.$$.fragment, local);
-        transition_out(accordionitem3.$$.fragment, local);
-        transition_out(accordionitem4.$$.fragment, local);
-        transition_out(accordionitem5.$$.fragment, local);
+        transition_out(if_block0);
+        transition_out(if_block1);
+        transition_out(if_block2);
+        transition_out(if_block3);
+        transition_out(if_block4);
+        transition_out(if_block5);
         current = false;
       },
       d(detaching) {
         if (detaching)
           detach(div);
-        destroy_component(accordionitem0);
-        destroy_component(accordionitem1);
-        destroy_component(accordionitem2);
-        destroy_component(accordionitem3);
-        destroy_component(accordionitem4);
-        destroy_component(accordionitem5);
+        if (if_block0)
+          if_block0.d();
+        if (if_block1)
+          if_block1.d();
+        if (if_block2)
+          if_block2.d();
+        if (if_block3)
+          if_block3.d();
+        if (if_block4)
+          if_block4.d();
+        if (if_block5)
+          if_block5.d();
       }
     };
   }
@@ -10148,27 +10363,27 @@
       "Time Read": format(",.2f"),
       "Read Speed": format(",.0f")
     };
-    function accordionitem0_group_binding(value) {
+    function accordionitem_group_binding(value) {
       display_group = value;
       $$invalidate(1, display_group);
     }
-    function accordionitem1_group_binding(value) {
+    function accordionitem_group_binding_1(value) {
       display_group = value;
       $$invalidate(1, display_group);
     }
-    function accordionitem2_group_binding(value) {
+    function accordionitem_group_binding_2(value) {
       display_group = value;
       $$invalidate(1, display_group);
     }
-    function accordionitem3_group_binding(value) {
+    function accordionitem_group_binding_3(value) {
       display_group = value;
       $$invalidate(1, display_group);
     }
-    function accordionitem4_group_binding(value) {
+    function accordionitem_group_binding_4(value) {
       display_group = value;
       $$invalidate(1, display_group);
     }
-    function accordionitem5_group_binding(value) {
+    function accordionitem_group_binding_5(value) {
       display_group = value;
       $$invalidate(1, display_group);
     }
@@ -10192,12 +10407,12 @@
       read_speed_accessor,
       tooltip_accessors,
       tooltip_formatters,
-      accordionitem0_group_binding,
-      accordionitem1_group_binding,
-      accordionitem2_group_binding,
-      accordionitem3_group_binding,
-      accordionitem4_group_binding,
-      accordionitem5_group_binding
+      accordionitem_group_binding,
+      accordionitem_group_binding_1,
+      accordionitem_group_binding_2,
+      accordionitem_group_binding_3,
+      accordionitem_group_binding_4,
+      accordionitem_group_binding_5
     ];
   }
   var Stats = class extends SvelteComponent {

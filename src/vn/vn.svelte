@@ -181,7 +181,7 @@
 	}
 
 	body {
-		@apply dark:bg-slate-800;
+		@apply bg-slate-800;
 	}
 
 	.jp-text {
@@ -202,16 +202,16 @@
 	}
 
 	.sentence-entry {
-		@apply flex items-center dark:bg-slate-900 jp-text p-4 gap-4;
+		@apply flex items-center bg-slate-900 jp-text p-4 gap-4;
 		filter: blur(var(--default-inactivity-blur));
 	}
 
 	.sentence {
-		@apply grow inline-block text-left dark:text-slate-400 jp-text;
+		@apply grow inline-block text-left text-slate-400 jp-text;
 	}
 
 	.delete-button {
-		@apply self-center rounded-full inline-flex dark:text-indigo-500 dark:border-indigo-500 p-2 hover:bg-indigo-700 hover:text-white;
+		@apply self-center rounded-full inline-flex text-indigo-500 border-indigo-500 p-2 hover:bg-indigo-700 hover:text-white;
 	}
 
 	.line-select {
@@ -232,7 +232,7 @@
 	}
 
 	.menu-button {
-		@apply text-left col-span-2 p-4 dark:bg-slate-900 text-white hover:bg-slate-700;
+		@apply text-left col-span-2 p-4 bg-slate-900 text-white hover:bg-slate-700;
 	}
 
 	.menu-input {
@@ -240,6 +240,6 @@
 	}
 
 	.menu-label {
-		@apply p-4 dark:bg-slate-900 text-white;
+		@apply p-4 bg-slate-900 text-white;
 	}
 </style>

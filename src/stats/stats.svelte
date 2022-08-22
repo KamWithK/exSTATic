@@ -86,6 +86,6 @@
     @tailwind utilities;
 
 	body {
-		@apply dark:bg-slate-800;
+		@apply bg-slate-800;
 	}
 </style>

@@ -29,8 +29,8 @@ browser.action.onClicked.addListener(async _ => {
     if (listen_status == true || listen_status === undefined) {
         await browser.action.setIcon({
             "path": {
-                "100": "docs/disabled_100x100.png",
-                "500": "docs/disabled.png"
+                "100": "/docs/disabled_100x100.png",
+                "500": "/docs/disabled.png"
             }
         })
 
@@ -40,8 +40,8 @@ browser.action.onClicked.addListener(async _ => {
     } else {
         await browser.action.setIcon({
             "path": {
-                "100": "docs/favicon_100x100.png",
-                "500": "docs/favicon.png"
+                "100": "/docs/favicon_100x100.png",
+                "500": "/docs/favicon.png"
             }
         })
 

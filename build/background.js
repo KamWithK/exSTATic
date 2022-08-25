@@ -1706,8 +1706,8 @@
     if (listen_status == true || listen_status === void 0) {
       await browser3.action.setIcon({
         "path": {
-          "100": "docs/disabled_100x100.png",
-          "500": "docs/disabled.png"
+          "100": "/docs/disabled_100x100.png",
+          "500": "/docs/disabled.png"
         }
       });
       await browser3.storage.local.set({
@@ -1716,8 +1716,8 @@
     } else {
       await browser3.action.setIcon({
         "path": {
-          "100": "docs/favicon_100x100.png",
-          "500": "docs/favicon.png"
+          "100": "/docs/favicon_100x100.png",
+          "500": "/docs/favicon.png"
         }
       });
       await browser3.storage.local.set({

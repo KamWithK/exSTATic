@@ -1341,7 +1341,7 @@
         return;
       }
       const max_line_id = this.details["last_line_added"];
-      const min_line_id = max_lines <= 0 | max_lines === void 0 | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1);
+      const min_line_id = max_lines <= 0 | max_lines === void 0 | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines);
       const id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map((index) => JSON.stringify([this.uuid, min_line_id + index]));
       const lines = await browser.storage.local.get(id_queries);
       return Object.entries(lines).map(([key, line_data]) => {
@@ -1445,7 +1445,6 @@
       if (this.instance_storage !== void 0) {
         this.details = this.instance_storage.details;
         this.uuid = this.properties["previous_uuid"];
-        this.logLines();
       }
       if (live_stat_update) {
         this.stop_ticker(false);

@@ -714,17 +714,21 @@ select {
 .bg-transparent {
   background-color: transparent;
 }
-.bg-slate-900 {
+.bg-block {
   --tw-bg-opacity:1;
   background-color: rgb(15 23 42 / var(--tw-bg-opacity));
 }
-.bg-indigo-400 {
+.bg-button {
   --tw-bg-opacity:1;
   background-color: rgb(129 140 248 / var(--tw-bg-opacity));
 }
-.bg-slate-700 {
+.bg-menu {
   --tw-bg-opacity:1;
   background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+}
+.bg-slate-900 {
+  --tw-bg-opacity:1;
+  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
 }
 .bg-opacity-70 {
   --tw-bg-opacity:0.7;
@@ -793,15 +797,15 @@ select {
 .tracking-tighter {
   letter-spacing: -0.05em;
 }
-.text-slate-400 {
+.text-text {
   --tw-text-opacity:1;
   color: rgb(148 163 184 / var(--tw-text-opacity));
 }
-.text-indigo-500 {
+.text-button-text {
   --tw-text-opacity:1;
   color: rgb(99 102 241 / var(--tw-text-opacity));
 }
-.text-white {
+.text-icon {
   --tw-text-opacity:1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
@@ -828,7 +832,7 @@ body {
   --tw-bg-opacity:1;
   background-color: rgb(30 41 59 / var(--tw-bg-opacity));
 }
-.hover\:bg-indigo-700:hover {
+.hover\:bg-hover:hover {
   --tw-bg-opacity:1;
   background-color: rgb(67 56 202 / var(--tw-bg-opacity));
 }

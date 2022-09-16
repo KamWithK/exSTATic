@@ -3616,7 +3616,7 @@
       c() {
         button = element("button");
         button.textContent = "more_vert";
-        attr(button, "class", "material-icons rounded-full hover:bg-indigo-700");
+        attr(button, "class", "material-icons rounded-full hover:bg-hover");
       },
       m(target, anchor) {
         insert(target, button, anchor);

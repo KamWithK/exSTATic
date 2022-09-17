@@ -708,6 +708,9 @@ select {
 .items-center {
   align-items: center;
 }
+.justify-center {
+  justify-content: center;
+}
 .justify-between {
   justify-content: space-between;
 }
@@ -819,6 +822,9 @@ select {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+.text-\[0\.6rem\] {
+  font-size: 0.6rem;
 }
 .font-semibold {
   font-weight: 600;

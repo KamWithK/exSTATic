@@ -1,6 +1,7 @@
 <script lang="ts">
     import BulkDataGraphs from "./bulk_data_graphs.svelte"
     import MediaGraphs from "./media_graphs.svelte"
+    import CalendarHeatmap from "../components/charts/calendar_heatmap.svelte"
 
     import { groups, sum, mean, min } from "d3-array"
     import { format } from "d3-format"
@@ -55,6 +56,15 @@
         "read_speed": mean(v, d => d.read_speed)
     }))
 
+    let date_groups, date_summary
+    $: date_groups = groups(filtered, d => d.date)
+    $: date_summary = date_groups.map(([, v]) => ({
+        "date": v[0].date,
+        "time_read": sum(v, d => d.time_read),
+        "chars_read": sum(v, d => d.chars_read),
+        "read_speed": mean(v, d => d.read_speed)
+    }))
+
     const name_accessor = d => d.name
     const date_accessor = d => parseISO(d.date)
     const chars_read_accessor = d => d.chars_read
@@ -82,6 +92,10 @@
     </div>
 
     {#if entries_exist}
+        {#if year !== "All Time"}
+            <CalendarHeatmap data={date_summary} {date_accessor} metric_accessor={time_read_accessor} graph_title="Streak" {tooltip_accessors} {tooltip_formatters}/>
+        {/if}
+
         <BulkDataGraphs data={filtered} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
         <MediaGraphs data={uuid_summary} {name_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
     {/if}

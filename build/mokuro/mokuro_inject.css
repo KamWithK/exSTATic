@@ -738,11 +738,11 @@ select {
 }
 .bg-block {
   --tw-bg-opacity:1;
-  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+  background-color: rgb(245 245 245 / var(--tw-bg-opacity));
 }
 .bg-button {
   --tw-bg-opacity:1;
-  background-color: rgb(129 140 248 / var(--tw-bg-opacity));
+  background-color: rgb(99 102 241 / var(--tw-bg-opacity));
 }
 .bg-menu {
   --tw-bg-opacity:1;
@@ -821,15 +821,15 @@ select {
 }
 .text-text {
   --tw-text-opacity:1;
-  color: rgb(148 163 184 / var(--tw-text-opacity));
+  color: rgb(88 110 117 / var(--tw-text-opacity));
 }
 .text-button-text {
   --tw-text-opacity:1;
-  color: rgb(99 102 241 / var(--tw-text-opacity));
+  color: rgb(67 56 202 / var(--tw-text-opacity));
 }
 .text-icon {
   --tw-text-opacity:1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
+  color: rgb(88 110 117 / var(--tw-text-opacity));
 }
 .text-indigo-400 {
   --tw-text-opacity:1;

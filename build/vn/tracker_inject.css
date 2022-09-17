@@ -748,11 +748,11 @@ select {
 }
 .bg-block {
   --tw-bg-opacity:1;
-  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+  background-color: rgb(245 245 245 / var(--tw-bg-opacity));
 }
 .bg-button {
   --tw-bg-opacity:1;
-  background-color: rgb(129 140 248 / var(--tw-bg-opacity));
+  background-color: rgb(99 102 241 / var(--tw-bg-opacity));
 }
 .bg-menu {
   --tw-bg-opacity:1;
@@ -831,15 +831,15 @@ select {
 }
 .text-text {
   --tw-text-opacity:1;
-  color: rgb(148 163 184 / var(--tw-text-opacity));
+  color: rgb(88 110 117 / var(--tw-text-opacity));
 }
 .text-button-text {
   --tw-text-opacity:1;
-  color: rgb(99 102 241 / var(--tw-text-opacity));
+  color: rgb(67 56 202 / var(--tw-text-opacity));
 }
 .text-icon {
   --tw-text-opacity:1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
+  color: rgb(88 110 117 / var(--tw-text-opacity));
 }
 .text-indigo-400 {
   --tw-text-opacity:1;
@@ -865,7 +865,7 @@ input {
 }
 body {
   --tw-bg-opacity:1;
-  background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 .jp-text {
   font-family: var(--default-font);
@@ -873,7 +873,7 @@ body {
 }
 #top_bar {
   --tw-bg-opacity:1;
-  background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
@@ -882,18 +882,18 @@ body {
   font-size: 2.25rem;
   line-height: 2.5rem;
   --tw-text-opacity:1;
-  color: rgb(129 140 248 / var(--tw-text-opacity));
+  color: rgb(55 48 163 / var(--tw-text-opacity));
 }
 .entry_holder {
   --tw-bg-opacity:1;
-  background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 .sentence-entry {
   display: flex;
   align-items: center;
   gap: 1rem;
   --tw-bg-opacity:1;
-  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+  background-color: rgb(245 245 245 / var(--tw-bg-opacity));
   padding: 1rem;
   font-family: var(--default-font);
   font-size: var(--default-font-size);
@@ -904,7 +904,7 @@ body {
   flex-grow: 1;
   text-align: left;
   --tw-text-opacity:1;
-  color: rgb(148 163 184 / var(--tw-text-opacity));
+  color: rgb(88 110 117 / var(--tw-text-opacity));
   font-family: var(--default-font);
   font-size: var(--default-font-size);
 }
@@ -916,13 +916,13 @@ body {
   border-color: rgb(99 102 241 / var(--tw-border-opacity));
   padding: 0.5rem;
   --tw-text-opacity:1;
-  color: rgb(99 102 241 / var(--tw-text-opacity));
+  color: rgb(67 56 202 / var(--tw-text-opacity));
 }
 .delete-button:hover {
   --tw-bg-opacity:1;
   background-color: rgb(67 56 202 / var(--tw-bg-opacity));
   --tw-text-opacity:1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
+  color: rgb(88 110 117 / var(--tw-text-opacity));
 }
 .line-select {
   height: 1rem;
@@ -930,9 +930,9 @@ body {
   flex-shrink: 0;
   border-radius: 9999px;
   --tw-bg-opacity:1;
-  background-color: rgb(129 140 248 / var(--tw-bg-opacity));
+  background-color: rgb(99 102 241 / var(--tw-bg-opacity));
   --tw-text-opacity:1;
-  color: rgb(99 102 241 / var(--tw-text-opacity));
+  color: rgb(67 56 202 / var(--tw-text-opacity));
 }
 .stat-numbers {
   white-space: nowrap;
@@ -959,7 +959,7 @@ body {
   height: 100%;
   align-items: center;
   gap: 0.75rem;
-  background-color: rgb(129 140 248 / var(--tw-bg-opacity));
+  background-color: rgb(99 102 241 / var(--tw-bg-opacity));
   --tw-bg-opacity:0.7;
   padding: 0.75rem;
 }
@@ -973,11 +973,11 @@ body {
 .menu-button {
   grid-column: span 2 / span 2;
   --tw-bg-opacity:1;
-  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+  background-color: rgb(245 245 245 / var(--tw-bg-opacity));
   padding: 1rem;
   text-align: left;
   --tw-text-opacity:1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
+  color: rgb(88 110 117 / var(--tw-text-opacity));
 }
 .menu-button:hover {
   --tw-bg-opacity:1;
@@ -990,14 +990,14 @@ body {
   background-color: rgb(51 65 85 / var(--tw-bg-opacity));
   padding: 0.25rem;
   --tw-text-opacity:1;
-  color: rgb(209 213 219 / var(--tw-text-opacity));
+  color: rgb(88 110 117 / var(--tw-text-opacity));
 }
 .menu-label {
   --tw-bg-opacity:1;
-  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+  background-color: rgb(245 245 245 / var(--tw-bg-opacity));
   padding: 1rem;
   --tw-text-opacity:1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
+  color: rgb(88 110 117 / var(--tw-text-opacity));
 }
 .hover\:bg-hover:hover {
   --tw-bg-opacity:1;

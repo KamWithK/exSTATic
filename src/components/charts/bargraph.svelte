@@ -65,6 +65,6 @@
 
         <Legend {groups} {hues}/>
 
-        <Popup {data} {groups} {hues} {x_accessor} group_accessor={c_accessor} {tooltip_accessors} {tooltip_formatters} bind:mouse_move bind:mouse_out/>
+        <Popup {data} {groups} {hues} date_accessor={x_accessor} group_accessor={c_accessor} {tooltip_accessors} {tooltip_formatters} bind:mouse_move bind:mouse_out/>
     </figure>
 </div>

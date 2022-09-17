@@ -1146,18 +1146,18 @@
       }
       function computeQualityMetrics(distance, colors) {
         var i, j, l;
-        var min = Infinity, d;
+        var min2 = Infinity, d;
         var S = 0, t = 0;
         for (i = 0, l = colors.length; i < l; i++) {
           for (j = i + 1; j < l; j++) {
             d = distance(colors[i], colors[j]);
-            if (d < min)
-              min = d;
+            if (d < min2)
+              min2 = d;
             S += d;
             t++;
           }
         }
-        return { min, mean: S / t };
+        return { min: min2, mean: S / t };
       }
       exports.validateRgb = validateRgb;
       exports.labToRgb = labToRgb;
@@ -1684,11 +1684,6 @@
   // node_modules/svelte/internal/index.mjs
   function noop() {
   }
-  function assign(tar, src) {
-    for (const k in src)
-      tar[k] = src[k];
-    return tar;
-  }
   function run(fn) {
     return fn();
   }
@@ -1706,50 +1701,6 @@
   }
   function is_empty(obj) {
     return Object.keys(obj).length === 0;
-  }
-  function create_slot(definition, ctx, $$scope, fn) {
-    if (definition) {
-      const slot_ctx = get_slot_context(definition, ctx, $$scope, fn);
-      return definition[0](slot_ctx);
-    }
-  }
-  function get_slot_context(definition, ctx, $$scope, fn) {
-    return definition[1] && fn ? assign($$scope.ctx.slice(), definition[1](fn(ctx))) : $$scope.ctx;
-  }
-  function get_slot_changes(definition, $$scope, dirty, fn) {
-    if (definition[2] && fn) {
-      const lets = definition[2](fn(dirty));
-      if ($$scope.dirty === void 0) {
-        return lets;
-      }
-      if (typeof lets === "object") {
-        const merged = [];
-        const len = Math.max($$scope.dirty.length, lets.length);
-        for (let i = 0; i < len; i += 1) {
-          merged[i] = $$scope.dirty[i] | lets[i];
-        }
-        return merged;
-      }
-      return $$scope.dirty | lets;
-    }
-    return $$scope.dirty;
-  }
-  function update_slot_base(slot, slot_definition, ctx, $$scope, slot_changes, get_slot_context_fn) {
-    if (slot_changes) {
-      const slot_context = get_slot_context(slot_definition, ctx, $$scope, get_slot_context_fn);
-      slot.p(slot_context, slot_changes);
-    }
-  }
-  function get_all_dirty_from_scope($$scope) {
-    if ($$scope.ctx.length > 32) {
-      const dirty = [];
-      const length = $$scope.ctx.length / 32;
-      for (let i = 0; i < length; i++) {
-        dirty[i] = -1;
-      }
-      return dirty;
-    }
-    return -1;
   }
   var is_hydrating = false;
   function start_hydrating() {
@@ -2007,7 +1958,7 @@
     }
     component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
   }
-  function init(component, options, instance15, create_fragment15, not_equal, props, append_styles, dirty = [-1]) {
+  function init(component, options, instance13, create_fragment13, not_equal, props, append_styles, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -2030,7 +1981,7 @@
     };
     append_styles && append_styles($$.root);
     let ready = false;
-    $$.ctx = instance15 ? instance15(component, options.props || {}, (i, ret, ...rest) => {
+    $$.ctx = instance13 ? instance13(component, options.props || {}, (i, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
       if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
         if (!$$.skip_bound && $$.bound[i])
@@ -2043,7 +1994,7 @@
     $$.update();
     ready = true;
     run_all($$.before_update);
-    $$.fragment = create_fragment15 ? create_fragment15($$.ctx) : false;
+    $$.fragment = create_fragment13 ? create_fragment13($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
         start_hydrating();
@@ -2125,225 +2076,6 @@
       }
     }
   };
-
-  // src/components/interface/accordion_item.svelte
-  function create_if_block(ctx) {
-    let current;
-    const default_slot_template = ctx[6].default;
-    const default_slot = create_slot(default_slot_template, ctx, ctx[5], null);
-    return {
-      c() {
-        if (default_slot)
-          default_slot.c();
-      },
-      m(target, anchor) {
-        if (default_slot) {
-          default_slot.m(target, anchor);
-        }
-        current = true;
-      },
-      p(ctx2, dirty) {
-        if (default_slot) {
-          if (default_slot.p && (!current || dirty & 32)) {
-            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[5], !current ? get_all_dirty_from_scope(ctx2[5]) : get_slot_changes(default_slot_template, ctx2[5], dirty, null), null);
-          }
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(default_slot, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(default_slot, local);
-        current = false;
-      },
-      d(detaching) {
-        if (default_slot)
-          default_slot.d(detaching);
-      }
-    };
-  }
-  function create_fragment(ctx) {
-    let div;
-    let label_1;
-    let input;
-    let t02;
-    let p;
-    let t12;
-    let t2;
-    let span;
-    let t3_value = ctx[4] ? "expand_less" : "expand_more";
-    let t3;
-    let t4;
-    let current;
-    let mounted;
-    let dispose;
-    let if_block = ctx[4] && create_if_block(ctx);
-    return {
-      c() {
-        div = element("div");
-        label_1 = element("label");
-        input = element("input");
-        t02 = space();
-        p = element("p");
-        t12 = text(ctx[1]);
-        t2 = space();
-        span = element("span");
-        t3 = text(t3_value);
-        t4 = space();
-        if (if_block)
-          if_block.c();
-        attr(input, "type", "radio");
-        attr(input, "class", "hidden");
-        attr(input, "name", ctx[2]);
-        input.__value = ctx[3];
-        input.value = input.__value;
-        ctx[9][0].push(input);
-        set_style(p, "color", "grey");
-        attr(span, "class", "material-icons h-3 w-3");
-        set_style(span, "color", "grey");
-        attr(label_1, "class", "flex flex-row justify-between bg-slate-900 p-5 border-2 border-indigo-400");
-        attr(div, "class", "flex flex-col");
-      },
-      m(target, anchor) {
-        insert(target, div, anchor);
-        append(div, label_1);
-        append(label_1, input);
-        ctx[7](input);
-        input.checked = input.__value === ctx[0];
-        append(label_1, t02);
-        append(label_1, p);
-        append(p, t12);
-        append(label_1, t2);
-        append(label_1, span);
-        append(span, t3);
-        append(div, t4);
-        if (if_block)
-          if_block.m(div, null);
-        current = true;
-        if (!mounted) {
-          dispose = listen(input, "change", ctx[8]);
-          mounted = true;
-        }
-      },
-      p(ctx2, [dirty]) {
-        if (!current || dirty & 4) {
-          attr(input, "name", ctx2[2]);
-        }
-        if (!current || dirty & 8) {
-          input.__value = ctx2[3];
-          input.value = input.__value;
-        }
-        if (dirty & 1) {
-          input.checked = input.__value === ctx2[0];
-        }
-        if (!current || dirty & 2)
-          set_data(t12, ctx2[1]);
-        if ((!current || dirty & 16) && t3_value !== (t3_value = ctx2[4] ? "expand_less" : "expand_more"))
-          set_data(t3, t3_value);
-        if (ctx2[4]) {
-          if (if_block) {
-            if_block.p(ctx2, dirty);
-            if (dirty & 16) {
-              transition_in(if_block, 1);
-            }
-          } else {
-            if_block = create_if_block(ctx2);
-            if_block.c();
-            transition_in(if_block, 1);
-            if_block.m(div, null);
-          }
-        } else if (if_block) {
-          group_outros();
-          transition_out(if_block, 1, 1, () => {
-            if_block = null;
-          });
-          check_outros();
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(if_block);
-        current = true;
-      },
-      o(local) {
-        transition_out(if_block);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div);
-        ctx[7](null);
-        ctx[9][0].splice(ctx[9][0].indexOf(input), 1);
-        if (if_block)
-          if_block.d();
-        mounted = false;
-        dispose();
-      }
-    };
-  }
-  function instance($$self, $$props, $$invalidate) {
-    let { $$slots: slots = {}, $$scope } = $$props;
-    let { label = "" } = $$props;
-    let { name = "accordion" } = $$props;
-    let { group: group2 = void 0 } = $$props;
-    let value;
-    let shown = false;
-    const $$binding_groups = [[]];
-    function input_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        value = $$value;
-        $$invalidate(3, value);
-      });
-    }
-    function input_change_handler() {
-      group2 = this.__value;
-      $$invalidate(0, group2), $$invalidate(3, value);
-    }
-    $$self.$$set = ($$props2) => {
-      if ("label" in $$props2)
-        $$invalidate(1, label = $$props2.label);
-      if ("name" in $$props2)
-        $$invalidate(2, name = $$props2.name);
-      if ("group" in $$props2)
-        $$invalidate(0, group2 = $$props2.group);
-      if ("$$scope" in $$props2)
-        $$invalidate(5, $$scope = $$props2.$$scope);
-    };
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 9) {
-        $:
-          if (group2 === void 0 && value !== void 0)
-            $$invalidate(0, group2 = value);
-      }
-      if ($$self.$$.dirty & 9) {
-        $:
-          $$invalidate(4, shown = group2 === value);
-      }
-    };
-    return [
-      group2,
-      label,
-      name,
-      value,
-      shown,
-      $$scope,
-      slots,
-      input_binding,
-      input_change_handler,
-      $$binding_groups
-    ];
-  }
-  var Accordion_item = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance, create_fragment, safe_not_equal, { label: 1, name: 2, group: 0 });
-    }
-  };
-  var accordion_item_default = Accordion_item;
 
   // node_modules/d3-selection/src/namespaces.js
   var xhtml = "http://www.w3.org/1999/xhtml";
@@ -3896,7 +3628,7 @@
       }
     };
   }
-  function create_if_block2(ctx) {
+  function create_if_block(ctx) {
     let text_1;
     let t;
     let text_1_x_value;
@@ -3926,14 +3658,14 @@
       }
     };
   }
-  function create_fragment2(ctx) {
+  function create_fragment(ctx) {
     let g;
     let g_transform_value;
     let t;
     let if_block_anchor;
     function select_block_type(ctx2, dirty) {
       if (ctx2[3] === "top")
-        return create_if_block2;
+        return create_if_block;
       if (ctx2[3] === "right")
         return create_if_block_1;
       if (ctx2[3] === "bottom")
@@ -3995,7 +3727,7 @@
       }
     };
   }
-  function instance2($$self, $$props, $$invalidate) {
+  function instance($$self, $$props, $$invalidate) {
     let { scale } = $$props;
     let { height, width, margin } = $$props;
     let { position } = $$props;
@@ -4089,7 +3821,7 @@
   var Oriented_axis = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance2, create_fragment2, safe_not_equal, {
+      init(this, options, instance, create_fragment, safe_not_equal, {
         scale: 7,
         height: 0,
         width: 1,
@@ -4176,17 +3908,17 @@
 
   // node_modules/d3-array/src/extent.js
   function extent(values, valueof) {
-    let min;
+    let min2;
     let max;
     if (valueof === void 0) {
       for (const value of values) {
         if (value != null) {
-          if (min === void 0) {
+          if (min2 === void 0) {
             if (value >= value)
-              min = max = value;
+              min2 = max = value;
           } else {
-            if (min > value)
-              min = value;
+            if (min2 > value)
+              min2 = value;
             if (max < value)
               max = value;
           }
@@ -4196,19 +3928,19 @@
       let index2 = -1;
       for (let value of values) {
         if ((value = valueof(value, ++index2, values)) != null) {
-          if (min === void 0) {
+          if (min2 === void 0) {
             if (value >= value)
-              min = max = value;
+              min2 = max = value;
           } else {
-            if (min > value)
-              min = value;
+            if (min2 > value)
+              min2 = value;
             if (max < value)
               max = value;
           }
         }
       }
     }
-    return [min, max];
+    return [min2, max];
   }
 
   // node_modules/internmap/src/index.js
@@ -4340,6 +4072,26 @@
     else if (error >= e2)
       step1 *= 2;
     return stop < start ? -step1 : step1;
+  }
+
+  // node_modules/d3-array/src/min.js
+  function min(values, valueof) {
+    let min2;
+    if (valueof === void 0) {
+      for (const value of values) {
+        if (value != null && (min2 > value || min2 === void 0 && value >= value)) {
+          min2 = value;
+        }
+      }
+    } else {
+      let index2 = -1;
+      for (let value of values) {
+        if ((value = valueof(value, ++index2, values)) != null && (min2 > value || min2 === void 0 && value >= value)) {
+          min2 = value;
+        }
+      }
+    }
+    return min2;
   }
 
   // node_modules/d3-array/src/mean.js
@@ -4796,7 +4548,7 @@
     if (o instanceof Hsl)
       return o;
     o = o.rgb();
-    var r = o.r / 255, g = o.g / 255, b = o.b / 255, min = Math.min(r, g, b), max = Math.max(r, g, b), h = NaN, s = max - min, l = (max + min) / 2;
+    var r = o.r / 255, g = o.g / 255, b = o.b / 255, min2 = Math.min(r, g, b), max = Math.max(r, g, b), h = NaN, s = max - min2, l = (max + min2) / 2;
     if (s) {
       if (r === max)
         h = (g - b) / s + (g < b) * 6;
@@ -4804,7 +4556,7 @@
         h = (b - r) / s + 2;
       else
         h = (r - g) / s + 4;
-      s /= l < 0.5 ? max + min : 2 - max - min;
+      s /= l < 0.5 ? max + min2 : 2 - max - min2;
       h *= 60;
     } else {
       s = l > 0 && l < 1 ? 0 : h;
@@ -6505,7 +6257,7 @@
   }
 
   // src/components/draw/axis.svelte
-  function create_fragment3(ctx) {
+  function create_fragment2(ctx) {
     let lineaxis;
     let updating_scale;
     let updating_height;
@@ -6589,7 +6341,7 @@
       }
     };
   }
-  function instance3($$self, $$props, $$invalidate) {
+  function instance2($$self, $$props, $$invalidate) {
     let { scaleType } = $$props;
     let { data } = $$props;
     let { accessor } = $$props;
@@ -6668,7 +6420,7 @@
   var Axis = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance3, create_fragment3, safe_not_equal, {
+      init(this, options, instance2, create_fragment2, safe_not_equal, {
         scaleType: 7,
         data: 8,
         accessor: 9,
@@ -6696,7 +6448,7 @@
     child_ctx[12] = i;
     return child_ctx;
   }
-  function create_if_block3(ctx) {
+  function create_if_block2(ctx) {
     let each_1_anchor;
     let each_value = ctx[0];
     let each_blocks = [];
@@ -6802,9 +6554,9 @@
       }
     };
   }
-  function create_fragment4(ctx) {
+  function create_fragment3(ctx) {
     let if_block_anchor;
-    let if_block = ctx[7] && create_if_block3(ctx);
+    let if_block = ctx[7] && create_if_block2(ctx);
     return {
       c() {
         if (if_block)
@@ -6821,7 +6573,7 @@
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
-            if_block = create_if_block3(ctx2);
+            if_block = create_if_block2(ctx2);
             if_block.c();
             if_block.m(if_block_anchor.parentNode, if_block_anchor);
           }
@@ -6840,7 +6592,7 @@
       }
     };
   }
-  function instance4($$self, $$props, $$invalidate) {
+  function instance3($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { xGet, yGet, rGet, cGet } = $$props;
     let { x_scale, y_scale } = $$props;
@@ -6882,7 +6634,7 @@
   var Circles = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance4, create_fragment4, safe_not_equal, {
+      init(this, options, instance3, create_fragment3, safe_not_equal, {
         data: 0,
         xGet: 1,
         yGet: 2,
@@ -6898,7 +6650,7 @@
   var circles_default = Circles;
 
   // src/components/draw/line.svelte
-  function create_fragment5(ctx) {
+  function create_fragment4(ctx) {
     let path2;
     return {
       c() {
@@ -6923,7 +6675,7 @@
       }
     };
   }
-  function instance5($$self, $$props, $$invalidate) {
+  function instance4($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { xGet, yGet } = $$props;
     let { x_scale, y_scale } = $$props;
@@ -6952,7 +6704,7 @@
   var Line = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance5, create_fragment5, safe_not_equal, {
+      init(this, options, instance4, create_fragment4, safe_not_equal, {
         data: 1,
         xGet: 2,
         yGet: 3,
@@ -6969,7 +6721,7 @@
     child_ctx[16] = list[i];
     return child_ctx;
   }
-  function create_if_block4(ctx) {
+  function create_if_block3(ctx) {
     let p;
     let t;
     return {
@@ -7024,7 +6776,7 @@
       }
     };
   }
-  function create_fragment6(ctx) {
+  function create_fragment5(ctx) {
     let div;
     let p;
     let t02;
@@ -7033,7 +6785,7 @@
     let br;
     let t3;
     let div_class_value;
-    let if_block = ctx[5] !== void 0 && ctx[5] !== "" && ctx[5] !== "NaN  0NaN" && create_if_block4(ctx);
+    let if_block = ctx[5] !== void 0 && ctx[5] !== "" && ctx[5] !== "NaN  0NaN" && create_if_block3(ctx);
     let each_value = Object.keys(ctx[0]);
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
@@ -7082,7 +6834,7 @@
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
-            if_block = create_if_block4(ctx2);
+            if_block = create_if_block3(ctx2);
             if_block.c();
             if_block.m(div, t2);
           }
@@ -7132,7 +6884,7 @@
       }
     };
   }
-  function instance6($$self, $$props, $$invalidate) {
+  function instance5($$self, $$props, $$invalidate) {
     let show_popup = false;
     let [popup_x, popup_y] = [0, 0];
     let [popup_name, popup_date, popout_color] = ["", "", ""];
@@ -7194,7 +6946,7 @@
   var Popup = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance6, create_fragment6, safe_not_equal, {
+      init(this, options, instance5, create_fragment5, safe_not_equal, {
         data: 8,
         groups: 9,
         hues: 10,
@@ -7264,7 +7016,7 @@
       }
     };
   }
-  function create_fragment7(ctx) {
+  function create_fragment6(ctx) {
     let div;
     let each_value = ctx[0];
     let each_blocks = [];
@@ -7314,7 +7066,7 @@
       }
     };
   }
-  function instance7($$self, $$props, $$invalidate) {
+  function instance6($$self, $$props, $$invalidate) {
     let { groups: groups2, hues } = $$props;
     $$self.$$set = ($$props2) => {
       if ("groups" in $$props2)
@@ -7327,14 +7079,14 @@
   var Legend = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance7, create_fragment7, safe_not_equal, { groups: 0, hues: 1 });
+      init(this, options, instance6, create_fragment6, safe_not_equal, { groups: 0, hues: 1 });
     }
   };
   var legend_default = Legend;
 
   // src/components/charts/scatterplot.svelte
   var import_iwanthue = __toESM(require_iwanthue());
-  function create_if_block5(ctx) {
+  function create_if_block4(ctx) {
     let line;
     let current;
     line = new line_default2({
@@ -7383,7 +7135,7 @@
       }
     };
   }
-  function create_fragment8(ctx) {
+  function create_fragment7(ctx) {
     let div;
     let h1;
     let t02;
@@ -7515,7 +7267,7 @@
         mouse_out: ctx[23]
       }
     });
-    let if_block = ctx[6] && create_if_block5(ctx);
+    let if_block = ctx[6] && create_if_block4(ctx);
     legend = new legend_default({
       props: {
         groups: ctx[12],
@@ -7689,7 +7441,7 @@
               transition_in(if_block, 1);
             }
           } else {
-            if_block = create_if_block5(ctx2);
+            if_block = create_if_block4(ctx2);
             if_block.c();
             transition_in(if_block, 1);
             if_block.m(svg, null);
@@ -7771,7 +7523,7 @@
       }
     };
   }
-  function instance8($$self, $$props, $$invalidate) {
+  function instance7($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { radius = 60 } = $$props;
     let [xScaleType_1, yScaleType_1, rScaleType_1] = [time, linear2, linear2];
@@ -7970,7 +7722,7 @@
   var Scatterplot = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance8, create_fragment8, safe_not_equal, {
+      init(this, options, instance7, create_fragment7, safe_not_equal, {
         data: 0,
         radius: 29,
         xScaleType: 1,
@@ -7992,7 +7744,7 @@
   var scatterplot_default = Scatterplot;
 
   // src/stats/bulk_data_graphs.svelte
-  function create_fragment9(ctx) {
+  function create_fragment8(ctx) {
     let div;
     let scatterplot0;
     let t;
@@ -8032,7 +7784,7 @@
         create_component(scatterplot0.$$.fragment);
         t = space();
         create_component(scatterplot1.$$.fragment);
-        attr(div, "class", "flex flex-col items-center h-full w-full p-20 gap-20");
+        attr(div, "class", "flex flex-col items-center h-full w-full gap-20");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -8095,7 +7847,7 @@
       }
     };
   }
-  function instance9($$self, $$props, $$invalidate) {
+  function instance8($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { name_accessor } = $$props;
     let { date_accessor } = $$props;
@@ -8135,7 +7887,7 @@
   var Bulk_data_graphs = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance9, create_fragment9, safe_not_equal, {
+      init(this, options, instance8, create_fragment8, safe_not_equal, {
         data: 0,
         name_accessor: 1,
         date_accessor: 2,
@@ -8149,201 +7901,6 @@
   };
   var bulk_data_graphs_default = Bulk_data_graphs;
 
-  // src/stats/min_data_graphs.svelte
-  function create_fragment10(ctx) {
-    let div;
-    let scatterplot0;
-    let t02;
-    let scatterplot1;
-    let t12;
-    let scatterplot2;
-    let current;
-    scatterplot0 = new scatterplot_default({
-      props: {
-        data: ctx[0],
-        x_accessor: ctx[2],
-        y_accessor: ctx[3],
-        c_accessor: ctx[1],
-        radius: MAX_CIRCLE_RADIUS,
-        draw_line: true,
-        tooltip_accessors: ctx[6],
-        tooltip_formatters: ctx[7],
-        graph_title: "Reading Chars Quantity",
-        x_label: "Date",
-        y_label: "Chars Read"
-      }
-    });
-    scatterplot1 = new scatterplot_default({
-      props: {
-        data: ctx[0],
-        x_accessor: ctx[2],
-        y_accessor: ctx[4],
-        c_accessor: ctx[1],
-        radius: MAX_CIRCLE_RADIUS,
-        draw_line: true,
-        tooltip_accessors: ctx[6],
-        tooltip_formatters: ctx[7],
-        graph_title: "Reading Time Quantity",
-        x_label: "Date",
-        y_label: "Time Read"
-      }
-    });
-    scatterplot2 = new scatterplot_default({
-      props: {
-        data: ctx[0],
-        x_accessor: ctx[2],
-        y_accessor: ctx[5],
-        c_accessor: ctx[1],
-        radius: MAX_CIRCLE_RADIUS,
-        draw_line: true,
-        tooltip_accessors: ctx[6],
-        tooltip_formatters: ctx[7],
-        graph_title: "Reading Speed Gains",
-        x_label: "Date",
-        y_label: "Reading Speed"
-      }
-    });
-    return {
-      c() {
-        div = element("div");
-        create_component(scatterplot0.$$.fragment);
-        t02 = space();
-        create_component(scatterplot1.$$.fragment);
-        t12 = space();
-        create_component(scatterplot2.$$.fragment);
-        attr(div, "class", "flex flex-col items-center h-full w-full p-20 gap-20");
-      },
-      m(target, anchor) {
-        insert(target, div, anchor);
-        mount_component(scatterplot0, div, null);
-        append(div, t02);
-        mount_component(scatterplot1, div, null);
-        append(div, t12);
-        mount_component(scatterplot2, div, null);
-        current = true;
-      },
-      p(ctx2, [dirty]) {
-        const scatterplot0_changes = {};
-        if (dirty & 1)
-          scatterplot0_changes.data = ctx2[0];
-        if (dirty & 4)
-          scatterplot0_changes.x_accessor = ctx2[2];
-        if (dirty & 8)
-          scatterplot0_changes.y_accessor = ctx2[3];
-        if (dirty & 2)
-          scatterplot0_changes.c_accessor = ctx2[1];
-        if (dirty & 64)
-          scatterplot0_changes.tooltip_accessors = ctx2[6];
-        if (dirty & 128)
-          scatterplot0_changes.tooltip_formatters = ctx2[7];
-        scatterplot0.$set(scatterplot0_changes);
-        const scatterplot1_changes = {};
-        if (dirty & 1)
-          scatterplot1_changes.data = ctx2[0];
-        if (dirty & 4)
-          scatterplot1_changes.x_accessor = ctx2[2];
-        if (dirty & 16)
-          scatterplot1_changes.y_accessor = ctx2[4];
-        if (dirty & 2)
-          scatterplot1_changes.c_accessor = ctx2[1];
-        if (dirty & 64)
-          scatterplot1_changes.tooltip_accessors = ctx2[6];
-        if (dirty & 128)
-          scatterplot1_changes.tooltip_formatters = ctx2[7];
-        scatterplot1.$set(scatterplot1_changes);
-        const scatterplot2_changes = {};
-        if (dirty & 1)
-          scatterplot2_changes.data = ctx2[0];
-        if (dirty & 4)
-          scatterplot2_changes.x_accessor = ctx2[2];
-        if (dirty & 32)
-          scatterplot2_changes.y_accessor = ctx2[5];
-        if (dirty & 2)
-          scatterplot2_changes.c_accessor = ctx2[1];
-        if (dirty & 64)
-          scatterplot2_changes.tooltip_accessors = ctx2[6];
-        if (dirty & 128)
-          scatterplot2_changes.tooltip_formatters = ctx2[7];
-        scatterplot2.$set(scatterplot2_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(scatterplot0.$$.fragment, local);
-        transition_in(scatterplot1.$$.fragment, local);
-        transition_in(scatterplot2.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(scatterplot0.$$.fragment, local);
-        transition_out(scatterplot1.$$.fragment, local);
-        transition_out(scatterplot2.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div);
-        destroy_component(scatterplot0);
-        destroy_component(scatterplot1);
-        destroy_component(scatterplot2);
-      }
-    };
-  }
-  var MAX_CIRCLE_RADIUS = 7;
-  function instance10($$self, $$props, $$invalidate) {
-    let { data } = $$props;
-    let { name_accessor } = $$props;
-    let { date_accessor } = $$props;
-    let { chars_read_accessor } = $$props;
-    let { time_read_accessor } = $$props;
-    let { read_speed_accessor } = $$props;
-    let { tooltip_accessors, tooltip_formatters } = $$props;
-    $$self.$$set = ($$props2) => {
-      if ("data" in $$props2)
-        $$invalidate(0, data = $$props2.data);
-      if ("name_accessor" in $$props2)
-        $$invalidate(1, name_accessor = $$props2.name_accessor);
-      if ("date_accessor" in $$props2)
-        $$invalidate(2, date_accessor = $$props2.date_accessor);
-      if ("chars_read_accessor" in $$props2)
-        $$invalidate(3, chars_read_accessor = $$props2.chars_read_accessor);
-      if ("time_read_accessor" in $$props2)
-        $$invalidate(4, time_read_accessor = $$props2.time_read_accessor);
-      if ("read_speed_accessor" in $$props2)
-        $$invalidate(5, read_speed_accessor = $$props2.read_speed_accessor);
-      if ("tooltip_accessors" in $$props2)
-        $$invalidate(6, tooltip_accessors = $$props2.tooltip_accessors);
-      if ("tooltip_formatters" in $$props2)
-        $$invalidate(7, tooltip_formatters = $$props2.tooltip_formatters);
-    };
-    return [
-      data,
-      name_accessor,
-      date_accessor,
-      chars_read_accessor,
-      time_read_accessor,
-      read_speed_accessor,
-      tooltip_accessors,
-      tooltip_formatters
-    ];
-  }
-  var Min_data_graphs = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance10, create_fragment10, safe_not_equal, {
-        data: 0,
-        name_accessor: 1,
-        date_accessor: 2,
-        chars_read_accessor: 3,
-        time_read_accessor: 4,
-        read_speed_accessor: 5,
-        tooltip_accessors: 6,
-        tooltip_formatters: 7
-      });
-    }
-  };
-  var min_data_graphs_default = Min_data_graphs;
-
   // src/components/draw/bars.svelte
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
@@ -8351,7 +7908,7 @@
     child_ctx[13] = i;
     return child_ctx;
   }
-  function create_if_block6(ctx) {
+  function create_if_block5(ctx) {
     let each_1_anchor;
     let each_value = ctx[0];
     let each_blocks = [];
@@ -8461,9 +8018,9 @@
       }
     };
   }
-  function create_fragment11(ctx) {
+  function create_fragment9(ctx) {
     let if_block_anchor;
-    let if_block = ctx[8] && create_if_block6(ctx);
+    let if_block = ctx[8] && create_if_block5(ctx);
     return {
       c() {
         if (if_block)
@@ -8480,7 +8037,7 @@
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
-            if_block = create_if_block6(ctx2);
+            if_block = create_if_block5(ctx2);
             if_block.c();
             if_block.m(if_block_anchor.parentNode, if_block_anchor);
           }
@@ -8499,7 +8056,7 @@
       }
     };
   }
-  function instance11($$self, $$props, $$invalidate) {
+  function instance9($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { xGet, yGet, hGet, cGet } = $$props;
     let { x_scale, y_scale } = $$props;
@@ -8556,7 +8113,7 @@
   var Bars = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance11, create_fragment11, safe_not_equal, {
+      init(this, options, instance9, create_fragment9, safe_not_equal, {
         data: 0,
         xGet: 1,
         yGet: 2,
@@ -8574,7 +8131,7 @@
 
   // src/components/charts/bargraph.svelte
   var import_iwanthue2 = __toESM(require_iwanthue());
-  function create_fragment12(ctx) {
+  function create_fragment10(ctx) {
     let div;
     let h1;
     let t02;
@@ -8937,7 +8494,7 @@
       }
     };
   }
-  function instance12($$self, $$props, $$invalidate) {
+  function instance10($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let [xScaleType_1, yScaleType_1] = [band, linear2];
     let { xScaleType = xScaleType_1, yScaleType = yScaleType_1 } = $$props;
@@ -9124,7 +8681,7 @@
   var Bargraph = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance12, create_fragment12, safe_not_equal, {
+      init(this, options, instance10, create_fragment10, safe_not_equal, {
         data: 0,
         xScaleType: 1,
         yScaleType: 2,
@@ -9142,7 +8699,7 @@
   var bargraph_default = Bargraph;
 
   // src/stats/media_graphs.svelte
-  function create_fragment13(ctx) {
+  function create_fragment11(ctx) {
     let div;
     let bargraph0;
     let t02;
@@ -9197,7 +8754,7 @@
         create_component(bargraph1.$$.fragment);
         t12 = space();
         create_component(bargraph2.$$.fragment);
-        attr(div, "class", "flex flex-col items-center h-full w-full p-20 gap-20");
+        attr(div, "class", "flex flex-col items-center h-full w-full gap-20");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -9275,7 +8832,7 @@
       }
     };
   }
-  function instance13($$self, $$props, $$invalidate) {
+  function instance11($$self, $$props, $$invalidate) {
     let { data } = $$props;
     let { name_accessor } = $$props;
     let { chars_read_accessor } = $$props;
@@ -9311,7 +8868,7 @@
   var Media_graphs = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance13, create_fragment13, safe_not_equal, {
+      init(this, options, instance11, create_fragment11, safe_not_equal, {
         data: 0,
         name_accessor: 1,
         chars_read_accessor: 2,
@@ -9360,21 +8917,6 @@
     }
   }
 
-  // node_modules/date-fns/esm/addDays/index.js
-  function addDays(dirtyDate, dirtyAmount) {
-    requiredArgs(2, arguments);
-    var date2 = toDate(dirtyDate);
-    var amount = toInteger(dirtyAmount);
-    if (isNaN(amount)) {
-      return new Date(NaN);
-    }
-    if (!amount) {
-      return date2;
-    }
-    date2.setDate(date2.getDate() + amount);
-    return date2;
-  }
-
   // node_modules/date-fns/esm/addMonths/index.js
   function addMonths(dirtyDate, dirtyAmount) {
     requiredArgs(2, arguments);
@@ -9398,14 +8940,6 @@
     }
   }
 
-  // node_modules/date-fns/esm/addWeeks/index.js
-  function addWeeks(dirtyDate, dirtyAmount) {
-    requiredArgs(2, arguments);
-    var amount = toInteger(dirtyAmount);
-    var days2 = amount * 7;
-    return addDays(dirtyDate, days2);
-  }
-
   // node_modules/date-fns/esm/addYears/index.js
   function addYears(dirtyDate, dirtyAmount) {
     requiredArgs(2, arguments);
@@ -9425,6 +8959,32 @@
   var secondsInYear = secondsInDay * daysInYear;
   var secondsInMonth = secondsInYear / 12;
   var secondsInQuarter = secondsInMonth * 3;
+
+  // node_modules/date-fns/esm/endOfYear/index.js
+  function endOfYear(dirtyDate) {
+    requiredArgs(1, arguments);
+    var date2 = toDate(dirtyDate);
+    var year2 = date2.getFullYear();
+    date2.setFullYear(year2 + 1, 0, 0);
+    date2.setHours(23, 59, 59, 999);
+    return date2;
+  }
+
+  // node_modules/date-fns/esm/startOfYear/index.js
+  function startOfYear(dirtyDate) {
+    requiredArgs(1, arguments);
+    var cleanDate = toDate(dirtyDate);
+    var date2 = new Date(0);
+    date2.setFullYear(cleanDate.getFullYear(), 0, 1);
+    date2.setHours(0, 0, 0, 0);
+    return date2;
+  }
+
+  // node_modules/date-fns/esm/getYear/index.js
+  function getYear(dirtyDate) {
+    requiredArgs(1, arguments);
+    return toDate(dirtyDate).getFullYear();
+  }
 
   // node_modules/date-fns/esm/parseISO/index.js
   function parseISO(argument, options) {
@@ -9609,20 +9169,6 @@
     return minutes2 >= 0 && minutes2 <= 59;
   }
 
-  // node_modules/date-fns/esm/subMonths/index.js
-  function subMonths(dirtyDate, dirtyAmount) {
-    requiredArgs(2, arguments);
-    var amount = toInteger(dirtyAmount);
-    return addMonths(dirtyDate, -amount);
-  }
-
-  // node_modules/date-fns/esm/subWeeks/index.js
-  function subWeeks(dirtyDate, dirtyAmount) {
-    requiredArgs(2, arguments);
-    var amount = toInteger(dirtyAmount);
-    return addWeeks(dirtyDate, -amount);
-  }
-
   // node_modules/date-fns/esm/subYears/index.js
   function subYears(dirtyDate, dirtyAmount) {
     requiredArgs(2, arguments);
@@ -9631,514 +9177,7 @@
   }
 
   // src/stats/stats.svelte
-  function create_if_block_5(ctx) {
-    let accordionitem;
-    let updating_group;
-    let current;
-    function accordionitem_group_binding(value) {
-      ctx[15](value);
-    }
-    let accordionitem_props = {
-      label: "1 Week",
-      $$slots: { default: [create_default_slot_5] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem_props.group = ctx[1];
-    }
-    accordionitem = new accordion_item_default({ props: accordionitem_props });
-    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding));
-    return {
-      c() {
-        create_component(accordionitem.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(accordionitem, target, anchor);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const accordionitem_changes = {};
-        if (dirty & 33554432) {
-          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        if (!updating_group && dirty & 2) {
-          updating_group = true;
-          accordionitem_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group = false);
-        }
-        accordionitem.$set(accordionitem_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(accordionitem.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(accordionitem.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(accordionitem, detaching);
-      }
-    };
-  }
-  function create_default_slot_5(ctx) {
-    let mindatagraphs;
-    let current;
-    mindatagraphs = new min_data_graphs_default({
-      props: {
-        data: ctx[2],
-        name_accessor: ctx[8],
-        date_accessor: ctx[9],
-        chars_read_accessor: ctx[10],
-        time_read_accessor: ctx[11],
-        read_speed_accessor: ctx[12],
-        tooltip_accessors: ctx[13],
-        tooltip_formatters: ctx[14]
-      }
-    });
-    return {
-      c() {
-        create_component(mindatagraphs.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(mindatagraphs, target, anchor);
-        current = true;
-      },
-      p: noop,
-      i(local) {
-        if (current)
-          return;
-        transition_in(mindatagraphs.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(mindatagraphs.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(mindatagraphs, detaching);
-      }
-    };
-  }
-  function create_if_block_4(ctx) {
-    let accordionitem;
-    let updating_group;
-    let current;
-    function accordionitem_group_binding_1(value) {
-      ctx[16](value);
-    }
-    let accordionitem_props = {
-      label: "1 Month",
-      $$slots: { default: [create_default_slot_4] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem_props.group = ctx[1];
-    }
-    accordionitem = new accordion_item_default({ props: accordionitem_props });
-    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding_1));
-    return {
-      c() {
-        create_component(accordionitem.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(accordionitem, target, anchor);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const accordionitem_changes = {};
-        if (dirty & 33554432) {
-          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        if (!updating_group && dirty & 2) {
-          updating_group = true;
-          accordionitem_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group = false);
-        }
-        accordionitem.$set(accordionitem_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(accordionitem.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(accordionitem.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(accordionitem, detaching);
-      }
-    };
-  }
-  function create_default_slot_4(ctx) {
-    let bulkdatagraphs;
-    let current;
-    bulkdatagraphs = new bulk_data_graphs_default({
-      props: {
-        data: ctx[3],
-        name_accessor: ctx[8],
-        date_accessor: ctx[9],
-        chars_read_accessor: ctx[10],
-        time_read_accessor: ctx[11],
-        read_speed_accessor: ctx[12],
-        tooltip_accessors: ctx[13],
-        tooltip_formatters: ctx[14]
-      }
-    });
-    return {
-      c() {
-        create_component(bulkdatagraphs.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(bulkdatagraphs, target, anchor);
-        current = true;
-      },
-      p: noop,
-      i(local) {
-        if (current)
-          return;
-        transition_in(bulkdatagraphs.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(bulkdatagraphs.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(bulkdatagraphs, detaching);
-      }
-    };
-  }
-  function create_if_block_32(ctx) {
-    let accordionitem;
-    let updating_group;
-    let current;
-    function accordionitem_group_binding_2(value) {
-      ctx[17](value);
-    }
-    let accordionitem_props = {
-      label: "3 Months",
-      $$slots: { default: [create_default_slot_3] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem_props.group = ctx[1];
-    }
-    accordionitem = new accordion_item_default({ props: accordionitem_props });
-    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding_2));
-    return {
-      c() {
-        create_component(accordionitem.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(accordionitem, target, anchor);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const accordionitem_changes = {};
-        if (dirty & 33554432) {
-          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        if (!updating_group && dirty & 2) {
-          updating_group = true;
-          accordionitem_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group = false);
-        }
-        accordionitem.$set(accordionitem_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(accordionitem.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(accordionitem.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(accordionitem, detaching);
-      }
-    };
-  }
-  function create_default_slot_3(ctx) {
-    let bulkdatagraphs;
-    let current;
-    bulkdatagraphs = new bulk_data_graphs_default({
-      props: {
-        data: ctx[4],
-        name_accessor: ctx[8],
-        date_accessor: ctx[9],
-        chars_read_accessor: ctx[10],
-        time_read_accessor: ctx[11],
-        read_speed_accessor: ctx[12],
-        tooltip_accessors: ctx[13],
-        tooltip_formatters: ctx[14]
-      }
-    });
-    return {
-      c() {
-        create_component(bulkdatagraphs.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(bulkdatagraphs, target, anchor);
-        current = true;
-      },
-      p: noop,
-      i(local) {
-        if (current)
-          return;
-        transition_in(bulkdatagraphs.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(bulkdatagraphs.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(bulkdatagraphs, detaching);
-      }
-    };
-  }
-  function create_if_block_22(ctx) {
-    let accordionitem;
-    let updating_group;
-    let current;
-    function accordionitem_group_binding_3(value) {
-      ctx[18](value);
-    }
-    let accordionitem_props = {
-      label: "6 Months",
-      $$slots: { default: [create_default_slot_2] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem_props.group = ctx[1];
-    }
-    accordionitem = new accordion_item_default({ props: accordionitem_props });
-    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding_3));
-    return {
-      c() {
-        create_component(accordionitem.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(accordionitem, target, anchor);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const accordionitem_changes = {};
-        if (dirty & 33554432) {
-          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        if (!updating_group && dirty & 2) {
-          updating_group = true;
-          accordionitem_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group = false);
-        }
-        accordionitem.$set(accordionitem_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(accordionitem.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(accordionitem.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(accordionitem, detaching);
-      }
-    };
-  }
-  function create_default_slot_2(ctx) {
-    let bulkdatagraphs;
-    let current;
-    bulkdatagraphs = new bulk_data_graphs_default({
-      props: {
-        data: ctx[5],
-        name_accessor: ctx[8],
-        date_accessor: ctx[9],
-        chars_read_accessor: ctx[10],
-        time_read_accessor: ctx[11],
-        read_speed_accessor: ctx[12],
-        tooltip_accessors: ctx[13],
-        tooltip_formatters: ctx[14]
-      }
-    });
-    return {
-      c() {
-        create_component(bulkdatagraphs.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(bulkdatagraphs, target, anchor);
-        current = true;
-      },
-      p: noop,
-      i(local) {
-        if (current)
-          return;
-        transition_in(bulkdatagraphs.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(bulkdatagraphs.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(bulkdatagraphs, detaching);
-      }
-    };
-  }
-  function create_if_block_12(ctx) {
-    let accordionitem;
-    let updating_group;
-    let current;
-    function accordionitem_group_binding_4(value) {
-      ctx[19](value);
-    }
-    let accordionitem_props = {
-      label: "1 Year",
-      $$slots: { default: [create_default_slot_1] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem_props.group = ctx[1];
-    }
-    accordionitem = new accordion_item_default({ props: accordionitem_props });
-    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding_4));
-    return {
-      c() {
-        create_component(accordionitem.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(accordionitem, target, anchor);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const accordionitem_changes = {};
-        if (dirty & 33554432) {
-          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        if (!updating_group && dirty & 2) {
-          updating_group = true;
-          accordionitem_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group = false);
-        }
-        accordionitem.$set(accordionitem_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(accordionitem.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(accordionitem.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(accordionitem, detaching);
-      }
-    };
-  }
-  function create_default_slot_1(ctx) {
-    let bulkdatagraphs;
-    let current;
-    bulkdatagraphs = new bulk_data_graphs_default({
-      props: {
-        data: ctx[6],
-        name_accessor: ctx[8],
-        date_accessor: ctx[9],
-        chars_read_accessor: ctx[10],
-        time_read_accessor: ctx[11],
-        read_speed_accessor: ctx[12],
-        tooltip_accessors: ctx[13],
-        tooltip_formatters: ctx[14]
-      }
-    });
-    return {
-      c() {
-        create_component(bulkdatagraphs.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(bulkdatagraphs, target, anchor);
-        current = true;
-      },
-      p: noop,
-      i(local) {
-        if (current)
-          return;
-        transition_in(bulkdatagraphs.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(bulkdatagraphs.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(bulkdatagraphs, detaching);
-      }
-    };
-  }
-  function create_if_block7(ctx) {
-    let accordionitem;
-    let updating_group;
-    let current;
-    function accordionitem_group_binding_5(value) {
-      ctx[20](value);
-    }
-    let accordionitem_props = {
-      label: "All Time",
-      $$slots: { default: [create_default_slot] },
-      $$scope: { ctx }
-    };
-    if (ctx[1] !== void 0) {
-      accordionitem_props.group = ctx[1];
-    }
-    accordionitem = new accordion_item_default({ props: accordionitem_props });
-    binding_callbacks.push(() => bind(accordionitem, "group", accordionitem_group_binding_5));
-    return {
-      c() {
-        create_component(accordionitem.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(accordionitem, target, anchor);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const accordionitem_changes = {};
-        if (dirty & 33554433) {
-          accordionitem_changes.$$scope = { dirty, ctx: ctx2 };
-        }
-        if (!updating_group && dirty & 2) {
-          updating_group = true;
-          accordionitem_changes.group = ctx2[1];
-          add_flush_callback(() => updating_group = false);
-        }
-        accordionitem.$set(accordionitem_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(accordionitem.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(accordionitem.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(accordionitem, detaching);
-      }
-    };
-  }
-  function create_default_slot(ctx) {
+  function create_if_block6(ctx) {
     let bulkdatagraphs;
     let t;
     let mediagraphs;
@@ -10146,24 +9185,24 @@
     bulkdatagraphs = new bulk_data_graphs_default({
       props: {
         data: ctx[0],
-        name_accessor: ctx[8],
-        date_accessor: ctx[9],
-        chars_read_accessor: ctx[10],
-        time_read_accessor: ctx[11],
-        read_speed_accessor: ctx[12],
-        tooltip_accessors: ctx[13],
-        tooltip_formatters: ctx[14]
+        name_accessor: ctx[6],
+        date_accessor: ctx[7],
+        chars_read_accessor: ctx[8],
+        time_read_accessor: ctx[9],
+        read_speed_accessor: ctx[10],
+        tooltip_accessors: ctx[11],
+        tooltip_formatters: ctx[12]
       }
     });
     mediagraphs = new media_graphs_default({
       props: {
-        data: ctx[7],
-        name_accessor: ctx[8],
-        chars_read_accessor: ctx[10],
-        time_read_accessor: ctx[11],
-        read_speed_accessor: ctx[12],
-        tooltip_accessors: ctx[13],
-        tooltip_formatters: ctx[14]
+        data: ctx[3],
+        name_accessor: ctx[6],
+        chars_read_accessor: ctx[8],
+        time_read_accessor: ctx[9],
+        read_speed_accessor: ctx[10],
+        tooltip_accessors: ctx[11],
+        tooltip_formatters: ctx[12]
       }
     });
     return {
@@ -10183,6 +9222,10 @@
         if (dirty & 1)
           bulkdatagraphs_changes.data = ctx2[0];
         bulkdatagraphs.$set(bulkdatagraphs_changes);
+        const mediagraphs_changes = {};
+        if (dirty & 8)
+          mediagraphs_changes.data = ctx2[3];
+        mediagraphs.$set(mediagraphs_changes);
       },
       i(local) {
         if (current)
@@ -10204,89 +9247,82 @@
       }
     };
   }
-  function create_fragment14(ctx) {
-    let div;
-    let t02;
+  function create_fragment12(ctx) {
+    let div1;
+    let div0;
+    let button0;
     let t12;
+    let p;
     let t2;
     let t3;
-    let t4;
+    let button1;
+    let t5;
     let current;
-    let if_block0 = ctx[2].length >= 1 && create_if_block_5(ctx);
-    let if_block1 = ctx[3].length >= 1 && create_if_block_4(ctx);
-    let if_block2 = ctx[4].length >= 1 && create_if_block_32(ctx);
-    let if_block3 = ctx[5].length >= 1 && create_if_block_22(ctx);
-    let if_block4 = ctx[6].length >= 1 && create_if_block_12(ctx);
-    let if_block5 = ctx[0].length >= 1 && create_if_block7(ctx);
+    let mounted;
+    let dispose;
+    let if_block = ctx[2] && create_if_block6(ctx);
     return {
       c() {
-        div = element("div");
-        if (if_block0)
-          if_block0.c();
-        t02 = space();
-        if (if_block1)
-          if_block1.c();
+        div1 = element("div");
+        div0 = element("div");
+        button0 = element("button");
+        button0.textContent = "navigate_before";
         t12 = space();
-        if (if_block2)
-          if_block2.c();
-        t2 = space();
-        if (if_block3)
-          if_block3.c();
+        p = element("p");
+        t2 = text(ctx[1]);
         t3 = space();
-        if (if_block4)
-          if_block4.c();
-        t4 = space();
-        if (if_block5)
-          if_block5.c();
+        button1 = element("button");
+        button1.textContent = "navigate_next";
+        t5 = space();
+        if (if_block)
+          if_block.c();
+        attr(button0, "class", "material-icons header-text header-icon");
+        attr(p, "class", "header-text");
+        attr(button1, "class", "material-icons header-text header-icon");
+        attr(div0, "id", "top_bar");
+        attr(div0, "class", "flex bg-button bg-opacity-80 z-50 h-20 sticky top-0 items-center justify-between");
+        attr(div1, "class", "flex flex-col px-20 gap-10");
       },
       m(target, anchor) {
-        insert(target, div, anchor);
-        if (if_block0)
-          if_block0.m(div, null);
-        append(div, t02);
-        if (if_block1)
-          if_block1.m(div, null);
-        append(div, t12);
-        if (if_block2)
-          if_block2.m(div, null);
-        append(div, t2);
-        if (if_block3)
-          if_block3.m(div, null);
-        append(div, t3);
-        if (if_block4)
-          if_block4.m(div, null);
-        append(div, t4);
-        if (if_block5)
-          if_block5.m(div, null);
+        insert(target, div1, anchor);
+        append(div1, div0);
+        append(div0, button0);
+        append(div0, t12);
+        append(div0, p);
+        append(p, t2);
+        append(div0, t3);
+        append(div0, button1);
+        append(div1, t5);
+        if (if_block)
+          if_block.m(div1, null);
         current = true;
+        if (!mounted) {
+          dispose = [
+            listen(button0, "click", ctx[5]),
+            listen(button1, "click", ctx[4])
+          ];
+          mounted = true;
+        }
       },
       p(ctx2, [dirty]) {
-        if (ctx2[2].length >= 1)
-          if_block0.p(ctx2, dirty);
-        if (ctx2[3].length >= 1)
-          if_block1.p(ctx2, dirty);
-        if (ctx2[4].length >= 1)
-          if_block2.p(ctx2, dirty);
-        if (ctx2[5].length >= 1)
-          if_block3.p(ctx2, dirty);
-        if (ctx2[6].length >= 1)
-          if_block4.p(ctx2, dirty);
-        if (ctx2[0].length >= 1) {
-          if (if_block5) {
-            if_block5.p(ctx2, dirty);
-            if (dirty & 1) {
-              transition_in(if_block5, 1);
+        if (!current || dirty & 2)
+          set_data(t2, ctx2[1]);
+        if (ctx2[2]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+            if (dirty & 4) {
+              transition_in(if_block, 1);
             }
           } else {
-            if_block5 = create_if_block7(ctx2);
-            if_block5.c();
-            transition_in(if_block5, 1);
-            if_block5.m(div, null);
+            if_block = create_if_block6(ctx2);
+            if_block.c();
+            transition_in(if_block, 1);
+            if_block.m(div1, null);
           }
-        } else if (if_block5) {
+        } else if (if_block) {
           group_outros();
-          transition_out(if_block5, 1, 1, () => {
-            if_block5 = null;
+          transition_out(if_block, 1, 1, () => {
+            if_block = null;
           });
           check_outros();
         }
@@ -10294,59 +9330,53 @@
       i(local) {
         if (current)
           return;
-        transition_in(if_block0);
-        transition_in(if_block1);
-        transition_in(if_block2);
-        transition_in(if_block3);
-        transition_in(if_block4);
-        transition_in(if_block5);
+        transition_in(if_block);
         current = true;
       },
       o(local) {
-        transition_out(if_block0);
-        transition_out(if_block1);
-        transition_out(if_block2);
-        transition_out(if_block3);
-        transition_out(if_block4);
-        transition_out(if_block5);
+        transition_out(if_block);
         current = false;
       },
       d(detaching) {
         if (detaching)
-          detach(div);
-        if (if_block0)
-          if_block0.d();
-        if (if_block1)
-          if_block1.d();
-        if (if_block2)
-          if_block2.d();
-        if (if_block3)
-          if_block3.d();
-        if (if_block4)
-          if_block4.d();
-        if (if_block5)
-          if_block5.d();
+          detach(div1);
+        if (if_block)
+          if_block.d();
+        mounted = false;
+        run_all(dispose);
       }
     };
   }
-  function instance14($$self, $$props, $$invalidate) {
+  function instance12($$self, $$props, $$invalidate) {
     const SECS_TO_HRS = 60 * 60;
     let { data } = $$props;
-    let display_group = void 0;
-    let time_now = new Date();
-    const afterTimePredicate = (earliest) => (d) => parseISO(d.date) >= earliest;
-    const one_week_data = data.filter(afterTimePredicate(subWeeks(time_now, 1)));
-    const one_month_data = data.filter(afterTimePredicate(subMonths(time_now, 1)));
-    const three_months_data = data.filter(afterTimePredicate(subMonths(time_now, 3)));
-    const six_months_data = data.filter(afterTimePredicate(subMonths(time_now, 6)));
-    const one_year_data = data.filter(afterTimePredicate(subYears(time_now, 1)));
-    const uuid_groups = groups(data, (d) => d.uuid);
-    const uuid_summary = uuid_groups.map(([, v]) => ({
-      "name": v[0].name,
-      "time_read": sum(v, (d) => d.time_read),
-      "chars_read": sum(v, (d) => d.chars_read),
-      "read_speed": mean(v, (d) => d.read_speed)
-    }));
+    const end_time = new Date();
+    const start_time = min(data, (d) => parseISO(d.date));
+    let [year_start, year_end] = [startOfYear(end_time), endOfYear(end_time)];
+    let year2;
+    year2 = getYear(year_start);
+    const withinTimePredicate = (d) => year_start <= parseISO(d.date) && parseISO(d.date) <= year_end;
+    let filtered, entries_exist;
+    const nextPeriod = () => {
+      if (year_end < end_time) {
+        $$invalidate(14, year_start = addYears(year_start, 1));
+        $$invalidate(15, year_end = addYears(year_end, 1));
+        $$invalidate(1, year2 = getYear(year_start));
+      } else {
+        $$invalidate(14, year_start = start_time), $$invalidate(15, year_end = end_time);
+        $$invalidate(1, year2 = "All Time");
+      }
+    };
+    const previousPeriod = () => {
+      if (year2 === "All Time") {
+        $$invalidate(14, [year_start, year_end] = [startOfYear(end_time), endOfYear(end_time)], year_start, $$invalidate(15, year_end));
+      } else if (year_start > start_time) {
+        $$invalidate(14, year_start = subYears(year_start, 1));
+        $$invalidate(15, year_end = subYears(year_end, 1));
+      }
+      $$invalidate(1, year2 = getYear(year_start));
+    };
+    let uuid_groups, uuid_summary;
     const name_accessor = (d) => d.name;
     const date_accessor = (d) => parseISO(d.date);
     const chars_read_accessor = (d) => d.chars_read;
@@ -10362,43 +9392,40 @@
       "Time Read": format(",.2f"),
       "Read Speed": format(",.0f")
     };
-    function accordionitem_group_binding(value) {
-      display_group = value;
-      $$invalidate(1, display_group);
-    }
-    function accordionitem_group_binding_1(value) {
-      display_group = value;
-      $$invalidate(1, display_group);
-    }
-    function accordionitem_group_binding_2(value) {
-      display_group = value;
-      $$invalidate(1, display_group);
-    }
-    function accordionitem_group_binding_3(value) {
-      display_group = value;
-      $$invalidate(1, display_group);
-    }
-    function accordionitem_group_binding_4(value) {
-      display_group = value;
-      $$invalidate(1, display_group);
-    }
-    function accordionitem_group_binding_5(value) {
-      display_group = value;
-      $$invalidate(1, display_group);
-    }
     $$self.$$set = ($$props2) => {
       if ("data" in $$props2)
-        $$invalidate(0, data = $$props2.data);
+        $$invalidate(13, data = $$props2.data);
+    };
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & 57344) {
+        $:
+          $$invalidate(0, filtered = data.filter(withinTimePredicate)), year_start, year_end;
+      }
+      if ($$self.$$.dirty & 1) {
+        $:
+          $$invalidate(2, entries_exist = filtered.length >= 1);
+      }
+      if ($$self.$$.dirty & 1) {
+        $:
+          $$invalidate(16, uuid_groups = groups(filtered, (d) => d.uuid));
+      }
+      if ($$self.$$.dirty & 65536) {
+        $:
+          $$invalidate(3, uuid_summary = uuid_groups.map(([, v]) => ({
+            "name": v[0].name,
+            "time_read": sum(v, (d) => d.time_read),
+            "chars_read": sum(v, (d) => d.chars_read),
+            "read_speed": mean(v, (d) => d.read_speed)
+          })));
+      }
     };
     return [
-      data,
-      display_group,
-      one_week_data,
-      one_month_data,
-      three_months_data,
-      six_months_data,
-      one_year_data,
+      filtered,
+      year2,
+      entries_exist,
       uuid_summary,
+      nextPeriod,
+      previousPeriod,
       name_accessor,
       date_accessor,
       chars_read_accessor,
@@ -10406,18 +9433,16 @@
       read_speed_accessor,
       tooltip_accessors,
       tooltip_formatters,
-      accordionitem_group_binding,
-      accordionitem_group_binding_1,
-      accordionitem_group_binding_2,
-      accordionitem_group_binding_3,
-      accordionitem_group_binding_4,
-      accordionitem_group_binding_5
+      data,
+      year_start,
+      year_end,
+      uuid_groups
     ];
   }
   var Stats = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance14, create_fragment14, safe_not_equal, { data: 0 });
+      init(this, options, instance12, create_fragment12, safe_not_equal, { data: 13 });
     }
   };
   var stats_default = Stats;

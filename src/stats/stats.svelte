@@ -1,32 +1,54 @@
 <script lang="ts">
-    import AccordionItem from "../components/interface/accordion_item.svelte"
     import BulkDataGraphs from "./bulk_data_graphs.svelte"
-    import MinDataGraphs from "./min_data_graphs.svelte"
     import MediaGraphs from "./media_graphs.svelte"
 
-    import { groups, sum, mean } from "d3-array"
+    import { groups, sum, mean, min } from "d3-array"
     import { format } from "d3-format"
-    import { parseISO } from "date-fns"
-    import { subWeeks, subMonths, subYears } from "date-fns"
+    import { parseISO, startOfYear, endOfYear, addYears, subYears, getYear } from "date-fns"
 
     const SECS_TO_HRS = 60 * 60
 
     export let data
 
-    let display_group = undefined
+    const end_time = new Date()
+    const start_time = min(data, d => parseISO(d.date))
 
-    let time_now = new Date()
+    let [year_start, year_end] = [startOfYear(end_time), endOfYear(end_time)]
+    let year
+    year = getYear(year_start)
 
-    const afterTimePredicate = earliest => d => parseISO(d.date) >= earliest
+    const withinTimePredicate = (d) =>
+        year_start <= parseISO(d.date) && parseISO(d.date) <= year_end
 
-    const one_week_data = data.filter(afterTimePredicate(subWeeks(time_now, 1)))
-    const one_month_data = data.filter(afterTimePredicate(subMonths(time_now, 1)))
-    const three_months_data = data.filter(afterTimePredicate(subMonths(time_now, 3)))
-    const six_months_data = data.filter(afterTimePredicate(subMonths(time_now, 6)))
-    const one_year_data = data.filter(afterTimePredicate(subYears(time_now, 1)))
+    let filtered, entries_exist
+    $: filtered = data.filter(withinTimePredicate), year_start, year_end
+    $: entries_exist = filtered.length >= 1
 
-    const uuid_groups = groups(data, d => d.uuid)
-    const uuid_summary = uuid_groups.map(([, v]) => ({
+    const nextPeriod = () => {
+        if (year_end < end_time) {
+            year_start = addYears(year_start, 1)
+            year_end = addYears(year_end, 1)
+            year = getYear(year_start)
+        } else {
+            year_start = start_time,
+            year_end = end_time
+            year = "All Time"
+        }
+    }
+    const previousPeriod = () => {
+        if (year === "All Time") {
+            [year_start, year_end] = [startOfYear(end_time), endOfYear(end_time)]
+        }
+        else if (year_start > start_time) {
+            year_start = subYears(year_start, 1)
+            year_end = subYears(year_end, 1)
+        }
+        year = getYear(year_start)
+    }
+
+    let uuid_groups, uuid_summary
+    $: uuid_groups = groups(filtered, d => d.uuid)
+    $: uuid_summary = uuid_groups.map(([, v]) => ({
         "name": v[0].name,
         "time_read": sum(v, d => d.time_read),
         "chars_read": sum(v, d => d.chars_read),
@@ -52,42 +74,16 @@
     }
 </script>
 
-<div>
-    {#if one_week_data.length >= 1}
-        <AccordionItem label="1 Week" bind:group={display_group}>
-            <MinDataGraphs data={one_week_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-        </AccordionItem>
-    {/if}
+<div class="flex flex-col px-20 gap-10">
+    <div id="top_bar" class="flex bg-button bg-opacity-80 z-50 h-20 sticky top-0 items-center justify-between">
+        <button class="material-icons header-text header-icon" on:click={previousPeriod}>navigate_before</button>
+        <p class="header-text">{year}</p>
+        <button class="material-icons header-text header-icon" on:click={nextPeriod}>navigate_next</button>
+    </div>
 
-    {#if one_month_data.length >=1}
-        <AccordionItem label="1 Month" bind:group={display_group}>
-            <BulkDataGraphs data={one_month_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-        </AccordionItem>
-    {/if}
-
-    {#if three_months_data.length >=1}
-        <AccordionItem label="3 Months" bind:group={display_group}>
-            <BulkDataGraphs data={three_months_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-        </AccordionItem>
-    {/if}
-
-    {#if six_months_data.length >=1}
-        <AccordionItem label="6 Months" bind:group={display_group}>
-            <BulkDataGraphs data={six_months_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-        </AccordionItem>
-    {/if}
-
-    {#if one_year_data.length >=1}
-        <AccordionItem label="1 Year" bind:group={display_group}>
-            <BulkDataGraphs data={one_year_data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-        </AccordionItem>
-    {/if}
-
-    {#if data.length >= 1}
-        <AccordionItem label="All Time" bind:group={display_group}>
-            <BulkDataGraphs {data} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-            <MediaGraphs data={uuid_summary} {name_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-        </AccordionItem>
+    {#if entries_exist}
+        <BulkDataGraphs data={filtered} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
+        <MediaGraphs data={uuid_summary} {name_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
     {/if}
 </div>
 
@@ -100,4 +96,12 @@
 	body {
 		@apply bg-slate-800;
 	}
+
+    .header-text {
+        @apply text-4xl items-center inline-flex;
+    }
+
+    .header-icon {
+        @apply h-full hover:bg-hover hover:hover:text-icon;
+    }
 </style>

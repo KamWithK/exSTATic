@@ -18,7 +18,7 @@
         popup_y = event.layerY
 
         popup_name = group_accessor(data[index])
-        if (popup_date != undefined && popup_date !== "") popup_date = timeFormat("%d %B %Y")(x_accessor(data[index]))
+        popup_date = timeFormat("%d %B %Y")(x_accessor(data[index]))
         popout_color = hues[groups.indexOf(group_accessor(data[index]))]
 
         Object.entries(tooltip_accessors).forEach(([key, value_accessor]: [string, Function]) => {
@@ -35,7 +35,7 @@
 
 <div id="popup" class="{show_popup ? "absolute" : "hidden"} p-3 z-50" style="left: {popup_x}px;top: {popup_y}px; background-color: {popout_color}">
     <p id="popup_title" class="font-semibold">{popup_name}</p>
-    {#if (popup_date != undefined && popup_date !== "")}
+    {#if (popup_date !== undefined && popup_date !== "" && popup_date !== "NaN  0NaN")}
         <p id="popup_date">{popup_date}</p>
     {/if}
 

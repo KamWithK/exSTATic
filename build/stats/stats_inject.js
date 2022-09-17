@@ -7033,7 +7033,7 @@
     let br;
     let t3;
     let div_class_value;
-    let if_block = ctx[5] != void 0 && ctx[5] !== "" && create_if_block4(ctx);
+    let if_block = ctx[5] !== void 0 && ctx[5] !== "" && ctx[5] !== "NaN  0NaN" && create_if_block4(ctx);
     let each_value = Object.keys(ctx[0]);
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
@@ -7078,7 +7078,7 @@
       p(ctx2, [dirty]) {
         if (dirty & 16)
           set_data(t02, ctx2[4]);
-        if (ctx2[5] != void 0 && ctx2[5] !== "") {
+        if (ctx2[5] !== void 0 && ctx2[5] !== "" && ctx2[5] !== "NaN  0NaN") {
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
@@ -7145,8 +7145,7 @@
       $$invalidate(2, popup_x = event.layerX);
       $$invalidate(3, popup_y = event.layerY);
       $$invalidate(4, popup_name = group_accessor(data[index2]));
-      if (popup_date != void 0 && popup_date !== "")
-        $$invalidate(5, popup_date = timeFormat("%d %B %Y")(x_accessor(data[index2])));
+      $$invalidate(5, popup_date = timeFormat("%d %B %Y")(x_accessor(data[index2])));
       $$invalidate(6, popout_color = hues[groups2.indexOf(group_accessor(data[index2]))]);
       Object.entries(tooltip_accessors).forEach(([key, value_accessor]) => {
         $$invalidate(7, popup_tooltips[key] = tooltip_formatters[key](value_accessor(data[index2])), popup_tooltips);

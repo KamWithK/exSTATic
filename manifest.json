@@ -1,9 +1,15 @@
 {
     "manifest_version": 2,
     "name": "exSTATic",
-    "version": "0.0.1",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuwn/wsj43FLW2rxrACsMQK+58H2Cjkwez105WIDVfdj6SUiTIXdzBO2lT+tSZmoLx9HRbULqg0Aq4z8yg/mSHIjrQPPB/Gr1QFexWSAyvqkyJsePxwjpybo1aotuVo/fesMyHyBsenH7xNxSpsSbldA8GbVFks3rQc5gQOexhe1PXOA5GlmBOhIPO2vrITk60X5Ysp1VwGhx1OlUF9IixcH2uHvWm4n15AsINPH+OFx3mJw7xS+GqCL2bYP/mxepOohA8lKHKEPFtSFOBdFMtTA3tV/HEUU6G5hsS6IeQpBjzW2YTmaHD3tcK5SSdnK336AX3htYxY/O6zwErXx3PQIDAQAB",
+    "version": "0.0.5",
   
     "description": "Completely automated reading statistics and tracking",
+
+    "icons": {
+      "100": "docs/favicon_100x100.png",
+      "500": "docs/favicon.png"
+    },
 
     "background": {
       "persistent": true,
@@ -12,19 +18,73 @@
     "content_scripts": [
       {
         "matches": [
-          "https://kamwithk.github.io/exSTATic/char-tracker.html",
-          "file:///*/exSTATic/*/char-tracker.html"
+          "https://kamwithk.github.io/exSTATic/tracker.html",
+          "file:///*/exSTATic/*/tracker.html",
+          "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/tracker.html"
         ],
-        "js": ["build/tracker_inject.js"]
+        "js": [
+          "build/vn/tracker_inject.js",
+          "build/fonts.js"
+        ],
+        "css": [
+          "docs/fonts.css",
+          "build/vn/tracker_inject.css"
+        ]
+      },
+      {
+        "matches": [
+          "https://ttu-ebook.web.app/**"
+        ],
+        "js": [
+          "build/ttu/ttu_inject.js",
+          "build/fonts.js"
+        ],
+        "css": [
+          "docs/fonts.css",
+          "build/ttu/ttu_inject.css"
+        ]
+      },
+      {
+        "matches": [
+          "https://*/Manga/**.html",
+          "file:///**/Manga/**.html"
+        ],
+        "js": [
+          "build/mokuro/mokuro_inject.js",
+          "build/fonts.js"
+        ],
+        "css": [
+          "docs/fonts.css",
+          "build/mokuro/mokuro_inject.css"
+        ]
       },
       {
         "matches": [
           "https://kamwithk.github.io/exSTATic/stats.html",
-          "file:///*/exSTATic/*/stats.html"
+          "file:///*/exSTATic/*/stats.html",
+          "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/stats.html"
         ],
-        "js": ["build/stats_inject.js"]
+        "js": [
+          "build/stats/stats_inject.js",
+          "build/fonts.js"
+        ],
+        "css": [
+          "docs/fonts.css",
+          "build/stats/stats_inject.css"
+        ]
       }
     ],
+
+    "web_accessible_resources": [
+      "fonts/*"
+    ],
+
+    "browser_action": {
+      "default_icon": {
+          "100": "docs/favicon_100x100.png",
+          "500": "docs/favicon.png"
+      }
+    },
 
     "permissions": [
       "storage",

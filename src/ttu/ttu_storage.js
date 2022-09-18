@@ -62,3 +62,4 @@ export class TtuStorage extends MediaStorage {
         await this.instance_storage.addToDates(date)
         await this.instance_storage.addToDate(date)
     }
+}

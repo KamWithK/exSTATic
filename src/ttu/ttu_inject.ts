@@ -25,16 +25,11 @@ function getCharCount() {
   return undefined
 }
 
-async function initialSetup(char_current, book_title) {
+async function setup() {
   ttu_storage = await TTUStorage.build(true)
 
   // Switch to the right instance
-  await ttu_storage.changeInstance(undefined, book_title)
-
-  // Ensure starting partially through doesn't cause everything so far to log in todays stats
-  await ttu_storage.instance_storage.updateDetails({
-    last_char_count: char_current,
-  })
+  await ttu_storage.changeInstance(undefined, getBookTitle())
 
   // Load Svelte for the inserted UI
   const svelte_div = document.createElement("div")
@@ -52,6 +47,7 @@ async function initialSetup(char_current, book_title) {
     },
   })
 }
+setup()
 
 const onUpdate = async () => {
   if (ttu_storage && !(await ttu_storage.extensionActivated())) return
@@ -78,8 +74,10 @@ const observeAfter = async () => {
   // If information doesn't exist then keep waiting
   if (!document.querySelector(".writing-horizontal-tb.fixed.bottom-2")) return
   
-  // Once information exists initialise
-  await initialSetup(getCharCount(), getBookTitle())
+  // Ensure starting partially through doesn't cause everything so far to log in todays stats
+  await ttu_storage.instance_storage.updateDetails({
+    last_char_count: getCharCount(),
+  })
 
   // Create a new observer over just the built in stats bar
   const stats_observer = new MutationObserver(onUpdate)

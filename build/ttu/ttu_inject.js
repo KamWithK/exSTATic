@@ -2405,12 +2405,9 @@
     }
     return void 0;
   }
-  async function initialSetup(char_current, book_title) {
+  async function setup() {
     ttu_storage = await TTUStorage.build(true);
-    await ttu_storage.changeInstance(void 0, book_title);
-    await ttu_storage.instance_storage.updateDetails({
-      last_char_count: char_current
-    });
+    await ttu_storage.changeInstance(void 0, getBookTitle());
     const svelte_div = document.createElement("div");
     svelte_div.style.position = "fixed";
     svelte_div.style.height = "0px";
@@ -2425,6 +2422,7 @@
       }
     });
   }
+  setup();
   var onUpdate = async () => {
     if (ttu_storage && !await ttu_storage.extensionActivated())
       return;
@@ -2444,7 +2442,9 @@
   var observeAfter = async () => {
     if (!document.querySelector(".writing-horizontal-tb.fixed.bottom-2"))
       return;
-    await initialSetup(getCharCount(), getBookTitle());
+    await ttu_storage.instance_storage.updateDetails({
+      last_char_count: getCharCount()
+    });
     const stats_observer = new MutationObserver(onUpdate);
     stats_observer.observe(document.querySelector(".writing-horizontal-tb.fixed.bottom-2"), observer_settings);
     overall_observer.disconnect();

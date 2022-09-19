@@ -36,13 +36,16 @@
         const daily_stats = statsExist(media_storage)
 
         const char_count = getStat(daily_stats, "chars_read")
-        const line_count = getStat(daily_stats, "lines_read")
         const time_secs = getStat(daily_stats, "time_read")
 
         chars = char_count.toLocaleString()
-        lines = line_count.toLocaleString()
         time = getTime(time_secs)
         speed = getSpeed(char_count, time_secs)
+
+        if (show_lines) {
+            const line_count = getStat(daily_stats, "lines_read")
+            lines = line_count.toLocaleString()
+        }
     }
     calculateStats()
 

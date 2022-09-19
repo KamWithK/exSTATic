@@ -13,7 +13,7 @@ function getBookTitle() {
 
 // Gets current char count and total in book
 function getCharCount() {
-  const nodes = document.getElementsByClassName("writing-horizontal-tb")[1].childNodes
+  const nodes = document.querySelector(".writing-horizontal-tb.fixed.bottom-2").childNodes
 
   if (nodes.length == 6) {
     const char_current = nodes[0].textContent

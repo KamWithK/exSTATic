@@ -2975,12 +2975,14 @@
     const calculateStats = () => {
       const daily_stats = statsExist(media_storage);
       const char_count = getStat(daily_stats, "chars_read");
-      const line_count = getStat(daily_stats, "lines_read");
       const time_secs = getStat(daily_stats, "time_read");
       $$invalidate(2, chars = char_count.toLocaleString());
-      $$invalidate(3, lines = line_count.toLocaleString());
       $$invalidate(4, time = getTime(time_secs));
       $$invalidate(5, speed = getSpeed(char_count, time_secs));
+      if (show_lines) {
+        const line_count = getStat(daily_stats, "lines_read");
+        $$invalidate(3, lines = line_count.toLocaleString());
+      }
     };
     calculateStats();
     document.addEventListener("status_active", () => {

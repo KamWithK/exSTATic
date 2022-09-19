@@ -2215,12 +2215,14 @@
     const calculateStats = () => {
       const daily_stats = statsExist(media_storage);
       const char_count = getStat(daily_stats, "chars_read");
-      const line_count = getStat(daily_stats, "lines_read");
       const time_secs = getStat(daily_stats, "time_read");
       $$invalidate(2, chars = char_count.toLocaleString());
-      $$invalidate(3, lines = line_count.toLocaleString());
       $$invalidate(4, time = getTime(time_secs));
       $$invalidate(5, speed = getSpeed(char_count, time_secs));
+      if (show_lines) {
+        const line_count = getStat(daily_stats, "lines_read");
+        $$invalidate(3, lines = line_count.toLocaleString());
+      }
     };
     calculateStats();
     document.addEventListener("status_active", () => {
@@ -2397,7 +2399,7 @@
     return document.title.replace(/ \| ッツ Ebook Reader$/, "");
   }
   function getCharCount() {
-    const nodes = document.getElementsByClassName("writing-horizontal-tb")[1].childNodes;
+    const nodes = document.querySelector(".writing-horizontal-tb.fixed.bottom-2").childNodes;
     if (nodes.length == 6) {
       const char_current = nodes[0].textContent;
       const char_total = nodes[2].textContent;

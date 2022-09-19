@@ -55,7 +55,7 @@ const onUpdate = async () => {
   const book_title = getBookTitle()
   const char_count = getCharCount()
 
-  // in case there's no charCount on TTU
+  // In case there's no charCount on TTU
   if (!char_count) return
 
   const [char_current,] = char_count

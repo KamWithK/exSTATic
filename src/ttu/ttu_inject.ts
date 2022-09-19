@@ -67,16 +67,11 @@ const observer_settings = {
 }
 
 const observeAfter = async () => {
-  // Try get information
-  const book_title = getBookTitle()
-  const char_count = getCharCount()
-
   // If information doesn't exist then keep waiting
   if (!document.querySelector(".writing-horizontal-tb.fixed.bottom-2")) return
-  if (!char_count) return
-
+  
   // Once information exists initialise
-  await initialSetup(char_count, book_title)
+  await initialSetup(getCharCount(), getBookTitle())
 
   // Create a new observer over just the built in stats bar
   const stats_observer = new MutationObserver(onUpdate)

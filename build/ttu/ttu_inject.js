@@ -2306,13 +2306,9 @@
     subtree: true
   };
   var observeAfter = async () => {
-    const book_title = getBookTitle();
-    const char_count = getCharCount();
     if (!document.querySelector(".writing-horizontal-tb.fixed.bottom-2"))
       return;
-    if (!char_count)
-      return;
-    await initialSetup(char_count, book_title);
+    await initialSetup(getCharCount(), getBookTitle());
     const stats_observer = new MutationObserver(onUpdate);
     stats_observer.observe(document.querySelector(".writing-horizontal-tb.fixed.bottom-2"), observer_settings);
     overall_observer.disconnect();

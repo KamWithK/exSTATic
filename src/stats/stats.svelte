@@ -80,9 +80,9 @@
     const tooltip_formatters = {
         "Chars Read": format(",.0f"),
         "Time Read": (t) => {
-            let minutes = Math.floor(t / 60);
-            let hours = Math.floor(minutes / 60);
-            return `${hours}h ${minutes % 60}m`;
+            let minutes = Math.floor(t / 60)
+            let hours = Math.floor(minutes / 60)
+            return `${hours}h ${minutes % 60}m`
         },
         "Read Speed": format(",.0f")
     }

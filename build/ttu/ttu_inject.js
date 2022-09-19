@@ -2268,11 +2268,10 @@
     return document.title.replace(/ \| ッツ Ebook Reader$/, "");
   }
   function getCharCount() {
-    let charCount = document.getElementsByClassName("writing-horizontal-tb")[1]["innerText"];
-    if (charCount.includes("%")) {
-      let countSplit = charCount.split("/");
-      const char_current = parseInt(countSplit[0]);
-      const char_total = parseInt(countSplit[1].split("(")[0]);
+    const nodes = document.getElementsByClassName("writing-horizontal-tb")[1].childNodes;
+    if (nodes.length == 6) {
+      const char_current = nodes[0].textContent;
+      const char_total = nodes[2].textContent;
       return [char_current, char_total];
     }
     return void 0;
@@ -2297,7 +2296,7 @@
     const char_count = getCharCount();
     if (!char_count)
       return;
-    let [char_current, char_total] = char_count;
+    const [char_current] = char_count;
     await ttu_storage.changeInstance(void 0, book_title);
     await ttu_storage.processText(char_current, dateNowString());
   };

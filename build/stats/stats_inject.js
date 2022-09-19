@@ -10102,7 +10102,7 @@
     const name_accessor = (d) => d.name;
     const date_accessor = (d) => parseISO(d.date);
     const chars_read_accessor = (d) => d.chars_read;
-    const time_read_accessor = (d) => d.time_read / SECS_TO_HRS;
+    const time_read_accessor = (d) => d.time_read;
     const read_speed_accessor = (d) => d.read_speed * SECS_TO_HRS;
     const tooltip_accessors = {
       "Chars Read": chars_read_accessor,
@@ -10111,7 +10111,11 @@
     };
     const tooltip_formatters = {
       "Chars Read": format(",.0f"),
-      "Time Read": format(",.2f"),
+      "Time Read": (t) => {
+        let minutes2 = Math.floor(t / 60);
+        let hours2 = Math.floor(minutes2 / 60);
+        return `${hours2}h ${minutes2 % 60}m`;
+      },
       "Read Speed": format(",.0f")
     };
     $$self.$$set = ($$props2) => {

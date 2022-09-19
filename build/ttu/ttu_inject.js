@@ -1540,7 +1540,7 @@
     static async build(live_stat_update = false) {
       const [type_storage, instance_storage] = await super.build("ttu");
       await this.setPages(instance_storage);
-      await type_storage.updateProperties({ "afk_max_time": 5 });
+      await type_storage.updateProperties({ "afk_max_time": 60 });
       return new TTUStorage(type_storage, instance_storage, live_stat_update);
     }
     static async setPages(instance_storage) {

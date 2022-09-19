@@ -19,7 +19,7 @@ function getCharCount() {
     const char_current = nodes[0].textContent
     const char_total = nodes[2].textContent
 
-    return [char_current, char_total]
+    return [char_current ? char_current : 0, char_total]
   }
 
   return undefined
@@ -76,7 +76,7 @@ const observeAfter = async () => {
   
   // Ensure starting partially through doesn't cause everything so far to log in todays stats
   await ttu_storage.instance_storage.updateDetails({
-    last_char_count: getCharCount(),
+    last_char_count: getCharCount()[0],
   })
 
   // Create a new observer over just the built in stats bar

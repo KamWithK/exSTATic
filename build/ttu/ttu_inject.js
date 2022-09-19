@@ -1557,8 +1557,8 @@
       await TTUStorage.setPages(this.instance_storage);
     }
     async processText(chars_read, date) {
-      const stats = { ...this.instance_storage.today_stats, "chars_read": chars_read };
-      await this.instance_storage.setDailyStats(date, stats);
+      const stats = { "chars_read": chars_read - this.details["last_char_count"] };
+      await this.instance_storage.addDailyStats(date, stats);
       if (chars_read > this.details["last_char_count"])
         this.start_ticker(false);
       else if (chars_read < this.details["last_char_count"])
@@ -2403,7 +2403,7 @@
     if (nodes.length == 6) {
       const char_current = nodes[0].textContent;
       const char_total = nodes[2].textContent;
-      return [char_current, char_total];
+      return [char_current ? char_current : 0, char_total];
     }
     return void 0;
   }
@@ -2445,7 +2445,7 @@
     if (!document.querySelector(".writing-horizontal-tb.fixed.bottom-2"))
       return;
     await ttu_storage.instance_storage.updateDetails({
-      last_char_count: getCharCount()
+      last_char_count: getCharCount()[0]
     });
     const stats_observer = new MutationObserver(onUpdate);
     stats_observer.observe(document.querySelector(".writing-horizontal-tb.fixed.bottom-2"), observer_settings);

@@ -39,9 +39,9 @@ export class TTUStorage extends MediaStorage {
     }
 
     async processText(chars_read, date) {
-        const stats = { ...this.instance_storage.today_stats, "chars_read": chars_read }
+        const stats = { "chars_read": chars_read - this.details["last_char_count"] }
 
-        await this.instance_storage.setDailyStats(date, stats)
+        await this.instance_storage.addDailyStats(date, stats)
 
         if (chars_read > this.details["last_char_count"])
             this.start_ticker(false)

@@ -28,7 +28,7 @@ function getCharCount() {
 async function initialSetup(char_current, book_title) {
   ttu_storage = await TTUStorage.build(true)
 
-  // Process first page
+  // Switch to the right instance
   await ttu_storage.changeInstance(undefined, book_title)
 
   // Ensure starting partially through doesn't cause everything so far to log in todays stats

@@ -846,10 +846,6 @@ select {
 .tracking-tighter {
   letter-spacing: -0.05em;
 }
-.text-gray-300 {
-  --tw-text-opacity:1;
-  color: rgb(209 213 219 / var(--tw-text-opacity));
-}
 .text-text {
   --tw-text-opacity:1;
   color: rgb(148 163 184 / var(--tw-text-opacity));

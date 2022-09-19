@@ -1681,6 +1681,13 @@
     if (text2.wholeText !== data)
       text2.data = data;
   }
+  function set_style(node, key, value, important) {
+    if (value === null) {
+      node.style.removeProperty(key);
+    } else {
+      node.style.setProperty(key, value, important ? "important" : "");
+    }
+  }
   var current_component;
   function set_current_component(component) {
     current_component = component;
@@ -2248,7 +2255,8 @@
       c() {
         div = element("div");
         create_component(statbar.$$.fragment);
-        attr(div, "class", div_class_value = "h-12 w-min mx-auto flex-none top-0 items-end content-center text-gray-300 " + (ctx[1] ? "block" : "hidden"));
+        attr(div, "class", div_class_value = "h-12 w-min mx-auto flex-none top-0 items-end content-center " + (ctx[1] ? "block" : "hidden"));
+        set_style(div, "color", "#afb3b9");
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -2260,7 +2268,7 @@
         if (dirty & 1)
           statbar_changes.media_storage = ctx2[0];
         statbar.$set(statbar_changes);
-        if (!current || dirty & 2 && div_class_value !== (div_class_value = "h-12 w-min mx-auto flex-none top-0 items-end content-center text-gray-300 " + (ctx2[1] ? "block" : "hidden"))) {
+        if (!current || dirty & 2 && div_class_value !== (div_class_value = "h-12 w-min mx-auto flex-none top-0 items-end content-center " + (ctx2[1] ? "block" : "hidden"))) {
           attr(div, "class", div_class_value);
         }
       },

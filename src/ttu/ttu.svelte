@@ -39,7 +39,7 @@
   })
 </script>
 
-<div class="h-12 w-min mx-auto flex-none top-0 items-end content-center text-gray-300 {shown ? 'block' : 'hidden'}">
+<div class="h-12 w-min mx-auto flex-none top-0 items-end content-center {shown ? 'block' : 'hidden'}" style="color: #afb3b9;">
 	<StatBar media_storage={ttu_storage} show_lines={false}/>
 </div>
 

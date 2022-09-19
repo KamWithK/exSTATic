@@ -1667,6 +1667,9 @@
   function space() {
     return text(" ");
   }
+  function empty() {
+    return text("");
+  }
   function attr(node, attribute, value) {
     if (value == null)
       node.removeAttribute(attribute);
@@ -1751,6 +1754,19 @@
   }
   var outroing = /* @__PURE__ */ new Set();
   var outros;
+  function group_outros() {
+    outros = {
+      r: 0,
+      c: [],
+      p: outros
+    };
+  }
+  function check_outros() {
+    if (!outros.r) {
+      run_all(outros.c);
+    }
+    outros = outros.p;
+  }
   function transition_in(block, local) {
     if (block && block.i) {
       outroing.delete(block);
@@ -2240,10 +2256,9 @@
   var stat_bar_default = Stat_bar;
 
   // src/ttu/ttu.svelte
-  function create_fragment2(ctx) {
+  function create_if_block2(ctx) {
     let div;
     let statbar;
-    let div_class_value;
     let current;
     statbar = new stat_bar_default({
       props: {
@@ -2255,7 +2270,7 @@
       c() {
         div = element("div");
         create_component(statbar.$$.fragment);
-        attr(div, "class", div_class_value = "h-12 w-min mx-auto flex-none top-0 items-end content-center " + (ctx[1] ? "block" : "hidden"));
+        attr(div, "class", "h-12 w-min mx-auto flex-none top-0 items-end content-center");
         set_style(div, "color", "#afb3b9");
       },
       m(target, anchor) {
@@ -2263,14 +2278,11 @@
         mount_component(statbar, div, null);
         current = true;
       },
-      p(ctx2, [dirty]) {
+      p(ctx2, dirty) {
         const statbar_changes = {};
         if (dirty & 1)
           statbar_changes.media_storage = ctx2[0];
         statbar.$set(statbar_changes);
-        if (!current || dirty & 2 && div_class_value !== (div_class_value = "h-12 w-min mx-auto flex-none top-0 items-end content-center " + (ctx2[1] ? "block" : "hidden"))) {
-          attr(div, "class", div_class_value);
-        }
       },
       i(local) {
         if (current)
@@ -2286,6 +2298,61 @@
         if (detaching)
           detach(div);
         destroy_component(statbar);
+      }
+    };
+  }
+  function create_fragment2(ctx) {
+    let if_block_anchor;
+    let current;
+    let if_block = ctx[1] && create_if_block2(ctx);
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+        current = true;
+      },
+      p(ctx2, [dirty]) {
+        if (ctx2[1]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+            if (dirty & 2) {
+              transition_in(if_block, 1);
+            }
+          } else {
+            if_block = create_if_block2(ctx2);
+            if_block.c();
+            transition_in(if_block, 1);
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          group_outros();
+          transition_out(if_block, 1, 1, () => {
+            if_block = null;
+          });
+          check_outros();
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(if_block);
+        current = true;
+      },
+      o(local) {
+        transition_out(if_block);
+        current = false;
+      },
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
       }
     };
   }
@@ -2346,7 +2413,7 @@
     });
     const svelte_div = document.createElement("div");
     svelte_div.style.position = "fixed";
-    svelte_div.style.height = "8px";
+    svelte_div.style.height = "0px";
     svelte_div.style.width = "100%";
     svelte_div.style.writingMode = "horizontal-tb";
     svelte_div.style.zIndex = "50";

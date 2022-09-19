@@ -634,9 +634,6 @@ select {
   margin-left: auto;
   margin-right: auto;
 }
-.block {
-  display: block;
-}
 .inline-block {
   display: inline-block;
 }

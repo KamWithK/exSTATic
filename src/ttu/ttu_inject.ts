@@ -39,7 +39,7 @@ async function initialSetup(char_current, book_title) {
   // Load Svelte for the inserted UI
   const svelte_div = document.createElement("div")
   svelte_div.style.position = "fixed"
-  svelte_div.style.height = "8px"
+  svelte_div.style.height = "0px"
   svelte_div.style.width = "100%"
   svelte_div.style.writingMode = "horizontal-tb"
   svelte_div.style.zIndex = "50"

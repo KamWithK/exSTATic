@@ -1558,6 +1558,7 @@
     }
     async processText(chars_read, date) {
       const stats = { ...this.instance_storage.today_stats, "chars_read": chars_read };
+      await this.instance_storage.setDailyStats(date, stats);
       if (chars_read > this.details["last_char_count"])
         this.start_ticker(false);
       else if (chars_read < this.details["last_char_count"])
@@ -1566,7 +1567,6 @@
         "last_char_count": chars_read,
         "last_active_at": timeNowSeconds()
       });
-      await this.instance_storage.setDailyStats(date, stats);
       await this.instance_storage.addToDates(date);
       await this.instance_storage.addToDate(date);
     }

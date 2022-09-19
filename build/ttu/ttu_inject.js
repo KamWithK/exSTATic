@@ -1681,13 +1681,6 @@
     if (text2.wholeText !== data)
       text2.data = data;
   }
-  function set_style(node, key, value, important) {
-    if (value === null) {
-      node.style.removeProperty(key);
-    } else {
-      node.style.setProperty(key, value, important ? "important" : "");
-    }
-  }
   var current_component;
   function set_current_component(component) {
     current_component = component;
@@ -1932,6 +1925,54 @@
   };
 
   // src/components/interface/stat_bar.svelte
+  function create_if_block_1(ctx) {
+    let div0;
+    let t0;
+    let t1;
+    let div1;
+    let t3;
+    let span;
+    return {
+      c() {
+        div0 = element("div");
+        t0 = text(ctx[3]);
+        t1 = space();
+        div1 = element("div");
+        div1.textContent = "Lines";
+        t3 = space();
+        span = element("span");
+        span.textContent = "drive_file_rename_outline";
+        attr(div0, "id", "lines_read");
+        attr(div0, "class", "stat-numbers svelte-1127kl9");
+        attr(div1, "class", "stat-annotation svelte-1127kl9");
+        attr(span, "class", "material-icons");
+      },
+      m(target, anchor) {
+        insert(target, div0, anchor);
+        append(div0, t0);
+        insert(target, t1, anchor);
+        insert(target, div1, anchor);
+        insert(target, t3, anchor);
+        insert(target, span, anchor);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 8)
+          set_data(t0, ctx2[3]);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div0);
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(div1);
+        if (detaching)
+          detach(t3);
+        if (detaching)
+          detach(span);
+      }
+    };
+  }
   function create_else_block(ctx) {
     let t;
     return {
@@ -1963,7 +2004,7 @@
     };
   }
   function create_fragment(ctx) {
-    let div8;
+    let div6;
     let div0;
     let t0;
     let t1;
@@ -1971,42 +2012,37 @@
     let t3;
     let span0;
     let t5;
-    let div2;
     let t6;
+    let div2;
     let t7;
+    let t8;
     let div3;
-    let t9;
+    let t10;
     let span1;
-    let t11;
-    let div4;
     let t12;
+    let div4;
     let t13;
+    let t14;
     let div5;
-    let t15;
+    let t16;
     let span2;
     let t17;
-    let div6;
-    let t18;
-    let t19;
-    let div7;
-    let t21;
-    let span3;
-    let t22;
     let current;
+    let if_block0 = ctx[1] && create_if_block_1(ctx);
     function select_block_type(ctx2, dirty) {
       if (ctx2[0])
         return create_if_block;
       return create_else_block;
     }
     let current_block_type = select_block_type(ctx, -1);
-    let if_block = current_block_type(ctx);
-    const default_slot_template = ctx[7].default;
-    const default_slot = create_slot(default_slot_template, ctx, ctx[6], null);
+    let if_block1 = current_block_type(ctx);
+    const default_slot_template = ctx[8].default;
+    const default_slot = create_slot(default_slot_template, ctx, ctx[7], null);
     return {
       c() {
-        div8 = element("div");
+        div6 = element("div");
         div0 = element("div");
-        t0 = text(ctx[1]);
+        t0 = text(ctx[2]);
         t1 = space();
         div1 = element("div");
         div1.textContent = "Chars";
@@ -2014,110 +2050,106 @@
         span0 = element("span");
         span0.textContent = "auto_stories";
         t5 = space();
+        if (if_block0)
+          if_block0.c();
+        t6 = space();
         div2 = element("div");
-        t6 = text(ctx[2]);
-        t7 = space();
+        t7 = text(ctx[4]);
+        t8 = space();
         div3 = element("div");
-        div3.textContent = "Lines";
-        t9 = space();
+        div3.textContent = "Elapsed";
+        t10 = space();
         span1 = element("span");
-        span1.textContent = "drive_file_rename_outline";
-        t11 = space();
+        span1.textContent = "timer";
+        t12 = space();
         div4 = element("div");
-        t12 = text(ctx[3]);
-        t13 = space();
+        t13 = text(ctx[5]);
+        t14 = space();
         div5 = element("div");
-        div5.textContent = "Elapsed";
-        t15 = space();
+        div5.textContent = "Chars / Hour";
+        t16 = space();
         span2 = element("span");
-        span2.textContent = "timer";
+        if_block1.c();
         t17 = space();
-        div6 = element("div");
-        t18 = text(ctx[4]);
-        t19 = space();
-        div7 = element("div");
-        div7.textContent = "Chars / Hour";
-        t21 = space();
-        span3 = element("span");
-        if_block.c();
-        t22 = space();
         if (default_slot)
           default_slot.c();
         attr(div0, "id", "chars_read");
         attr(div0, "class", "stat-numbers svelte-1127kl9");
         attr(div1, "class", "stat-annotation svelte-1127kl9");
         attr(span0, "class", "material-icons");
-        attr(div2, "id", "lines_read");
+        attr(div2, "id", "elapsed_time");
         attr(div2, "class", "stat-numbers svelte-1127kl9");
         attr(div3, "class", "stat-annotation svelte-1127kl9");
         attr(span1, "class", "material-icons");
-        attr(div4, "id", "elapsed_time");
+        attr(div4, "id", "chars_per_hour");
         attr(div4, "class", "stat-numbers svelte-1127kl9");
         attr(div5, "class", "stat-annotation svelte-1127kl9");
+        attr(span2, "id", "activity_symbol");
         attr(span2, "class", "material-icons");
-        attr(div6, "id", "chars_per_hour");
-        attr(div6, "class", "stat-numbers svelte-1127kl9");
-        attr(div7, "class", "stat-annotation svelte-1127kl9");
-        attr(span3, "id", "activity_symbol");
-        attr(span3, "class", "material-icons");
-        attr(div8, "class", "flex flex-row menu-bar z-50 h-full p-3 gap-3 items-center");
+        attr(div6, "class", "flex flex-row menu-bar z-50 h-full p-3 gap-3 items-center");
       },
       m(target, anchor) {
-        insert(target, div8, anchor);
-        append(div8, div0);
+        insert(target, div6, anchor);
+        append(div6, div0);
         append(div0, t0);
-        append(div8, t1);
-        append(div8, div1);
-        append(div8, t3);
-        append(div8, span0);
-        append(div8, t5);
-        append(div8, div2);
-        append(div2, t6);
-        append(div8, t7);
-        append(div8, div3);
-        append(div8, t9);
-        append(div8, span1);
-        append(div8, t11);
-        append(div8, div4);
-        append(div4, t12);
-        append(div8, t13);
-        append(div8, div5);
-        append(div8, t15);
-        append(div8, span2);
-        append(div8, t17);
-        append(div8, div6);
-        append(div6, t18);
-        append(div8, t19);
-        append(div8, div7);
-        append(div8, t21);
-        append(div8, span3);
-        if_block.m(span3, null);
-        append(div8, t22);
+        append(div6, t1);
+        append(div6, div1);
+        append(div6, t3);
+        append(div6, span0);
+        append(div6, t5);
+        if (if_block0)
+          if_block0.m(div6, null);
+        append(div6, t6);
+        append(div6, div2);
+        append(div2, t7);
+        append(div6, t8);
+        append(div6, div3);
+        append(div6, t10);
+        append(div6, span1);
+        append(div6, t12);
+        append(div6, div4);
+        append(div4, t13);
+        append(div6, t14);
+        append(div6, div5);
+        append(div6, t16);
+        append(div6, span2);
+        if_block1.m(span2, null);
+        append(div6, t17);
         if (default_slot) {
-          default_slot.m(div8, null);
+          default_slot.m(div6, null);
         }
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (!current || dirty & 2)
-          set_data(t0, ctx2[1]);
         if (!current || dirty & 4)
-          set_data(t6, ctx2[2]);
-        if (!current || dirty & 8)
-          set_data(t12, ctx2[3]);
+          set_data(t0, ctx2[2]);
+        if (ctx2[1]) {
+          if (if_block0) {
+            if_block0.p(ctx2, dirty);
+          } else {
+            if_block0 = create_if_block_1(ctx2);
+            if_block0.c();
+            if_block0.m(div6, t6);
+          }
+        } else if (if_block0) {
+          if_block0.d(1);
+          if_block0 = null;
+        }
         if (!current || dirty & 16)
-          set_data(t18, ctx2[4]);
+          set_data(t7, ctx2[4]);
+        if (!current || dirty & 32)
+          set_data(t13, ctx2[5]);
         if (current_block_type !== (current_block_type = select_block_type(ctx2, dirty))) {
-          if_block.d(1);
-          if_block = current_block_type(ctx2);
-          if (if_block) {
-            if_block.c();
-            if_block.m(span3, null);
+          if_block1.d(1);
+          if_block1 = current_block_type(ctx2);
+          if (if_block1) {
+            if_block1.c();
+            if_block1.m(span2, null);
           }
         }
         if (default_slot) {
-          if (default_slot.p && (!current || dirty & 64)) {
-            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[6], !current ? get_all_dirty_from_scope(ctx2[6]) : get_slot_changes(default_slot_template, ctx2[6], dirty, null), null);
+          if (default_slot.p && (!current || dirty & 128)) {
+            update_slot_base(default_slot, default_slot_template, ctx2, ctx2[7], !current ? get_all_dirty_from_scope(ctx2[7]) : get_slot_changes(default_slot_template, ctx2[7], dirty, null), null);
           }
         }
       },
@@ -2133,8 +2165,10 @@
       },
       d(detaching) {
         if (detaching)
-          detach(div8);
-        if_block.d();
+          detach(div6);
+        if (if_block0)
+          if_block0.d();
+        if_block1.d();
         if (default_slot)
           default_slot.d(detaching);
       }
@@ -2145,6 +2179,7 @@
     let SECS_TO_HOURS = 60 * 60;
     let { media_storage } = $$props;
     let { active = false } = $$props;
+    let { show_lines = true } = $$props;
     let chars, lines, time, speed;
     const statsExist = (media_storage2) => media_storage2.instance_storage != void 0 ? media_storage2.instance_storage.today_stats : void 0;
     const getStat = (daily_stats, stat_key) => daily_stats != void 0 && daily_stats.hasOwnProperty(stat_key) ? daily_stats[stat_key] : 0;
@@ -2159,10 +2194,10 @@
       const char_count = getStat(daily_stats, "chars_read");
       const line_count = getStat(daily_stats, "lines_read");
       const time_secs = getStat(daily_stats, "time_read");
-      $$invalidate(1, chars = char_count.toLocaleString());
-      $$invalidate(2, lines = line_count.toLocaleString());
-      $$invalidate(3, time = getTime(time_secs));
-      $$invalidate(4, speed = getSpeed(char_count, time_secs));
+      $$invalidate(2, chars = char_count.toLocaleString());
+      $$invalidate(3, lines = line_count.toLocaleString());
+      $$invalidate(4, time = getTime(time_secs));
+      $$invalidate(5, speed = getSpeed(char_count, time_secs));
     };
     calculateStats();
     document.addEventListener("status_active", () => {
@@ -2175,44 +2210,49 @@
     });
     $$self.$$set = ($$props2) => {
       if ("media_storage" in $$props2)
-        $$invalidate(5, media_storage = $$props2.media_storage);
+        $$invalidate(6, media_storage = $$props2.media_storage);
       if ("active" in $$props2)
         $$invalidate(0, active = $$props2.active);
+      if ("show_lines" in $$props2)
+        $$invalidate(1, show_lines = $$props2.show_lines);
       if ("$$scope" in $$props2)
-        $$invalidate(6, $$scope = $$props2.$$scope);
+        $$invalidate(7, $$scope = $$props2.$$scope);
     };
-    return [active, chars, lines, time, speed, media_storage, $$scope, slots];
+    return [active, show_lines, chars, lines, time, speed, media_storage, $$scope, slots];
   }
   var Stat_bar = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance, create_fragment, safe_not_equal, { media_storage: 5, active: 0 });
+      init(this, options, instance, create_fragment, safe_not_equal, {
+        media_storage: 6,
+        active: 0,
+        show_lines: 1
+      });
     }
   };
   var stat_bar_default = Stat_bar;
 
   // src/ttu/ttu.svelte
   function create_fragment2(ctx) {
-    let div1;
-    let div0;
+    let div;
     let statbar;
+    let div_class_value;
     let current;
     statbar = new stat_bar_default({
-      props: { media_storage: ctx[0] }
+      props: {
+        media_storage: ctx[0],
+        show_lines: false
+      }
     });
     return {
       c() {
-        div1 = element("div");
-        div0 = element("div");
+        div = element("div");
         create_component(statbar.$$.fragment);
-        attr(div0, "class", "h-10 grow rounded-[3px] z-50");
-        set_style(div0, "background", "var(--color1) box-shadow: 0px 0px 8px 0px var(--color3a)");
-        attr(div1, "class", "flex flex-col-reverse items-end content-center m-[5px]");
+        attr(div, "class", div_class_value = "h-12 w-min mx-auto flex-none top-0 items-end content-center text-gray-300 " + (ctx[1] ? "block" : "hidden"));
       },
       m(target, anchor) {
-        insert(target, div1, anchor);
-        append(div1, div0);
-        mount_component(statbar, div0, null);
+        insert(target, div, anchor);
+        mount_component(statbar, div, null);
         current = true;
       },
       p(ctx2, [dirty]) {
@@ -2220,6 +2260,9 @@
         if (dirty & 1)
           statbar_changes.media_storage = ctx2[0];
         statbar.$set(statbar_changes);
+        if (!current || dirty & 2 && div_class_value !== (div_class_value = "h-12 w-min mx-auto flex-none top-0 items-end content-center text-gray-300 " + (ctx2[1] ? "block" : "hidden"))) {
+          attr(div, "class", div_class_value);
+        }
       },
       i(local) {
         if (current)
@@ -2233,13 +2276,24 @@
       },
       d(detaching) {
         if (detaching)
-          detach(div1);
+          detach(div);
         destroy_component(statbar);
       }
     };
   }
   function instance2($$self, $$props, $$invalidate) {
     let { ttu_storage: ttu_storage2 } = $$props;
+    let shown = false;
+    const showBar = () => {
+      setTimeout(() => {
+        $$invalidate(1, shown = true);
+      }, 300);
+    };
+    const hideBar = () => {
+      $$invalidate(1, shown = false);
+    };
+    document.querySelector("button.fixed:nth-child(1)").addEventListener("click", showBar);
+    document.body.addEventListener("click", hideBar);
     document.body.addEventListener("dblclick", ttu_storage2.toggleActive.bind(ttu_storage2));
     document.addEventListener("status_active", () => {
       document.querySelector(".book-content").style.setProperty("filter", "");
@@ -2251,7 +2305,7 @@
       if ("ttu_storage" in $$props2)
         $$invalidate(0, ttu_storage2 = $$props2.ttu_storage);
     };
-    return [ttu_storage2];
+    return [ttu_storage2, shown];
   }
   var Ttu = class extends SvelteComponent {
     constructor(options) {
@@ -2282,8 +2336,15 @@
     await ttu_storage.instance_storage.updateDetails({
       last_char_count: char_current
     });
+    const svelte_div = document.createElement("div");
+    svelte_div.style.position = "fixed";
+    svelte_div.style.height = "8px";
+    svelte_div.style.width = "100%";
+    svelte_div.style.writingMode = "horizontal-tb";
+    svelte_div.style.zIndex = "50";
+    document.body.insertBefore(svelte_div, document.querySelector("div.h-full.w-full"));
     new ttu_default({
-      target: document.body.querySelector(".book-content"),
+      target: svelte_div,
       props: {
         ttu_storage
       }

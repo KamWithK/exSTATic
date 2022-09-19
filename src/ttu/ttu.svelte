@@ -4,6 +4,23 @@
 
   export let ttu_storage: TTUStorage
 
+  let shown = false
+
+  // Open the bar with a small delay
+  // To sync up with the default bar
+  // To avoid hide bar being called straight after
+  const showBar = () => {
+    setTimeout(() => { shown = true }, 300)
+  }
+
+  const hideBar = () => {
+    shown = false
+  }
+
+  document.querySelector("button.fixed:nth-child(1)")
+    .addEventListener("click", showBar)
+  document.body.addEventListener("click", hideBar)
+
   document.body.addEventListener(
     "dblclick",
     ttu_storage.toggleActive.bind(ttu_storage)
@@ -22,13 +39,8 @@
   })
 </script>
 
-<div class="flex flex-col-reverse items-end content-center m-[5px]">
-  <div
-    class="h-10 grow rounded-[3px] z-50"
-    style="background: var(--color1) box-shadow: 0px 0px 8px 0px var(--color3a)"
-  >
-    <StatBar media_storage={ttu_storage} />
-  </div>
+<div class="h-12 w-min mx-auto flex-none top-0 items-end content-center text-gray-300 {shown ? 'block' : 'hidden'}">
+	<StatBar media_storage={ttu_storage} show_lines={false}/>
 </div>
 
 <style global>

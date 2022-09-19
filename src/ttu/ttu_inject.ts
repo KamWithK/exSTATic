@@ -28,9 +28,6 @@ function getCharCount() {
 async function setup() {
   ttu_storage = await TTUStorage.build(true)
 
-  // Switch to the right instance
-  await ttu_storage.changeInstance(undefined, getBookTitle())
-
   // Load Svelte for the inserted UI
   const svelte_div = document.createElement("div")
   svelte_div.style.position = "fixed"
@@ -74,6 +71,9 @@ const observeAfter = async () => {
   // If information doesn't exist then keep waiting
   if (!document.querySelector(".writing-horizontal-tb.fixed.bottom-2")) return
   
+  // Switch to the right instance
+  await ttu_storage.changeInstance(undefined, getBookTitle())
+
   // Ensure starting partially through doesn't cause everything so far to log in todays stats
   await ttu_storage.instance_storage.updateDetails({
     last_char_count: getCharCount()[0],

@@ -2409,7 +2409,6 @@
   }
   async function setup() {
     ttu_storage = await TTUStorage.build(true);
-    await ttu_storage.changeInstance(void 0, getBookTitle());
     const svelte_div = document.createElement("div");
     svelte_div.style.position = "fixed";
     svelte_div.style.height = "0px";
@@ -2444,6 +2443,7 @@
   var observeAfter = async () => {
     if (!document.querySelector(".writing-horizontal-tb.fixed.bottom-2"))
       return;
+    await ttu_storage.changeInstance(void 0, getBookTitle());
     await ttu_storage.instance_storage.updateDetails({
       last_char_count: getCharCount()[0]
     });

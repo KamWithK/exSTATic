@@ -1557,12 +1557,11 @@
       await TTUStorage.setPages(this.instance_storage);
     }
     async processText(chars_read, date) {
-      const stats = { "chars_read": chars_read };
-      if (chars_read > this.details["last_char_count"]) {
+      const stats = { ...this.instance_storage.today_stats, "chars_read": chars_read };
+      if (chars_read > this.details["last_char_count"])
         this.start_ticker(false);
-      } else if (chars_read < this.details["last_char_count"]) {
+      else if (chars_read < this.details["last_char_count"])
         this.stop_ticker();
-      }
       await this.instance_storage.updateDetails({
         "last_char_count": chars_read,
         "last_active_at": timeNowSeconds()

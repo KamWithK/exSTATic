@@ -33,6 +33,22 @@
       },
       {
         "matches": [
+          "https://ttu-ebook.web.app/**",
+          "https://reader.ttsu.app/**",
+          "file:///**/ttu-ebook.web.app/**",
+          "file:///**/reader.ttsu.app/**"
+        ],
+        "js": [
+          "build/ttu/ttu_inject.js",
+          "build/fonts.js"
+        ],
+        "css": [
+          "docs/fonts.css",
+          "build/ttu/ttu_inject.css"
+        ]
+      },
+      {
+        "matches": [
           "https://*/Manga/**.html",
           "file:///**/Manga/**.html"
         ],

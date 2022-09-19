@@ -1082,14 +1082,6 @@
   }
 
   // src/calculations.js
-  var IGNORE = /[〔〕《》〖〗〘〙〚〛【】「」［］『』｛｝\[\]()（）｟｠〈〉≪≫。、.,※＊'：！?？‥…―─ｰ〽～→♪♪ ♫ ♬ ♩\"　\t\n]/g;
-  var SPLIT = /[\n。.！?？]/g;
-  function charsInLine(line) {
-    return line.replaceAll(IGNORE, "").length;
-  }
-  function lineSplitCount(line) {
-    return line.split(SPLIT).filter((value) => value.replaceAll(IGNORE, "") != "").length;
-  }
   function dateNowString() {
     rn = new Date();
     return formatISO(rn, { "representation": "date" });
@@ -1543,57 +1535,42 @@
     }
   };
 
-  // src/mokuro/mokuro_storage.js
-  var browser4 = require_browser_polyfill();
-  var MokuroStorage = class extends MediaStorage {
+  // src/ttu/ttu_storage.js
+  var TTUStorage = class extends MediaStorage {
     static async build(live_stat_update = false) {
-      const [type_storage, instance_storage] = await super.build("mokuro");
-      await MokuroStorage.setPages(instance_storage);
-      await type_storage.updateProperties({ "afk_max_time": 60 });
-      return new MokuroStorage(type_storage, instance_storage, live_stat_update);
+      const [type_storage, instance_storage] = await super.build("ttu");
+      await this.setPages(instance_storage);
+      await type_storage.updateProperties({ "afk_max_time": 5 });
+      return new TTUStorage(type_storage, instance_storage, live_stat_update);
     }
     static async setPages(instance_storage) {
       if (instance_storage === void 0)
         return;
       let details = {};
-      if (instance_storage.details["last_page_read"] === void 0) {
-        details["last_page_read"] = 0;
+      if (instance_storage.details["last_char_count"] === void 0) {
+        details["last_char_count"] = 0;
       }
       await instance_storage.updateDetails(details);
     }
-    async setDetails(series, page_count) {
-      if (this.details["series"] === void 0) {
-        this.instance_storage.updateDetails({ "series": series });
-      }
-      if (this.details["page_count"] !== page_count) {
-        this.instance_storage.updateDetails({ "page_count": page_count });
-      }
-    }
     async changeInstance(new_uuid, given_identifier = void 0) {
       await super.changeInstance(new_uuid, given_identifier);
-      await MokuroStorage.setPages(this.instance_storage);
+      await TTUStorage.setPages(this.instance_storage);
     }
-    async processPage(page_num, lines, date) {
-      let stats = {};
-      stats["chars_read"] = lines.reduce((total, line) => total + charsInLine(line), 0);
-      stats["lines_read"] = lines.reduce((total, line) => total + lineSplitCount(line), 0);
-      stats["pages_read"] = Math.abs(page_num - this.details["last_page_read"]);
-      if (page_num > this.details["last_page_read"]) {
-        await this.instance_storage.addDailyStats(date, stats);
+    async processText(chars_read, date) {
+      const stats = { ...this.instance_storage.today_stats, "chars_read": chars_read };
+      if (chars_read > this.details["last_char_count"])
         this.start_ticker(false);
-      } else if (page_num < this.details["last_page_read"]) {
-        await this.instance_storage.subDailyStats(date, stats);
+      else if (chars_read < this.details["last_char_count"])
         this.stop_ticker();
-      }
-      await this.instance_storage.updateDetails({ "last_page_read": page_num });
+      await this.instance_storage.updateDetails({
+        "last_char_count": chars_read,
+        "last_active_at": timeNowSeconds()
+      });
+      await this.instance_storage.setDailyStats(date, stats);
       await this.instance_storage.addToDates(date);
       await this.instance_storage.addToDate(date);
     }
   };
-
-  // src/messaging/socket_actions.js
-  var browser5 = require_browser_polyfill();
-  var SPLIT_PATH = /\\|\//g;
 
   // node_modules/svelte/internal/index.mjs
   function noop() {
@@ -1690,6 +1667,9 @@
   function space() {
     return text(" ");
   }
+  function empty() {
+    return text("");
+  }
   function attr(node, attribute, value) {
     if (value == null)
       node.removeAttribute(attribute);
@@ -1774,6 +1754,19 @@
   }
   var outroing = /* @__PURE__ */ new Set();
   var outros;
+  function group_outros() {
+    outros = {
+      r: 0,
+      c: [],
+      p: outros
+    };
+  }
+  function check_outros() {
+    if (!outros.r) {
+      run_all(outros.c);
+    }
+    outros = outros.p;
+  }
   function transition_in(block, local) {
     if (block && block.i) {
       outroing.delete(block);
@@ -2262,32 +2255,30 @@
   };
   var stat_bar_default = Stat_bar;
 
-  // src/mokuro/mokuro.svelte
-  function create_fragment2(ctx) {
-    let div1;
-    let div0;
+  // src/ttu/ttu.svelte
+  function create_if_block2(ctx) {
+    let div;
     let statbar;
     let current;
     statbar = new stat_bar_default({
-      props: { media_storage: ctx[0] }
+      props: {
+        media_storage: ctx[0],
+        show_lines: false
+      }
     });
     return {
       c() {
-        div1 = element("div");
-        div0 = element("div");
+        div = element("div");
         create_component(statbar.$$.fragment);
-        attr(div0, "class", "h-10 grow rounded-[3px] z-50");
-        set_style(div0, "background", "var(--color1)");
-        set_style(div0, "box-shadow", "0px 0px 8px 0px var(--color3a)");
-        attr(div1, "class", "flex flex-col-reverse items-end content-center m-[5px]");
+        attr(div, "class", "h-12 w-min mx-auto flex-none top-0 items-end content-center");
+        set_style(div, "color", "#afb3b9");
       },
       m(target, anchor) {
-        insert(target, div1, anchor);
-        append(div1, div0);
-        mount_component(statbar, div0, null);
+        insert(target, div, anchor);
+        mount_component(statbar, div, null);
         current = true;
       },
-      p(ctx2, [dirty]) {
+      p(ctx2, dirty) {
         const statbar_changes = {};
         if (dirty & 1)
           statbar_changes.media_storage = ctx2[0];
@@ -2305,75 +2296,159 @@
       },
       d(detaching) {
         if (detaching)
-          detach(div1);
+          detach(div);
         destroy_component(statbar);
       }
     };
   }
+  function create_fragment2(ctx) {
+    let if_block_anchor;
+    let current;
+    let if_block = ctx[1] && create_if_block2(ctx);
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+        current = true;
+      },
+      p(ctx2, [dirty]) {
+        if (ctx2[1]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+            if (dirty & 2) {
+              transition_in(if_block, 1);
+            }
+          } else {
+            if_block = create_if_block2(ctx2);
+            if_block.c();
+            transition_in(if_block, 1);
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          group_outros();
+          transition_out(if_block, 1, 1, () => {
+            if_block = null;
+          });
+          check_outros();
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(if_block);
+        current = true;
+      },
+      o(local) {
+        transition_out(if_block);
+        current = false;
+      },
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
   function instance2($$self, $$props, $$invalidate) {
-    let { mokuro_storage: mokuro_storage2 } = $$props;
-    document.body.addEventListener("dblclick", mokuro_storage2.toggleActive.bind(mokuro_storage2));
+    let { ttu_storage: ttu_storage2 } = $$props;
+    let shown = false;
+    const showBar = () => {
+      setTimeout(() => {
+        $$invalidate(1, shown = true);
+      }, 300);
+    };
+    const hideBar = () => {
+      $$invalidate(1, shown = false);
+    };
+    document.querySelector("button.fixed:nth-child(1)").addEventListener("click", showBar);
+    document.body.addEventListener("click", hideBar);
+    document.body.addEventListener("dblclick", ttu_storage2.toggleActive.bind(ttu_storage2));
     document.addEventListener("status_active", () => {
-      document.getElementById("pagesContainer").style.setProperty("filter", "");
+      document.querySelector(".book-content").style.setProperty("filter", "");
     });
     document.addEventListener("status_inactive", () => {
-      document.getElementById("pagesContainer").style.setProperty("filter", "blur(2px)");
+      document.querySelector(".book-content").style.setProperty("filter", "blur(2px)");
     });
     $$self.$$set = ($$props2) => {
-      if ("mokuro_storage" in $$props2)
-        $$invalidate(0, mokuro_storage2 = $$props2.mokuro_storage);
+      if ("ttu_storage" in $$props2)
+        $$invalidate(0, ttu_storage2 = $$props2.ttu_storage);
     };
-    return [mokuro_storage2];
+    return [ttu_storage2, shown];
   }
-  var Mokuro = class extends SvelteComponent {
+  var Ttu = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance2, create_fragment2, safe_not_equal, { mokuro_storage: 0 });
+      init(this, options, instance2, create_fragment2, safe_not_equal, { ttu_storage: 0 });
     }
   };
-  var mokuro_default = Mokuro;
+  var ttu_default = Ttu;
 
-  // src/mokuro/mokuro_inject.ts
+  // src/ttu/ttu_inject.ts
   console.log("Injected");
-  var mokuro_storage;
-  function getVolumeSeries() {
-    const paths = decodeURI(window.location.href).split(SPLIT_PATH);
-    const volume = paths[paths.length - 1].replace(/\.html.*$/, "");
-    const series = paths[paths.length - 2];
-    return [volume, series];
+  var ttu_storage;
+  function getBookTitle() {
+    return document.title.replace(/ \| ッツ Ebook Reader$/, "");
   }
-  function getPage() {
-    const [current_page, total_pages] = document.getElementById("pageIdxDisplay").innerText.split("/");
-    return [Number.parseInt(current_page) - 1, Number.parseInt(total_pages)];
+  function getCharCount() {
+    const nodes = document.getElementsByClassName("writing-horizontal-tb")[1].childNodes;
+    if (nodes.length == 6) {
+      const char_current = nodes[0].textContent;
+      const char_total = nodes[2].textContent;
+      return [char_current, char_total];
+    }
+    return void 0;
   }
-  var getGivenID = (series, volume) => JSON.stringify([series, volume]);
   async function setup() {
-    mokuro_storage = await MokuroStorage.build(true);
-    const [volume, series] = getVolumeSeries();
-    const [current_page, total_pages] = getPage();
-    await mokuro_storage.changeInstance(void 0, getGivenID(series, volume));
-    await mokuro_storage.setDetails(series, total_pages);
-    await mokuro_storage.instance_storage.updateDetails({ "last_page_read": current_page });
+    ttu_storage = await TTUStorage.build(true);
+    await ttu_storage.changeInstance(void 0, getBookTitle());
     const svelte_div = document.createElement("div");
-    document.body.insertBefore(svelte_div, document.getElementById("showMenuA"));
-    new mokuro_default({
+    svelte_div.style.position = "fixed";
+    svelte_div.style.height = "0px";
+    svelte_div.style.width = "100%";
+    svelte_div.style.writingMode = "horizontal-tb";
+    svelte_div.style.zIndex = "50";
+    document.body.insertBefore(svelte_div, document.querySelector("div.h-full.w-full"));
+    new ttu_default({
       target: svelte_div,
       props: {
-        mokuro_storage
+        ttu_storage
       }
     });
   }
   setup();
-  var observer = new MutationObserver(async (_) => {
-    if (!await mokuro_storage.extensionActivated())
+  var onUpdate = async () => {
+    if (ttu_storage && !await ttu_storage.extensionActivated())
       return;
-    const [volume, series] = getVolumeSeries();
-    const [current_page, total_pages] = getPage();
-    const get_page = current_page > mokuro_storage.details["last_page_read"] ? current_page - 1 : current_page;
-    const lines = Array.from(document.getElementById(`page${get_page}`).firstChild.childNodes).map((element2) => Array.from(element2.childNodes).reduce((so_far, node) => `${so_far}${node.textContent}`, ""));
-    await mokuro_storage.changeInstance(void 0, getGivenID(series, volume));
-    await mokuro_storage.setDetails(series, total_pages);
-    await mokuro_storage.processPage(current_page, lines, dateNowString());
-  });
-  observer.observe(document.getElementById("pageIdxDisplay"), { "childList": true, "subtree": true });
+    const book_title = getBookTitle();
+    const char_count = getCharCount();
+    if (!char_count)
+      return;
+    const [char_current] = char_count;
+    await ttu_storage.changeInstance(void 0, book_title);
+    await ttu_storage.processText(char_current, dateNowString());
+  };
+  var observer_settings = {
+    characterData: true,
+    childList: false,
+    subtree: true
+  };
+  var observeAfter = async () => {
+    if (!document.querySelector(".writing-horizontal-tb.fixed.bottom-2"))
+      return;
+    await ttu_storage.instance_storage.updateDetails({
+      last_char_count: getCharCount()
+    });
+    const stats_observer = new MutationObserver(onUpdate);
+    stats_observer.observe(document.querySelector(".writing-horizontal-tb.fixed.bottom-2"), observer_settings);
+    overall_observer.disconnect();
+  };
+  var overall_observer = new MutationObserver(observeAfter);
+  overall_observer.observe(document, observer_settings);
 })();

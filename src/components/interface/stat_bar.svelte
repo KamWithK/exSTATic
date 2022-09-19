@@ -5,6 +5,7 @@
 
     export let media_storage: MediaStorage
     export let active: boolean = false
+    export let show_lines: boolean = true
 
     let chars, lines, time, speed
     
@@ -61,9 +62,11 @@
     <div class="stat-annotation">Chars</div>
     <span class="material-icons">auto_stories</span>
 
-    <div id="lines_read" class="stat-numbers">{lines}</div>
-    <div class="stat-annotation">Lines</div>
-    <span class="material-icons">drive_file_rename_outline</span>
+    {#if show_lines}
+        <div id="lines_read" class="stat-numbers">{lines}</div>
+        <div class="stat-annotation">Lines</div>
+        <span class="material-icons">drive_file_rename_outline</span>
+    {/if}
 
     <div id="elapsed_time" class="stat-numbers">{time}</div>
     <div class="stat-annotation">Elapsed</div>

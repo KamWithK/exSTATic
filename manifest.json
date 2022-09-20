@@ -1,110 +1,98 @@
 {
-    "manifest_version": 3,
-    "name": "exSTATic",
-    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuwn/wsj43FLW2rxrACsMQK+58H2Cjkwez105WIDVfdj6SUiTIXdzBO2lT+tSZmoLx9HRbULqg0Aq4z8yg/mSHIjrQPPB/Gr1QFexWSAyvqkyJsePxwjpybo1aotuVo/fesMyHyBsenH7xNxSpsSbldA8GbVFks3rQc5gQOexhe1PXOA5GlmBOhIPO2vrITk60X5Ysp1VwGhx1OlUF9IixcH2uHvWm4n15AsINPH+OFx3mJw7xS+GqCL2bYP/mxepOohA8lKHKEPFtSFOBdFMtTA3tV/HEUU6G5hsS6IeQpBjzW2YTmaHD3tcK5SSdnK336AX3htYxY/O6zwErXx3PQIDAQAB",
-    "version": "0.0.5",
-  
-    "description": "Completely automated reading statistics and tracking",
+  "manifest_version": 2,
+  "name": "exSTATic",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuwn/wsj43FLW2rxrACsMQK+58H2Cjkwez105WIDVfdj6SUiTIXdzBO2lT+tSZmoLx9HRbULqg0Aq4z8yg/mSHIjrQPPB/Gr1QFexWSAyvqkyJsePxwjpybo1aotuVo/fesMyHyBsenH7xNxSpsSbldA8GbVFks3rQc5gQOexhe1PXOA5GlmBOhIPO2vrITk60X5Ysp1VwGhx1OlUF9IixcH2uHvWm4n15AsINPH+OFx3mJw7xS+GqCL2bYP/mxepOohA8lKHKEPFtSFOBdFMtTA3tV/HEUU6G5hsS6IeQpBjzW2YTmaHD3tcK5SSdnK336AX3htYxY/O6zwErXx3PQIDAQAB",
+  "version": "0.0.5",
 
-    "icons": {
-      "100": "docs/favicon_100x100.png",
-      "500": "docs/favicon.png"
+  "description": "Completely automated reading statistics and tracking",
+
+  "icons": {
+    "100": "docs/favicon_100x100.png",
+    "500": "docs/favicon.png"
+  },
+
+  "background": {
+    "persistent": true,
+    "scripts": ["build/background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://kamwithk.github.io/exSTATic/tracker.html",
+        "file:///*/exSTATic/*/tracker.html",
+        "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/tracker.html"
+      ],
+      "js": [
+        "build/vn/tracker_inject.js",
+        "build/fonts.js"
+      ],
+      "css": [
+        "docs/fonts.css",
+        "build/vn/tracker_inject.css"
+      ]
     },
-
-    "permissions": [
-      "storage",
-      "unlimitedStorage",
-      "tabs",
-      "scripting",
-      "downloads"
-    ],
-
-    "host_permissions": [
-      "https://kamwithk.github.io/exSTATic/",
-      "file:///*/exSTATic/*/*.html",
-      "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/*.html",
-
-      "https://*/Manga/**.html",
-      "file:///**/Manga/**.html"
-    ],
-
-    "background": {
-      "service_worker": "build/background.js"
+    {
+      "matches": [
+        "https://ttu-ebook.web.app/**",
+        "https://reader.ttsu.app/**",
+        "file:///**/ttu-ebook.web.app/**",
+        "file:///**/reader.ttsu.app/**"
+      ],
+      "js": [
+        "build/ttu/ttu_inject.js",
+        "build/fonts.js"
+      ],
+      "css": [
+        "docs/fonts.css",
+        "build/ttu/ttu_inject.css"
+      ]
     },
-
-    "content_scripts": [
-      {
-        "matches": [
-          "https://kamwithk.github.io/exSTATic/tracker.html",
-          "file:///*/exSTATic/*/tracker.html",
-          "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/tracker.html"
-        ],
-        "js": [
-          "build/vn/tracker_inject.js",
-          "build/fonts.js"
-        ],
-        "css": [
-          "docs/fonts.css",
-          "build/vn/tracker_inject.css"
-        ]
-      },
-      {
-        "matches": [
-          "https://ttu-ebook.web.app/**",
-          "https://reader.ttsu.app/**",
-          "file:///**/ttu-ebook.web.app/**",
-          "file:///**/reader.ttsu.app/**"
-        ],
-        "js": [
-          "build/ttu/ttu_inject.js",
-          "build/fonts.js"
-        ],
-        "css": [
-          "docs/fonts.css",
-          "build/ttu/ttu_inject.css"
-        ]
-      },
-      {
-        "matches": [
-          "https://*/Manga/**.html",
-          "file:///**/Manga/**.html"
-        ],
-        "js": [
-          "build/mokuro/mokuro_inject.js",
-          "build/fonts.js"
-        ],
-        "css": [
-          "docs/fonts.css",
-          "build/mokuro/mokuro_inject.css"
-        ]
-      },
-      {
-        "matches": [
-          "https://kamwithk.github.io/exSTATic/stats.html",
-          "file:///*/exSTATic/*/stats.html",
-          "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/stats.html"
-        ],
-        "js": [
-          "build/stats/stats_inject.js",
-          "build/fonts.js"
-        ],
-        "css": [
-          "docs/fonts.css",
-          "build/stats/stats_inject.css"
-        ]
-      }
-    ],
-
-    "web_accessible_resources": [{
-      "resources": ["/fonts/*"],
-      "matches": ["<all_urls>"]
-    }],
-
-    "action": {
-      "default_icon": {
-          "100": "docs/favicon_100x100.png",
-          "500": "docs/favicon.png"
-      }
+    {
+      "matches": [
+        "https://*/Manga/**.html",
+        "file:///**/Manga/**.html"
+      ],
+      "js": [
+        "build/mokuro/mokuro_inject.js",
+        "build/fonts.js"
+      ],
+      "css": [
+        "docs/fonts.css",
+        "build/mokuro/mokuro_inject.css"
+      ]
+    },
+    {
+      "matches": [
+        "https://kamwithk.github.io/exSTATic/stats.html",
+        "file:///*/exSTATic/*/stats.html",
+        "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/stats.html"
+      ],
+      "js": [
+        "build/stats/stats_inject.js",
+        "build/fonts.js"
+      ],
+      "css": [
+        "docs/fonts.css",
+        "build/stats/stats_inject.css"
+      ]
     }
-  }
-  
+  ],
+
+  "web_accessible_resources": [
+    "/fonts/*"
+  ],
+
+  "browser_action": {
+    "default_icon": {
+        "100": "docs/favicon_100x100.png",
+        "500": "docs/favicon.png"
+    }
+  },
+
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "tabs",
+    "downloads"
+  ]
+}

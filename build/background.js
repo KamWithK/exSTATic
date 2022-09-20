@@ -1693,7 +1693,7 @@
     console.log("Reloading all extension tabs...");
     for (const content_script of chrome.runtime.getManifest().content_scripts) {
       for (const tab of await chrome.tabs.query({ url: content_script.matches })) {
-        browser3.scripting.executeScript({
+        browser3.tabs.executeScript({
           target: { tabId: tab.id },
           func: () => window.location.reload()
         });
@@ -1701,10 +1701,10 @@
     }
   });
   browser3.runtime.onMessage.addListener(message_action);
-  browser3.action.onClicked.addListener(async (_) => {
+  browser3.browserAction.onClicked.addListener(async (_) => {
     const listen_status = (await browser3.storage.local.get("listen_status"))["listen_status"];
     if (listen_status == true || listen_status === void 0) {
-      await browser3.action.setIcon({
+      await browser3.browserAction.setIcon({
         "path": {
           "100": "/docs/disabled_100x100.png",
           "500": "/docs/disabled.png"
@@ -1714,7 +1714,7 @@
         "listen_status": false
       });
     } else {
-      await browser3.action.setIcon({
+      await browser3.browserAction.setIcon({
         "path": {
           "100": "/docs/favicon_100x100.png",
           "500": "/docs/favicon.png"

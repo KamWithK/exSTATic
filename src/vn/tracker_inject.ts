@@ -7,11 +7,18 @@ var browser = require("webextension-polyfill")
 
 const setup = async () => {
 	const vn_storage = await VNStorage.build(true)
-	const port = browser.runtime.connect({"name": "vn_lines"})
-	port.onMessage.addListener(async data => {
-		await vn_storage.changeInstance(undefined, data["process_path"])
-		await vn_storage.addLine(data["line"], data["date"], data["time"])
-	})
+
+	let port
+	const connectMessaging = () => {
+		port = browser.runtime.connect({"name": "vn_lines"})
+		port.onDisconnect.addListener(() => connectMessaging)
+
+		port.onMessage.addListener(async data => {
+			await vn_storage.changeInstance(undefined, data["process_path"])
+			await vn_storage.addLine(data["line"], data["date"], data["time"])
+		})
+	}
+	connectMessaging()
 
 	new App({
 		target: document.documentElement,

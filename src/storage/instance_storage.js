@@ -132,7 +132,9 @@ export class InstanceStorage {
 
         // NOTE: This doesn't account for deleted lines
         const max_line_id = this.details["last_line_added"]
-        const min_line_id = max_lines <= 0 | max_lines === undefined | isNaN(max_lines) ? 0 : Math.max(0, this.details["last_line_added"] - max_lines + 1)
+        const min_line_id = max_lines <= 0 | max_lines === undefined | isNaN(max_lines)
+            ? 0 :
+            Math.max(0, this.details["last_line_added"] - max_lines + 1)
     
         const id_queries = [...Array(max_line_id - min_line_id + 1).keys()].map(
             index => JSON.stringify([this.uuid, min_line_id + index])

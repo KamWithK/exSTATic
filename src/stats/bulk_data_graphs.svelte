@@ -13,7 +13,7 @@
     export let tooltip_accessors, tooltip_formatters
 </script>
 
-<div class="flex flex-col items-center h-full w-full p-20 gap-20">
+<div class="flex flex-col items-center h-full w-full gap-20">
     <Scatterplot
         data={data}
         x_accessor={date_accessor} y_accessor={read_speed_accessor}

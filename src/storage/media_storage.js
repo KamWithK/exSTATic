@@ -28,9 +28,6 @@ export class MediaStorage {
         if (this.instance_storage !== undefined) {
             this.details = this.instance_storage.details
             this.uuid = this.properties["previous_uuid"]
-
-            // Dispatch an event
-            this.logLines()
         }
 
         if (live_stat_update) {

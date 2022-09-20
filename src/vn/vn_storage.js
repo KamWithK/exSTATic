@@ -13,6 +13,7 @@ export class VNStorage extends MediaStorage {
     constructor(type_storage, instance_storage, live_stat_update=false) {
         super(type_storage, instance_storage, live_stat_update)
         this.max_lines = Number.parseInt(type_storage.properties["max_loaded_lines"])
+        this.logLines()
     }
 
     static async build(live_stat_update=false) {

@@ -1,4 +1,26 @@
-/* fakecss:C:/Users/kamwi/Development/Projects/exSTATic/src/stats/stats.esbuild-svelte-fake-css */
+/* fakecss:C:/Users/kamwi/Development/Projects/exSTATic/src/components/interface/stat_bar.esbuild-svelte-fake-css */
+.stat-numbers.svelte-1127kl9 {
+  font-family:
+    "ui-monospace",
+    "SFMono-Regular",
+    "Menlo",
+    "Monaco",
+    "Consolas",
+    "Liberation Mono",
+    "Courier New",
+    "monospace";
+  font-size: 1rem;
+  line-height: 1.5rem;
+  white-space: nowrap;
+}
+.stat-annotation.svelte-1127kl9 {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+}
+
+/* fakecss:C:/Users/kamwi/Development/Projects/exSTATic/src/ttu/ttu.esbuild-svelte-fake-css */
 *,
 ::before,
 ::after {
@@ -851,27 +873,6 @@ select {
 }
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-}
-body {
-  --tw-bg-opacity:1;
-  background-color: rgb(30 41 59 / var(--tw-bg-opacity));
-}
-.header-text {
-  display: inline-flex;
-  align-items: center;
-  font-size: 2.25rem;
-  line-height: 2.5rem;
-}
-.header-icon {
-  height: 100%;
-}
-.header-icon:hover {
-  --tw-bg-opacity:1;
-  background-color: rgb(67 56 202 / var(--tw-bg-opacity));
-}
-.header-icon:hover:hover {
-  --tw-text-opacity:1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .hover\:bg-hover:hover {
   --tw-bg-opacity:1;

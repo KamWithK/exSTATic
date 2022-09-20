@@ -139,7 +139,7 @@
 		<input id="game_name" class="w-20 h-full shrink grow justify-self-start jp-text" type="text" bind:value={title}>
 		<div class="relative">
 			<StatBar media_storage={vn_storage}>
-				<button class="material-icons rounded-full hover:bg-indigo-700" on:click={() => menu = !menu}>more_vert</button>
+				<button class="material-icons rounded-full hover:bg-hover" on:click={() => menu = !menu}>more_vert</button>
 			</StatBar>
 			<MenuBar show={menu} media_storage={vn_storage}>
 				<MenuOption media_storage={vn_storage} id="font" description="Font" type="text" value="Klee One" root_css="--default-font"/>
@@ -181,7 +181,7 @@
 	}
 
 	body {
-		@apply bg-slate-800;
+		@apply bg-backdrop;
 	}
 
 	.jp-text {
@@ -190,32 +190,32 @@
 	}
 
 	#top_bar {
-		@apply py-3 bg-slate-800;
+		@apply py-3 bg-backdrop;
 	}
 
 	#game_name {
-		@apply text-4xl bg-transparent text-indigo-400;
+		@apply text-4xl bg-transparent text-title;
 	}
 
 	.entry_holder {
-		@apply bg-slate-800;
+		@apply bg-backdrop;
 	}
 
 	.sentence-entry {
-		@apply flex items-center bg-slate-900 jp-text p-4 gap-4;
+		@apply flex items-center bg-block jp-text p-4 gap-4;
 		filter: blur(var(--default-inactivity-blur));
 	}
 
 	.sentence {
-		@apply grow inline-block text-left text-slate-400 jp-text;
+		@apply grow inline-block text-left text-text jp-text;
 	}
 
 	.delete-button {
-		@apply self-center rounded-full inline-flex text-indigo-500 border-indigo-500 p-2 hover:bg-indigo-700 hover:text-white;
+		@apply self-center rounded-full inline-flex text-button-text border-indigo-500 p-2 hover:bg-hover hover:text-icon;
 	}
 
 	.line-select {
-		@apply w-4 h-4 shrink-0 rounded-full text-indigo-500 bg-indigo-400;
+		@apply w-4 h-4 shrink-0 rounded-full text-button-text bg-button;
 	}
 
 	.stat-numbers {
@@ -227,19 +227,19 @@
 	}
 
 	.menu-bar {
-		@apply flex items-center h-full p-3 gap-3 bg-indigo-400 bg-opacity-70 hover:filter-none hover:bg-opacity-80;
+		@apply flex items-center h-full p-3 gap-3 bg-button bg-opacity-70 hover:filter-none hover:bg-opacity-80;
 		filter: blur(var(--default-menu-blur));
 	}
 
 	.menu-button {
-		@apply text-left col-span-2 p-4 bg-slate-900 text-white hover:bg-slate-700;
+		@apply text-left col-span-2 p-4 bg-block text-icon hover:bg-hover;
 	}
 
 	.menu-input {
-		@apply col-start-2 p-1 grow bg-slate-700 text-gray-300;
+		@apply col-start-2 p-1 grow bg-menu text-menu-text;
 	}
 
 	.menu-label {
-		@apply p-4 bg-slate-900 text-white;
+		@apply p-4 bg-block text-icon;
 	}
 </style>

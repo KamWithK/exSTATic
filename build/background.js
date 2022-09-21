@@ -1692,7 +1692,7 @@
   browser3.runtime.onInstalled.addListener(async () => {
     console.log("Reloading all extension tabs...");
     for (const content_script of chrome.runtime.getManifest().content_scripts) {
-      for (const tab of await chrome.tabs.query({ url: content_script.matches })) {
+      for (const tab of await browser3.tabs.query({ url: content_script.matches })) {
         browser3.tabs.executeScript({
           target: { tabId: tab.id },
           func: () => window.location.reload()

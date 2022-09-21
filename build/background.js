@@ -1690,6 +1690,9 @@
   var browser3 = require_browser_polyfill();
   browser3.runtime.onUpdateAvailable.addListener(() => browser3.runtime.reload());
   browser3.runtime.onInstalled.addListener(async () => {
+    if (!(await browser3.storage.local.get("client"))["client"])
+      await browser3.storage.local.set({ "client": crypto.randomUUID() });
+    console.log("Client UUID: " + (await browser3.storage.local.get("client"))["client"]);
     console.log("Reloading all extension tabs...");
     for (const content_script of chrome.runtime.getManifest().content_scripts) {
       for (const tab of await browser3.tabs.query({ url: content_script.matches })) {

@@ -9,6 +9,11 @@ var browser = require("webextension-polyfill")
 
 browser.runtime.onUpdateAvailable.addListener(() => browser.runtime.reload())
 browser.runtime.onInstalled.addListener(async () => {
+    if (!(await browser.storage.local.get("client"))["client"])
+        await browser.storage.local.set({ "client": crypto.randomUUID() })
+
+    console.log("Client UUID: " + (await browser.storage.local.get("client"))["client"])
+    
     console.log("Reloading all extension tabs...")
     for (const content_script of chrome.runtime.getManifest().content_scripts) {
         for (const tab of await browser.tabs.query({url: content_script.matches})) {

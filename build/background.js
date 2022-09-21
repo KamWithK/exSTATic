@@ -1693,10 +1693,7 @@
     console.log("Reloading all extension tabs...");
     for (const content_script of chrome.runtime.getManifest().content_scripts) {
       for (const tab of await browser3.tabs.query({ url: content_script.matches })) {
-        browser3.tabs.executeScript({
-          target: { tabId: tab.id },
-          func: () => window.location.reload()
-        });
+        browser3.tabs.executeScript(tab.id, { code: "window.location.reload()" });
       }
     }
   });

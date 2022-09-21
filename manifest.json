@@ -93,6 +93,15 @@
     "storage",
     "unlimitedStorage",
     "tabs",
-    "downloads"
+    "downloads",
+    "https://kamwithk.github.io/exSTATic/**.html",
+    "file:///*/exSTATic/**.html",
+    "file:///*/fjiikigkdpahddfcembbapebejanfnhf/**.html",
+    "https://*/Manga/**.html",
+    "file:///**/Manga/**.html",
+    "https://ttu-ebook.web.app/**",
+    "https://reader.ttsu.app/**",
+    "file:///**/ttu-ebook.web.app/**",
+    "file:///**/reader.ttsu.app/**"
   ]
 }

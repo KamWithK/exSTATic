@@ -22,6 +22,8 @@ export class VNStorage extends MediaStorage {
     }
 
     async logLines() {
+        if (!this.uuid || !this.details || !this.instance_storage) return
+
         const event = new CustomEvent("media_changed", {
             "detail": {
                 "uuid": this.uuid,

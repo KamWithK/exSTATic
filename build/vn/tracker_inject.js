@@ -2118,6 +2118,8 @@
       return new VNStorage(type_storage, instance_storage, live_stat_update);
     }
     async logLines() {
+      if (!this.uuid || !this.details || !this.instance_storage)
+        return;
       const event = new CustomEvent("media_changed", {
         "detail": {
           "uuid": this.uuid,

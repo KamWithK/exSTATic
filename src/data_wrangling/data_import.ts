@@ -26,7 +26,7 @@ export async function importStats(data) {
 
         const instance_storage = new InstanceStorage(uuid)
         await instance_storage.setup()
-    
+
         if (entry.hasOwnProperty("name")) {
             await instance_storage.updateDetails({
                 "name": entry["name"]
@@ -34,10 +34,10 @@ export async function importStats(data) {
         }
 
         await instance_storage.addToDates(entry["date"])
-        await instance_storage.addToDate(entry["date"])
+        await instance_storage.addToDate(entry["date"], entry["client"])
 
         if (Object.keys(stats).length !== 0) {
-            await instance_storage.setDailyStats(entry["date"], stats)
+            await instance_storage.setDailyStats(entry["date"], stats, entry["client"])
         }
     }
 }

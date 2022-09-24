@@ -1258,6 +1258,7 @@
       this.mutex = new Mutex();
     }
     async setup() {
+      this.client = (await browser.storage.local.get("client"))["client"];
       const details = await browser.storage.local.get(this.uuid);
       this.details = details.hasOwnProperty(this.uuid) ? details[this.uuid] : {};
       const uuid_date_key = JSON.stringify([this.uuid, dateNowString()]);
@@ -1269,8 +1270,8 @@
       detail_entries[this.uuid] = this.details;
       await browser.storage.local.set(detail_entries);
     }
-    async setDailyStats(date, values) {
-      const uuid_date_key = JSON.stringify([this.uuid, date]);
+    async setDailyStats(date, values, from_client = void 0) {
+      const uuid_date_key = JSON.stringify([from_client ?? this.client, this.uuid, date]);
       let daily_stats_entry = await browser.storage.local.get(uuid_date_key);
       daily_stats_entry[uuid_date_key] = values;
       if (date == dateNowString()) {
@@ -1281,11 +1282,11 @@
     async addStats(date_stat_adds, multiple = 1) {
       return this.mutex.runExclusive(async () => this.#addStats(date_stat_adds, multiple));
     }
-    async #addStats(date_stat_adds, multiple = 1) {
-      const date_keys = Object.keys(date_stat_adds).map((date) => JSON.stringify([this.uuid, date]));
+    async #addStats(date_stat_adds, multiple = 1, from_client = void 0) {
+      const date_keys = Object.keys(date_stat_adds).map((date) => JSON.stringify([from_client ?? this.client, this.uuid, date]));
       let date_stats = await browser.storage.local.get(date_keys);
       date_keys.forEach((key) => {
-        let date = JSON.parse(key)[1];
+        let date = JSON.parse(key)[2];
         if (!date_stats.hasOwnProperty(key)) {
           date_stats[key] = {};
         }
@@ -1353,13 +1354,15 @@
         await browser.storage.local.set(day_entries);
       }
     }
-    async addToDate(date) {
+    async addToDate(date, from_client = void 0) {
       let day_entries = await browser.storage.local.get(date);
       if (!day_entries.hasOwnProperty(date)) {
         day_entries[date] = [];
       }
-      if (!day_entries[date].includes(this.uuid)) {
-        day_entries[date].push(this.uuid);
+      const client_uuid = [from_client ?? this.client, this.uuid];
+      const exists = day_entries[date].some((current) => current[0] === client_uuid[0] && current[1] === client_uuid[1]);
+      if (!exists) {
+        day_entries[date].push(client_uuid);
         await browser.storage.local.set(day_entries);
       }
     }

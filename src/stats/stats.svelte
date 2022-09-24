@@ -11,6 +11,19 @@
 
     export let data
 
+    let client_groups
+    client_groups = groups(data, d => JSON.stringify([d.uuid, d.date]))
+    data = client_groups.map(([, v]) => ({
+        "uuid": v[0].uuid,
+        "name": v[0].name,
+        "given_identifier": v[0].given_identifier,
+        "type": v[0].type,
+        "date": v[0].date,
+        "time_read": sum(v, d => d.time_read),
+        "chars_read": sum(v, d => d.chars_read),
+        "read_speed": mean(v, d => d.read_speed)
+    }))
+
     const end_time = new Date()
     const start_time = min(data, d => parseISO(d.date))
 

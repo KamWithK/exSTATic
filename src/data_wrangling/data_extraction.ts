@@ -3,11 +3,11 @@ var browser = require("webextension-polyfill")
 export async function getDateData(date) {
     const uuids = (await browser.storage.local.get(date))[date]
     
-    const date_data = uuids.map(async (uuid, _) => {
+    const date_data = uuids.map(async ([client, uuid]) => {
         const details = (await browser.storage.local.get(uuid))[uuid]
 
-        const uuid_date_key = JSON.stringify([uuid, date])
-        let stats_entry = (await browser.storage.local.get(uuid_date_key))[uuid_date_key]
+        const uuid_date_key = JSON.stringify([client, uuid, date])
+        let stats_entry = (await browser.storage.local.get(uuid_date_key))[uuid_date_key] ?? {}
 
         // Processed stats
         if (stats_entry.hasOwnProperty("time_read")) {
@@ -19,6 +19,7 @@ export async function getDateData(date) {
         }
 
         return {
+            "client": client,
             "uuid": uuid,
             "name": details["name"],
             "given_identifier": details["given_identifier"],

@@ -8775,7 +8775,7 @@
         c_accessor: ctx[1],
         tooltip_accessors: ctx[5],
         tooltip_formatters: ctx[6],
-        graph_title: "Reading Pace Improvement",
+        graph_title: "Reading Speed Improvement",
         x_label: "Name",
         y_label: "Read Pace"
       }

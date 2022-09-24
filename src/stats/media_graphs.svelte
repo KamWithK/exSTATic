@@ -33,6 +33,6 @@
         x_accessor={name_accessor} y_accessor={read_speed_accessor}
         c_accessor={name_accessor}
         {tooltip_accessors} {tooltip_formatters}
-        graph_title="Reading Pace Improvement" x_label="Name" y_label="Read Pace"
+        graph_title="Reading Speed Improvement" x_label="Name" y_label="Read Pace"
     />
 </div>

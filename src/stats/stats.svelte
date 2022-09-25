@@ -66,7 +66,7 @@
         "name": v[0].name,
         "time_read": sum(v, d => d.time_read),
         "chars_read": sum(v, d => d.chars_read),
-        "read_speed": mean(v, d => d.read_speed)
+        "read_speed": sum(v, d => d.chars_read) / sum(v, d => d.time_read)
     }))
 
     let date_groups, date_summary
@@ -75,7 +75,7 @@
         "date": v[0].date,
         "time_read": sum(v, d => d.time_read),
         "chars_read": sum(v, d => d.chars_read),
-        "read_speed": mean(v, d => d.read_speed)
+        "read_speed": sum(v, d => d.chars_read) / sum(v, d => d.time_read)
     }))
 
     const name_accessor = d => d.name

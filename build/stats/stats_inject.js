@@ -4095,28 +4095,6 @@
     return min2;
   }
 
-  // node_modules/d3-array/src/mean.js
-  function mean(values, valueof) {
-    let count = 0;
-    let sum2 = 0;
-    if (valueof === void 0) {
-      for (let value of values) {
-        if (value != null && (value = +value) >= value) {
-          ++count, sum2 += value;
-        }
-      }
-    } else {
-      let index2 = -1;
-      for (let value of values) {
-        if ((value = valueof(value, ++index2, values)) != null && (value = +value) >= value) {
-          ++count, sum2 += value;
-        }
-      }
-    }
-    if (count)
-      return sum2 / count;
-  }
-
   // node_modules/d3-array/src/range.js
   function range(start, stop, step) {
     start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
@@ -10154,7 +10132,7 @@
             "name": v[0].name,
             "time_read": sum(v, (d) => d.time_read),
             "chars_read": sum(v, (d) => d.chars_read),
-            "read_speed": mean(v, (d) => d.read_speed)
+            "read_speed": sum(v, (d) => d.chars_read) / sum(v, (d) => d.time_read)
           })));
       }
       if ($$self.$$.dirty & 1) {
@@ -10167,7 +10145,7 @@
             "date": v[0].date,
             "time_read": sum(v, (d) => d.time_read),
             "chars_read": sum(v, (d) => d.chars_read),
-            "read_speed": mean(v, (d) => d.read_speed)
+            "read_speed": sum(v, (d) => d.chars_read) / sum(v, (d) => d.time_read)
           })));
       }
     };

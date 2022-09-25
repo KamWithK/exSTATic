@@ -21,7 +21,6 @@
         "date": v[0].date,
         "time_read": sum(v, d => d.time_read),
         "chars_read": sum(v, d => d.chars_read),
-        "read_speed": sum(v, d => d.chars_read) / sum(v, d => d.time_read),
     }))
 
     const end_time = new Date()
@@ -66,7 +65,6 @@
         "name": v[0].name,
         "time_read": sum(v, d => d.time_read),
         "chars_read": sum(v, d => d.chars_read),
-        "read_speed": sum(v, d => d.chars_read) / sum(v, d => d.time_read)
     }))
 
     let date_groups, date_summary
@@ -75,14 +73,13 @@
         "date": v[0].date,
         "time_read": sum(v, d => d.time_read),
         "chars_read": sum(v, d => d.chars_read),
-        "read_speed": sum(v, d => d.chars_read) / sum(v, d => d.time_read)
     }))
 
     const name_accessor = d => d.name
     const date_accessor = d => parseISO(d.date)
     const chars_read_accessor = d => d.chars_read
     const time_read_accessor = d => d.time_read
-    const read_speed_accessor = d => d.read_speed * SECS_TO_HRS
+    const read_speed_accessor = d => (d.chars_read / d.time_read) * SECS_TO_HRS
 
     const tooltip_accessors = {
         "Chars Read": chars_read_accessor,

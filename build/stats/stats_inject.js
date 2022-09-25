@@ -10059,8 +10059,7 @@
       "type": v[0].type,
       "date": v[0].date,
       "time_read": sum(v, (d) => d.time_read),
-      "chars_read": sum(v, (d) => d.chars_read),
-      "read_speed": sum(v, (d) => d.chars_read) / sum(v, (d) => d.time_read)
+      "chars_read": sum(v, (d) => d.chars_read)
     }));
     const end_time = new Date();
     const start_time = min(data, (d) => parseISO(d.date));
@@ -10094,7 +10093,7 @@
     const date_accessor = (d) => parseISO(d.date);
     const chars_read_accessor = (d) => d.chars_read;
     const time_read_accessor = (d) => d.time_read;
-    const read_speed_accessor = (d) => d.read_speed * SECS_TO_HRS;
+    const read_speed_accessor = (d) => d.chars_read / d.time_read * SECS_TO_HRS;
     const tooltip_accessors = {
       "Chars Read": chars_read_accessor,
       "Time Read": time_read_accessor,
@@ -10131,8 +10130,7 @@
           $$invalidate(3, uuid_summary = uuid_groups.map(([, v]) => ({
             "name": v[0].name,
             "time_read": sum(v, (d) => d.time_read),
-            "chars_read": sum(v, (d) => d.chars_read),
-            "read_speed": sum(v, (d) => d.chars_read) / sum(v, (d) => d.time_read)
+            "chars_read": sum(v, (d) => d.chars_read)
           })));
       }
       if ($$self.$$.dirty & 1) {
@@ -10144,8 +10142,7 @@
           $$invalidate(4, date_summary = date_groups.map(([, v]) => ({
             "date": v[0].date,
             "time_read": sum(v, (d) => d.time_read),
-            "chars_read": sum(v, (d) => d.chars_read),
-            "read_speed": sum(v, (d) => d.chars_read) / sum(v, (d) => d.time_read)
+            "chars_read": sum(v, (d) => d.chars_read)
           })));
       }
     };

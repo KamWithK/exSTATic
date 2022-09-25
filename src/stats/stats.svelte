@@ -3,7 +3,7 @@
     import MediaGraphs from "./media_graphs.svelte"
     import CalendarHeatmap from "../components/charts/calendar_heatmap.svelte"
 
-    import { groups, sum, mean, min } from "d3-array"
+    import { groups, sum, min } from "d3-array"
     import { format } from "d3-format"
     import { parseISO, startOfYear, endOfYear, addYears, subYears, getYear } from "date-fns"
 

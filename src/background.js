@@ -13,6 +13,9 @@ browser.runtime.onInstalled.addListener(async () => {
         await browser.storage.local.set({ "client": crypto.randomUUID() })
 
     console.log("Client UUID: " + (await browser.storage.local.get("client"))["client"])
+
+    if (!(await browser.storage.local.get("schema_version"))["schema_version"])
+        await browser.storage.local.set({ "schema_version": 2. })
     
     console.log("Reloading all extension tabs...")
     for (const content_script of chrome.runtime.getManifest().content_scripts) {

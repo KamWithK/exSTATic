@@ -65,7 +65,10 @@ export class MokuroStorage extends MediaStorage {
             this.stop_ticker()
         }
         
-        await this.instance_storage.updateDetails({"last_page_read": page_num})
+        await this.instance_storage.updateDetails({
+            "last_page_read": page_num,
+            "last_active_at": timeNowSeconds()
+        })
         await this.instance_storage.addToDates(date)
         await this.instance_storage.addToDate(date)
     }

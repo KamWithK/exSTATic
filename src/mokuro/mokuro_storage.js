@@ -1,4 +1,4 @@
-import { charsInLine, dateNowString, lineSplitCount } from "../calculations"
+import { charsInLine, timeNowSeconds, lineSplitCount } from "../calculations"
 import { MediaStorage } from "../storage/media_storage"
 
 var browser = require("webextension-polyfill")

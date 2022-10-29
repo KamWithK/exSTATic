@@ -1094,7 +1094,7 @@
     rn = new Date();
     return formatISO(rn, { "representation": "date" });
   }
-  function timeNowSeconds2() {
+  function timeNowSeconds() {
     let rn2 = new Date();
     return rn2.getTime() / 1e3;
   }
@@ -1493,7 +1493,7 @@
     }
     start_ticker(event = true) {
       if (this.previous_time == void 0) {
-        this.previous_time = timeNowSeconds2();
+        this.previous_time = timeNowSeconds();
       }
       if (event) {
         const event2 = new Event("status_active");
@@ -1508,7 +1508,7 @@
       }
     }
     async #ticker() {
-      const time_now = timeNowSeconds2();
+      const time_now = timeNowSeconds();
       if (this.instance_storage == void 0 || this.previous_time == void 0) {
         return;
       }
@@ -1534,7 +1534,7 @@
         this.stop_ticker();
         return;
       }
-      const time = timeNowSeconds2();
+      const time = timeNowSeconds();
       if (this.instance_storage === void 0)
         return;
       if (this.previous_time === void 0) {

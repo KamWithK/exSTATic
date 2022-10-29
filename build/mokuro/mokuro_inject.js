@@ -1094,7 +1094,7 @@
     rn = new Date();
     return formatISO(rn, { "representation": "date" });
   }
-  function timeNowSeconds() {
+  function timeNowSeconds2() {
     let rn2 = new Date();
     return rn2.getTime() / 1e3;
   }
@@ -1493,7 +1493,7 @@
     }
     start_ticker(event = true) {
       if (this.previous_time == void 0) {
-        this.previous_time = timeNowSeconds();
+        this.previous_time = timeNowSeconds2();
       }
       if (event) {
         const event2 = new Event("status_active");
@@ -1508,7 +1508,7 @@
       }
     }
     async #ticker() {
-      const time_now = timeNowSeconds();
+      const time_now = timeNowSeconds2();
       if (this.instance_storage == void 0 || this.previous_time == void 0) {
         return;
       }
@@ -1534,7 +1534,7 @@
         this.stop_ticker();
         return;
       }
-      const time = timeNowSeconds();
+      const time = timeNowSeconds2();
       if (this.instance_storage === void 0)
         return;
       if (this.previous_time === void 0) {
@@ -1588,7 +1588,10 @@
         await this.instance_storage.subDailyStats(date, stats);
         this.stop_ticker();
       }
-      await this.instance_storage.updateDetails({ "last_page_read": page_num });
+      await this.instance_storage.updateDetails({
+        "last_page_read": page_num,
+        "last_active_at": timeNowSeconds()
+      });
       await this.instance_storage.addToDates(date);
       await this.instance_storage.addToDate(date);
     }

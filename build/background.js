@@ -1693,6 +1693,8 @@
     if (!(await browser3.storage.local.get("client"))["client"])
       await browser3.storage.local.set({ "client": crypto.randomUUID() });
     console.log("Client UUID: " + (await browser3.storage.local.get("client"))["client"]);
+    if (!(await browser3.storage.local.get("schema_version"))["schema_version"])
+      await browser3.storage.local.set({ "schema_version": 2 });
     console.log("Reloading all extension tabs...");
     for (const content_script of chrome.runtime.getManifest().content_scripts) {
       for (const tab of await browser3.tabs.query({ url: content_script.matches })) {

@@ -4299,7 +4299,7 @@ Char and line statistics will be modified accordingly however time read won't ch
     let port;
     const connectMessaging = () => {
       port = browser8.runtime.connect({ "name": "vn_lines" });
-      port.onDisconnect.addListener(() => connectMessaging);
+      port.onDisconnect.addListener(connectMessaging);
       port.onMessage.addListener(async (data) => {
         await vn_storage.changeInstance(void 0, data["process_path"]);
         await vn_storage.addLine(data["line"], data["date"], data["time"]);

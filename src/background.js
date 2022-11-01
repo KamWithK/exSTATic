@@ -18,12 +18,12 @@ browser.runtime.onInstalled.addListener(async () => {
         await browser.storage.local.set({ "schema_version": 2. })
     
     console.log("Reloading all extension tabs...")
-    for (const content_script of chrome.runtime.getManifest().content_scripts) {
+    for (const content_script of browser.runtime.getManifest().content_scripts) {
         for (const tab of await browser.tabs.query({url: content_script.matches})) {
-            browser.tabs.executeScript(
-                tab.id,
-                { code: "window.location.reload()" }
-            )
+            browser.scripting.executeScript({
+                target: {tabId: tab.id},
+                func: () => window.location.reload()
+            })
         }
     }
 })
@@ -31,11 +31,11 @@ browser.runtime.onInstalled.addListener(async () => {
 // Message passing is used for actions which can only be performed on the background page
 browser.runtime.onMessage.addListener(message_action)
 
-browser.browserAction.onClicked.addListener(async _ => {
+browser.action.onClicked.addListener(async () => {
     const listen_status = (await browser.storage.local.get("listen_status"))["listen_status"]
 
     if (listen_status == true || listen_status === undefined) {
-        await browser.browserAction.setIcon({
+        await browser.action.setIcon({
             "path": {
                 "100": "/docs/disabled_100x100.png",
                 "500": "/docs/disabled.png"
@@ -46,7 +46,7 @@ browser.browserAction.onClicked.addListener(async _ => {
             "listen_status": false
         })
     } else {
-        await browser.browserAction.setIcon({
+        await browser.action.setIcon({
             "path": {
                 "100": "/docs/favicon_100x100.png",
                 "500": "/docs/favicon.png"

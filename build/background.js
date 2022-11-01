@@ -1696,17 +1696,20 @@
     if (!(await browser3.storage.local.get("schema_version"))["schema_version"])
       await browser3.storage.local.set({ "schema_version": 2 });
     console.log("Reloading all extension tabs...");
-    for (const content_script of chrome.runtime.getManifest().content_scripts) {
+    for (const content_script of browser3.runtime.getManifest().content_scripts) {
       for (const tab of await browser3.tabs.query({ url: content_script.matches })) {
-        browser3.tabs.executeScript(tab.id, { code: "window.location.reload()" });
+        browser3.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => window.location.reload()
+        });
       }
     }
   });
   browser3.runtime.onMessage.addListener(message_action);
-  browser3.browserAction.onClicked.addListener(async (_) => {
+  browser3.action.onClicked.addListener(async () => {
     const listen_status = (await browser3.storage.local.get("listen_status"))["listen_status"];
     if (listen_status == true || listen_status === void 0) {
-      await browser3.browserAction.setIcon({
+      await browser3.action.setIcon({
         "path": {
           "100": "/docs/disabled_100x100.png",
           "500": "/docs/disabled.png"
@@ -1716,7 +1719,7 @@
         "listen_status": false
       });
     } else {
-      await browser3.browserAction.setIcon({
+      await browser3.action.setIcon({
         "path": {
           "100": "/docs/favicon_100x100.png",
           "500": "/docs/favicon.png"

@@ -2638,15 +2638,25 @@
 
   // src/data_wrangling/data_export.ts
   var import_papaparse = __toESM(require_papaparse_min());
+  var BOM_CODE = "\uFEFF";
   var browser6 = require_browser_polyfill();
+  function csv_blob(csv, options) {
+    if (csv.substring(0, 5) != BOM_CODE) {
+      csv = BOM_CODE + csv;
+    }
+    return new Blob([csv], options);
+  }
+  async function blob_download(blob, filename) {
+    await browser6.runtime.sendMessage({
+      "action": "download",
+      "url": URL.createObjectURL(blob),
+      "filename": filename
+    });
+  }
   async function exportStats() {
     const data = await getData();
-    browser6.runtime.sendMessage({
-      "action": "export_csv",
-      "csv": [(0, import_papaparse.unparse)(data)],
-      "blob_options": { "type": "text/csv" },
-      "filename": "exSTATic_stats.csv"
-    });
+    const blob = csv_blob((0, import_papaparse.unparse)(data), { "type": "text/csv" });
+    await blob_download(blob, "exSTATic_stats.csv");
   }
   async function exportLines() {
     const media = await browser6.storage.local.get("media");
@@ -2655,12 +2665,8 @@
     }
     const detail_entries = await browser6.storage.local.get(Object.values(media["media"]));
     const data = await Promise.all(Object.entries(detail_entries).map(getInstanceData));
-    browser6.runtime.sendMessage({
-      "action": "export_csv",
-      "csv": [(0, import_papaparse.unparse)(data.flat())],
-      "blob_options": { "type": "text/csv;charset=utf-8" },
-      "filename": "exSTATic_lines.csv"
-    });
+    const blob = csv_blob((0, import_papaparse.unparse)(data.flat()), { "type": "text/csv;charset=utf-8" });
+    await blob_download(blob, "exSTATic_lines.csv");
   }
 
   // src/data_wrangling/data_import.ts

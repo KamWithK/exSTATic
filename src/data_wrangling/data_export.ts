@@ -2,17 +2,36 @@ import { getData, getInstanceData } from "./data_extraction"
 
 import { unparse } from "papaparse"
 
+var BOM_CODE = "\ufeff"
+
 var browser = require("webextension-polyfill")
+
+function csv_blob(csv, options) {
+    // Byte Order Mark (BOM) required on Windows for displaying Japanese characters
+    if (csv.substring(0, 5) != BOM_CODE) {
+        csv = BOM_CODE + csv
+    }
+
+    return new Blob([csv], options)
+}
+
+async function blob_download(blob, filename) {
+    await browser.runtime.sendMessage({
+        "action": "download",
+        "url": URL.createObjectURL(blob),
+        "filename": filename
+    })
+}
+
 
 export async function exportStats() {
     const data = await getData()
 
-    browser.runtime.sendMessage({
-        "action": "export_csv",
-        "csv": [unparse(data)],
-        "blob_options": { "type": "text/csv" },
-        "filename": "exSTATic_stats.csv"
-    })
+    const blob = csv_blob(
+        unparse(data),
+        { "type": "text/csv" }
+    )
+    await blob_download(blob, "exSTATic_stats.csv")
 }
 
 export async function exportLines() {
@@ -24,10 +43,6 @@ export async function exportLines() {
     const detail_entries = await browser.storage.local.get(Object.values(media["media"]))
     const data = await Promise.all(Object.entries(detail_entries).map(getInstanceData))
 
-    browser.runtime.sendMessage({
-        "action": "export_csv",
-        "csv": [unparse(data.flat())],
-        "blob_options": { "type": "text/csv;charset=utf-8" },
-        "filename": "exSTATic_lines.csv"
-    })
+    const blob = csv_blob(unparse(data.flat()), { "type": "text/csv;charset=utf-8" })
+    await blob_download(blob, "exSTATic_lines.csv")
 }

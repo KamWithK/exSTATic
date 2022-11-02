@@ -1002,21 +1002,16 @@
 
   // src/messaging/message_actions.js
   var browser = require_browser_polyfill();
-  var BOM_CODE = "\uFEFF";
   async function message_action(args, sender, send_response) {
-    if (args["action"] == "export_csv") {
-      await export_csv(args);
-    } else if (args["action"] == "open_tab") {
+    if (args["action"] == "open_tab") {
       await open_tab(args);
+    } else if (args["action"] == "download") {
+      await download(args);
     }
   }
-  async function export_csv(args) {
-    if (args["csv"][0].substring(0, 5) != BOM_CODE) {
-      args["csv"][0] = BOM_CODE + args["csv"][0];
-    }
-    const blob = new Blob(args["csv"], args["blob_options"]);
+  async function download(args) {
     await browser.downloads.download({
-      url: URL.createObjectURL(blob),
+      url: args["url"],
       filename: args["filename"]
     });
   }

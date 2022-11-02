@@ -22,8 +22,6 @@
     "webextension-polyfill": "^0.9.0"
   },
   "webExt": {
-    "ignoreFiles": [
-      "test_data"
-    ]
+    "sourceDir": "build"
   }
 }

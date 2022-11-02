@@ -1,6 +1,11 @@
 const esbuild = require("esbuild");
 const sveltePlugin = require("esbuild-svelte");
 const sveltePreprocess = require("svelte-preprocess");
+const fs = require("fs")
+
+fs.copyFileSync("manifest.json", "build/manifest.json")
+fs.cpSync("docs", "build/docs/", { recursive: true })
+fs.cpSync("fonts", "build/fonts/", { recursive: true })
 
 esbuild
   .build({

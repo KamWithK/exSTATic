@@ -32,7 +32,7 @@
   ],
 
   "background": {
-    "service_worker": "build/background.js"
+    "service_worker": "background.js"
   },
 
   "content_scripts": [
@@ -43,12 +43,12 @@
         "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/tracker.html"
       ],
       "js": [
-        "build/vn/tracker_inject.js",
-        "build/fonts.js"
+        "vn/tracker_inject.js",
+        "fonts.js"
       ],
       "css": [
         "docs/fonts.css",
-        "build/vn/tracker_inject.css"
+        "vn/tracker_inject.css"
       ]
     },
     {
@@ -59,12 +59,12 @@
         "file:///**/reader.ttsu.app/**"
       ],
       "js": [
-        "build/ttu/ttu_inject.js",
-        "build/fonts.js"
+        "ttu/ttu_inject.js",
+        "fonts.js"
       ],
       "css": [
         "docs/fonts.css",
-        "build/ttu/ttu_inject.css"
+        "ttu/ttu_inject.css"
       ]
     },
     {
@@ -73,12 +73,12 @@
         "file:///**/Manga/**.html"
       ],
       "js": [
-        "build/mokuro/mokuro_inject.js",
-        "build/fonts.js"
+        "mokuro/mokuro_inject.js",
+        "fonts.js"
       ],
       "css": [
         "docs/fonts.css",
-        "build/mokuro/mokuro_inject.css"
+        "mokuro/mokuro_inject.css"
       ]
     },
     {
@@ -88,12 +88,12 @@
         "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/stats.html"
       ],
       "js": [
-        "build/stats/stats_inject.js",
-        "build/fonts.js"
+        "stats/stats_inject.js",
+        "fonts.js"
       ],
       "css": [
         "docs/fonts.css",
-        "build/stats/stats_inject.css"
+        "stats/stats_inject.css"
       ]
     }
   ],

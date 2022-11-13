@@ -11,7 +11,7 @@ const setup = async () => {
 	let port
 	const connectMessaging = () => {
 		port = browser.runtime.connect({"name": "vn_lines"})
-		port.onDisconnect.addListener(() => connectMessaging)
+		port.onDisconnect.addListener(connectMessaging)
 
 		port.onMessage.addListener(async data => {
 			await vn_storage.changeInstance(undefined, data["process_path"])

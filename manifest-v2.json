@@ -11,10 +11,29 @@
     "500": "docs/favicon.png"
   },
 
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "tabs",
+    "scripting",
+    "downloads",
+
+    "https://kamwithk.github.io/exSTATic/**.html",
+    "file:///*/exSTATic/**.html",
+    "file:///*/fjiikigkdpahddfcembbapebejanfnhf/**.html",
+    "https://*/Manga/**.html",
+    "file:///**/Manga/**.html",
+    "https://ttu-ebook.web.app/**",
+    "https://reader.ttsu.app/**",
+    "file:///**/ttu-ebook.web.app/**",
+    "file:///**/reader.ttsu.app/**"
+  ],
+
   "background": {
     "persistent": true,
-    "scripts": ["build/background.js"]
+    "scripts": ["background.js"]
   },
+
   "content_scripts": [
     {
       "matches": [
@@ -23,12 +42,12 @@
         "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/tracker.html"
       ],
       "js": [
-        "build/vn/tracker_inject.js",
-        "build/fonts.js"
+        "vn/tracker_inject.js",
+        "fonts.js"
       ],
       "css": [
         "docs/fonts.css",
-        "build/vn/tracker_inject.css"
+        "vn/tracker_inject.css"
       ]
     },
     {
@@ -39,12 +58,12 @@
         "file:///**/reader.ttsu.app/**"
       ],
       "js": [
-        "build/ttu/ttu_inject.js",
-        "build/fonts.js"
+        "ttu/ttu_inject.js",
+        "fonts.js"
       ],
       "css": [
         "docs/fonts.css",
-        "build/ttu/ttu_inject.css"
+        "ttu/ttu_inject.css"
       ]
     },
     {
@@ -53,12 +72,12 @@
         "file:///**/Manga/**.html"
       ],
       "js": [
-        "build/mokuro/mokuro_inject.js",
-        "build/fonts.js"
+        "mokuro/mokuro_inject.js",
+        "fonts.js"
       ],
       "css": [
         "docs/fonts.css",
-        "build/mokuro/mokuro_inject.css"
+        "mokuro/mokuro_inject.css"
       ]
     },
     {
@@ -68,40 +87,22 @@
         "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/stats.html"
       ],
       "js": [
-        "build/stats/stats_inject.js",
-        "build/fonts.js"
+        "stats/stats_inject.js",
+        "fonts.js"
       ],
       "css": [
         "docs/fonts.css",
-        "build/stats/stats_inject.css"
+        "stats/stats_inject.css"
       ]
     }
   ],
 
-  "web_accessible_resources": [
-    "/fonts/*"
-  ],
+  "web_accessible_resources": ["/fonts/*"],
 
   "browser_action": {
     "default_icon": {
         "100": "docs/favicon_100x100.png",
         "500": "docs/favicon.png"
     }
-  },
-
-  "permissions": [
-    "storage",
-    "unlimitedStorage",
-    "tabs",
-    "downloads",
-    "https://kamwithk.github.io/exSTATic/**.html",
-    "file:///*/exSTATic/**.html",
-    "file:///*/fjiikigkdpahddfcembbapebejanfnhf/**.html",
-    "https://*/Manga/**.html",
-    "file:///**/Manga/**.html",
-    "https://ttu-ebook.web.app/**",
-    "https://reader.ttsu.app/**",
-    "file:///**/ttu-ebook.web.app/**",
-    "file:///**/reader.ttsu.app/**"
-  ]
+  }
 }

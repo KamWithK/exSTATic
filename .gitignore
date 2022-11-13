@@ -131,3 +131,8 @@ dist
 
 # Extension build
 web-ext-artifacts
+web-ext-v2
+web-ext-v3
+build/**
+build-v2/**
+build-v3/**

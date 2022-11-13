@@ -75,11 +75,19 @@ More than happy to take a look into anything/approve PRs 😄!
 
 Here's [my Ko-Fi](https://ko-fi.com/kamwithk) if you'd like to support.
 
-To test and develop run:
+## Developer Instructions
+**NOTE:** Due to Chrome forcing Manifest V3 and Firefox still using Manifest V2, the following build instructions have become slightly less intuitive
 
-1. `npm install` to set up the required packages
-2. `web-ext run` to start a temporary instance of the extension, watch for changes and auto refresh the extension when they occur (OPTIONAL, manually import and refresh the extension otherwise)
-3. `npm run build` to use the esbuild bundler
+Make sure to start by having all the correct packages installed - `npm install`
+Each time you make a change run `npm run build` (this will take 2x longer since a separate Firefox and Chrome build are generated)
+
+To have live browser extension updates:
+* **Firefox** - `npm run web-ext-v2 -- run`
+* **Chrome** - `npm run web-ext-v3 -- run --target chromium`
+
+To build the extension ready for release:
+* **Firefox** - `npm run web-ext-v2 -- build`
+* **Chrome** - `npm run web-ext-v3 -- build`
 
 # Credits
 Huge shoutout to everyone who helped on this project.

@@ -7,6 +7,37 @@ import ReconnectingWebSocket from "reconnecting-websocket"
 
 var browser = require("webextension-polyfill")
 
+// NOTE: Chrome only supports Manifest V3 whilst Firefox Manifest V2
+// TODO: Declutter once Firefox supports Manifest V3
+const manifest_version = browser.runtime.getManifest().manifest_version
+
+// Reloaders have to be made for Manifest V2 and V3 separately
+const reloadTab = async (tab) => {
+    manifest_version === 2 ? reloadTabV2(tab) : reloadTabV3(tab)
+}
+
+const reloadTabV2 = async (tab) => {
+    browser.tabs.executeScript(
+        tab.id,
+        { code: "window.location.reload()" }
+    )
+}
+
+const reloadTabV3 = async (tab) => {
+    browser.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => window.location.reload()
+    })
+}
+
+// Run a function with each tab that has a content script
+const runOnContentScripts = async (func) => {
+    for (const content_script of browser.runtime.getManifest().content_scripts) {
+        for (const tab of await browser.tabs.query({url: content_script.matches}))
+            func(tab)
+    }
+}
+
 browser.runtime.onUpdateAvailable.addListener(() => browser.runtime.reload())
 browser.runtime.onInstalled.addListener(async () => {
     if (!(await browser.storage.local.get("client"))["client"])
@@ -18,24 +49,20 @@ browser.runtime.onInstalled.addListener(async () => {
         await browser.storage.local.set({ "schema_version": 2. })
     
     console.log("Reloading all extension tabs...")
-    for (const content_script of browser.runtime.getManifest().content_scripts) {
-        for (const tab of await browser.tabs.query({url: content_script.matches})) {
-            browser.scripting.executeScript({
-                target: {tabId: tab.id},
-                func: () => window.location.reload()
-            })
-        }
-    }
+    runOnContentScripts(reloadTab)
 })
 
 // Message passing is used for actions which can only be performed on the background page
 browser.runtime.onMessage.addListener(message_action)
 
-browser.action.onClicked.addListener(async () => {
+// API names can change between Manifest versions
+const browser_action = manifest_version === 2 ? browser.browserAction : browser.action
+
+browser_action.onClicked.addListener(async () => {
     const listen_status = (await browser.storage.local.get("listen_status"))["listen_status"]
 
     if (listen_status == true || listen_status === undefined) {
-        await browser.action.setIcon({
+        await browser_action.setIcon({
             "path": {
                 "100": "/docs/disabled_100x100.png",
                 "500": "/docs/disabled.png"
@@ -46,7 +73,7 @@ browser.action.onClicked.addListener(async () => {
             "listen_status": false
         })
     } else {
-        await browser.action.setIcon({
+        await browser_action.setIcon({
             "path": {
                 "100": "/docs/favicon_100x100.png",
                 "500": "/docs/favicon.png"

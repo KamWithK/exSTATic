@@ -35,7 +35,7 @@
     }
 </script>
 
-<div id="popup" class="{show_popup ? "absolute" : "hidden"} p-3 z-50" style="left: {popup_x}px;top: {popup_y}px; background-color: {popout_color}">
+<div id="popup" class="{show_popup ? "absolute" : "hidden"} p-3 z-50 pointer-events-none" style="left: {popup_x}px;top: {popup_y}px; background-color: {popout_color}">
     {#if popup_name !== undefined}
         <p id="popup_title" class="font-semibold">{popup_name}</p>
     {/if}

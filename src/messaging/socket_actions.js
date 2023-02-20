@@ -52,7 +52,8 @@ export async function dataFetched(event) {
     }
 
     let process_path = data["process_path"]
-    const line = data["sentence"]
+    // Wrap with newlines so that yomichan's default sentence parsing will work
+    const line = "\n" + data["sentence"] + "\n"
 
     // Only consider at max the last three sections of the path
     const path_segments = process_path.split(SPLIT_PATH)

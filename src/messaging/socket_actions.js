@@ -43,6 +43,8 @@ export async function dataFetched(event) {
     // Parse provided data
     const data = JSON.parse(event.data)
     console.log("Recieved Socket Data: ", data)
+
+    if ("type" in data && data.type === "translate") return
     
     // Lines will have a valid process path and sentence
     if (!data.hasOwnProperty("process_path") || !data.hasOwnProperty("sentence")) {

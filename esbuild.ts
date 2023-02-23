@@ -42,10 +42,10 @@ const options = {
 
 // Build for Manifest v2 and v3 separately
 esbuild
-  .build({ ...options, outdir: build_v3_dir })
+  .build({ ...options, watch: true, outdir: build_v3_dir })
   .catch(() => process.exit(1));
 
 esbuild
-  .build({ ...options, outdir: build_v2_dir })
+  .build({ ...options, watch: true, outdir: build_v2_dir })
   .catch(() => process.exit(1));
   

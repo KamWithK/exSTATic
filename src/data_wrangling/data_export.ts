@@ -6,6 +6,8 @@ var BOM_CODE = "\ufeff"
 
 var browser = require("webextension-polyfill")
 
+const manifest_version = browser.runtime.getManifest().manifest_version
+
 function csv_blob(csv, options) {
     // Byte Order Mark (BOM) required on Windows for displaying Japanese characters
     if (csv.substring(0, 5) != BOM_CODE) {
@@ -18,7 +20,7 @@ function csv_blob(csv, options) {
 async function blob_download(blob, filename) {
     await browser.runtime.sendMessage({
         "action": "download",
-        "url": URL.createObjectURL(blob),
+        "url": manifest_version == 2 ? blob : URL.createObjectURL(blob),
         "filename": filename
     })
 }

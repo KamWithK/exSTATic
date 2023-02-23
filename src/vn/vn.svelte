@@ -38,6 +38,7 @@
 	// UI events
 	const setTitle = title => {
 		if (vn_storage == undefined || vn_storage.instance_storage == undefined) return
+		document.title = title
 		vn_storage.instance_storage.updateDetails({"name": title})
 	}
 	$: setTitle(title)

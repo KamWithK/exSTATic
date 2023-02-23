@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "exSTATic",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuwn/wsj43FLW2rxrACsMQK+58H2Cjkwez105WIDVfdj6SUiTIXdzBO2lT+tSZmoLx9HRbULqg0Aq4z8yg/mSHIjrQPPB/Gr1QFexWSAyvqkyJsePxwjpybo1aotuVo/fesMyHyBsenH7xNxSpsSbldA8GbVFks3rQc5gQOexhe1PXOA5GlmBOhIPO2vrITk60X5Ysp1VwGhx1OlUF9IixcH2uHvWm4n15AsINPH+OFx3mJw7xS+GqCL2bYP/mxepOohA8lKHKEPFtSFOBdFMtTA3tV/HEUU6G5hsS6IeQpBjzW2YTmaHD3tcK5SSdnK336AX3htYxY/O6zwErXx3PQIDAQAB",
-  "version": "0.0.7",
+  "version": "0.0.8",
 
   "description": "Completely automated reading statistics and tracking",
 

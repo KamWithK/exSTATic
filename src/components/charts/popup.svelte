@@ -31,11 +31,11 @@
     }
 
     export const mouse_out = () => {
-        if (window["chrome"] === undefined) show_popup = false
+        show_popup = false
     }
 </script>
 
-<div id="popup" class="{show_popup ? "absolute" : "hidden"} p-3 z-50" style="left: {popup_x}px;top: {popup_y}px; background-color: {popout_color}">
+<div id="popup" class="{show_popup ? "absolute" : "hidden"} p-3 z-50" style="left: {popup_x}px;top: {popup_y}px; background-color: {popout_color}; pointer-events: none">
     {#if popup_name !== undefined}
         <p id="popup_title" class="font-semibold">{popup_name}</p>
     {/if}

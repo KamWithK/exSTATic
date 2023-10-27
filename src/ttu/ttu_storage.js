@@ -38,6 +38,10 @@ export class TTUStorage extends MediaStorage {
         await TTUStorage.setPages(this.instance_storage)
     }
 
+    async pauseChange(last_char_count) {
+        await this.instance_storage.updateDetails({"last_char_count": last_char_count})
+    }
+
     async processText(chars_read, date) {
         const stats = { "chars_read": chars_read - this.details["last_char_count"] }
 

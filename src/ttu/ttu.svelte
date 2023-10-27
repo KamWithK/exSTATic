@@ -17,9 +17,18 @@
     shown = false
   }
 
-  document.querySelector("button.fixed:nth-child(1)")
-    .addEventListener("click", showBar)
-  document.body.addEventListener("click", hideBar)
+  export const resetBarClickEvents = () => {
+    document.querySelector("button.fixed:nth-child(1)")
+      .addEventListener("click", showBar)
+    document.body.addEventListener("click", hideBar)
+  }
+  document.addEventListener('ttsu:page.change', (event: CustomEvent) => {
+    // Extract data
+    const book_title = (event.target as Document).title.replace(/ \| ッツ Ebook Reader$/, "")
+    if (["Settings", "Book Manager"].includes(book_title))
+      setTimeout(() => { resetBarClickEvents() }, 300)
+  })
+  resetBarClickEvents()
 
   document.body.addEventListener(
     "dblclick",
@@ -27,15 +36,15 @@
   )
 
   document.addEventListener("status_active", () => {
-    document
+    let content = document
       .querySelector<HTMLElement>(".book-content")
-      .style.setProperty("filter", "")
+    if (content) content.style.setProperty("filter", "")
   })
 
   document.addEventListener("status_inactive", () => {
-    document
+    let content = document
       .querySelector<HTMLElement>(".book-content")
-      .style.setProperty("filter", "blur(2px)")
+    if (content) content.style.setProperty("filter", "blur(2px)")
   })
 </script>
 

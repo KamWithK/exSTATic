@@ -7,24 +7,6 @@ console.log("Injected")
 
 var ttu_storage: TTUStorage
 
-function getBookTitle() {
-  return document.title.replace(/ \| ッツ Ebook Reader$/, "")
-}
-
-// Gets current char count and total in book
-function getCharCount() {
-  const nodes = document.querySelector(".writing-horizontal-tb.fixed.bottom-2").childNodes
-
-  if (nodes.length == 6) {
-    const char_current = nodes[0].textContent
-    const char_total = nodes[2].textContent
-
-    return [char_current ? char_current : 0, char_total]
-  }
-
-  return undefined
-}
-
 async function setup() {
   ttu_storage = await TTUStorage.build(true)
 
@@ -46,49 +28,44 @@ async function setup() {
 }
 setup()
 
-const onUpdate = async () => {
-  if (ttu_storage && !(await ttu_storage.extensionActivated())) return
+const onUpdate = async (event: CustomEvent) => {
+  // Extract data
+  const book_title = (event.target as Document).title.replace(/ \| ッツ Ebook Reader$/, "")
 
-  const book_title = getBookTitle()
-  const char_count = getCharCount()
+  // Ignore events pre page load, they register to these names
+  // NOTE: This could change (if ttu's page titles change)
+  // TODO: Only start timer once the page count reaches the previous logged (obviouslly this doesn't count the first time)
+  if (book_title === "ッツ Ebook Reader") return
+  if (["Settings", "Book Manager"].includes(book_title)) return
 
-  // In case there's no charCount on TTU
-  if (!char_count) return
+  const book_char_length = event.detail.bookCharCount
+  const char_count = event.detail.exploredCharCount ?? 0
 
-  const [char_current,] = char_count
+  // The book length is given on load
+  // A separate even will later be sent for progress
+  if (book_char_length) return
 
+  // Wait for extention to start before we try to log
+  if (!ttu_storage) return
+
+  // Make sure the current book is loaded
   await ttu_storage.changeInstance(undefined, book_title)
-  await ttu_storage.processText(char_current, dateNowString())
+
+  // Check whether active
+  const active = await ttu_storage.extensionActivated()
+
+  // Update stats when active
+  // Update current char count when paused
+  if (active)
+    await ttu_storage.processText(char_count, dateNowString())
+  else
+    await ttu_storage.pauseChange(char_count)
 }
 
-const observer_settings = {
-  characterData: true,
-  childList: false,
-  subtree: true,
-}
-
-const observeAfter = async () => {
-  // If information doesn't exist then keep waiting
-  if (!document.querySelector(".writing-horizontal-tb.fixed.bottom-2")) return
-  
-  // Switch to the right instance
-  await ttu_storage.changeInstance(undefined, getBookTitle())
-
-  // Ensure starting partially through doesn't cause everything so far to log in todays stats
-  await ttu_storage.instance_storage.updateDetails({
-    last_char_count: getCharCount()[0],
-  })
-
-  // Create a new observer over just the built in stats bar
-  const stats_observer = new MutationObserver(onUpdate)
-  stats_observer.observe(
-    document.querySelector(".writing-horizontal-tb.fixed.bottom-2"),
-    observer_settings
-  )
-
-  // Disconnect the old observer so this never runs again
-  overall_observer.disconnect()
-}
-
-const overall_observer = new MutationObserver(observeAfter)
-overall_observer.observe(document, observer_settings)
+// Execute update
+// Updates must be forced to run synchronously by running one after another
+let promise_chain = Promise.resolve()
+document.addEventListener(
+  'ttsu:page.change',
+  (event: CustomEvent) => promise_chain = promise_chain.then(() => onUpdate(event))
+)

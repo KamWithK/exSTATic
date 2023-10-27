@@ -25,10 +25,9 @@
   document.addEventListener('ttsu:page.change', (event: CustomEvent) => {
     // Extract data
     const book_title = (event.target as Document).title.replace(/ \| ッツ Ebook Reader$/, "")
-    if (["Settings", "Book Manager"].includes(book_title))
+    if (["ッツ Ebook Reader", "Settings", "Book Manager"].includes(book_title))
       setTimeout(() => { resetBarClickEvents() }, 300)
   })
-  resetBarClickEvents()
 
   document.body.addEventListener(
     "dblclick",

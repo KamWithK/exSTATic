@@ -40,6 +40,7 @@ export class TTUStorage extends MediaStorage {
 
     async pauseChange(last_char_count) {
         await this.instance_storage.updateDetails({"last_char_count": last_char_count})
+        this.stop_ticker()
     }
 
     async processText(chars_read, date) {

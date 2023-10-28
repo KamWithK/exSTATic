@@ -76,18 +76,18 @@ More than happy to take a look into anything/approve PRs 😄!
 Here's [my Ko-Fi](https://ko-fi.com/kamwithk) if you'd like to support.
 
 ## Developer Instructions
-**NOTE:** Due to Chrome forcing Manifest V3 and Firefox still using Manifest V2, the following build instructions have become slightly less intuitive
+**NOTE:** Chrome and Firefox have ever so different Manifest V3 implementations, so require different Manifest files and so are build separately
 
 Make sure to start by having all the correct packages installed - `npm install`
-Each time you make a change run `npm run build` (this will take 2x longer since a separate Firefox and Chrome build are generated)
+Each time you make a change run `npm run build` (this will take 2x longer since a separate Firefox and Chrome build are generated, this could potentially be improved by building once and copying everything apart from the manifest file over sometime in the future)
 
 To have live browser extension updates:
-* **Firefox** - `npm run web-ext-v2 -- run`
-* **Chrome** - `npm run web-ext-v3 -- run --target chromium`
+* **Firefox** - `npm run web-ext-firefox -- run`
+* **Chrome** - `npm run web-ext-chrome -- run --target chromium`
 
 To build the extension ready for release:
-* **Firefox** - `npm run web-ext-v2 -- build`
-* **Chrome** - `npm run web-ext-v3 -- build`
+* **Firefox** - `npm run web-ext-firefox -- build`
+* **Chrome** - `npm run web-ext-chrome -- build`
 
 # Credits
 Huge shoutout to everyone who helped on this project.

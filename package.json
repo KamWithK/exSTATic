@@ -1,8 +1,8 @@
 {
   "scripts": {
     "build": "node esbuild.ts",
-    "web-ext-v2": "web-ext --source-dir build-v2 --artifacts-dir web-ext-v2",
-    "web-ext-v3": "web-ext --source-dir build-v3 --artifacts-dir web-ext-v3"
+    "web-ext-chrome": "web-ext --source-dir build-chrome --artifacts-dir web-ext-chrome",
+    "web-ext-firefox": "web-ext --source-dir build-firefox --artifacts-dir web-ext-firefox"
   },
   "dependencies": {
     "@d3fc/d3fc-axis": "^3.0.6",
@@ -22,5 +22,8 @@
     "tailwindcss": "^3.1.8",
     "typescript": "^4.7.4",
     "webextension-polyfill": "^0.9.0"
+  },
+  "devDependencies": {
+    "web-ext": "^7.8.0"
   }
 }

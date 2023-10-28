@@ -3,26 +3,28 @@ const sveltePlugin = require("esbuild-svelte");
 const sveltePreprocess = require("svelte-preprocess");
 const fs = require("fs");
 
-const build_v2_dir = "build-v2";
-const build_v3_dir = "build-v3";
+// NOTE: Chrome and Firefox Manifest V3 implementations differ
+// So two seperate builds are still required
+
+// Builds directories
+const build_chrome_dir = "build-chrome";
+const build_firefox_dir = "build-firefox";
 
 // Make sure build directories exist
-if (!fs.existsSync(build_v3_dir)){
-  fs.mkdirSync(build_v3_dir);
+if (!fs.existsSync(build_chrome_dir)){
+  fs.mkdirSync(build_chrome_dir);
 }
-
-if (!fs.existsSync(build_v2_dir)){
-  fs.mkdirSync(build_v2_dir);
+if (!fs.existsSync(build_firefox_dir)){
+  fs.mkdirSync(build_firefox_dir);
 }
 
 // Copy assets and manifests
-fs.copyFileSync("manifest-v3.json", `${build_v3_dir}/manifest.json`);
-fs.cpSync("docs", `${build_v3_dir}/docs/`, { recursive: true });
-fs.cpSync("fonts", `${build_v3_dir}/fonts/`, { recursive: true });
-
-fs.copyFileSync("manifest-v2.json", `${build_v2_dir}/manifest.json`);
-fs.cpSync("docs", `${build_v2_dir}/docs/`, { recursive: true });
-fs.cpSync("fonts", `${build_v2_dir}/fonts/`, { recursive: true });
+fs.copyFileSync("manifest-chrome.json", `${build_chrome_dir}/manifest.json`);
+fs.cpSync("docs", `${build_chrome_dir}/docs/`, { recursive: true });
+fs.cpSync("fonts", `${build_chrome_dir}/fonts/`, { recursive: true });
+fs.copyFileSync("manifest-firefox.json", `${build_firefox_dir}/manifest.json`);
+fs.cpSync("docs", `${build_firefox_dir}/docs/`, { recursive: true });
+fs.cpSync("fonts", `${build_firefox_dir}/fonts/`, { recursive: true });
 
 const options = {
   entryPoints: [
@@ -36,16 +38,14 @@ const options = {
   mainFields: ["svelte", "browser", "module", "main"],
   bundle: true,
   minify: false,
-  target: ["chrome102", "firefox102"],
+  target: ["chrome118", "firefox118"],
   plugins: [sveltePlugin({"preprocess": sveltePreprocess({postcss: true})})]
 };
 
-// Build for Manifest v2 and v3 separately
 esbuild
-  .build({ ...options, watch: true, outdir: build_v3_dir })
+  .build({ ...options, watch: true, outdir: build_chrome_dir })
   .catch(() => process.exit(1));
 
 esbuild
-  .build({ ...options, watch: true, outdir: build_v2_dir })
+  .build({ ...options, watch: true, outdir: build_firefox_dir })
   .catch(() => process.exit(1));
-  

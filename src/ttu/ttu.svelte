@@ -28,6 +28,7 @@
     if (["ッツ Ebook Reader", "Settings", "Book Manager"].includes(book_title))
       setTimeout(() => { resetBarClickEvents() }, 300)
   })
+  resetBarClickEvents()
 
   document.body.addEventListener(
     "dblclick",

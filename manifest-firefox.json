@@ -1,23 +1,21 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "exSTATic",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuwn/wsj43FLW2rxrACsMQK+58H2Cjkwez105WIDVfdj6SUiTIXdzBO2lT+tSZmoLx9HRbULqg0Aq4z8yg/mSHIjrQPPB/Gr1QFexWSAyvqkyJsePxwjpybo1aotuVo/fesMyHyBsenH7xNxSpsSbldA8GbVFks3rQc5gQOexhe1PXOA5GlmBOhIPO2vrITk60X5Ysp1VwGhx1OlUF9IixcH2uHvWm4n15AsINPH+OFx3mJw7xS+GqCL2bYP/mxepOohA8lKHKEPFtSFOBdFMtTA3tV/HEUU6G5hsS6IeQpBjzW2YTmaHD3tcK5SSdnK336AX3htYxY/O6zwErXx3PQIDAQAB",
-  "version": "0.0.8",
-
+  "version": "0.0.9",
   "description": "Completely automated reading statistics and tracking",
-
   "icons": {
     "100": "docs/favicon_100x100.png",
     "500": "docs/favicon.png"
   },
-
   "permissions": [
     "storage",
     "unlimitedStorage",
     "tabs",
     "scripting",
-    "downloads",
-
+    "downloads"
+  ],
+  "host_permissions": [
     "https://kamwithk.github.io/exSTATic/**.html",
     "file:///*/exSTATic/**.html",
     "file:///*/fjiikigkdpahddfcembbapebejanfnhf/**.html",
@@ -28,12 +26,11 @@
     "file:///**/ttu-ebook.web.app/**",
     "file:///**/reader.ttsu.app/**"
   ],
-
   "background": {
-    "persistent": true,
-    "scripts": ["background.js"]
+    "scripts": [
+      "background.js"
+    ]
   },
-
   "content_scripts": [
     {
       "matches": [
@@ -96,13 +93,20 @@
       ]
     }
   ],
-
-  "web_accessible_resources": ["/fonts/*"],
-
-  "browser_action": {
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "/fonts/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "action": {
     "default_icon": {
-        "100": "docs/favicon_100x100.png",
-        "500": "docs/favicon.png"
+      "100": "docs/favicon_100x100.png",
+      "500": "docs/favicon.png"
     }
   }
 }

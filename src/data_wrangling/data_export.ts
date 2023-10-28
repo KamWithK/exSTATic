@@ -5,8 +5,7 @@ import { unparse } from "papaparse"
 var BOM_CODE = "\ufeff"
 
 var browser = require("webextension-polyfill")
-
-const manifest_version = browser.runtime.getManifest().manifest_version
+var isChrome = !!(window as any).chrome && (!!(window as any).chrome.webstore || !!(window as any).chrome.runtime);
 
 function csv_blob(csv, options) {
     // Byte Order Mark (BOM) required on Windows for displaying Japanese characters
@@ -20,7 +19,7 @@ function csv_blob(csv, options) {
 async function blob_download(blob, filename) {
     await browser.runtime.sendMessage({
         "action": "download",
-        "url": manifest_version == 2 ? blob : URL.createObjectURL(blob),
+        "url": !isChrome ? blob : URL.createObjectURL(blob),
         "filename": filename
     })
 }

@@ -136,3 +136,5 @@ web-ext-v3
 build/**
 build-v2/**
 build-v3/**
+build-chrome/**
+build-firefox/**

@@ -1,7 +1,7 @@
-const esbuild = require("esbuild");
-const sveltePlugin = require("esbuild-svelte");
-const sveltePreprocess = require("svelte-preprocess");
-const fs = require("fs");
+import esbuild from "esbuild";
+import sveltePlugin from "esbuild-svelte";
+import sveltePreprocess from "svelte-preprocess";
+import fs from "fs";
 
 // NOTE: Chrome and Firefox Manifest V3 implementations differ
 // So two seperate builds are still required
@@ -42,10 +42,8 @@ const options = {
   plugins: [sveltePlugin({"preprocess": sveltePreprocess({postcss: true})})]
 };
 
-esbuild
-  .build({ ...options, watch: true, outdir: build_chrome_dir })
-  .catch(() => process.exit(1));
+const context_chrome = await esbuild.context({ ...options, outdir: build_chrome_dir })
+const context_firefox = await esbuild.context({ ...options, outdir: build_firefox_dir })
 
-esbuild
-  .build({ ...options, watch: true, outdir: build_firefox_dir })
-  .catch(() => process.exit(1));
+await Promise.all([context_chrome.watch(), context_firefox.watch()])
+// await Promise.all([context_chrome.dispose(), context_firefox.dispose()])

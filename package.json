@@ -1,27 +1,28 @@
 {
   "scripts": {
-    "build": "node esbuild.ts",
+    "build": "node esbuild.mjs",
     "web-ext-chrome": "web-ext --source-dir build-chrome --artifacts-dir web-ext-chrome",
     "web-ext-firefox": "web-ext --source-dir build-firefox --artifacts-dir web-ext-firefox"
   },
   "dependencies": {
     "@d3fc/d3fc-axis": "^3.0.6",
-    "@tailwindcss/forms": "^0.5.2",
-    "@tsconfig/svelte": "^3.0.0",
-    "async-mutex": "^0.3.2",
-    "autoprefixer": "^10.4.8",
-    "d3": "^7.6.1",
-    "date-fns": "^2.29.1",
-    "esbuild": "^0.14.48",
-    "esbuild-svelte": "^0.7.1",
+    "@tailwindcss/forms": "^0.5.6",
+    "@tsconfig/svelte": "^5.0.2",
+    "async-mutex": "^0.4.0",
+    "autoprefixer": "^10.4.16",
+    "d3": "^7.8.5",
+    "date-fns": "^2.30.0",
+    "esbuild": "^0.19.5",
+    "esbuild-svelte": "^0.8.0",
     "iwanthue": "^2.0.0",
-    "papaparse": "^5.3.2",
-    "postcss": "^8.4.16",
+    "papaparse": "^5.4.1",
+    "postcss": "^8.4.31",
     "reconnecting-websocket": "^4.4.0",
-    "svelte-preprocess": "^4.10.7",
-    "tailwindcss": "^3.1.8",
-    "typescript": "^4.7.4",
-    "webextension-polyfill": "^0.9.0"
+    "svelte-preprocess": "^5.0.4",
+    "tailwindcss": "^3.3.5",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2",
+    "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
     "web-ext": "^7.8.0"

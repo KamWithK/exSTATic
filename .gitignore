@@ -133,6 +133,8 @@ dist
 web-ext-artifacts
 web-ext-v2
 web-ext-v3
+web-ext-chrome
+web-ext-firefox
 build/**
 build-v2/**
 build-v3/**

@@ -14,8 +14,8 @@
     let client_groups
     client_groups = groups(data, d => JSON.stringify([d.uuid, d.date]))
     data = client_groups.map(([, v]) => ({
-        "uuid": v[0].uuid,
-        "name": v[0].name,
+        "uuid": v[0].type === "mokuro" ? JSON.parse(v[0].name)[0] : v[0].uuid,
+        "name": v[0].type === "mokuro" ? JSON.parse(v[0].name)[0] : v[0].name,
         "given_identifier": v[0].given_identifier,
         "type": v[0].type,
         "date": v[0].date,

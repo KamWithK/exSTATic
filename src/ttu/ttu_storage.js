@@ -18,7 +18,9 @@ export class TTUStorage extends MediaStorage {
         const [type_storage, instance_storage] = await super.build("ttu")
 
         await this.setPages(instance_storage)
-        await type_storage.updateProperties({"afk_max_time": 120})
+
+        if (!type_storage.properties.hasOwnProperty("afk_max_time"))
+            await type_storage.updateProperties({"afk_max_time": 120})
 
         return new TTUStorage(type_storage, instance_storage, live_stat_update)
     }

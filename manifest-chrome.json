@@ -89,6 +89,21 @@
         "docs/fonts.css",
         "stats/stats_inject.css"
       ]
+    },
+    {
+      "matches": [
+        "https://kamwithk.github.io/exSTATic/settings.html",
+        "file:///*/exSTATic/*/settings.html",
+        "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/settings.html"
+      ],
+      "js": [
+        "settings/settings_inject.js",
+        "fonts.js"
+      ],
+      "css": [
+        "docs/fonts.css",
+        "settings/settings_inject.css"
+      ]
     }
   ],
   "web_accessible_resources": [

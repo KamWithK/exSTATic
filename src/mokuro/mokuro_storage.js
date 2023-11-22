@@ -20,7 +20,9 @@ export class MokuroStorage extends MediaStorage {
         const [type_storage, instance_storage] = await super.build("mokuro")
 
         await MokuroStorage.setPages(instance_storage)
-        await type_storage.updateProperties({"afk_max_time": 120})
+
+        if (!type_storage.properties.hasOwnProperty("afk_max_time"))
+            await type_storage.updateProperties({"afk_max_time": 120})
 
         return new MokuroStorage(type_storage, instance_storage, live_stat_update)
     }

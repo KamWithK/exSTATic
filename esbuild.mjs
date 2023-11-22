@@ -33,6 +33,7 @@ const options = {
     "src/mokuro/mokuro_inject.ts",
     "src/ttu/ttu_inject.ts",
     "src/stats/stats_inject.ts",
+    "src/settings/settings_inject.ts",
     "src/fonts.ts"
   ],
   mainFields: ["svelte", "browser", "module", "main"],

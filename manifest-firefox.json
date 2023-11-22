@@ -34,6 +34,16 @@
   "content_scripts": [
     {
       "matches": [
+        "http://localhost:8080/",
+        "http://exstatic.io/"
+      ],
+      "js": [
+        "sync/sync_inject.js"
+      ],
+      "css": []
+    },
+    {
+      "matches": [
         "https://kamwithk.github.io/exSTATic/tracker.html",
         "file:///*/exSTATic/*/tracker.html",
         "file:///*/fjiikigkdpahddfcembbapebejanfnhf/*/tracker.html"

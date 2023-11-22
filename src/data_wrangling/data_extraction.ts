@@ -5,6 +5,7 @@ export async function getDateData(date) {
     
     const date_data = uuids.map(async ([client, uuid]) => {
         const details = (await browser.storage.local.get(uuid))[uuid]
+        console.log(details)
 
         const uuid_date_key = JSON.stringify([client, uuid, date])
         let stats_entry = (await browser.storage.local.get(uuid_date_key))[uuid_date_key] ?? {}

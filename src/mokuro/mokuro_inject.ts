@@ -27,6 +27,10 @@ const getGivenID = (series, volume) => JSON.stringify([series, volume])
 
 
 async function setup() {
+    // Ensure single page mode is on
+    (document.getElementById('menuDoublePageView') as HTMLInputElement).checked = true
+    document.getElementById('menuDoublePageView').click()
+
     mokuro_storage = await MokuroStorage.build(true)
 
     // Process first page

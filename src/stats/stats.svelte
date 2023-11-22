@@ -28,13 +28,15 @@
 
     let [year_start, year_end] = [startOfYear(end_time), endOfYear(end_time)]
     let year
+    let type = "all"
     year = getYear(year_start)
 
     const withinTimePredicate = (d) =>
         year_start <= parseISO(d.date) && parseISO(d.date) <= year_end
+    const typePredicate = (d) => type === "all" || d.type === type
 
     let filtered, entries_exist
-    $: filtered = data.filter(withinTimePredicate), year_start, year_end
+    $: filtered = data.filter(withinTimePredicate).filter(typePredicate), year_start, year_end, type
     $: entries_exist = filtered.length >= 1
 
     const nextPeriod = () => {
@@ -101,7 +103,15 @@
 <div class="flex flex-col px-20 gap-10">
     <div id="top_bar" class="flex bg-button bg-opacity-80 z-50 h-20 sticky top-0 items-center justify-between">
         <button class="material-icons header-text header-icon" on:click={previousPeriod}>navigate_before</button>
-        <p class="header-text">{year}</p>
+        <div class="flex flex-row gap-3 place-items-center">
+            <p class="header-text">{year}</p>
+            <select class="bg-button" bind:value={type}>
+                <option value="all">All</option>
+                <option value="vn">VN</option>
+                <option value="mokuro">Mokuro</option>
+                <option value="ttu">TTU</option>
+            </select>
+        </div>
         <button class="material-icons header-text header-icon" on:click={nextPeriod}>navigate_next</button>
     </div>
 

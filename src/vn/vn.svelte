@@ -151,6 +151,9 @@
 				<MenuOption media_storage={vn_storage} id="inactivity_blur" description="Inactivity Blur" units="px" value=2/>
 				<MenuOption media_storage={vn_storage} id="menu_blur" description="Menu Blur" units="px" value=8 root_css="--default-menu-blur"/>
 
+				<button id="settings_page" class="menu-button" on:click={() => window.open("https://kamwithk.github.io/exSTATic/settings.html")}>
+					Settings
+				</button>
 				<button id="export_stats" class="menu-button" on:click={exportStats}>Export Stats</button>
 				<button id="export_lines" class="menu-button" on:click={requestExportLines}>Export Lines</button>
 				<button class="menu-button" on:click="{() => document.getElementById('import_stats').click()}">

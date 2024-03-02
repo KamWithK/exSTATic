@@ -25,6 +25,6 @@
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
-    "web-ext": "^7.8.0"
+    "web-ext": "^0.0.1"
   }
 }

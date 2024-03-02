@@ -26,6 +26,9 @@
     "file:///**/ttu-ebook.web.app/**",
     "file:///**/reader.ttsu.app/**"
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "background": {
     "scripts": [
       "background.js"

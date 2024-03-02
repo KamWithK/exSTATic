@@ -7,7 +7,7 @@ import ReconnectingWebSocket from "reconnecting-websocket"
 
 var browser = require("webextension-polyfill")
 
-const reloadTabV3 = async (tab) => {
+const reloadTab = async (tab) => {
     browser.scripting.executeScript({
         target: { tabId: tab.id },
         func: () => window.location.reload()
@@ -33,7 +33,7 @@ browser.runtime.onInstalled.addListener(async () => {
         await browser.storage.local.set({ "schema_version": 2. })
     
     console.log("Reloading all extension tabs...")
-    runOnContentScripts(reloadTabV3(tab))
+    runOnContentScripts(reloadTab)
 })
 
 // Message passing is used for actions which can only be performed on the background page

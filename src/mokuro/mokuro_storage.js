@@ -34,6 +34,12 @@ export class MokuroStorage extends MediaStorage {
         if (instance_storage.details["last_page_read"] === undefined) {
             details["last_page_read"] = 0
         }
+        if (instance_storage.details["last_char_count"] === undefined) {
+            details["last_char_count"] = 0
+        }
+        if (instance_storage.details["last_line_count"] === undefined) {
+            details["last_line_count"] = 0
+        }
         await instance_storage.updateDetails(details)
     }
 
@@ -74,4 +80,29 @@ export class MokuroStorage extends MediaStorage {
         await this.instance_storage.addToDates(date)
         await this.instance_storage.addToDate(date)
     }
-}
+
+    async processPageStats(page_num, chars_read, lines_read, date) {
+        let stats = {
+            chars_read: chars_read - this.details["last_char_count"],
+            lines_read: lines_read - this.details["last_line_count"],
+            pages_read: page_num - this.details["last_page_read"]
+        }
+
+        await this.instance_storage.addDailyStats(date, stats)
+
+        if (page_num > this.details["last_page_read"]) {
+            this.start_ticker(false)
+        }
+        else if (page_num < this.details["last_page_read"]) {
+            this.stop_ticker()
+        }
+        
+        await this.instance_storage.updateDetails({
+            "last_page_read": page_num,
+            "last_chars_count": chars_read,
+            "last_line_count": lines_read,
+            "last_active_at": timeNowSeconds()
+        })
+        await this.instance_storage.addToDates(date)
+        await this.instance_storage.addToDate(date)
+    }}

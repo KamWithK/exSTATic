@@ -13,19 +13,19 @@ export function lineSplitCount(line) {
 }
 
 export function dateNowString() {
-    rn = new Date()
+    const rn = new Date()
     return formatISO(rn, {"representation": "date"})
 }
 
 export function timeToDateString(time) {
     if (time === undefined || isNaN(time)) return
 
-    let date = new Date(0)
+    const date = new Date(0)
     date.setSeconds(time)
     return formatISO(date, {"representation": "date"})
 }
 
 export function timeNowSeconds() {
-    let rn = new Date()
+    const rn = new Date()
     return rn.getTime() / 1000
 }

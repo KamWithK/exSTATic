@@ -1,4 +1,4 @@
-var browser = require("webextension-polyfill")
+import * as browser from "webextension-polyfill"
 
 // STORAGE SPEC
 // {
@@ -13,42 +13,55 @@ var browser = require("webextension-polyfill")
 //     }
 // }
 
+export interface TypeProperties {
+    afk_max_time: number;
+    bottom_line_padding: string;
+    font: string;
+    font_size: string;
+    inactivity_blur: string;
+    max_loaded_lines: string;
+    menu_blur: string;
+    previous_uuid?: string;
+}
+
 export class TypeStorage {
-    constructor (type) {
+    type: string
+    properties: TypeProperties
+
+    constructor (type: string, properties: TypeProperties) {
         this.type = type
+        this.properties = properties
     }
 
-    async setup() {
+    static async buildTypeStorage(type: string) {
         let types_list = await browser.storage.local.get("types")
         if (!types_list.hasOwnProperty("types")) {
             types_list["types"] = []
         }
         
-        if (!types_list["types"].includes(this.type)) {
-            types_list["types"].push(this.type)
+        if (!types_list["types"].includes(type)) {
+            types_list["types"].push(type)
         }
 
         await browser.storage.local.set(types_list)
 
-        let type_dict = await browser.storage.local.get(this.type)
-        if (!type_dict.hasOwnProperty(this.type)) {
-            type_dict[this.type] = {}
+        let type_dict = await browser.storage.local.get(type)
+        if (!type_dict.hasOwnProperty(type)) {
+            type_dict[type] = {}
         }
 
-        this.properties = type_dict[this.type]
+        const properties = type_dict[type]
         await browser.storage.local.set(type_dict)
+
+        return new TypeStorage(type, properties)
     }
 
-    async updateProperties(properties) {
+    async updateProperties(properties: Partial<TypeProperties>) {
         Object.assign(this.properties, properties)
-        
-        let properties_entry = {}
-        properties_entry[this.type] = this.properties
-    
-        await browser.storage.local.set(properties_entry)
+        await browser.storage.local.set({[this.type]: this.properties})
     }
 
-    async getMedia(given_identifier) {
+    async getMedia(given_identifier: string): Promise<string> {
         const media_entries = await browser.storage.local.get("media")
         const media_key = JSON.stringify([given_identifier, this.type])
 
@@ -59,7 +72,7 @@ export class TypeStorage {
         }
     }
 
-    async addMedia(given_identifier, uuid=undefined) {
+    async addMedia(given_identifier: string, uuid?: string) {
         let media_entries = await browser.storage.local.get("media")
 
         if (!media_entries.hasOwnProperty("media")) {

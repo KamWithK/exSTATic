@@ -2,15 +2,15 @@
     import { select } from "d3-selection"
     import { axisTop, axisRight, axisBottom, axisLeft, axisLabelOffset } from "@d3fc/d3fc-axis"
 
-    export let scale
+    export let scale: any
 
-    export let height, width, margin
+    export let height: number, width: number, margin: number
     export let position: "top" | "right" | "bottom" | "left"
-    export let formatter
+    export let formatter: (date: any) => string
 
     export let label = ""
     
-    let axis
+    let axis: SVGGElement
     let transform = "0,0"
 
     const positionedAxis = (scale: Function) => {
@@ -58,7 +58,7 @@
         }
 
         // Find the positions in the domain these uncovered extremes would have mapped to
-        const extended_range = [range[0] - excess / 2, range[1] + excess / 2]
+        const extended_range = [range[0] - excess! / 2, range[1] + excess! / 2]
         const extended_domain = [axis_scale.invert(extended_range[0]), axis_scale.invert(extended_range[1])]
 
         // Modify the domain and range to cover the full available section
@@ -76,8 +76,8 @@
         select(axis).select("path").style("stroke", "grey")
     }
 
-    $: if (scale && height && width && margin && position && formatter && axis)
-        setupAxis()
+    $: if (scale && height && width && margin && position && axis)
+        setupAxis(), formatter
 </script>
 
 <g color="grey" stroke="grey" fill="grey" bind:this={axis} transform="translate({transform})"/>

@@ -1,9 +1,8 @@
 console.log("Injected")
 
+import * as browser from "webextension-polyfill"
 import { VNStorage } from "./vn_storage"
-
 import App from "./vn.svelte"
-var browser = require("webextension-polyfill")
 
 const setup = async () => {
 	const vn_storage = await VNStorage.build(true)

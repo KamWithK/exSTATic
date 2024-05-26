@@ -1,6 +1,6 @@
-var browser = require("webextension-polyfill")
+import * as browser from "webextension-polyfill"
 
-export async function message_action(args, sender, send_response) {
+export async function message_action(args: any) {
     if (args["action"] == "open_tab") {
         await open_tab(args)
     }
@@ -9,13 +9,13 @@ export async function message_action(args, sender, send_response) {
     }
 }
 
-async function download(args) {
+async function download(args: any) {
     await browser.downloads.download({
         url: typeof(args["url"]) !== "string" ? URL.createObjectURL(args["url"]) : args["url"],
         filename: args["filename"]
     })
 }
 
-async function open_tab(args) {
+async function open_tab(args: any) {
     await browser.tabs.create({"url": args["url"]})
 }

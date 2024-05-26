@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { Stat } from "../../storage/instance_storage";
     import type { MediaStorage } from "../storage/media_storage"
 
     let SECS_TO_HOURS = 60 * 60
@@ -7,25 +8,25 @@
     export let active: boolean = false
     export let show_lines: boolean = true
 
-    let chars, lines, time, speed
+    let chars: number, lines: number, time: string, speed: string
     
-    const statsExist = media_storage =>
+    const statsExist = (media_storage: MediaStorage) =>
         media_storage.instance_storage != undefined
             ? media_storage.instance_storage.today_stats
             : undefined
     
-    const getStat = (daily_stats, stat_key) =>
+    const getStat = (daily_stats: Stat, stat_key: string) =>
         daily_stats != undefined && daily_stats.hasOwnProperty(stat_key)
             ? daily_stats[stat_key]
             : 0
 
-    const getTime = time_secs => {
+    const getTime = (time_secs: number) => {
         const date = new Date(0)
         date.setSeconds(Math.round(time_secs))
         return date.toISOString().substring(11, 19)
     }
 
-    const getSpeed = (chars, time_secs) =>
+    const getSpeed = (chars: number, time_secs: number) =>
         chars === undefined || time_secs === undefined
             || isNaN(chars) || isNaN(time_secs)
             || chars === 0 || time_secs === 0

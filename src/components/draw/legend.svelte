@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let groups, hues
+    export let groups: string[], hues: string[]
 </script>
 
 <div class="flex flex-col">

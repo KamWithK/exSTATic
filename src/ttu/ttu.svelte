@@ -19,7 +19,7 @@
 
   export const resetBarClickEvents = () => {
     document.querySelector("button.fixed:nth-child(1)")
-      .addEventListener("click", showBar)
+      ?.addEventListener("click", showBar)
     document.body.addEventListener("click", hideBar)
   }
   document.addEventListener('ttsu:page.change', (event: CustomEvent) => {

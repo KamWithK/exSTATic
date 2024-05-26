@@ -9,7 +9,7 @@ const setup = async () => {
     new Stats({
 		target: document.documentElement,
 		props: {
-			data: (await getData()).sort((first, second) => parseISO(first["date"]).valueOf() - parseISO(second["date"]).valueOf())
+			data: (await getData())?.sort((first, second) => parseISO(first["date"]).valueOf() - parseISO(second["date"]).valueOf())
 		}
 	})
 }

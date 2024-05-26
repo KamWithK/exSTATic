@@ -3,12 +3,13 @@
 
     import { extent } from "d3-array"
     import { scaleBand } from "d3-scale"
+    import type { DataEntry } from "../../data_wrangling/data_extraction";
 
-    export let scaleType
+    export let scaleType: any
 
-    export let data
-    export let accessor: Function
-    export let formatter
+    export let data: Partial<DataEntry>[]
+    export let accessor: any
+    export let formatter: (date: any) => string
 
     export let range: [number, number]
 
@@ -18,7 +19,7 @@
     export let position: "top" | "right" | "bottom" | "left"
 
     // Map data (domains) onto physical scales (ranges)
-    export let scale
+    export let scale: any
     $: scale = scaleType()
         .domain(scaleType === scaleBand ? data.map(accessor) : extent(data, accessor))
         .range(range)

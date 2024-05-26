@@ -1,13 +1,13 @@
 import { getData, getInstanceData } from "./data_extraction"
 
+import * as browser from "webextension-polyfill"
 import { unparse } from "papaparse"
 
 var BOM_CODE = "\ufeff"
 
-var browser = require("webextension-polyfill")
 var isChrome = !!(window as any).chrome && (!!(window as any).chrome.webstore || !!(window as any).chrome.runtime);
 
-function csv_blob(csv, options) {
+function csv_blob(csv: string, options: {[key: string]: string}) {
     // Byte Order Mark (BOM) required on Windows for displaying Japanese characters
     if (csv.substring(0, 5) != BOM_CODE) {
         csv = BOM_CODE + csv
@@ -16,7 +16,7 @@ function csv_blob(csv, options) {
     return new Blob([csv], options)
 }
 
-async function blob_download(blob, filename) {
+async function blob_download(blob: Blob, filename: string) {
     await browser.runtime.sendMessage({
         "action": "download",
         "url": !isChrome ? blob : URL.createObjectURL(blob),
@@ -29,7 +29,7 @@ export async function exportStats() {
     const data = await getData()
 
     const blob = csv_blob(
-        unparse(data),
+        unparse(data!),
         { "type": "text/csv" }
     )
     await blob_download(blob, "exSTATic_stats.csv")

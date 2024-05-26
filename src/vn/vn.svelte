@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as browser from "webextension-polyfill"
 	import { timeToDateString } from "../calculations"
 	import type { VNStorage } from "./vn_storage"
 	import { exportLines, exportStats } from "../data_wrangling/data_export"
@@ -9,21 +10,21 @@
 	import LineHolder from "../components/interface/line_holder.svelte"
 
 	import { parse } from "papaparse"
-	var browser = require("webextension-polyfill")
+    import type { DataEntry } from "../data_wrangling/data_extraction";
 
 	export let vn_storage: VNStorage
 	let title = "Game"
-	let lines = []
+	let lines: string[][] = []
 	let menu = false
 
 	// Events for media being added/replaced
-	document.addEventListener("media_changed", event => {
+	document.addEventListener("media_changed", (event: CustomEvent) => {
 		// Show name and title
-		title = event["detail"]["name"]
+		title = event.detail["name"]
 	
 		// Show lines
-		lines = event["detail"]["lines"]
-			.sort((first, second) => first[1] - second[1])
+		lines = event.detail["lines"]
+			.sort((first: [string, number, string, number], second: [string, number, string, number]) => first[1] - second[1])
 	})
 
 	document.addEventListener("new_line", event => {
@@ -36,7 +37,7 @@
 	})
 
 	// UI events
-	const setTitle = title => {
+	const setTitle = (title: string) => {
 		if (vn_storage == undefined || vn_storage.instance_storage == undefined) return
 		document.title = title + " | exSTATic"
 		vn_storage.instance_storage.updateDetails({"name": title})
@@ -53,35 +54,35 @@
         }
 	}
 
-	const requestImportStats = event => {
+	const requestImportStats = (event: InputEvent) => {
         const confirmed = confirm(
             "Are you sure you'd like to import stats?\nThe imported stats will replace conflicting entries (i.e. on the same days for the same media)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"
         )
     
         if (!confirmed) return
 
-        parse(event["target"].files[0], {
+        parse((event.target as HTMLInputElement).files![0], {
             "header": true,
             "dynamicTyping": true,
             "complete": async result => {
-                await importStats(result.data)
+                await importStats(result.data as DataEntry[])
                 alert("Finished importing stats successfully!\nPlease refresh all exSTATic pages now...")
             }
         })
     }
 
-	const requestImportLines = event => {
+	const requestImportLines = (event: InputEvent) => {
         const confirmed = confirm(
             "Are you sure you'd like to import lines?\n Please ensure that ALL stats are up to date beforehand (import if necessary).\nThe imported lines will be inserted after the current ones in storage...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"
         )
     
         if (!confirmed) return
 
-        parse(event["target"].files[0], {
+        parse((event.target as HTMLInputElement).files![0], {
             "header": true,
             "dynamicTyping": true,
             "complete": async result => {
-                await importLines(result.data)
+                await importLines(result.data as { [key: string]: string | number; }[])
                 alert("Finished importing lines successfully!\nPlease refresh all exSTATic pages now...")
             }
         })
@@ -125,13 +126,13 @@
 
 		const parents = checked_boxes.map(checkbox => checkbox.parentElement)
 		const details = parents.map(element_div => [
-			Number.parseInt(element_div.dataset.lineId),
-			element_div.textContent,
-			timeToDateString(Number.parseInt(element_div.dataset.time))
+			Number.parseInt(element_div?.dataset.lineId!),
+			element_div?.textContent,
+			timeToDateString(Number.parseInt(element_div?.dataset.time!))
 		])
 
-		await vn_storage.deleteLines(details)
-		parents.forEach(element_div => element_div.remove())
+		await vn_storage.deleteLines(details as [[number, string, string]])
+		parents.forEach(element_div => element_div?.remove())
 	}
 </script>
 
@@ -156,11 +157,11 @@
 				</button>
 				<button id="export_stats" class="menu-button" on:click={exportStats}>Export Stats</button>
 				<button id="export_lines" class="menu-button" on:click={requestExportLines}>Export Lines</button>
-				<button class="menu-button" on:click="{() => document.getElementById('import_stats').click()}">
+				<button class="menu-button" on:click="{() => document.getElementById('import_stats')?.click()}">
 					Import Stats
 					<input id="import_stats" class="hidden" type="file" on:change={requestImportStats}>
 				</button>
-				<button class="menu-button" on:click="{() => document.getElementById('import_lines').click()}">
+				<button class="menu-button" on:click="{() => document.getElementById('import_lines')?.click()}">
 					Import Lines
 					<input id="import_lines" class="hidden" type="file" on:change={requestImportLines}>
 				</button>

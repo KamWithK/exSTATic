@@ -1,10 +1,11 @@
+import type { Runtime } from "webextension-polyfill"
 import { dateNowString, timeNowSeconds } from "../calculations"
 
-var browser = require("webextension-polyfill")
+import * as browser from "webextension-polyfill"
 
 export const SPLIT_PATH = /\\|\//g
 
-let port = undefined
+let port: Runtime.Port | undefined
 
 export function connectionOpened() {
     console.log("Connected")
@@ -14,14 +15,14 @@ export function connectionClosed() {
     console.log("Connection Lost")
 }
 
-export function messagingConnected(port_) {
+export function messagingConnected(port_: Runtime.Port) {
     console.log("Messaging Connected: ", port_)
     port = port_
 
     port.onDisconnect.addListener(messagingDisconnected)
 }
 
-function messagingDisconnected(port_) {
+function messagingDisconnected(port_: Runtime.Port) {
     console.log("Messaging Disconnected: ", port_)
 
     if (port === port_) {
@@ -29,7 +30,7 @@ function messagingDisconnected(port_) {
     }
 }
 
-export async function dataFetched(event) {
+export async function dataFetched(event: MessageEvent) {
     console.log(event)
     const listen_status = (await browser.storage.local.get("listen_status"))["listen_status"]
     if (listen_status === false) {
@@ -59,7 +60,7 @@ export async function dataFetched(event) {
     const path_segments = process_path.split(SPLIT_PATH)
     process_path = path_segments.slice(Math.max(0, path_segments.length - 3)).join("\/")
 
-    await port.postMessage({
+    await port?.postMessage({
         "line": line,
         "process_path": process_path,
         "date": date,

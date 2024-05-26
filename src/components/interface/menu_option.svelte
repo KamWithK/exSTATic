@@ -8,19 +8,19 @@
     export let description: string = ""
     export let units = ""
     export let type = "number"
-    export let value = undefined
-    export let root_css = undefined
+    export let value: string | undefined = undefined
+    export let root_css: string | undefined = undefined
 
-    let input_element = undefined
+    let input_element: HTMLInputElement | undefined
     
-    const update = async event => {
-        value = event["target"].value
+    const update = async (event: Event) => {
+        value = (event.target as HTMLInputElement).value
 
         if (root_css !== undefined) {
             document.documentElement.style.setProperty(root_css, `${value}${units}`)
         }
 
-        const properties = {}
+        const properties: {[key: string]: string | undefined} = {}
         properties[id] = value
         if (media_storage !== undefined && media_storage.type_storage !== undefined) {
             await media_storage.type_storage.updateProperties(properties)
@@ -28,13 +28,12 @@
     }
     
     onMount(() => {
-        if (media_storage.properties.hasOwnProperty(id)) {
-            value = media_storage.properties[id]
-            input_element.value = value
+        if (media_storage.properties.id) {
+            input_element!.value = media_storage.properties.id
         }
 
-        if (input_element.value != undefined) {
-            input_element.dispatchEvent(new Event("change"))
+        if (input_element!.value != undefined) {
+            input_element?.dispatchEvent(new Event("change"))
         }
     })
 </script>

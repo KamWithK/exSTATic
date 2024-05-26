@@ -10,22 +10,37 @@
     import { timeFormat } from "d3-time-format"
     import { scaleLinear, scaleTime } from "d3-scale"
     import iwanthue from "iwanthue"
+    import type { DataEntry } from "../../data_wrangling/data_extraction";
+    import type { ScaleBand, ScaleLinear } from "d3";
 
-    export let data
+    export let data: DataEntry[]
     export let radius = 60
 
     export let [xScaleType, yScaleType, rScaleType] = [scaleTime, scaleLinear, scaleLinear]
-    export let x_accessor, y_accessor
-    export let r_accessor = undefined, c_accessor
+    export let x_accessor: (d: Partial<DataEntry>) => Date, y_accessor: (d: DataEntry) => number
+    export let r_accessor: ((d: Partial<DataEntry>) => number) | undefined, c_accessor: (d: DataEntry) => string
 
     export let draw_line = false
 
-    export let tooltip_accessors, tooltip_formatters
+    export let tooltip_accessors: {
+        "Chars Read": (d: DataEntry) => number;
+        "Time Read": (d: DataEntry) => number;
+        "Read Speed": (d: DataEntry) => number;
+    }
+    export let tooltip_formatters: {
+        "Chars Read": (n: number | {
+            valueOf(): number;
+        }) => string;
+        "Time Read": (t: number) => string;
+        "Read Speed": (n: number | {
+            valueOf(): number;
+        }) => string;
+    }
 
-    export let graph_title
-    export let x_label, y_label
+    export let graph_title: string
+    export let x_label: string, y_label: string
 
-    let groups, hues
+    let groups: string[], hues: string[]
     $: groups = Array.from(group(data, c_accessor).keys())
     $: hues = iwanthue(groups.length, {
         "colorSpace": [0, 360, 0, 100, 50, 100],
@@ -43,20 +58,20 @@
     $: x_range = [radius + margin, width - radius - margin]
     $: y_range = [height - radius - margin, radius + margin]
 
-    let r_scale
+    let r_scale: number[] & ScaleLinear<number, number, never>
     $: r_scale = rScaleType()
         .domain(extent(data, r_accessor))
         .range([0, radius])
 
-    let x_scale, xGet
-    let y_scale, yGet
+    let x_scale: ScaleBand<string>, xGet: (d: DataEntry) => number | undefined
+    let y_scale: ScaleBand<string>, yGet: (d: DataEntry) => number | undefined
 
-    const rGet = d => r_accessor !== undefined ? r_scale(r_accessor(d)) : radius
-    const cGet = d => hues[groups.indexOf(c_accessor(d))]
+    const rGet = (d: DataEntry) => r_accessor !== undefined ? r_scale(r_accessor(d)) : radius
+    const cGet = (d: DataEntry) => hues[groups.indexOf(c_accessor(d))]
 
     const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")]
 
-    let mouse_move, mouse_out
+    let mouse_move: any, mouse_out: any
 </script>
 
 <div class="flex flex-col w-full h-full items-center p-12 bg-slate-900">

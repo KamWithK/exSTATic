@@ -128,8 +128,8 @@
             <CalendarHeatmap data={date_summary} {date_accessor} metric_accessor={time_read_accessor} graph_title="Streak" {tooltip_accessors} {tooltip_formatters}/>
         {/if}
 
-        <!-- <BulkDataGraphs data={filtered} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
-        <MediaGraphs data={uuid_summary} {name_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/> -->
+        <BulkDataGraphs data={filtered} {name_accessor} {date_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
+        <MediaGraphs data={uuid_summary} {name_accessor} {chars_read_accessor} {time_read_accessor} {read_speed_accessor} {tooltip_accessors} {tooltip_formatters}/>
     {/if}
 </div>
 

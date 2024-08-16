@@ -1,7 +1,7 @@
 <script lang="ts">
     import Axis from "../draw/axis.svelte"
     import Bars from "../draw/bars.svelte"
-    import Popup from "./popup.svelte"
+    import Popup, { type TooltipAccessors, type TooltipFormatters } from "./popup.svelte"
     import Legend from "../draw/legend.svelte"
 
     import { group } from "d3-array"
@@ -17,20 +17,8 @@
     export let x_accessor: (d: Partial<DataEntry>) => string, y_accessor: (d: Partial<DataEntry>) => number
     export let c_accessor: (d: Partial<DataEntry>) => string
 
-    export let tooltip_accessors: {
-        "Chars Read": (d: DataEntry) => number;
-        "Time Read": (d: DataEntry) => number;
-        "Read Speed": (d: DataEntry) => number;
-    }
-    export let tooltip_formatters: {
-        "Chars Read": (n: number | {
-            valueOf(): number;
-        }) => string;
-        "Time Read": (t: number) => string;
-        "Read Speed": (n: number | {
-            valueOf(): number;
-        }) => string;
-    }
+    export let tooltip_accessors: TooltipAccessors
+    export let tooltip_formatters: TooltipFormatters
 
     export let graph_title: string
     export let x_label: string, y_label: string

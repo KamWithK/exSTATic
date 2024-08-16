@@ -7,6 +7,7 @@
     import { format } from "d3-format"
     import { parseISO, startOfYear, endOfYear, addYears, subYears, getYear } from "date-fns"
     import type { DataEntry } from "../data_wrangling/data_extraction";
+    import type { TooltipFormatters } from "../components/charts/popup.svelte";
 
     const SECS_TO_HRS = 60 * 60
 
@@ -97,10 +98,10 @@
         "Read Speed": read_speed_accessor,
     }
 
-    const tooltip_formatters = {
+    const tooltip_formatters: TooltipFormatters = {
         "Chars Read": format(",.0f"),
-        "Time Read": (t: number) => {
-            let minutes = Math.floor(t / 60)
+        "Time Read": (t) => {
+            let minutes = Math.floor(t.valueOf() / 60)
             let hours = Math.floor(minutes / 60)
             return `${hours}h ${minutes % 60}m`
         },

@@ -1,3 +1,11 @@
+<script context="module" lang="ts">
+    export type TooltipKey = "Chars Read" | "Time Read" | "Read Speed";
+    export type TooltipAccessors = Record<TooltipKey, (d: DataEntry) => number>
+    export type TooltipFormatters = Record<TooltipKey, (n: (number | {
+        valueOf(): number;
+    })) => string>
+</script>
+
 <script lang="ts">
     import { timeFormat } from "d3-time-format"
     import type { DataEntry } from "../../data_wrangling/data_extraction";
@@ -10,20 +18,8 @@
     export let data: Partial<DataEntry>[], groups: string[] | undefined, hues: string[] | undefined
     export let date_accessor: ((d: Partial<DataEntry>) => Date) | undefined = undefined
     export let group_accessor: (d: Partial<DataEntry>) => string | number
-    export let tooltip_accessors: {
-        "Chars Read": (d: DataEntry) => number;
-        "Time Read": (d: DataEntry) => number;
-        "Read Speed": (d: DataEntry) => number;
-    }
-    export let tooltip_formatters: {
-        "Chars Read": (n: number | {
-            valueOf(): number;
-        }) => string;
-        "Time Read": (t: number) => string;
-        "Read Speed": (n: number | {
-            valueOf(): number;
-        }) => string;
-    }
+    export let tooltip_accessors: TooltipAccessors
+    export let tooltip_formatters: TooltipFormatters
 
     Object.keys(tooltip_accessors).forEach(key => popup_tooltips[key] = "")
 
@@ -39,8 +35,8 @@
             ? group_accessor(data[index]).toString()
             : hues[groups!.indexOf(group_accessor(data[index]).toString())]
 
-        Object.entries(tooltip_accessors).forEach(([key, value_accessor]: [string, Function]) => {
-            popup_tooltips[key] = tooltip_formatters[key](value_accessor(data[index]))
+        Object.entries(tooltip_accessors).forEach(([key, value_accessor]) => {
+            popup_tooltips[key] = tooltip_formatters[key as TooltipKey](value_accessor(data[index]))
         })
 
         show_popup = true

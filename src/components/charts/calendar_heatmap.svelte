@@ -4,27 +4,15 @@
 
     import { getDay, getWeek } from "date-fns"
     import Bars from "../draw/bars.svelte"
-    import Popup from "./popup.svelte"
+    import Popup, { type TooltipAccessors, type TooltipFormatters } from "./popup.svelte"
     import type { DataEntry } from "../../data_wrangling/data_extraction";
     import type { ScaleBand, ScaleLinear } from "d3";
 
     export let data: Partial<DataEntry>[]
 
     export let date_accessor: (d: Partial<DataEntry>) => Date, metric_accessor: (d: Partial<DataEntry>) => number
-    export let tooltip_accessors: {
-        "Chars Read": (d: DataEntry) => number;
-        "Time Read": (d: DataEntry) => number;
-        "Read Speed": (d: DataEntry) => number;
-    }
-    export let tooltip_formatters: {
-        "Chars Read": (n: number | {
-            valueOf(): number;
-        }) => string;
-        "Time Read": (t: number) => string;
-        "Read Speed": (n: number | {
-            valueOf(): number;
-        }) => string;
-    }
+    export let tooltip_accessors: TooltipAccessors
+    export let tooltip_formatters: TooltipFormatters
 
     export let graph_title: string
 

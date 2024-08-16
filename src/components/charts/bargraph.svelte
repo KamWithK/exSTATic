@@ -56,7 +56,7 @@
     let x_scale: ScaleBand<string>, xGet: (d: Partial<DataEntry>) => number
     let y_scale: ScaleBand<string>, yGet: (d: Partial<DataEntry>) => number
 
-    const cGet = (d: Partial<DataEntry>) => Number(hues[groups.indexOf(c_accessor(d))])
+    const cGet = (d: Partial<DataEntry>) => hues[groups.indexOf(c_accessor(d))]
     const hGet = (d: Partial<DataEntry>) => y_scale === undefined ? 0 : Math.max(0, height - margin - yGet(d)!)
 
     let bar_width = 0

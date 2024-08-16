@@ -46,15 +46,20 @@
     $: x_range = [radius + margin, width - radius - margin]
     $: y_range = [height - radius - margin, radius + margin]
 
-    let r_scale: number[] & ScaleLinear<number, number, never>
-    $: r_scale = rScaleType()
-        .domain(extent(data, r_accessor))
-        .range([0, radius])
+    // Several of these functions can return undefined
+    // Lift those up
+    let r_scale: ScaleLinear<number, number, never> | undefined
+    $: {
+        const scale_extent = r_accessor && extent(data, r_accessor)
+        if (scale_extent && scale_extent[0] !== undefined && scale_extent[1] !== undefined) {
+            r_scale = rScaleType().domain(scale_extent).range([0, radius])
+        }
+    }
 
     let x_scale: ScaleBand<string>, xGet: (d: DataEntry) => number | undefined
     let y_scale: ScaleBand<string>, yGet: (d: DataEntry) => number | undefined
 
-    const rGet = (d: DataEntry) => r_accessor !== undefined ? r_scale(r_accessor(d)) : radius
+    const rGet = (d: DataEntry) => r_accessor && r_scale && r_scale(r_accessor(d))
     const cGet = (d: DataEntry) => hues[groups.indexOf(c_accessor(d))]
 
     const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")]

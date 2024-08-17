@@ -6,9 +6,9 @@
 
     export let data: DataEntry[]
 
-    export let name_accessor: (d: DataEntry) => string
-    export let date_accessor: (d: DataEntry) => Date
-    export let chars_read_accessor: (d: DataEntry) => number
+    export let name_accessor: (d: Partial<DataEntry>) => string
+    export let date_accessor: (d: Partial<DataEntry>) => Date
+    export let chars_read_accessor: (d: Partial<DataEntry>) => number
     export let time_read_accessor: (d: DataEntry) => number
     export let read_speed_accessor: (d: DataEntry) => number
 

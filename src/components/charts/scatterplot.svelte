@@ -18,7 +18,7 @@
 
     export let [xScaleType, yScaleType, rScaleType] = [scaleTime, scaleLinear, scaleLinear]
     export let x_accessor: (d: Partial<DataEntry>) => Date, y_accessor: (d: DataEntry) => number
-    export let r_accessor: ((d: Partial<DataEntry>) => number) | undefined, c_accessor: (d: DataEntry) => string
+    export let r_accessor: ((d: Partial<DataEntry>) => number) | undefined, c_accessor: (d: Partial<DataEntry>) => string
 
     export let draw_line = false
 

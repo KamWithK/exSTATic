@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Stat } from "../../storage/instance_storage";
-    import type { MediaStorage } from "../storage/media_storage"
+    import type { MediaStorage } from "../../storage/media_storage"
 
     let SECS_TO_HOURS = 60 * 60
 
@@ -9,13 +9,8 @@
     export let show_lines: boolean = true
 
     let chars: string, lines: string, time: string, speed: string
-    
-    const statsExist = (media_storage: MediaStorage) =>
-        media_storage.instance_storage != undefined
-            ? media_storage.instance_storage.today_stats
-            : undefined
-    
-    const getStat = (daily_stats: Stat, stat_key: keyof Stat) =>
+
+    const getStat = (daily_stats: Stat | undefined, stat_key: keyof Stat) =>
         daily_stats != undefined && daily_stats.hasOwnProperty(stat_key)
             ? daily_stats[stat_key]
             : 0
@@ -26,7 +21,7 @@
         return date.toISOString().substring(11, 19)
     }
 
-    const getSpeed = (chars: number, time_secs: number) =>
+    const getSpeed = (chars: number | undefined, time_secs: number | undefined) =>
         chars === undefined || time_secs === undefined
             || isNaN(chars) || isNaN(time_secs)
             || chars === 0 || time_secs === 0
@@ -34,14 +29,14 @@
                 : (Math.round((chars / time_secs) * SECS_TO_HOURS)).toLocaleString()
             
     const calculateStats = () => {
-        const daily_stats = statsExist(media_storage)
+        const daily_stats = media_storage.instance_storage?.today_stats
 
         const char_count = getStat(daily_stats, "chars_read")
         const time_secs = getStat(daily_stats, "time_read")
 
         chars = char_count?.toLocaleString() ?? ""
         time = getTime(time_secs!)
-        speed = getSpeed(char_count!, time_secs!)
+        speed = getSpeed(char_count, time_secs)
 
         if (show_lines) {
             const line_count = getStat(daily_stats, "lines_read")

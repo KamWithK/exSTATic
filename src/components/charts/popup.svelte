@@ -23,20 +23,21 @@
 
     Object.keys(tooltip_accessors).forEach(key => popup_tooltips[key] = "")
 
-    export const mouse_move = (event: Event) => {
-        const index = event.target?.dataset.index
+    export const mouse_move = (event: MouseEvent) => {
+        const index = Number((event.target as HTMLCanvasElement).getAttribute("data-index"))
+        const data_entry = data[index];
 
         popup_x = event.layerX
         popup_y = event.layerY
         
-        popup_name = !!groups ? group_accessor(data[index]).toString() : ""
-        popup_date = date_accessor ? timeFormat("%d %B %Y")(date_accessor(data[index])) : ""
+        popup_name = !!groups ? group_accessor(data_entry).toString() : ""
+        popup_date = date_accessor ? timeFormat("%d %B %Y")(date_accessor(data_entry)) : ""
         popout_color = hues === undefined
-            ? group_accessor(data[index]).toString()
-            : hues[groups!.indexOf(group_accessor(data[index]).toString())]
+            ? group_accessor(data_entry).toString()
+            : hues[groups!.indexOf(group_accessor(data_entry).toString())]
 
         Object.entries(tooltip_accessors).forEach(([key, value_accessor]) => {
-            popup_tooltips[key] = tooltip_formatters[key as TooltipKey](value_accessor(data[index]))
+            popup_tooltips[key] = tooltip_formatters[key as TooltipKey](value_accessor(data_entry))
         })
 
         show_popup = true

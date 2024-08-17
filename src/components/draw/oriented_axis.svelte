@@ -1,5 +1,6 @@
 <script lang="ts">
     import { select } from "d3-selection"
+    // @ts-ignore
     import { axisTop, axisRight, axisBottom, axisLeft, axisLabelOffset } from "@d3fc/d3fc-axis"
 
     export let scale: any

@@ -4,11 +4,11 @@ import { formatISO } from "date-fns"
 const IGNORE = /[〔〕《》〖〗〘〙〚〛【】「」［］『』｛｝\[\]()（）｟｠〈〉≪≫。、.,※＊'：！?？‥…―─ｰ〽～→♪♪ ♫ ♬ ♩\"　\t\n]/g
 const SPLIT = /[\n。.！?？]/g
 
-export function charsInLine(line) {
+export function charsInLine(line: string) {
     return line.replaceAll(IGNORE, "").length
 }
 
-export function lineSplitCount(line) {
+export function lineSplitCount(line: string) {
     return line.split(SPLIT).filter((value) => value.replaceAll(IGNORE, "") != "").length
 }
 
@@ -17,7 +17,7 @@ export function dateNowString() {
     return formatISO(rn, {"representation": "date"})
 }
 
-export function timeToDateString(time) {
+export function timeToDateString(time: number) {
     if (time === undefined || isNaN(time)) return
 
     const date = new Date(0)

@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
     export type TooltipKey = "Chars Read" | "Time Read" | "Read Speed";
-    export type TooltipAccessors = Record<TooltipKey, (d: DataEntry) => number>
+    export type TooltipAccessors = Record<TooltipKey, (d: Partial<DataEntry>) => number>
     export type TooltipFormatters = Record<TooltipKey, (n: (number | {
         valueOf(): number;
     })) => string>

@@ -54,7 +54,7 @@
         }
 	}
 
-	const requestImportStats = (event: InputEvent) => {
+	const requestImportStats = (event: Event) => {
         const confirmed = confirm(
             "Are you sure you'd like to import stats?\nThe imported stats will replace conflicting entries (i.e. on the same days for the same media)...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"
         )
@@ -71,7 +71,7 @@
         })
     }
 
-	const requestImportLines = (event: InputEvent) => {
+	const requestImportLines = (event: Event) => {
         const confirmed = confirm(
             "Are you sure you'd like to import lines?\n Please ensure that ALL stats are up to date beforehand (import if necessary).\nThe imported lines will be inserted after the current ones in storage...\nIt is highly recommended to BACKUP (export) data regularly in case anything goes wrong (i.e. before importing)!"
         )

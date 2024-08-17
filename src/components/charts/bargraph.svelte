@@ -24,7 +24,7 @@
     export let x_label: string, y_label: string
 
     let groups: string[], hues: string[]
-    $: groups = Array.from(group(data, c_accessor as any).keys()) as string[]
+    $: groups = Array.from(group(data, c_accessor).keys()) as string[]
     $: hues = iwanthue(groups.length, {
         "colorSpace": [0, 360, 0, 100, 50, 100],
         "clustering": "force-vector",
@@ -50,9 +50,9 @@
     let bar_width = 0
     $: if (x_scale) bar_width = x_scale.bandwidth()
 
-    const [x_formatter, y_formatter] = [(x_value: any) => x_value, format(".2s")]
+    const [x_formatter, y_formatter] = [(x_value: string) => x_value, format(".2s")]
 
-    let mouse_move: any, mouse_out: any
+    let mouse_move: (event: MouseEvent) => void, mouse_out: () => void
 </script>
 
 <div class="flex flex-col w-full h-full items-center p-12 bg-slate-900">

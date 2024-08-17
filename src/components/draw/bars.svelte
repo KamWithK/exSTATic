@@ -10,7 +10,7 @@
     export let x_scale: ScaleBand<string>, y_scale: ScaleBand<string>
     export let bar_width: number
 
-    export let mouse_move: any, mouse_out: any
+    export let mouse_move: (event: MouseEvent) => void, mouse_out: () => void
 
     let ready: boolean = false
     $: ready = xGet !== undefined && yGet !== undefined

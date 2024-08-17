@@ -56,15 +56,15 @@
         }
     }
 
-    let x_scale: ScaleBand<string>, xGet: (d: DataEntry) => number | undefined
-    let y_scale: ScaleBand<string>, yGet: (d: DataEntry) => number | undefined
+    let x_scale: ScaleBand<string>, xGet: (d: Partial<DataEntry>) => number | undefined
+    let y_scale: ScaleBand<string>, yGet: (d: Partial<DataEntry>) => number | undefined
 
     const rGet = (d: DataEntry) => r_accessor && r_scale && r_scale(r_accessor(d))
     const cGet = (d: DataEntry) => hues[groups.indexOf(c_accessor(d))]
 
     const [x_formatter, y_formatter] = [timeFormat("%B\n%Y"), format(".2s")]
 
-    let mouse_move: any, mouse_out: any
+    let mouse_move: (event: MouseEvent) => void, mouse_out: () => void
 </script>
 
 <div class="flex flex-col w-full h-full items-center p-12 bg-slate-900">

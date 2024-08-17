@@ -3,10 +3,10 @@
     import type { DataEntry } from "../../data_wrangling/data_extraction";
 
     export let data: DataEntry[]
-    export let xGet: (d: DataEntry) => number | undefined, yGet: (d: DataEntry) => number | undefined, rGet: any, cGet: any
+    export let xGet: (d: DataEntry) => number | undefined, yGet: (d: DataEntry) => number | undefined, rGet: (d: DataEntry) => number | undefined, cGet: (d: DataEntry) => string
     export let x_scale: ScaleBand<string>, y_scale: ScaleBand<string>
 
-    export let mouse_move: any, mouse_out: any
+    export let mouse_move: (event: MouseEvent) => void, mouse_out: () => void
 
     let ready: boolean = false
     $: ready = x_scale !== undefined && y_scale !== undefined

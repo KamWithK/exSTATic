@@ -73,7 +73,7 @@
         if (day_num === 6) return "S"
     }
 
-    let mouse_move: any, mouse_out: any
+    let mouse_move: (event: MouseEvent) => void, mouse_out: () => void
 </script>
 
 <div class="flex flex-col w-full h-full items-center p-12 bg-slate-900">

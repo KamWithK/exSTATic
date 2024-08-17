@@ -25,7 +25,7 @@
         .range(range)
     $: if (scale.nice !== undefined) scale = scale.nice()
 
-    export const get = (d: any) => scale(accessor(d))
+    export const get = (d: Partial<DataEntry>) => scale(accessor(d))
 </script>
 
 <LineAxis

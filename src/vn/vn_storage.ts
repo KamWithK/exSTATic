@@ -75,12 +75,14 @@ export class VNStorage extends MediaStorage {
                 date = dateNowString()
             }
 
-            if (!date_stats[date]) {
+            const date_stat = date_stats[date]
+
+            if (!date_stat) {
                 date_stats[date] = { lines_read: 0, chars_read: 0 }
             }
 
-            date_stats[date].lines_read += lineSplitCount(line)
-            date_stats[date].chars_read += charsInLine(line)
+            date_stats[date].lines_read = date_stat.lines_read ?? 0 + lineSplitCount(line)
+            date_stats[date].chars_read = date_stat.chars_read ?? 0 + charsInLine(line)
         })
 
         await this.instance_storage?.deleteLines(details.map(([line_id,,]) => line_id))

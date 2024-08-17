@@ -6,8 +6,8 @@
     export let xGet: any, yGet: any
     export let x_scale: any, y_scale: any
 
-    let line_path: any
-    $: if (x_scale && y_scale) line_path = line()
+    let line_path: string | null
+    $: if (x_scale && y_scale) line_path = line<Partial<DataEntry>>()
         .curve(curveMonotoneX)
         .x(xGet).y(yGet)
         (data)

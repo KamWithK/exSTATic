@@ -6,7 +6,7 @@
 
     export let xGet: (d: Partial<DataEntry>) => number
     export let yGet: (d: Partial<DataEntry>) => number
-    export let hGet: (d: Partial<DataEntry>) => number, cGet: (d: Partial<DataEntry>) => number
+    export let hGet: (d: Partial<DataEntry>) => number, cGet: (d: Partial<DataEntry>) => string | number
     export let x_scale: ScaleBand<string>, y_scale: ScaleBand<string>
     export let bar_width: number
 

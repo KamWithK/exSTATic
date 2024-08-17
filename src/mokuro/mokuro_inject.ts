@@ -6,7 +6,7 @@ import App from "./mokuro.svelte"
 
 console.log("Injected")
 
-var mokuro_storage: MokuroStorage
+let mokuro_storage: MokuroStorage
 
 function getVolumeSeries() {
     const paths = decodeURI(window.location.href).split(SPLIT_PATH)

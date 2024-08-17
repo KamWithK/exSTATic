@@ -3,7 +3,7 @@ import { dateNowString, timeNowSeconds } from "../calculations"
 import { InstanceStorage, type InstanceDetails } from "./instance_storage"
 import { TypeStorage, type TypeProperties } from "./type_storage"
 
-var REFRESH_STATS_INTERVAL = 1000 // in milliseconds
+const REFRESH_STATS_INTERVAL = 1000 // in milliseconds
 
 // EXTENDED STORAGE SPEC
 // {

@@ -3,9 +3,9 @@ import { getData, getInstanceData } from "./data_extraction"
 import * as browser from "webextension-polyfill"
 import { unparse } from "papaparse"
 
-var BOM_CODE = "\ufeff"
+let BOM_CODE = "\ufeff"
 
-var isChrome = !!(window as any).chrome && (!!(window as any).chrome.webstore || !!(window as any).chrome.runtime);
+let isChrome = !!(window as any).chrome && (!!(window as any).chrome.webstore || !!(window as any).chrome.runtime);
 
 function csv_blob(csv: string, options: {[key: string]: string}) {
     // Byte Order Mark (BOM) required on Windows for displaying Japanese characters

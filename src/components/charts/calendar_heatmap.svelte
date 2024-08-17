@@ -42,7 +42,7 @@
 
     let x_scale: ScaleBand<string>
     let y_scale: ScaleBand<string>
-    let colorScale: number[] & ScaleLinear<number, number, never>
+    let colorScale: ScaleLinear<string, string, never> | undefined
 
     $: x_scale = scaleBand()
         .domain(range(53).map(String))
@@ -52,12 +52,16 @@
         .domain(range(7).map(String))
         .padding(0.1)
         .range(y_range)
-    $: colorScale = scaleLinear()
-        .domain(extent(data, metric_accessor))
-        .range(["#818cf8", "#4338ca"])
+    $: {
+        const color_extent = extent(data, metric_accessor)
+        colorScale = color_extent[0] !== undefined && color_extent[1] !== undefined ? scaleLinear<string>()
+            .domain(color_extent)
+            .range(["#818cf8", "#4338ca"])
+            : undefined
+    }
 
     const [xGet, yGet] = [(d: Partial<DataEntry>) => x_scale(xAccessor(d).toString())!, (d: Partial<DataEntry>) => y_scale(yAccessor(d).toString())!]
-    const cGet = (d: Partial<DataEntry>) => colorScale(metric_accessor(d)!)
+    const cGet = (d: Partial<DataEntry>) => colorScale!(metric_accessor(d)!)
 
     const dayCode = (day_num: number) => {
         if (day_num === 0) return "S"

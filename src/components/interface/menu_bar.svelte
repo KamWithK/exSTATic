@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { MediaStorage } from "../storage/media_storage"
+    import type { MediaStorage } from "../../storage/media_storage"
     import MenuOption from "./menu_option.svelte"
 
     export let show = false

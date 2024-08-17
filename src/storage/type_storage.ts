@@ -14,6 +14,7 @@ import * as browser from "webextension-polyfill"
 // }
 
 export interface TypeProperties {
+    id: string;
     afk_max_time: number;
     bottom_line_padding: string;
     font: string;

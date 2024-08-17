@@ -83,7 +83,7 @@ Each time you make a change run `npm run build` (this will take 2x longer since 
 
 To have live browser extension updates:
 * **Firefox** - `npm run web-ext-firefox -- run`
-* **Chrome** - `npm run web-ext-chrome -- run --target chromium`
+* **Chrome** - `npm run web-ext-chrome -- run -- --target chromium`
 
 To build the extension ready for release:
 * **Firefox** - `npm run web-ext-firefox -- build`

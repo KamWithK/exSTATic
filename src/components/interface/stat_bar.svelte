@@ -8,14 +8,14 @@
     export let active: boolean = false
     export let show_lines: boolean = true
 
-    let chars: number, lines: number, time: string, speed: string
+    let chars: string, lines: string, time: string, speed: string
     
     const statsExist = (media_storage: MediaStorage) =>
         media_storage.instance_storage != undefined
             ? media_storage.instance_storage.today_stats
             : undefined
     
-    const getStat = (daily_stats: Stat, stat_key: string) =>
+    const getStat = (daily_stats: Stat, stat_key: keyof Stat) =>
         daily_stats != undefined && daily_stats.hasOwnProperty(stat_key)
             ? daily_stats[stat_key]
             : 0
@@ -39,13 +39,13 @@
         const char_count = getStat(daily_stats, "chars_read")
         const time_secs = getStat(daily_stats, "time_read")
 
-        chars = char_count.toLocaleString()
-        time = getTime(time_secs)
-        speed = getSpeed(char_count, time_secs)
+        chars = char_count?.toLocaleString() ?? ""
+        time = getTime(time_secs!)
+        speed = getSpeed(char_count!, time_secs!)
 
         if (show_lines) {
             const line_count = getStat(daily_stats, "lines_read")
-            lines = line_count.toLocaleString()
+            lines = line_count?.toLocaleString() ?? ""
         }
     }
     calculateStats()

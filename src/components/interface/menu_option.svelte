@@ -2,13 +2,14 @@
     import type { MediaStorage } from "../../storage/media_storage"
 
     import { onMount } from "svelte"
+    import type { HTMLInputTypeAttribute } from "svelte/elements"
     import type { TypeProperties } from "../../storage/type_storage";
 
     export let media_storage: MediaStorage
     export let id: keyof TypeProperties
-    export let description: string = ""
+    export let description = ""
     export let units = ""
-    export let type = "number"
+    export let type: HTMLInputTypeAttribute = "number"
     export let value: string | number | undefined = undefined
     export let root_css: string | undefined = undefined
 

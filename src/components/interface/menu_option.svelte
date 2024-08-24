@@ -2,13 +2,14 @@
     import type { MediaStorage } from "../../storage/media_storage"
 
     import { onMount } from "svelte"
+    import type { TypeProperties } from "../../storage/type_storage";
 
     export let media_storage: MediaStorage
-    export let id: string
+    export let id: keyof TypeProperties
     export let description: string = ""
     export let units = ""
     export let type = "number"
-    export let value: string | undefined = undefined
+    export let value: string | number | undefined = undefined
     export let root_css: string | undefined = undefined
 
     let input_element: HTMLInputElement | undefined
@@ -28,12 +29,13 @@
     }
     
     onMount(() => {
-        if (media_storage.properties.id) {
-            input_element!.value = media_storage.properties.id
+        if (media_storage.properties.hasOwnProperty(id) && input_element) {
+            value = media_storage.properties[id]
+            input_element.value = (value ?? "").toString()
         }
 
-        if (input_element!.value != undefined) {
-            input_element?.dispatchEvent(new Event("change"))
+        if (input_element?.value !== undefined) {
+            input_element.dispatchEvent(new Event("change"))
         }
     })
 </script>

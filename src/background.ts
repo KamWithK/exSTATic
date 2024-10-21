@@ -4,6 +4,7 @@ import { message_action } from "./messaging/message_actions"
 import { connectionClosed, connectionOpened, dataFetched, messagingConnected } from "./messaging/socket_actions"
 
 import * as browser from "webextension-polyfill"
+import type { Tabs } from "webextension-polyfill"
 import ReconnectingWebSocket from "reconnecting-websocket"
 
 declare global {
@@ -14,7 +15,8 @@ declare global {
     }
 }
 
-const reloadTab = async (tab: any) => {
+const reloadTab = async (tab: Tabs.Tab) => {
+    if (!tab.id) return;
     browser.scripting.executeScript({
         target: { tabId: tab.id },
         func: () => window.location.reload()
@@ -22,7 +24,7 @@ const reloadTab = async (tab: any) => {
 }
 
 // Run a function with each tab that has a content script
-const runOnContentScripts = async (func: (tab: any) => void) => {
+const runOnContentScripts = async (func: (tab: Tabs.Tab) => void) => {
     for (const content_script of browser.runtime.getManifest().content_scripts ?? []) {
         for (const tab of await browser.tabs.query({url: content_script.matches}))
             func(tab)

@@ -140,3 +140,6 @@ build-v2/**
 build-v3/**
 build-chrome/**
 build-firefox/**
+
+# Nix flake artifacts
+.direnv

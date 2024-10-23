@@ -46,7 +46,7 @@
     let r_scale
     $: r_scale = rScaleType()
         .domain(extent(data, r_accessor))
-        .range([0, radius])
+        .range([5, radius])
 
     let x_scale, xGet
     let y_scale, yGet

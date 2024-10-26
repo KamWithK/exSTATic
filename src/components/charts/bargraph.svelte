@@ -8,7 +8,7 @@
     import { format } from "d3-format"
     import { scaleLinear, scaleBand } from "d3-scale"
     import iwanthue from "iwanthue"
-    import type { ScaleBand } from "d3";
+    import type { ScaleBand, ScaleLinear } from "d3-scale";
     import type { DataEntry } from "../../data_wrangling/data_extraction";
 
     export let data: Partial<DataEntry>[]
@@ -42,7 +42,7 @@
     $: y_range = [height - margin, margin]
 
     let x_scale: ScaleBand<string>, xGet: (d: Partial<DataEntry>) => number
-    let y_scale: ScaleBand<string>, yGet: (d: Partial<DataEntry>) => number
+    let y_scale: ScaleLinear<number, number>, yGet: (d: Partial<DataEntry>) => number
 
     const cGet = (d: Partial<DataEntry>) => hues[groups.indexOf(c_accessor(d))]
     const hGet = (d: Partial<DataEntry>) => y_scale === undefined ? 0 : Math.max(0, height - margin - yGet(d)!)

@@ -1,10 +1,10 @@
 <script lang="ts">
-    import type { ScaleBand } from "d3";
+    import type { ScaleBand, ScaleLinear } from "d3";
     import type { DataEntry } from "../../data_wrangling/data_extraction";
 
     export let data: DataEntry[]
     export let xGet: (d: DataEntry) => number | undefined, yGet: (d: DataEntry) => number | undefined, rGet: (d: DataEntry) => number | undefined, cGet: (d: DataEntry) => string
-    export let x_scale: ScaleBand<string>, y_scale: ScaleBand<string>
+    export let x_scale: ScaleBand<string>, y_scale: ScaleLinear<number, number>
 
     export let mouse_move: (event: MouseEvent) => void, mouse_out: () => void
 

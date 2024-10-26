@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ScaleBand } from "d3";
+    import type { ScaleBand, ScaleLinear } from "d3";
     import type { DataEntry } from "../../data_wrangling/data_extraction";
 
     export let data: Partial<DataEntry>[]
@@ -7,7 +7,7 @@
     export let xGet: (d: Partial<DataEntry>) => number
     export let yGet: (d: Partial<DataEntry>) => number
     export let hGet: (d: Partial<DataEntry>) => number, cGet: (d: Partial<DataEntry>) => string | number
-    export let x_scale: ScaleBand<string>, y_scale: ScaleBand<string>
+    export let x_scale: ScaleBand<string>, y_scale: ScaleLinear<number, number>
     export let bar_width: number
 
     export let mouse_move: (event: MouseEvent) => void, mouse_out: () => void

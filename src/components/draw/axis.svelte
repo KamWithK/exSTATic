@@ -9,7 +9,7 @@
 
     export let data: Partial<DataEntry>[]
     export let accessor: any
-    export let formatter: (date: any) => string
+    export let formatter: (value: any) => string
 
     export let range: [number, number]
 

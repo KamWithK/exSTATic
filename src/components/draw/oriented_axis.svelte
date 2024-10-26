@@ -1,20 +1,21 @@
 <script lang="ts">
     import { select } from "d3-selection"
+    import type { ScaleBand, ScaleLinear, ScaleTime } from "d3-scale";
     // @ts-ignore
     import { axisTop, axisRight, axisBottom, axisLeft, axisLabelOffset } from "@d3fc/d3fc-axis"
 
-    export let scale: any
+    export let scale: ScaleBand<string> | ScaleLinear<number, number> | ScaleTime<number, number>
 
     export let height: number, width: number, margin: number
     export let position: "top" | "right" | "bottom" | "left"
-    export let formatter: (date: any) => string
+    export let formatter: ((date: (x_value: string) => string) => string) | ((n: number | { valueOf(): number; }) => string) | ((x_value: string) => string) | ((date: Date) => string)
 
     export let label = ""
     
     let axis: SVGGElement
     let transform = "0,0"
 
-    const positionedAxis = (scale: Function) => {
+    const positionedAxis = (scale: ScaleBand<string> | ScaleLinear<number, number> | ScaleTime<number, number> | undefined) => {
         if (position === "top") {
             return axisLabelOffset(axisTop(scale))
         }
@@ -44,10 +45,12 @@
         }
     }
 
-    const enlargedScale = (): Function => {
+    const enlargedScale = () => {
         const axis_scale = scale.copy()
         const range = axis_scale.range()
         let excess
+
+        if ("invert" in axis_scale === false) return
 
         // Find how much more room is physical range is available than was specified
         // NOTE: A margins worth of extra space is allowed at the start and end
@@ -62,12 +65,16 @@
         const extended_range = [range[0] - excess! / 2, range[1] + excess! / 2]
         const extended_domain = [axis_scale.invert(extended_range[0]), axis_scale.invert(extended_range[1])]
 
+        const axis_extended = axis_scale.domain(extended_domain)
+
+        if ("range" in axis_extended === false) return
+
         // Modify the domain and range to cover the full available section
-        return axis_scale.domain(extended_domain).range(extended_range)
+        return axis_extended.range(extended_range)
     }
 
     const setupAxis = () => {
-        const axis_creator = positionedAxis(scale.invert ? enlargedScale() : scale)
+        const axis_creator = positionedAxis("invert" in scale ? enlargedScale() : scale)
             .tickSizeOuter(0).tickSize(0)
             .tickFormat(formatter)
 
@@ -77,8 +84,8 @@
         select(axis).select("path").style("stroke", "grey")
     }
 
-    $: if (scale && height && width && margin && position && axis)
-        setupAxis(), formatter
+    $: if (height && width && margin && position && axis)
+        setupAxis(), formatter, scale
 </script>
 
 <g color="grey" stroke="grey" fill="grey" bind:this={axis} transform="translate({transform})"/>

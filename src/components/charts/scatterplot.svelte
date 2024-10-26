@@ -1,7 +1,6 @@
 <script lang="ts">
     import Axis from "../draw/axis.svelte"
     import Circles from "../draw/circles.svelte"
-    import Line from "../draw/line.svelte"
     import Popup, { type TooltipAccessors, type TooltipFormatters } from "./popup.svelte"
     import Legend from "../draw/legend.svelte"
 
@@ -19,8 +18,6 @@
     export let [xScaleType, yScaleType, rScaleType] = [scaleTime, scaleLinear, scaleLinear]
     export let x_accessor: (d: Partial<DataEntry>) => Date, y_accessor: (d: DataEntry) => number
     export let r_accessor: ((d: Partial<DataEntry>) => number) | undefined, c_accessor: (d: Partial<DataEntry>) => string
-
-    export let draw_line = false
 
     export let tooltip_accessors: TooltipAccessors
     export let tooltip_formatters: TooltipFormatters
@@ -57,7 +54,7 @@
     }
 
     let x_scale: ScaleBand<string>, xGet: (d: Partial<DataEntry>) => number
-    let y_scale: ScaleBand<string>, yGet: (d: Partial<DataEntry>) => number
+    let y_scale: ScaleLinear<number, number>, yGet: (d: Partial<DataEntry>) => number
 
     const rGet = (d: DataEntry) => r_accessor && r_scale && r_scale(r_accessor(d))
     const cGet = (d: DataEntry) => hues[groups.indexOf(c_accessor(d))]
@@ -76,10 +73,6 @@
             <Axis bind:get={yGet} bind:scale={y_scale} scaleType={yScaleType} {data} accessor={y_accessor} formatter={y_formatter} bind:range={y_range} label={y_label} bind:height bind:width {margin} position="left"/>
 
             <Circles {data} {xGet} {yGet} {rGet} {cGet} {x_scale} {y_scale} {mouse_move} {mouse_out}/>
-
-            {#if draw_line}
-                <Line {data} {xGet} {yGet} {x_scale} {y_scale}/>
-            {/if}
         </svg>
 
         <Legend {groups} {hues}/>

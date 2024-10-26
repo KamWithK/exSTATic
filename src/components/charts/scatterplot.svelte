@@ -56,8 +56,8 @@
         }
     }
 
-    let x_scale: ScaleBand<string>, xGet: (d: Partial<DataEntry>) => number | undefined
-    let y_scale: ScaleBand<string>, yGet: (d: Partial<DataEntry>) => number | undefined
+    let x_scale: ScaleBand<string>, xGet: (d: Partial<DataEntry>) => number
+    let y_scale: ScaleBand<string>, yGet: (d: Partial<DataEntry>) => number
 
     const rGet = (d: DataEntry) => r_accessor && r_scale && r_scale(r_accessor(d))
     const cGet = (d: DataEntry) => hues[groups.indexOf(c_accessor(d))]

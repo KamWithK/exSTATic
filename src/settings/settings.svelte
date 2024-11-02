@@ -43,7 +43,7 @@
 {/if}
 </div>
 
-<style global>
+<style global lang="postcss">
   @tailwind base;
   @tailwind components;
   @tailwind utilities;

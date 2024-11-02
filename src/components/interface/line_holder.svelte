@@ -20,7 +20,7 @@
     {/each}
 </div>
 
-<style>
+<style lang="postcss">
     #entry_holder {
         @apply flex flex-col w-full h-full gap-2;
         padding-bottom: var(--default-text-align);

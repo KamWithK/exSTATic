@@ -5,7 +5,7 @@ import { unparse } from "papaparse"
 
 let BOM_CODE = "\ufeff"
 
-let isChrome = !!(window as any).chrome && (!!(window as any).chrome.webstore || !!(window as any).chrome.runtime);
+let isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
 
 function csv_blob(csv: string, options: {[key: string]: string}) {
     // Byte Order Mark (BOM) required on Windows for displaying Japanese characters

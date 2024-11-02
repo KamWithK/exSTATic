@@ -8,6 +8,12 @@ import type { Tabs } from "webextension-polyfill"
 import ReconnectingWebSocket from "reconnecting-websocket"
 
 declare global {
+    interface Window {
+        chrome: {
+            runtime: object | undefined
+            webstore: object | undefined
+        } | undefined
+    }
     interface DocumentEventMap {
     		media_changed: CustomEvent
     		new_line: CustomEvent

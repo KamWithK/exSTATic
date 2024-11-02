@@ -1,10 +1,10 @@
 <script lang="ts">
-    import Axis from "../draw/axis.svelte"
+    import LineAxis from "../draw/oriented_axis.svelte"
     import Bars from "../draw/bars.svelte"
     import Popup, { type TooltipAccessors, type TooltipFormatters } from "./popup.svelte"
     import Legend from "../draw/legend.svelte"
 
-    import { group } from "d3-array"
+    import { extent, group } from "d3-array"
     import { format } from "d3-format"
     import { scaleLinear, scaleBand } from "d3-scale"
     import iwanthue from "iwanthue"
@@ -41,9 +41,23 @@
     $: x_range = [margin, width - margin]
     $: y_range = [height - margin, margin]
 
-    let x_scale: ScaleBand<string>, xGet: (d: Partial<DataEntry>) => number
-    let y_scale: ScaleLinear<number, number>, yGet: (d: Partial<DataEntry>) => number
+    let x_scale: ScaleBand<string>
+    let y_scale: ScaleLinear<number, number, never>
 
+    // Map data (domains) onto physical scales (ranges)
+    $: x_scale = scaleBand()
+        .domain(data.map(x_accessor))
+        .range(x_range)
+    $: {
+        const scale_extent = y_accessor && extent(data, y_accessor)
+        if (scale_extent && scale_extent[0] !== undefined && scale_extent[1] !== undefined) {
+            y_scale = scaleLinear().domain(scale_extent).range(y_range).nice()
+        }
+    }
+
+
+    const xGet = (d: Partial<DataEntry>) => x_scale(x_accessor(d))
+    const yGet = (d: Partial<DataEntry>) => y_scale(y_accessor(d))
     const cGet = (d: Partial<DataEntry>) => hues[groups.indexOf(c_accessor(d))]
     const hGet = (d: Partial<DataEntry>) => y_scale === undefined ? 0 : Math.max(0, height - margin - yGet(d)!)
 
@@ -60,8 +74,14 @@
 
     <figure bind:clientHeight={height} bind:clientWidth={width} class="flex flex-row w-full h-full items-center">
         <svg height="100%" width="100%" class="max-h-[80vh]" style="resize: both;" viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">
-            <Axis bind:get={xGet} bind:scale={x_scale} scaleType={xScaleType} {data} accessor={x_accessor} formatter={x_formatter} bind:range={x_range} label={x_label} bind:height bind:width {margin} position="bottom"/>
-            <Axis bind:get={yGet} bind:scale={y_scale} scaleType={yScaleType} {data} accessor={y_accessor} formatter={y_formatter} bind:range={y_range} label={y_label} bind:height bind:width {margin} position="left"/>
+            <LineAxis
+                bind:scale={x_scale} bind:height bind:width {margin}
+                position="bottom" formatter={x_formatter} label={x_label}
+            />
+            <LineAxis
+                bind:scale={y_scale} bind:height bind:width {margin}
+                position="left" formatter={y_formatter} label={y_label}
+            />
 
             <Bars {data} {xGet} {yGet} {hGet} {cGet} {x_scale} {y_scale} {bar_width} {mouse_move} {mouse_out}/>
         </svg>

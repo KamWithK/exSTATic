@@ -4,7 +4,7 @@
 
     export let data: Partial<DataEntry>[]
 
-    export let xGet: (d: Partial<DataEntry>) => number
+    export let xGet: (d: Partial<DataEntry>) => number | undefined
     export let yGet: (d: Partial<DataEntry>) => number
     export let hGet: (d: Partial<DataEntry>) => number, cGet: (d: Partial<DataEntry>) => string | number
     export let x_scale: ScaleBand<string>, y_scale: ScaleLinear<number, number>

@@ -19,11 +19,6 @@
   export let data: DataEntry[];
   export let radius = 60;
 
-  export let [xScaleType, yScaleType, rScaleType] = [
-    scaleTime,
-    scaleLinear,
-    scaleLinear,
-  ];
   export let x_accessor: (d: Partial<DataEntry>) => Date,
     y_accessor: (d: DataEntry) => number;
   export let r_accessor: ((d: Partial<DataEntry>) => number) | undefined,
@@ -90,7 +85,7 @@
       scale_extent[0] !== undefined &&
       scale_extent[1] !== undefined
     ) {
-      r_scale = rScaleType().domain(scale_extent).range([0, radius]);
+      r_scale = scaleLinear().domain(scale_extent).range([0, radius]);
     }
   }
 

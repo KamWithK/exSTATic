@@ -17,7 +17,6 @@
 
   export let data: Partial<DataEntry>[];
 
-  export let [xScaleType, yScaleType] = [scaleBand, scaleLinear];
   export let x_accessor: (d: Partial<DataEntry>) => string,
     y_accessor: (d: Partial<DataEntry>) => number;
   export let c_accessor: (d: Partial<DataEntry>) => string;

@@ -3,6 +3,7 @@ console.log("Injected")
 import * as browser from "webextension-polyfill"
 import { VNStorage } from "./vn_storage"
 import App from "./vn.svelte"
+import { mount } from "svelte";
 
 const setup = async () => {
 	const vn_storage = await VNStorage.build(true)
@@ -19,11 +20,11 @@ const setup = async () => {
 	}
 	connectMessaging()
 
-	new App({
-		target: document.documentElement,
-		props: {
-			vn_storage: vn_storage
-		}
-	})
+	mount(App, {
+    		target: document.documentElement,
+    		props: {
+    			vn_storage: vn_storage
+    		}
+    	})
 }
 setup()

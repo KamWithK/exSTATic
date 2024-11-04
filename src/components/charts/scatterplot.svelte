@@ -1,3 +1,4 @@
+<!-- @migration-task Error while migrating Svelte code: Encountered an export declaration pattern that is not supported for automigration. -->
 <script lang="ts">
     import LineAxis from "../draw/oriented_axis.svelte"
     import Circles from "../draw/circles.svelte"

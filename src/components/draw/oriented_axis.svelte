@@ -1,19 +1,35 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import { select } from "d3-selection"
     import type { ScaleBand, ScaleLinear, ScaleTime } from "d3-scale";
     // @ts-ignore
     import { axisTop, axisRight, axisBottom, axisLeft, axisLabelOffset } from "@d3fc/d3fc-axis"
 
-    export let scale: ScaleBand<string> | ScaleLinear<number, number> | ScaleTime<number, number>
 
-    export let height: number, width: number, margin: number
-    export let position: "top" | "right" | "bottom" | "left"
-    export let formatter: ((date: (x_value: string) => string) => string) | ((n: number | { valueOf(): number; }) => string) | ((x_value: string) => string) | ((date: Date) => string)
 
-    export let label = ""
+    interface Props {
+        scale: ScaleBand<string> | ScaleLinear<number, number> | ScaleTime<number, number>;
+        height: number;
+        width: number;
+        margin: number;
+        position: "top" | "right" | "bottom" | "left";
+        formatter: ((date: (x_value: string) => string) => string) | ((n: number | { valueOf(): number; }) => string) | ((x_value: string) => string) | ((date: Date) => string);
+        label?: string;
+    }
+
+    let {
+        scale,
+        height,
+        width,
+        margin,
+        position,
+        formatter,
+        label = ""
+    }: Props = $props();
     
-    let axis: SVGGElement
-    let transform = "0,0"
+    let axis: SVGGElement = $state()
+    let transform = $state("0,0")
 
     const positionedAxis = (scale: ScaleBand<string> | ScaleLinear<number, number> | ScaleTime<number, number> | undefined) => {
         if (position === "top") {
@@ -84,8 +100,10 @@
         select(axis).select("path").style("stroke", "grey")
     }
 
-    $: if (height && width && margin && position && axis)
-        setupAxis(), formatter, scale
+    run(() => {
+        if (height && width && margin && position && axis)
+            setupAxis(), formatter, scale
+    });
 </script>
 
 <g color="grey" stroke="grey" fill="grey" bind:this={axis} transform="translate({transform})"/>

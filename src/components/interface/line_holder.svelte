@@ -1,10 +1,17 @@
 <script lang="ts">
+    import { createBubbler } from 'svelte/legacy';
+
+    const bubble = createBubbler();
     import Line from "./line.svelte"
     
     import { onMount } from "svelte"
 
-    export let lines: string[][]
-    let entry_holder: HTMLElement
+    interface Props {
+        lines: string[][];
+    }
+
+    let { lines }: Props = $props();
+    let entry_holder: HTMLElement = $state()
 
     const observer = new MutationObserver(() => {
         window.scrollTo(0, entry_holder.scrollHeight)
@@ -13,8 +20,8 @@
     onMount(() => observer.observe(entry_holder, {"childList": true, "subtree": true}))
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div id="entry_holder" bind:this={entry_holder} on:click on:dblclick>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div id="entry_holder" bind:this={entry_holder} onclick={bubble('click')} ondblclick={bubble('dblclick')}>
     {#each lines as [_, id, line, time]}
         <Line id={id} time={time} sentence={line}/>
     {/each}

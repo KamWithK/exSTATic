@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
     export type TooltipKey = "Chars Read" | "Time Read" | "Read Speed";
     export type TooltipAccessors = Record<TooltipKey, (d: Partial<DataEntry>) => number>
     export type TooltipFormatters = Record<TooltipKey, (n: (number | {
@@ -10,16 +10,30 @@
     import { timeFormat } from "d3-time-format"
     import type { DataEntry } from "../../data_wrangling/data_extraction";
 
-    let show_popup = false
-    let [popup_x, popup_y] = [0, 0]
-    let [popup_name, popup_date, popout_color] = ["", "", ""]
-    let popup_tooltips: {[key: string]: string} = {}
+    let show_popup = $state(false)
+    let [popup_x, popup_y] = $state([0, 0])
+    let [popup_name, popup_date, popout_color] = $state(["", "", ""])
+    let popup_tooltips: {[key: string]: string} = $state({})
     
-    export let data: Partial<DataEntry>[], groups: string[] | undefined, hues: string[] | undefined
-    export let date_accessor: ((d: Partial<DataEntry>) => Date) | undefined = undefined
-    export let group_accessor: (d: Partial<DataEntry>) => string | number
-    export let tooltip_accessors: TooltipAccessors
-    export let tooltip_formatters: TooltipFormatters
+    interface Props {
+        data: Partial<DataEntry>[];
+        groups: string[] | undefined;
+        hues: string[] | undefined;
+        date_accessor?: ((d: Partial<DataEntry>) => Date) | undefined;
+        group_accessor: (d: Partial<DataEntry>) => string | number;
+        tooltip_accessors: TooltipAccessors;
+        tooltip_formatters: TooltipFormatters;
+    }
+
+    let {
+        data,
+        groups,
+        hues,
+        date_accessor = undefined,
+        group_accessor,
+        tooltip_accessors,
+        tooltip_formatters
+    }: Props = $props();
 
     Object.keys(tooltip_accessors).forEach(key => popup_tooltips[key] = "")
 

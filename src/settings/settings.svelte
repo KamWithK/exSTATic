@@ -4,11 +4,15 @@
   import type { TTUStorage } from "../ttu/ttu_storage";
   import { VNStorage } from "../vn/vn_storage";
 
-  let type = "vn"
+  let type = $state("vn")
 
-	export let vn_storage: VNStorage
-	export let mokuro_storage: MokuroStorage
-	export let ttu_storage: TTUStorage
+  interface Props {
+    vn_storage: VNStorage;
+    mokuro_storage: MokuroStorage;
+    ttu_storage: TTUStorage;
+  }
+
+  let { vn_storage, mokuro_storage, ttu_storage }: Props = $props();
 </script>
 
 <div class="flex flex-col px-20 gap-10">

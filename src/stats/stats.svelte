@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import BulkDataGraphs from "./bulk_data_graphs.svelte"
     import MediaGraphs from "./media_graphs.svelte"
     import CalendarHeatmap from "../components/charts/calendar_heatmap.svelte"
@@ -11,7 +13,11 @@
 
     const SECS_TO_HRS = 60 * 60
 
-    export let data: DataEntry[]
+    interface Props {
+        data: DataEntry[];
+    }
+
+    let { data = $bindable() }: Props = $props();
 
     let client_groups
     client_groups = groups(data, d => JSON.stringify([d.uuid, d.date]))
@@ -28,17 +34,19 @@
     const end_time = new Date()
     const start_time = min(data, d => parseISO(d.date)) ?? new Date()
 
-    let [year_start, year_end] = [startOfYear(end_time), endOfYear(end_time)]
-    let year: number | string = getYear(year_start)
-    let type = "all"
+    let [year_start, year_end] = $state([startOfYear(end_time), endOfYear(end_time)])
+    let year: number | string = $state(getYear(year_start))
+    let type = $state("all")
 
     const withinTimePredicate = (d: DataEntry) =>
         year_start <= parseISO(d.date) && parseISO(d.date) <= year_end
     const typePredicate = (d: DataEntry) => type === "all" || d.type === type
 
-    let filtered: DataEntry[], entries_exist: boolean
-    $: filtered = data.filter(withinTimePredicate).filter(typePredicate), year_start, year_end, type
-    $: entries_exist = filtered.length >= 1
+    let filtered: DataEntry[] = $state(), entries_exist: boolean = $derived(filtered.length >= 1)
+    run(() => {
+        filtered = data.filter(withinTimePredicate).filter(typePredicate), year_start, year_end, type
+    });
+    
 
     const nextPeriod = () => {
         if (year_end < end_time) {
@@ -62,29 +70,29 @@
         year = getYear(year_start)
     }
 
-    let uuid_groups: [string, DataEntry[]][], uuid_summary: {
+    let uuid_groups: [string, DataEntry[]][] = $derived(groups(filtered, d => d.uuid)), uuid_summary: {
         name: string;
         time_read: number;
         chars_read: number;
-    }[]
-    $: uuid_groups = groups(filtered, d => d.uuid)
-    $: uuid_summary = uuid_groups.map(([, v]) => ({
+    }[] = $derived(uuid_groups.map(([, v]) => ({
         "name": v[0].name,
         "time_read": sum(v, d => d.time_read),
         "chars_read": sum(v, d => d.chars_read),
-    }))
+    })))
+    
+    
 
-    let date_groups: [string, DataEntry[]][], date_summary: {
+    let date_groups: [string, DataEntry[]][] = $derived(groups(filtered, d => d.date)), date_summary: {
         date: string;
         time_read: number;
         chars_read: number;
-    }[]
-    $: date_groups = groups(filtered, d => d.date)
-    $: date_summary = date_groups.map(([, v]) => ({
+    }[] = $derived(date_groups.map(([, v]) => ({
         "date": v[0].date,
         "time_read": sum(v, d => d.time_read),
         "chars_read": sum(v, d => d.chars_read),
-    }))
+    })))
+    
+    
 
     const name_accessor = (d: Partial<DataEntry>) => d.name!
     const date_accessor = (d: Partial<DataEntry>) => parseISO(d.date!)
@@ -111,7 +119,7 @@
 
 <div class="flex flex-col px-20 gap-10">
     <div id="top_bar" class="flex bg-button bg-opacity-80 z-50 h-20 sticky top-0 items-center justify-between">
-        <button class="material-icons header-text header-icon" on:click={previousPeriod}>navigate_before</button>
+        <button class="material-icons header-text header-icon" onclick={previousPeriod}>navigate_before</button>
         <div class="flex flex-row gap-3 place-items-center">
             <p class="header-text">{year}</p>
             <select class="bg-button" bind:value={type}>
@@ -121,7 +129,7 @@
                 <option value="ttu">TTU</option>
             </select>
         </div>
-        <button class="material-icons header-text header-icon" on:click={nextPeriod}>navigate_next</button>
+        <button class="material-icons header-text header-icon" onclick={nextPeriod}>navigate_next</button>
     </div>
 
     {#if entries_exist}

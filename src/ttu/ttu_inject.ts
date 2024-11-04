@@ -2,6 +2,7 @@ import { dateNowString } from "../calculations"
 import { TTUStorage } from "./ttu_storage"
 
 import App from "./ttu.svelte"
+import { mount } from "svelte";
 
 console.log("Injected")
 
@@ -19,12 +20,12 @@ async function setup() {
   svelte_div.style.zIndex = "50"
   document.body.insertBefore(svelte_div, document.querySelector("div.h-full.w-full"))
 
-  new App({
-    target: svelte_div,
-    props: {
-      ttu_storage: ttu_storage,
-    },
-  })
+  mount(App, {
+        target: svelte_div,
+        props: {
+          ttu_storage: ttu_storage,
+        },
+      })
 }
 setup()
 

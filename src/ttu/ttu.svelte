@@ -2,9 +2,13 @@
   import type { TTUStorage } from "./ttu_storage.js"
   import StatBar from "../components/interface/stat_bar.svelte"
 
-  export let ttu_storage: TTUStorage
+  interface Props {
+    ttu_storage: TTUStorage;
+  }
 
-  let shown = false
+  let { ttu_storage }: Props = $props();
+
+  let shown = $state(false)
 
   // Open the bar with a small delay
   // To sync up with the default bar

@@ -3,6 +3,7 @@ import { MokuroStorage } from "./mokuro_storage"
 import { SPLIT_PATH } from "../messaging/socket_actions"
 
 import App from "./mokuro.svelte"
+import { mount } from "svelte";
 
 console.log("Injected")
 
@@ -46,12 +47,12 @@ async function setup() {
     // Load Svelte for the inserted UI
     const svelte_div = document.createElement("div")
     document.body.insertBefore(svelte_div, document.getElementById("showMenuA"))
-    new App({
-        target: svelte_div,
-        props: {
-            mokuro_storage: mokuro_storage
-        }
-    })
+    mount(App, {
+            target: svelte_div,
+            props: {
+                mokuro_storage: mokuro_storage
+            }
+        })
 }
 setup()
 

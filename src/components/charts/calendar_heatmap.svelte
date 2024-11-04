@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import { range, extent } from "d3-array"
     import { scaleLinear, scaleBand } from "d3-scale"
 
@@ -8,57 +10,79 @@
     import type { DataEntry } from "../../data_wrangling/data_extraction";
     import type { ScaleBand, ScaleLinear } from "d3";
 
-    export let data: Partial<DataEntry>[]
 
-    export let date_accessor: (d: Partial<DataEntry>) => Date, metric_accessor: (d: Partial<DataEntry>) => number
-    export let tooltip_accessors: TooltipAccessors
-    export let tooltip_formatters: TooltipFormatters
 
-    export let graph_title: string
+    interface Props {
+        data: Partial<DataEntry>[];
+        date_accessor: (d: Partial<DataEntry>) => Date;
+        metric_accessor: (d: Partial<DataEntry>) => number;
+        tooltip_accessors: TooltipAccessors;
+        tooltip_formatters: TooltipFormatters;
+        graph_title: string;
+    }
 
-    let [height, width, margin] = [1000, 1200, 10]
-    $: if (height < 500) height = 500
-    $: if (width < 500) width = 500
-    $: if (height > width) height = width
+    let {
+        data,
+        date_accessor,
+        metric_accessor,
+        tooltip_accessors,
+        tooltip_formatters,
+        graph_title
+    }: Props = $props();
 
-    let square_width: number, square_height: number, min_square: number
-    $: square_width = (width - 2 * margin) / 53
-    $: square_height = (height - 2 * margin) / 7
-    $: min_square = Math.min(square_width, square_height)
+    let [height, width, margin] = $state([1000, 1200, 10])
+    run(() => {
+        if (height < 500) height = 500
+    });
+    run(() => {
+        if (width < 500) width = 500
+    });
+    run(() => {
+        if (height > width) height = width
+    });
 
-    let new_width: number, new_height: number
-    $: new_width = min_square * 53
-    $: new_height = min_square * 7
+    let square_width: number = $derived((width - 2 * margin) / 53), square_height: number = $derived((height - 2 * margin) / 7), min_square: number = $derived(Math.min(square_width, square_height))
+    
+    
+    
+
+    let new_width: number = $derived(min_square * 53), new_height: number = $derived(min_square * 7)
+    
+    
 
     // Physical ranges shrink in proport to the maximal circle radius and padding
-    let [x_range, y_range]: [[number, number], [number, number]] = [[0, 0], [0, 0]]
-    $: x_range = [margin, new_width - margin]
-    $: y_range = [margin, new_height - margin]
+    let [x_range, y_range]: [[number, number], [number, number]] = $state([[0, 0], [0, 0]])
+    run(() => {
+        x_range = [margin, new_width - margin]
+    });
+    run(() => {
+        y_range = [margin, new_height - margin]
+    });
 
     const xAccessor = (d: Partial<DataEntry>) => {
         return getWeek(date_accessor(d))
     }
     const yAccessor = (d: Partial<DataEntry>) => getDay(date_accessor(d))
 
-    let x_scale: ScaleBand<string>
-    let y_scale: ScaleBand<string>
-    let colorScale: ScaleLinear<string, string, never> | undefined
-
-    $: x_scale = scaleBand()
+    let x_scale: ScaleBand<string> = $derived(scaleBand()
         .domain(range(53).map(String))
         .padding(0.01 * (53 / 7))
-        .range(x_range)
-    $: y_scale = scaleBand()
+        .range(x_range))
+    let y_scale: ScaleBand<string> = $derived(scaleBand()
         .domain(range(7).map(String))
         .padding(0.1)
-        .range(y_range)
-    $: {
+        .range(y_range))
+    let colorScale: ScaleLinear<string, string, never> | undefined = $state()
+
+    
+    
+    run(() => {
         const color_extent = extent(data, metric_accessor)
         colorScale = color_extent[0] !== undefined && color_extent[1] !== undefined ? scaleLinear<string>()
             .domain(color_extent)
             .range(["#818cf8", "#4338ca"])
             : undefined
-    }
+    });
 
     const [xGet, yGet] = [(d: Partial<DataEntry>) => x_scale(xAccessor(d).toString())!, (d: Partial<DataEntry>) => y_scale(yAccessor(d).toString())!]
     const cGet = (d: Partial<DataEntry>) => colorScale!(metric_accessor(d)!)
@@ -73,7 +97,7 @@
         if (day_num === 6) return "S"
     }
 
-    let mouse_move: (event: MouseEvent) => void, mouse_out: () => void
+    let mouse_move: (event: MouseEvent) => void = $state(), mouse_out: () => void = $state()
 </script>
 
 <div class="flex flex-col w-full h-full items-center p-12 bg-slate-900">
@@ -81,7 +105,7 @@
 
     <figure bind:clientHeight={height} bind:clientWidth={width} class="flex flex-row w-full h-full items-center justify-center">
         <svg height={new_height} width={new_width} class="max-h-[80vh]" style="resize: both;" viewBox="0 0 {new_width} {new_height}" preserveAspectRatio="xMidYMid meet">
-            <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+            <!-- svelte-ignore a11y_mouse_events_have_key_events -->
             {#each range(53) as week_num}
                 {#each range(7) as day_num}
                     <rect

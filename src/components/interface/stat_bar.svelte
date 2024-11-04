@@ -4,11 +4,21 @@
 
     let SECS_TO_HOURS = 60 * 60
 
-    export let media_storage: MediaStorage
-    export let active: boolean = false
-    export let show_lines: boolean = true
+    interface Props {
+        media_storage: MediaStorage;
+        active?: boolean;
+        show_lines?: boolean;
+        children?: import('svelte').Snippet;
+    }
 
-    let chars: string, lines: string, time: string, speed: string
+    let {
+        media_storage,
+        active = $bindable(false),
+        show_lines = true,
+        children
+    }: Props = $props();
+
+    let chars: string = $state(), lines: string = $state(), time: string = $state(), speed: string = $state()
 
     const getStat = (daily_stats: Stat | undefined, stat_key: keyof Stat) =>
         daily_stats != undefined && daily_stats.hasOwnProperty(stat_key)
@@ -82,7 +92,7 @@
         {/if}
     </span>
 
-    <slot></slot>
+    {@render children?.()}
 </div>
 
 <style>

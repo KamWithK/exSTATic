@@ -3,19 +3,31 @@
     import type { TooltipAccessors, TooltipFormatters } from "../components/charts/popup.svelte";
     import type { DataEntry } from "../data_wrangling/data_extraction";
 
-    export let data: {
+
+
+    interface Props {
+        data: {
         name: string;
         time_read: number;
         chars_read: number;
-    }[]
+    }[];
+        name_accessor: (d: Partial<DataEntry>) => string;
+        chars_read_accessor: (d: Partial<DataEntry>) => number;
+        time_read_accessor: (d: Partial<DataEntry>) => number;
+        read_speed_accessor: (d: Partial<DataEntry>) => number;
+        tooltip_accessors: TooltipAccessors;
+        tooltip_formatters: TooltipFormatters;
+    }
 
-    export let name_accessor: (d: Partial<DataEntry>) => string
-    export let chars_read_accessor: (d: Partial<DataEntry>) => number
-    export let time_read_accessor: (d: Partial<DataEntry>) => number
-    export let read_speed_accessor: (d: Partial<DataEntry>) => number
-
-    export let tooltip_accessors: TooltipAccessors
-    export let tooltip_formatters: TooltipFormatters
+    let {
+        data,
+        name_accessor,
+        chars_read_accessor,
+        time_read_accessor,
+        read_speed_accessor,
+        tooltip_accessors,
+        tooltip_formatters
+    }: Props = $props();
 </script>
 
 <div class="flex flex-col items-center h-full w-full gap-20">

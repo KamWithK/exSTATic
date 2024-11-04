@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import * as browser from "webextension-polyfill"
 	import { timeToDateString } from "../calculations"
 	import type { VNStorage } from "./vn_storage"
@@ -12,10 +14,14 @@
 	import { parse } from "papaparse"
     import type { DataEntry } from "../data_wrangling/data_extraction";
 
-	export let vn_storage: VNStorage
-	let title = "Game"
-	let lines: string[][] = []
-	let menu = false
+	interface Props {
+		vn_storage: VNStorage;
+	}
+
+	let { vn_storage }: Props = $props();
+	let title = $state("Game")
+	let lines: string[][] = $state([])
+	let menu = $state(false)
 
 	// Events for media being added/replaced
 	document.addEventListener("media_changed", (event: CustomEvent) => {
@@ -42,7 +48,9 @@
 		document.title = title + " | exSTATic"
 		vn_storage.instance_storage.updateDetails({"name": title})
 	}
-	$: setTitle(title)
+	run(() => {
+		setTitle(title)
+	});
 
 	const requestExportLines = async () => {
 		const confirmed = confirm(
@@ -141,7 +149,7 @@
 		<input id="game_name" class="w-20 h-full shrink grow justify-self-start jp-text" type="text" bind:value={title}>
 		<div class="relative">
 			<StatBar media_storage={vn_storage}>
-				<button class="material-icons rounded-full hover:bg-hover" on:click={() => menu = !menu}>more_vert</button>
+				<button class="material-icons rounded-full hover:bg-hover" onclick={() => menu = !menu}>more_vert</button>
 			</StatBar>
 			<MenuBar show={menu} media_storage={vn_storage}>
 				<MenuOption media_storage={vn_storage} id="font" description="Font" type="text" value="Klee One" root_css="--default-font"/>
@@ -152,26 +160,26 @@
 				<MenuOption media_storage={vn_storage} id="inactivity_blur" description="Inactivity Blur" units="px" value=2/>
 				<MenuOption media_storage={vn_storage} id="menu_blur" description="Menu Blur" units="px" value=8 root_css="--default-menu-blur"/>
 
-				<button id="settings_page" class="menu-button" on:click={() => window.open("https://kamwithk.github.io/exSTATic/settings.html")}>
+				<button id="settings_page" class="menu-button" onclick={() => window.open("https://kamwithk.github.io/exSTATic/settings.html")}>
 					Settings
 				</button>
-				<button id="export_stats" class="menu-button" on:click={exportStats}>Export Stats</button>
-				<button id="export_lines" class="menu-button" on:click={requestExportLines}>Export Lines</button>
-				<button class="menu-button" on:click="{() => document.getElementById('import_stats')?.click()}">
+				<button id="export_stats" class="menu-button" onclick={exportStats}>Export Stats</button>
+				<button id="export_lines" class="menu-button" onclick={requestExportLines}>Export Lines</button>
+				<button class="menu-button" onclick={() => document.getElementById('import_stats')?.click()}>
 					Import Stats
-					<input id="import_stats" class="hidden" type="file" on:change={requestImportStats}>
+					<input id="import_stats" class="hidden" type="file" onchange={requestImportStats}>
 				</button>
-				<button class="menu-button" on:click="{() => document.getElementById('import_lines')?.click()}">
+				<button class="menu-button" onclick={() => document.getElementById('import_lines')?.click()}>
 					Import Lines
-					<input id="import_lines" class="hidden" type="file" on:change={requestImportLines}>
+					<input id="import_lines" class="hidden" type="file" onchange={requestImportLines}>
 				</button>
-				<button id="view_stats" class="menu-button" on:click={openStats}>View Stats</button>
+				<button id="view_stats" class="menu-button" onclick={openStats}>View Stats</button>
 			</MenuBar>
 		</div>
-		<button id="delete-selection" class="material-icons delete-button" on:click={deleteLines}>delete</button>
+		<button id="delete-selection" class="material-icons delete-button" onclick={deleteLines}>delete</button>
 	</div>
 
-	<div class="px-12" on:dblclick={vn_storage.toggleActive.bind(vn_storage)}>
+	<div class="px-12" ondblclick={vn_storage.toggleActive.bind(vn_storage)}>
 		<LineHolder bind:lines={lines} on:click={() => menu = false }/>
 	</div>
 </body>

@@ -2,7 +2,11 @@
 	import type { MokuroStorage } from "./mokuro_storage.js"
     import StatBar from "../components/interface/stat_bar.svelte"
     
-    export let mokuro_storage: MokuroStorage
+	interface Props {
+		mokuro_storage: MokuroStorage;
+	}
+
+	let { mokuro_storage }: Props = $props();
 
     document.body.addEventListener("dblclick", mokuro_storage.toggleActive.bind(mokuro_storage))
 

@@ -158,7 +158,6 @@
   };
 </script>
 
-<body class="flex h-full w-full flex-col">
   <div
     id="top_bar"
     class="sticky top-0 z-50 flex h-20 items-center justify-between px-12"
@@ -286,7 +285,6 @@
   <div class="px-12" ondblclick={vn_storage.toggleActive.bind(vn_storage)}>
     <LineHolder bind:lines on:click={() => (menu = false)} />
   </div>
-</body>
 
 <style global lang="postcss">
   @tailwind base;

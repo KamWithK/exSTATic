@@ -19,7 +19,7 @@
 
   export const resetBarClickEvents = () => {
     document.querySelector("button.fixed:nth-child(1)")
-      .addEventListener("click", showBar)
+      ?.addEventListener("click", showBar)
     document.body.addEventListener("click", hideBar)
   }
   document.addEventListener('ttsu:page.change', (event: CustomEvent) => {
@@ -54,7 +54,7 @@
   </div>
 {/if}
 
-<style global>
+<style global lang="postcss">
   @tailwind base;
   @tailwind components;
   @tailwind utilities;

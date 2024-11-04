@@ -7,7 +7,7 @@
       "id": "{8a4101fc-747b-42b0-8f48-184df8cba172}"
     }
   },  
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Completely automated reading statistics and tracking",
   "icons": {
     "100": "docs/favicon_100x100.png",

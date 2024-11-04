@@ -1,30 +1,43 @@
+<script context="module" lang="ts">
+    export type TooltipKey = "Chars Read" | "Time Read" | "Read Speed";
+    export type TooltipAccessors = Record<TooltipKey, (d: Partial<DataEntry>) => number>
+    export type TooltipFormatters = Record<TooltipKey, (n: (number | {
+        valueOf(): number;
+    })) => string>
+</script>
+
 <script lang="ts">
     import { timeFormat } from "d3-time-format"
+    import type { DataEntry } from "../../data_wrangling/data_extraction";
 
     let show_popup = false
     let [popup_x, popup_y] = [0, 0]
     let [popup_name, popup_date, popout_color] = ["", "", ""]
-    let popup_tooltips = {}
+    let popup_tooltips: {[key: string]: string} = {}
     
-    export let data, groups, hues
-    export let date_accessor, group_accessor, tooltip_accessors, tooltip_formatters
+    export let data: Partial<DataEntry>[], groups: string[] | undefined, hues: string[] | undefined
+    export let date_accessor: ((d: Partial<DataEntry>) => Date) | undefined = undefined
+    export let group_accessor: (d: Partial<DataEntry>) => string | number
+    export let tooltip_accessors: TooltipAccessors
+    export let tooltip_formatters: TooltipFormatters
 
     Object.keys(tooltip_accessors).forEach(key => popup_tooltips[key] = "")
 
-    export const mouse_move = event => {
-        const index = event["target"].dataset.index
+    export const mouse_move = (event: MouseEvent) => {
+        const index = Number((event.target as HTMLCanvasElement).getAttribute("data-index"))
+        const data_entry = data[index];
 
         popup_x = event.layerX
         popup_y = event.layerY
         
-        popup_name = !!groups ? group_accessor(data[index]) : undefined
-        popup_date = timeFormat("%d %B %Y")(date_accessor(data[index]))
+        popup_name = !!groups ? group_accessor(data_entry).toString() : ""
+        popup_date = date_accessor ? timeFormat("%d %B %Y")(date_accessor(data_entry)) : ""
         popout_color = hues === undefined
-            ? group_accessor(data[index])
-            : hues[groups.indexOf(group_accessor(data[index]))]
+            ? group_accessor(data_entry).toString()
+            : hues[groups!.indexOf(group_accessor(data_entry).toString())]
 
-        Object.entries(tooltip_accessors).forEach(([key, value_accessor]: [string, Function]) => {
-            popup_tooltips[key] = tooltip_formatters[key](value_accessor(data[index]))
+        Object.entries(tooltip_accessors).forEach(([key, value_accessor]) => {
+            popup_tooltips[key] = tooltip_formatters[key as TooltipKey](value_accessor(data_entry))
         })
 
         show_popup = true

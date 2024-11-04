@@ -1,14 +1,21 @@
 <script lang="ts">
     import BarGraph from "../components/charts/bargraph.svelte"
+    import type { TooltipAccessors, TooltipFormatters } from "../components/charts/popup.svelte";
+    import type { DataEntry } from "../data_wrangling/data_extraction";
 
-    export let data
+    export let data: {
+        name: string;
+        time_read: number;
+        chars_read: number;
+    }[]
 
-    export let name_accessor
-    export let chars_read_accessor
-    export let time_read_accessor
-    export let read_speed_accessor
+    export let name_accessor: (d: Partial<DataEntry>) => string
+    export let chars_read_accessor: (d: Partial<DataEntry>) => number
+    export let time_read_accessor: (d: Partial<DataEntry>) => number
+    export let read_speed_accessor: (d: Partial<DataEntry>) => number
 
-    export let tooltip_accessors, tooltip_formatters
+    export let tooltip_accessors: TooltipAccessors
+    export let tooltip_formatters: TooltipFormatters
 </script>
 
 <div class="flex flex-col items-center h-full w-full gap-20">

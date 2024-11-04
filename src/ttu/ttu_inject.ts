@@ -5,7 +5,7 @@ import App from "./ttu.svelte"
 
 console.log("Injected")
 
-var ttu_storage: TTUStorage
+let ttu_storage: TTUStorage
 
 async function setup() {
   ttu_storage = await TTUStorage.build(true)

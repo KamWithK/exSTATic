@@ -28,7 +28,7 @@ fs.cpSync("fonts", `${build_firefox_dir}/fonts/`, { recursive: true });
 
 const options = {
   entryPoints: [
-    "src/background.js",
+    "src/background.ts",
     "src/vn/tracker_inject.ts",
     "src/mokuro/mokuro_inject.ts",
     "src/ttu/ttu_inject.ts",

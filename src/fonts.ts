@@ -1,4 +1,4 @@
-var browser = require("webextension-polyfill")
+import * as browser from "webextension-polyfill"
 
 export const addFont = async (font_name: string, relative_path: string) => {
     const absolute_path = browser.runtime.getURL(relative_path)

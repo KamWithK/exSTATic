@@ -7,14 +7,14 @@
     document.body.addEventListener("dblclick", mokuro_storage.toggleActive.bind(mokuro_storage))
 
 	document.addEventListener("status_active", () => {
-		document.getElementById("pagesContainer").style.setProperty(
+		document.getElementById("pagesContainer")?.style.setProperty(
 			"filter",
 			""
 		)
 	})
 
 	document.addEventListener("status_inactive", () => {
-		document.getElementById("pagesContainer").style.setProperty(
+		document.getElementById("pagesContainer")?.style.setProperty(
 			"filter",
 			"blur(2px)"
 		)
@@ -27,7 +27,7 @@
     </div>
 </div>
 
-<style global>
+<style global lang="postcss">
     @tailwind base;
     @tailwind components;
     @tailwind utilities;

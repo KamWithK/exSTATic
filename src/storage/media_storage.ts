@@ -1,10 +1,9 @@
+import * as browser from "webextension-polyfill"
 import { dateNowString, timeNowSeconds } from "../calculations"
-import { InstanceStorage } from "./instance_storage"
-import { TypeStorage } from "./type_storage"
+import { InstanceStorage, type InstanceDetails } from "./instance_storage"
+import { TypeStorage, type TypeProperties } from "./type_storage"
 
-var REFRESH_STATS_INTERVAL = 1000 // in milliseconds
-
-var browser = require("webextension-polyfill")
+const REFRESH_STATS_INTERVAL = 1000 // in milliseconds
 
 // EXTENDED STORAGE SPEC
 // {
@@ -18,17 +17,22 @@ var browser = require("webextension-polyfill")
 //     }
 // }
 
-export class MediaStorage {
-    constructor(type_storage, instance_storage, live_stat_update=false) {
+export class MediaStorage<TDetails extends InstanceDetails = InstanceDetails> {
+    type_storage: TypeStorage
+    instance_storage?: InstanceStorage<TDetails>
+    properties: TypeProperties
+    details?: TDetails
+    uuid?: string
+    previous_time?: number
+
+    constructor(type_storage: TypeStorage, instance_storage?: InstanceStorage<TDetails>, live_stat_update=false) {
         this.type_storage = type_storage
         this.instance_storage = instance_storage
 
         this.properties = this.type_storage.properties
 
-        if (this.instance_storage !== undefined) {
-            this.details = this.instance_storage.details
-            this.uuid = this.properties["previous_uuid"]
-        }
+        this.details = instance_storage?.details
+        this.uuid = this.properties.previous_uuid
 
         if (live_stat_update) {
             this.stop_ticker(false)
@@ -36,27 +40,22 @@ export class MediaStorage {
         }
     }
 
-    static async build(type) {
-        const type_storage = new TypeStorage(type)
-        await type_storage.setup()
+    static async buildMediaStorage(type: string) {
+        const type_storage = await TypeStorage.buildTypeStorage(type)
         
-        let instance_storage
-        if (type_storage.properties.hasOwnProperty("previous_uuid")) {
-            instance_storage = new InstanceStorage(type_storage.properties["previous_uuid"])
-            await instance_storage.setup()
-        } else {
-            instance_storage = undefined
-        }
+        const instance_storage = type_storage.properties.previous_uuid
+            ? await InstanceStorage.buildInstance(type_storage.properties.previous_uuid)
+            : undefined
 
-        return [type_storage, instance_storage]
+        return new MediaStorage(type_storage, instance_storage)
     }
 
-    async changeInstance(new_uuid, given_identifier=undefined) {
+    async changeInstance(uuid?: string, given_identifier?: string) {
         // Get a UUID if it hasn't been suplied
         // When both are supplied use the UUID
-        if (new_uuid == undefined && given_identifier !== undefined) {
-            new_uuid = await this.type_storage.getMedia(given_identifier)
-        }
+        const new_uuid = !uuid && given_identifier ? await this.type_storage.getMedia(given_identifier) : uuid
+
+        if (!new_uuid) throw new Error("Neither a uuid nor given identifier was provided, the instance cannot be changed")
 
         // Nothing required if they're both the same
         if (this.uuid == new_uuid) {
@@ -69,12 +68,12 @@ export class MediaStorage {
         }
 
         // Replace the storage entry
-        this.instance_storage = new InstanceStorage(new_uuid)
-        await this.instance_storage.setup()
+        const instance_storage = await InstanceStorage.buildInstance(new_uuid)
+        this.instance_storage = instance_storage
 
         // Set the easy-access properties
         this.uuid = this.instance_storage.uuid
-        this.details = this.instance_storage.details
+        this.details = instance_storage.details
 
         // Dispatch an event
         await this.logLines()
@@ -84,7 +83,7 @@ export class MediaStorage {
         const event = new CustomEvent("media_changed", {
             "detail": {
                 "uuid": this.uuid,
-                "name": this.details["name"]
+                "name": this.details!.name
             }
         })
         document.dispatchEvent(event)
@@ -117,13 +116,13 @@ export class MediaStorage {
             return
         }
         
-        const time_between_lines = this.details["last_active_at"] !== undefined ? time_now - this.details["last_active_at"] : 0
+        const time_between_lines = this.details && this.details.last_active_at ? time_now - this.details.last_active_at : 0
         const time_between_ticks = time_now - this.previous_time
         
         this.previous_time = time_now
         
         // Keep incrementing the time read counter whilst the max afk time isn't exceeded
-        if (time_between_lines <= this.properties["afk_max_time"]) {
+        if (time_between_lines <= this.properties.afk_max_time) {
             await this.instance_storage.addDailyStats(dateNowString(), {
                 "time_read": time_between_ticks
             })

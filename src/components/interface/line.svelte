@@ -1,6 +1,6 @@
 <script lang="ts">
-    export let id: number
-    export let time: number
+    export let id: string
+    export let time: string
     export let sentence: string = ""
     export let checked: boolean = false
 </script>

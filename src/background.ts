@@ -3,11 +3,26 @@ console.log("exSTATic")
 import { message_action } from "./messaging/message_actions"
 import { connectionClosed, connectionOpened, dataFetched, messagingConnected } from "./messaging/socket_actions"
 
+import * as browser from "webextension-polyfill"
+import type { Tabs } from "webextension-polyfill"
 import ReconnectingWebSocket from "reconnecting-websocket"
 
-var browser = require("webextension-polyfill")
+declare global {
+    interface Window {
+        chrome: {
+            runtime: object | undefined
+            webstore: object | undefined
+        } | undefined
+    }
+    interface DocumentEventMap {
+    		media_changed: CustomEvent
+    		new_line: CustomEvent
+            "ttsu:page.change": CustomEvent
+    }
+}
 
-const reloadTab = async (tab) => {
+const reloadTab = async (tab: Tabs.Tab) => {
+    if (!tab.id) return;
     browser.scripting.executeScript({
         target: { tabId: tab.id },
         func: () => window.location.reload()
@@ -15,8 +30,8 @@ const reloadTab = async (tab) => {
 }
 
 // Run a function with each tab that has a content script
-const runOnContentScripts = async (func) => {
-    for (const content_script of browser.runtime.getManifest().content_scripts) {
+const runOnContentScripts = async (func: (tab: Tabs.Tab) => void) => {
+    for (const content_script of browser.runtime.getManifest().content_scripts ?? []) {
         for (const tab of await browser.tabs.query({url: content_script.matches}))
             func(tab)
     }
@@ -72,6 +87,6 @@ let socket = new ReconnectingWebSocket("ws://localhost:9001")
 socket.addEventListener("open", connectionOpened)
 socket.addEventListener("close", connectionClosed)
 socket.addEventListener("error", connectionClosed)
-socket.addEventListener("message", dataFetched)
+socket.addEventListener("message", (event: MessageEvent) => {dataFetched(event)})
 
 browser.runtime.onConnect.addListener(messagingConnected)

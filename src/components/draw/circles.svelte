@@ -1,16 +1,19 @@
 <script lang="ts">
-    export let data
-    export let xGet, yGet, rGet, cGet
-    export let x_scale, y_scale
+    import type { ScaleLinear, ScaleTime } from "d3";
+    import type { DataEntry } from "../../data_wrangling/data_extraction";
 
-    export let mouse_move, mouse_out
+    export let data: DataEntry[]
+    export let xGet: (d: DataEntry) => number | undefined, yGet: (d: DataEntry) => number | undefined, rGet: (d: DataEntry) => number | undefined, cGet: (d: DataEntry) => string
+    export let x_scale: ScaleTime<number, number, never>, y_scale: ScaleLinear<number, number>
+
+    export let mouse_move: (event: MouseEvent) => void, mouse_out: () => void
 
     let ready: boolean = false
     $: ready = x_scale !== undefined && y_scale !== undefined
         && rGet !== undefined && cGet !== undefined
 
     // Forced refreshes on resize
-    $: if (x_scale && y_scale) data = data
+    $: data = data, x_scale, y_scale
 </script>
 
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->

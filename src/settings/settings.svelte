@@ -1,13 +1,14 @@
 <script lang="ts">
-	import MenuBar from "../components/interface/menu_bar.svelte"
 	import MenuOption from "../components/interface/menu_option.svelte"
+  import type { MokuroStorage } from "../mokuro/mokuro_storage";
+  import type { TTUStorage } from "../ttu/ttu_storage";
   import { VNStorage } from "../vn/vn_storage";
 
   let type = "vn"
 
 	export let vn_storage: VNStorage
-	export let mokuro_storage: VNStorage
-	export let ttu_storage: ttuStorage
+	export let mokuro_storage: MokuroStorage
+	export let ttu_storage: TTUStorage
 </script>
 
 <div class="flex flex-col px-20 gap-10">
@@ -42,7 +43,7 @@
 {/if}
 </div>
 
-<style global>
+<style global lang="postcss">
   @tailwind base;
   @tailwind components;
   @tailwind utilities;

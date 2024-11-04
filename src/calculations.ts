@@ -4,28 +4,28 @@ import { formatISO } from "date-fns"
 const IGNORE = /[〔〕《》〖〗〘〙〚〛【】「」［］『』｛｝\[\]()（）｟｠〈〉≪≫。、.,※＊'：！?？‥…―─ｰ〽～→♪♪ ♫ ♬ ♩\"　\t\n]/g
 const SPLIT = /[\n。.！?？]/g
 
-export function charsInLine(line) {
+export function charsInLine(line: string) {
     return line.replaceAll(IGNORE, "").length
 }
 
-export function lineSplitCount(line) {
+export function lineSplitCount(line: string) {
     return line.split(SPLIT).filter((value) => value.replaceAll(IGNORE, "") != "").length
 }
 
 export function dateNowString() {
-    rn = new Date()
+    const rn = new Date()
     return formatISO(rn, {"representation": "date"})
 }
 
-export function timeToDateString(time) {
+export function timeToDateString(time: number) {
     if (time === undefined || isNaN(time)) return
 
-    let date = new Date(0)
+    const date = new Date(0)
     date.setSeconds(time)
     return formatISO(date, {"representation": "date"})
 }
 
 export function timeNowSeconds() {
-    let rn = new Date()
+    const rn = new Date()
     return rn.getTime() / 1000
 }

@@ -1,35 +1,42 @@
 <script lang="ts">
-    import { createBubbler } from 'svelte/legacy';
+  import { createBubbler } from "svelte/legacy";
 
-    const bubble = createBubbler();
-    import Line from "./line.svelte"
-    
-    import { onMount } from "svelte"
+  const bubble = createBubbler();
+  import Line from "./line.svelte";
 
-    interface Props {
-        lines: string[][];
-    }
+  import { onMount } from "svelte";
 
-    let { lines }: Props = $props();
-    let entry_holder: HTMLElement = $state()
+  interface Props {
+    lines: string[][];
+  }
 
-    const observer = new MutationObserver(() => {
-        window.scrollTo(0, entry_holder.scrollHeight)
-    })
+  let { lines }: Props = $props();
+  let entry_holder: HTMLElement = $state();
 
-    onMount(() => observer.observe(entry_holder, {"childList": true, "subtree": true}))
+  const observer = new MutationObserver(() => {
+    window.scrollTo(0, entry_holder.scrollHeight);
+  });
+
+  onMount(() =>
+    observer.observe(entry_holder, { childList: true, subtree: true }),
+  );
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div id="entry_holder" bind:this={entry_holder} onclick={bubble('click')} ondblclick={bubble('dblclick')}>
-    {#each lines as [_, id, line, time]}
-        <Line id={id} time={time} sentence={line}/>
-    {/each}
+<div
+  id="entry_holder"
+  bind:this={entry_holder}
+  onclick={bubble("click")}
+  ondblclick={bubble("dblclick")}
+>
+  {#each lines as [_, id, line, time]}
+    <Line {id} {time} sentence={line} />
+  {/each}
 </div>
 
 <style lang="postcss">
-    #entry_holder {
-        @apply flex flex-col w-full h-full gap-2;
-        padding-bottom: var(--default-text-align);
-    }
+  #entry_holder {
+    @apply flex h-full w-full flex-col gap-2;
+    padding-bottom: var(--default-text-align);
+  }
 </style>

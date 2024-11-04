@@ -1,31 +1,33 @@
-import { formatISO } from "date-fns"
+import { formatISO } from "date-fns";
 
 // Source of information - https://en.wikipedia.org/wiki/List_of_Japanese_typographic_symbols
-const IGNORE = /[〔〕《》〖〗〘〙〚〛【】「」［］『』｛｝\[\]()（）｟｠〈〉≪≫。、.,※＊'：！?？‥…―─ｰ〽～→♪♪ ♫ ♬ ♩\"　\t\n]/g
-const SPLIT = /[\n。.！?？]/g
+const IGNORE =
+  /[〔〕《》〖〗〘〙〚〛【】「」［］『』｛｝\[\]()（）｟｠〈〉≪≫。、.,※＊'：！?？‥…―─ｰ〽～→♪♪ ♫ ♬ ♩\"　\t\n]/g;
+const SPLIT = /[\n。.！?？]/g;
 
 export function charsInLine(line: string) {
-    return line.replaceAll(IGNORE, "").length
+  return line.replaceAll(IGNORE, "").length;
 }
 
 export function lineSplitCount(line: string) {
-    return line.split(SPLIT).filter((value) => value.replaceAll(IGNORE, "") != "").length
+  return line.split(SPLIT).filter((value) => value.replaceAll(IGNORE, "") != "")
+    .length;
 }
 
 export function dateNowString() {
-    const rn = new Date()
-    return formatISO(rn, {"representation": "date"})
+  const rn = new Date();
+  return formatISO(rn, { representation: "date" });
 }
 
 export function timeToDateString(time: number) {
-    if (time === undefined || isNaN(time)) return
+  if (time === undefined || isNaN(time)) return;
 
-    const date = new Date(0)
-    date.setSeconds(time)
-    return formatISO(date, {"representation": "date"})
+  const date = new Date(0);
+  date.setSeconds(time);
+  return formatISO(date, { representation: "date" });
 }
 
 export function timeNowSeconds() {
-    const rn = new Date()
-    return rn.getTime() / 1000
+  const rn = new Date();
+  return rn.getTime() / 1000;
 }

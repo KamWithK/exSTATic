@@ -2,7 +2,8 @@
   "scripts": {
     "build": "node esbuild.mjs",
     "web-ext-chrome": "web-ext --source-dir build-chrome --artifacts-dir web-ext-chrome",
-    "web-ext-firefox": "web-ext --source-dir build-firefox --artifacts-dir web-ext-firefox"
+    "web-ext-firefox": "web-ext --source-dir build-firefox --artifacts-dir web-ext-firefox",
+    "format": "npx prettier --write src"
   },
   "dependencies": {
     "@d3fc/d3fc-axis": "^3.0.6",
@@ -28,6 +29,9 @@
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-svelte": "^3.2.7",
+    "prettier-plugin-tailwindcss": "^0.6.8",
     "web-ext": "^0.0.1"
   }
 }

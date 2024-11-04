@@ -1,17 +1,20 @@
 <script lang="ts">
-    interface Props {
-        groups: string[];
-        hues: string[];
-    }
+  interface Props {
+    groups: string[];
+    hues: string[];
+  }
 
-    let { groups, hues }: Props = $props();
+  let { groups, hues }: Props = $props();
 </script>
 
 <div class="flex flex-col">
-    {#each groups as group, index}
-        <div class="flex flex-row gap-1 items-center">
-            <div class="z-50 w-3 h-3 rounded-full shrink-0 grow-0" style="background-color: {hues[index]};"></div>
-            <p class="text-[#808080]">{group}</p>
-        </div>
-    {/each}
+  {#each groups as group, index}
+    <div class="flex flex-row items-center gap-1">
+      <div
+        class="z-50 h-3 w-3 shrink-0 grow-0 rounded-full"
+        style="background-color: {hues[index]};"
+      ></div>
+      <p class="text-[#808080]">{group}</p>
+    </div>
+  {/each}
 </div>

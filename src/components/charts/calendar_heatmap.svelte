@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from "svelte/legacy";
-
   import { range, extent } from "d3-array";
   import { scaleLinear, scaleBand } from "d3-scale";
 
@@ -32,34 +30,22 @@
   }: Props = $props();
 
   let [height, width, margin] = $state([1000, 1200, 10]);
-  run(() => {
-    if (height < 500) height = 500;
+  let safeHeight = $derived.by(() => {
+    const minHeight = Math.max(height, 500);
+    return minHeight > width ? width : minHeight;
   });
-  run(() => {
-    if (width < 500) width = 500;
-  });
-  run(() => {
-    if (height > width) height = width;
-  });
+  let safeWidth = $derived(Math.max(width, 500));
 
-  let square_width: number = $derived((width - 2 * margin) / 53),
-    square_height: number = $derived((height - 2 * margin) / 7),
-    min_square: number = $derived(Math.min(square_width, square_height));
+  let square_width = $derived((safeWidth - 2 * margin) / 53);
+  let square_height = $derived((safeHeight - 2 * margin) / 7);
+  let min_square = $derived(Math.min(square_width, square_height));
 
-  let new_width: number = $derived(min_square * 53),
-    new_height: number = $derived(min_square * 7);
+  let new_width = $derived(min_square * 53);
+  let new_height = $derived(min_square * 7);
 
   // Physical ranges shrink in proport to the maximal circle radius and padding
-  let [x_range, y_range]: [[number, number], [number, number]] = $state([
-    [0, 0],
-    [0, 0],
-  ]);
-  run(() => {
-    x_range = [margin, new_width - margin];
-  });
-  run(() => {
-    y_range = [margin, new_height - margin];
-  });
+  let x_range = $derived([margin, new_width - margin]);
+  let y_range = $derived([margin, new_height - margin]);
 
   const xAccessor = (d: Partial<DataEntry>) => {
     return getWeek(date_accessor(d));
@@ -75,16 +61,12 @@
   let y_scale: ScaleBand<string> = $derived(
     scaleBand().domain(range(7).map(String)).padding(0.1).range(y_range),
   );
-  let colorScale: ScaleLinear<string, string, never> | undefined = $state();
 
-  run(() => {
+  let colorScale = $derived.by(() => {
     const color_extent = extent(data, metric_accessor);
-    colorScale =
-      color_extent[0] !== undefined && color_extent[1] !== undefined
-        ? scaleLinear<string>()
-            .domain(color_extent)
-            .range(["#818cf8", "#4338ca"])
-        : undefined;
+    return color_extent[0] !== undefined && color_extent[1] !== undefined
+      ? scaleLinear<string>().domain(color_extent).range(["#818cf8", "#4338ca"])
+      : undefined;
   });
 
   const [xGet, yGet] = [

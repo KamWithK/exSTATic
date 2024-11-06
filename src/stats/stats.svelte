@@ -1,20 +1,11 @@
 <script lang="ts">
-  import { run } from "svelte/legacy";
-
   import BulkDataGraphs from "./bulk_data_graphs.svelte";
   import MediaGraphs from "./media_graphs.svelte";
   import CalendarHeatmap from "../components/charts/calendar_heatmap.svelte";
 
   import { groups, sum, min } from "d3-array";
   import { format } from "d3-format";
-  import {
-    parseISO,
-    startOfYear,
-    endOfYear,
-    addYears,
-    subYears,
-    getYear,
-  } from "date-fns";
+  import { parseISO, startOfYear, addYears, subYears, getYear } from "date-fns";
   import type { DataEntry } from "../data_wrangling/data_extraction";
   import type { TooltipFormatters } from "../components/charts/popup.svelte";
 
@@ -42,51 +33,42 @@
     chars_read: sum(v, (d) => d.chars_read),
   }));
 
-  const end_time = new Date();
-  const start_time = min(data, (d) => parseISO(d.date)) ?? new Date();
+  const currentTime = new Date();
+  const currentYearStart = startOfYear(currentTime);
+  const earliestStart = min(data, (d) => parseISO(d.date)) ?? currentTime;
 
-  let [year_start, year_end] = $state([
-    startOfYear(end_time),
-    endOfYear(end_time),
-  ]);
-  let year: number | string = $state(getYear(year_start));
-  let type = $state("all");
+  let selectedYearStart = $state(currentYearStart);
+  let selectedYearEnd = $derived(addYears(selectedYearStart, 1));
+  let enableAllTimeView = $derived(selectedYearStart > currentYearStart);
+  let displayTime = $derived(
+    enableAllTimeView ? "All Time" : getYear(selectedYearStart),
+  );
 
-  const withinTimePredicate = (d: DataEntry) =>
-    year_start <= parseISO(d.date) && parseISO(d.date) <= year_end;
-  const typePredicate = (d: DataEntry) => type === "all" || d.type === type;
+  let mediaType = $state("all");
 
-  let filtered: DataEntry[] = $state(),
-    entries_exist: boolean = $derived(filtered.length >= 1);
-  run(() => {
-    (filtered = data.filter(withinTimePredicate).filter(typePredicate)),
-      year_start,
-      year_end,
-      type;
-  });
+  let filteredData = $derived(
+    enableAllTimeView
+      ? data
+      : data
+          .filter(
+            (d) =>
+              selectedYearStart <= parseISO(d.date) &&
+              parseISO(d.date) <= selectedYearEnd,
+          )
+          .filter((d) => mediaType === "all" || d.type === mediaType),
+  );
 
-  const nextPeriod = () => {
-    if (year_end < end_time) {
-      year_start = addYears(year_start, 1);
-      year_end = addYears(year_end, 1);
-      year = getYear(year_start);
-    } else {
-      (year_start = start_time), (year_end = end_time);
-      year = "All Time";
-    }
-  };
+  const nextPeriod = () => (selectedYearStart = addYears(selectedYearStart, 1));
   const previousPeriod = () => {
-    if (year === "All Time") {
-      [year_start, year_end] = [startOfYear(end_time), endOfYear(end_time)];
-    } else if (year_start > start_time) {
-      year_start = subYears(year_start, 1);
-      year_end = subYears(year_end, 1);
+    if (enableAllTimeView) {
+      selectedYearStart = currentYearStart;
+    } else if (selectedYearStart > earliestStart) {
+      selectedYearStart = subYears(selectedYearStart, 1);
     }
-    year = getYear(year_start);
   };
 
   let uuid_groups: [string, DataEntry[]][] = $derived(
-      groups(filtered, (d) => d.uuid),
+      groups(filteredData, (d) => d.uuid),
     ),
     uuid_summary: {
       name: string;
@@ -101,7 +83,7 @@
     );
 
   let date_groups: [string, DataEntry[]][] = $derived(
-      groups(filtered, (d) => d.date),
+      groups(filteredData, (d) => d.date),
     ),
     date_summary: {
       date: string;
@@ -149,8 +131,8 @@
       onclick={previousPeriod}>navigate_before</button
     >
     <div class="flex flex-row place-items-center gap-3">
-      <p class="header-text">{year}</p>
-      <select class="bg-button" bind:value={type}>
+      <p class="header-text">{displayTime}</p>
+      <select class="bg-button" bind:value={mediaType}>
         <option value="all">All</option>
         <option value="vn">VN</option>
         <option value="mokuro">Mokuro</option>
@@ -162,8 +144,8 @@
     >
   </div>
 
-  {#if entries_exist}
-    {#if year !== "All Time"}
+  {#if filteredData.length > 0}
+    {#if !enableAllTimeView}
       <CalendarHeatmap
         data={date_summary}
         {date_accessor}
@@ -175,7 +157,7 @@
     {/if}
 
     <BulkDataGraphs
-      data={filtered}
+      data={filteredData}
       {name_accessor}
       {date_accessor}
       {chars_read_accessor}

@@ -122,8 +122,6 @@
         {yGet}
         {hGet}
         {cGet}
-        {x_scale}
-        {y_scale}
         {bar_width}
         {mouse_move}
         {mouse_out}

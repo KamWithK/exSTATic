@@ -9,7 +9,7 @@
     type TooltipFormatters,
   } from "./popup.svelte";
   import type { DataEntry } from "../../data_wrangling/data_extraction";
-  import type { ScaleBand, ScaleLinear } from "d3";
+  import type { ScaleBand } from "d3";
 
   interface Props {
     data: Partial<DataEntry>[];
@@ -139,8 +139,6 @@
         {yGet}
         hGet={() => y_scale.bandwidth()}
         {cGet}
-        {x_scale}
-        {y_scale}
         bar_width={x_scale.bandwidth()}
         {mouse_move}
         {mouse_out}

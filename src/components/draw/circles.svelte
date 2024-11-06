@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from "svelte/legacy";
-
   import type { ScaleLinear, ScaleTime } from "d3";
   import type { DataEntry } from "../../data_wrangling/data_extraction";
 
@@ -28,19 +26,12 @@
     mouse_out,
   }: Props = $props();
 
-  let ready: boolean = $state(false);
-  run(() => {
-    ready =
-      x_scale !== undefined &&
+  let ready = $derived(
+    x_scale !== undefined &&
       y_scale !== undefined &&
       rGet !== undefined &&
-      cGet !== undefined;
-  });
-
-  // Forced refreshes on resize
-  run(() => {
-    (data = data), x_scale, y_scale;
-  });
+      cGet !== undefined,
+  );
 </script>
 
 <!-- svelte-ignore a11y_mouse_events_have_key_events -->

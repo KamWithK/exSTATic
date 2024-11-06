@@ -158,133 +158,135 @@
   };
 </script>
 
-  <div
-    id="top_bar"
-    class="sticky top-0 z-50 flex h-20 items-center justify-between px-12"
+<div
+  id="top_bar"
+  class="sticky top-0 z-50 flex h-20 items-center justify-between px-12"
+>
+  <input
+    id="game_name"
+    class="jp-text h-full w-20 shrink grow justify-self-start"
+    type="text"
+    bind:value={title}
+  />
+  <div class="relative">
+    <StatBar media_storage={vn_storage}>
+      <button
+        class="material-icons rounded-full hover:bg-hover"
+        onclick={() => (menu = !menu)}>more_vert</button
+      >
+    </StatBar>
+    <MenuBar show={menu} media_storage={vn_storage}>
+      <MenuOption
+        media_storage={vn_storage}
+        id="font"
+        description="Font"
+        type="text"
+        value="Klee One"
+        root_css="--default-font"
+      />
+      <MenuOption
+        media_storage={vn_storage}
+        id="font_size"
+        description="Font Size"
+        units="rem"
+        value="2"
+        root_css="--default-font-size"
+      />
+      <MenuOption
+        media_storage={vn_storage}
+        id="bottom_line_padding"
+        description="Bottom Pushback"
+        units="%"
+        value="20"
+        root_css="--default-text-align"
+      />
+      <MenuOption
+        media_storage={vn_storage}
+        id="afk_max_time"
+        description="Max AFK Time"
+        units="secs"
+        value="60"
+      />
+      <MenuOption
+        media_storage={vn_storage}
+        id="max_loaded_lines"
+        description="Max Loaded Lines"
+        units="UI"
+        value="5000"
+      />
+      <MenuOption
+        media_storage={vn_storage}
+        id="inactivity_blur"
+        description="Inactivity Blur"
+        units="px"
+        value="2"
+      />
+      <MenuOption
+        media_storage={vn_storage}
+        id="menu_blur"
+        description="Menu Blur"
+        units="px"
+        value="8"
+        root_css="--default-menu-blur"
+      />
+
+      <button
+        id="settings_page"
+        class="menu-button"
+        onclick={() =>
+          window.open("https://kamwithk.github.io/exSTATic/settings.html")}
+      >
+        Settings
+      </button>
+      <button id="export_stats" class="menu-button" onclick={exportStats}
+        >Export Stats</button
+      >
+      <button id="export_lines" class="menu-button" onclick={requestExportLines}
+        >Export Lines</button
+      >
+      <button
+        class="menu-button"
+        onclick={() => document.getElementById("import_stats")?.click()}
+      >
+        Import Stats
+        <input
+          id="import_stats"
+          class="hidden"
+          type="file"
+          onchange={requestImportStats}
+        />
+      </button>
+      <button
+        class="menu-button"
+        onclick={() => document.getElementById("import_lines")?.click()}
+      >
+        Import Lines
+        <input
+          id="import_lines"
+          class="hidden"
+          type="file"
+          onchange={requestImportLines}
+        />
+      </button>
+      <button id="view_stats" class="menu-button" onclick={openStats}
+        >View Stats</button
+      >
+    </MenuBar>
+  </div>
+  <button
+    id="delete-selection"
+    class="material-icons delete-button"
+    onclick={deleteLines}>delete</button
   >
-    <input
-      id="game_name"
-      class="jp-text h-full w-20 shrink grow justify-self-start"
-      type="text"
-      bind:value={title}
-    />
-    <div class="relative">
-      <StatBar media_storage={vn_storage}>
-        <button
-          class="material-icons rounded-full hover:bg-hover"
-          onclick={() => (menu = !menu)}>more_vert</button
-        >
-      </StatBar>
-      <MenuBar show={menu} media_storage={vn_storage}>
-        <MenuOption
-          media_storage={vn_storage}
-          id="font"
-          description="Font"
-          type="text"
-          value="Klee One"
-          root_css="--default-font"
-        />
-        <MenuOption
-          media_storage={vn_storage}
-          id="font_size"
-          description="Font Size"
-          units="rem"
-          value="2"
-          root_css="--default-font-size"
-        />
-        <MenuOption
-          media_storage={vn_storage}
-          id="bottom_line_padding"
-          description="Bottom Pushback"
-          units="%"
-          value="20"
-          root_css="--default-text-align"
-        />
-        <MenuOption
-          media_storage={vn_storage}
-          id="afk_max_time"
-          description="Max AFK Time"
-          units="secs"
-          value="60"
-        />
-        <MenuOption
-          media_storage={vn_storage}
-          id="max_loaded_lines"
-          description="Max Loaded Lines"
-          units="UI"
-          value="5000"
-        />
-        <MenuOption
-          media_storage={vn_storage}
-          id="inactivity_blur"
-          description="Inactivity Blur"
-          units="px"
-          value="2"
-        />
-        <MenuOption
-          media_storage={vn_storage}
-          id="menu_blur"
-          description="Menu Blur"
-          units="px"
-          value="8"
-          root_css="--default-menu-blur"
-        />
+</div>
 
-        <button
-          id="settings_page"
-          class="menu-button"
-          onclick={() =>
-            window.open("https://kamwithk.github.io/exSTATic/settings.html")}
-        >
-          Settings
-        </button>
-        <button id="export_stats" class="menu-button" onclick={exportStats}
-          >Export Stats</button
-        >
-        <button
-          id="export_lines"
-          class="menu-button"
-          onclick={requestExportLines}>Export Lines</button
-        >
-        <button
-          class="menu-button"
-          onclick={() => document.getElementById("import_stats")?.click()}
-        >
-          Import Stats
-          <input
-            id="import_stats"
-            class="hidden"
-            type="file"
-            onchange={requestImportStats}
-          />
-        </button>
-        <button
-          class="menu-button"
-          onclick={() => document.getElementById("import_lines")?.click()}
-        >
-          Import Lines
-          <input
-            id="import_lines"
-            class="hidden"
-            type="file"
-            onchange={requestImportLines}
-          />
-        </button>
-        <button id="view_stats" class="menu-button" onclick={openStats}
-          >View Stats</button
-        >
-      </MenuBar>
-    </div>
-    <button
-      id="delete-selection"
-      class="material-icons delete-button"
-      onclick={deleteLines}>delete</button
-    >
-  </div>
-
-  <div class="px-12" role="feed" ondblclick={vn_storage.toggleActive.bind(vn_storage)}>
-    <LineHolder bind:lines on:click={() => (menu = false)} />
-  </div>
+<div
+  class="px-12"
+  role="feed"
+  ondblclick={vn_storage.toggleActive.bind(vn_storage)}
+>
+  <LineHolder bind:lines on:click={() => (menu = false)} />
+</div>
 
 <style global lang="postcss">
   @tailwind base;

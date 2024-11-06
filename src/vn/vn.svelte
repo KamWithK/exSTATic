@@ -282,7 +282,7 @@
     >
   </div>
 
-  <div class="px-12" ondblclick={vn_storage.toggleActive.bind(vn_storage)}>
+  <div class="px-12" role="feed" ondblclick={vn_storage.toggleActive.bind(vn_storage)}>
     <LineHolder bind:lines on:click={() => (menu = false)} />
   </div>
 

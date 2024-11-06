@@ -59,6 +59,8 @@
       fill={cGet(d).toString()}
       fill-opacity="0.8"
       class="z-10"
+      role="graphics-symbol"
+      aria-roledescription="bar"
       onmousemove={mouse_move}
       onmouseout={mouse_out}
     />

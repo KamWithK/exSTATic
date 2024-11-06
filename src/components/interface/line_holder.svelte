@@ -22,10 +22,10 @@
   );
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
   id="entry_holder"
   bind:this={entry_holder}
+  role="presentation"
   onclick={bubble("click")}
   ondblclick={bubble("dblclick")}
 >

@@ -54,6 +54,8 @@
       fill={cGet(d)}
       fill-opacity="0.8"
       class="z-10"
+      role="graphics-symbol"
+      aria-roledescription="circle"
       onmousemove={mouse_move}
       onmouseout={mouse_out}
     />

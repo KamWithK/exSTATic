@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from "svelte/legacy";
-
   import * as browser from "webextension-polyfill";
   import { timeToDateString } from "../calculations";
   import type { VNStorage } from "./vn_storage";
@@ -56,7 +54,7 @@
     document.title = title + " | exSTATic";
     vn_storage.instance_storage.updateDetails({ name: title });
   };
-  run(() => {
+  $effect(() => {
     setTitle(title);
   });
 

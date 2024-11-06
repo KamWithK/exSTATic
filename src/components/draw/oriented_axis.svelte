@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from "svelte/legacy";
-
   import { select } from "d3-selection";
   import type { ScaleBand, ScaleLinear, ScaleTime } from "d3-scale";
   // @ts-ignore
@@ -102,23 +100,20 @@
     return axis_extended.range(extended_range);
   };
 
-  const setupAxis = () => {
-    const axis_creator = positionedAxis(
-      "invert" in scale ? enlargedScale() : scale,
-    )
-      .tickSizeOuter(0)
-      .tickSize(0)
-      .tickFormat(formatter);
+  $effect(() => {
+    if (height && width && margin && position && axis) {
+      const axis_creator = positionedAxis(
+        "invert" in scale ? enlargedScale() : scale,
+      )
+        .tickSizeOuter(0)
+        .tickSize(0)
+        .tickFormat(formatter);
 
-    axis_creator(select(axis));
-    transitionAxis();
+      axis_creator(select(axis));
+      transitionAxis();
 
-    select(axis).select("path").style("stroke", "grey");
-  };
-
-  run(() => {
-    if (height && width && margin && position && axis)
-      setupAxis(), formatter, scale;
+      select(axis).select("path").style("stroke", "grey");
+    }
   });
 </script>
 

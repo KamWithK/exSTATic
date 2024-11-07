@@ -283,7 +283,12 @@
   role="feed"
   ondblclick={vn_storage.toggleActive.bind(vn_storage)}
 >
-  <LineHolder bind:lines on:click={() => (menu = false)} />
+  <LineHolder
+    bind:lines
+    onclick={() => (menu = false)}
+    on:dblclick
+    {ondblclick}
+  />
 </div>
 
 <style global lang="postcss">

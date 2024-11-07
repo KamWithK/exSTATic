@@ -18,10 +18,10 @@
     children,
   }: Props = $props();
 
-  let chars: string = $state(),
-    lines: string = $state(),
-    time: string = $state(),
-    speed: string = $state();
+  let chars: string = $state("0");
+  let lines: string = $state("0");
+  let time: string = $state("00:00:00");
+  let speed: string = $state("0");
 
   const getStat = (daily_stats: Stat | undefined, stat_key: keyof Stat) =>
     daily_stats != undefined && daily_stats.hasOwnProperty(stat_key)

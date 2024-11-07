@@ -23,8 +23,6 @@
     graph_title: string;
     x_label: string;
     y_label: string;
-    mouse_move: (event: MouseEvent) => void;
-    mouse_out: () => void;
   }
 
   let {
@@ -37,8 +35,6 @@
     graph_title,
     x_label,
     y_label,
-    mouse_move = $bindable(),
-    mouse_out = $bindable(),
   }: Props = $props();
 
   let groups = $derived(Array.from(group(data, c_accessor).keys()));
@@ -91,6 +87,9 @@
     (x_value: string) => x_value,
     format(".2s"),
   ];
+
+  let mouse_move: (event: MouseEvent) => void = $state(() => {});
+  let mouse_out: () => void = $state(() => {});
 </script>
 
 <div class="flex h-full w-full flex-col items-center bg-slate-900 p-12">

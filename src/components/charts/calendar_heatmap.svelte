@@ -18,8 +18,6 @@
     tooltip_accessors: TooltipAccessors;
     tooltip_formatters: TooltipFormatters;
     graph_title: string;
-    mouse_move: (event: MouseEvent) => void;
-    mouse_out: () => void;
   }
 
   let {
@@ -29,8 +27,6 @@
     tooltip_accessors,
     tooltip_formatters,
     graph_title,
-    mouse_move = $bindable(),
-    mouse_out = $bindable(),
   }: Props = $props();
 
   let [height, width, margin] = $state([1000, 1200, 10]);
@@ -89,6 +85,9 @@
     if (day_num === 5) return "F";
     if (day_num === 6) return "S";
   };
+
+  let mouse_move: (event: MouseEvent) => void = $state(() => {});
+  let mouse_out: () => void = $state(() => {});
 </script>
 
 <div class="flex h-full w-full flex-col items-center bg-slate-900 p-12">

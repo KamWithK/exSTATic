@@ -35,17 +35,14 @@
     );
   });
 
-  document.addEventListener("new_line", (event) => {
-    lines = [
-      ...lines,
-      [
-        vn_storage.uuid,
-        event["detail"]["line_id"],
-        event["detail"]["line"],
-        event["detail"]["time"],
-      ],
-    ];
-  });
+  document.addEventListener("new_line", (event) =>
+    lines.push([
+      vn_storage.uuid,
+      event["detail"]["line_id"],
+      event["detail"]["line"],
+      event["detail"]["time"],
+    ]),
+  );
 
   // UI events
   const setTitle = (title: string) => {

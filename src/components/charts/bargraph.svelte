@@ -14,7 +14,7 @@
   import type { DataEntry } from "../../data_wrangling/data_extraction";
 
   interface Props {
-    data: DataEntry[];
+    data: Partial<DataEntry>[];
     x_accessor: (d: Partial<DataEntry>) => string;
     y_accessor: (d: Partial<DataEntry>) => number;
     c_accessor: (d: Partial<DataEntry>) => string;

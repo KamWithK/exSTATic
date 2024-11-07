@@ -17,6 +17,7 @@
             nodejs
             npm
             typescript
+            prettier
           ];
         };
       }

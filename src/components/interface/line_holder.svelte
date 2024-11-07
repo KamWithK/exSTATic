@@ -1,7 +1,6 @@
 <script lang="ts">
   import Line from "./line.svelte";
-
-  import { onMount } from "svelte";
+  import { tick } from "svelte";
 
   interface Props {
     lines: string[][];
@@ -12,14 +11,10 @@
   let { lines = $bindable(), onclick, ondblclick }: Props = $props();
   let entry_holder: HTMLElement | undefined = $state();
 
-  const observer = new MutationObserver(() => {
-    if (!entry_holder) return;
-    window.scrollTo(0, entry_holder.scrollHeight);
-  });
+  $effect.pre(() => {
+    if (!entry_holder || lines.length === 0) return;
 
-  onMount(() => {
-    if (!entry_holder) return;
-    observer.observe(entry_holder, { childList: true, subtree: true });
+    tick().then(() => window.scrollTo(0, entry_holder?.scrollHeight ?? 0));
   });
 </script>
 

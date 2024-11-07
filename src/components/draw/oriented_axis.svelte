@@ -1,7 +1,6 @@
 <script lang="ts">
   import { select } from "d3-selection";
   import type { ScaleBand, ScaleLinear, ScaleTime } from "d3-scale";
-  // @ts-ignore
   import {
     axisTop,
     axisRight,

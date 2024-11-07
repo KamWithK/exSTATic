@@ -37,7 +37,7 @@
     label = "",
   }: Props = $props();
 
-  let axis: SVGGElement = $state();
+  let axis: SVGGElement | undefined = $state();
   let transform = $state("0,0");
 
   const positionedAxis = (

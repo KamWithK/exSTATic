@@ -13,11 +13,10 @@
       in
       {
         devShell = pkgs.mkShell {
-          buildInputs = [
-            # pkgs.fnm
-            pkgs.nodePackages.nodejs
-            pkgs.nodePackages.npm
-            pkgs.nodePackages.typescript
+          buildInputs = with pkgs.nodePackages; [
+            nodejs
+            npm
+            typescript
           ];
         };
       }

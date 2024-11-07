@@ -28,9 +28,9 @@
   }
 
   let {
-    scale,
-    height,
-    width,
+    scale = $bindable(),
+    height = $bindable(),
+    width = $bindable(),
     margin,
     position,
     formatter,

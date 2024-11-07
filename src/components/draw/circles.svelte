@@ -22,8 +22,8 @@
     cGet,
     x_scale,
     y_scale,
-    mouse_move,
-    mouse_out,
+    mouse_move = $bindable(),
+    mouse_out = $bindable(),
   }: Props = $props();
 
   let ready = $derived(

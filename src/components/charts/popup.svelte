@@ -33,6 +33,8 @@
     group_accessor: (d: Partial<DataEntry>) => string | number | undefined;
     tooltip_accessors: TooltipAccessors;
     tooltip_formatters: TooltipFormatters;
+    mouse_move: (event: MouseEvent) => void;
+    mouse_out: () => void;
   }
 
   let {
@@ -43,11 +45,13 @@
     group_accessor,
     tooltip_accessors,
     tooltip_formatters,
+    mouse_move = $bindable(),
+    mouse_out = $bindable(),
   }: Props = $props();
 
   Object.keys(tooltip_accessors).forEach((key) => (popup_tooltips[key] = ""));
 
-  export const mouse_move = (event: MouseEvent) => {
+  mouse_move = (event) => {
     const index = Number(
       (event.target as HTMLCanvasElement).getAttribute("data-index"),
     );
@@ -74,7 +78,7 @@
     show_popup = true;
   };
 
-  export const mouse_out = () => {
+  mouse_out = () => {
     show_popup = false;
   };
 </script>

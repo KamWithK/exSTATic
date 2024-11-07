@@ -8,8 +8,8 @@
     yGet: (d: DataEntry) => number | undefined;
     rGet: (d: DataEntry) => number | undefined;
     cGet: (d: DataEntry) => string;
-    x_scale: ScaleTime<number, number, never>;
-    y_scale: ScaleLinear<number, number>;
+    x_scale?: ScaleTime<number, number, never>;
+    y_scale?: ScaleLinear<number, number>;
     mouse_move: (event: MouseEvent) => void;
     mouse_out: () => void;
   }

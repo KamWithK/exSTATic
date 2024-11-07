@@ -75,8 +75,11 @@
   const xGet = (d: Partial<DataEntry>) => x_scale(x_accessor(d));
   const yGet = (d: Partial<DataEntry>) => y_scale && y_scale(y_accessor(d));
   const cGet = (d: Partial<DataEntry>) => hues[groups.indexOf(c_accessor(d))];
-  const hGet = (d: Partial<DataEntry>) =>
-    Math.max(0, safeHeight - margin - yGet(d)!);
+  const hGet = (d: Partial<DataEntry>) => {
+    const yValue = yGet(d);
+    if (!yValue) return;
+    return Math.max(0, safeHeight - margin - yValue);
+  };
 
   let bar_width = $derived(x_scale.bandwidth());
 

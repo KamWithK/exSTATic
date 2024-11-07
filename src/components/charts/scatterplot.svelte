@@ -97,7 +97,7 @@
   });
 
   const xGet = (d: Partial<DataEntry>) => x_scale && x_scale(x_accessor(d));
-  const yGet = (d: DataEntry) => y_scale!(y_accessor(d));
+  const yGet = (d: DataEntry) => y_scale && y_scale(y_accessor(d));
   const rGet = (d: DataEntry) =>
     r_accessor && r_scale && r_scale(r_accessor(d));
   const cGet = (d: DataEntry) => hues[groups.indexOf(c_accessor(d))];

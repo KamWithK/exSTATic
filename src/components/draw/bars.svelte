@@ -4,9 +4,9 @@
   interface Props {
     data: Partial<DataEntry>[];
     xGet: (d: Partial<DataEntry>) => number | undefined;
-    yGet: (d: Partial<DataEntry>) => number;
-    hGet: (d: Partial<DataEntry>) => number;
-    cGet: (d: Partial<DataEntry>) => string | number;
+    yGet: (d: Partial<DataEntry>) => number | undefined;
+    hGet: (d: Partial<DataEntry>) => number | undefined;
+    cGet: (d: Partial<DataEntry>) => string | number | undefined;
     bar_width: number;
     mouse_move: (event: MouseEvent) => void;
     mouse_out: () => void;
@@ -40,7 +40,7 @@
       y={yGet(d)}
       height={hGet(d)}
       width={bar_width}
-      fill={cGet(d).toString()}
+      fill={cGet(d)?.toString()}
       fill-opacity="0.8"
       class="z-10"
       role="graphics-symbol"

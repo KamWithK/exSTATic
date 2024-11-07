@@ -14,7 +14,8 @@
     scale:
       | ScaleBand<string>
       | ScaleLinear<number, number>
-      | ScaleTime<number, number>;
+      | ScaleTime<number, number>
+      | undefined;
     height: number;
     width: number;
     margin: number;
@@ -71,6 +72,8 @@
   };
 
   const enlargedScale = () => {
+    if (!scale) return;
+
     const axis_scale = scale.copy();
     const range = axis_scale.range();
     let excess;
@@ -101,7 +104,7 @@
   };
 
   $effect(() => {
-    if (height && width && margin && position && axis) {
+    if (height && width && margin && position && axis && scale) {
       const axis_creator = positionedAxis(
         "invert" in scale ? enlargedScale() : scale,
       )

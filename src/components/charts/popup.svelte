@@ -29,8 +29,8 @@
     data: Partial<DataEntry>[];
     groups: string[] | undefined;
     hues: string[] | undefined;
-    date_accessor?: ((d: Partial<DataEntry>) => Date) | undefined;
-    group_accessor: (d: Partial<DataEntry>) => string | number;
+    date_accessor?: (d: Partial<DataEntry>) => Date;
+    group_accessor: (d: Partial<DataEntry>) => string | number | undefined;
     tooltip_accessors: TooltipAccessors;
     tooltip_formatters: TooltipFormatters;
   }
@@ -56,14 +56,14 @@
     popup_x = event.layerX;
     popup_y = event.layerY;
 
-    popup_name = !!groups ? group_accessor(data_entry).toString() : "";
+    popup_name = !!groups ? (group_accessor(data_entry)?.toString() ?? "") : "";
     popup_date = date_accessor
       ? timeFormat("%d %B %Y")(date_accessor(data_entry))
       : "";
     popout_color =
       hues === undefined
-        ? group_accessor(data_entry).toString()
-        : hues[groups!.indexOf(group_accessor(data_entry).toString())];
+        ? (group_accessor(data_entry)?.toString() ?? "")
+        : hues[groups!.indexOf(group_accessor(data_entry)?.toString() ?? "")];
 
     Object.entries(tooltip_accessors).forEach(([key, value_accessor]) => {
       popup_tooltips[key] = tooltip_formatters[key as TooltipKey](

@@ -70,10 +70,11 @@
   });
 
   const [xGet, yGet] = [
-    (d: Partial<DataEntry>) => x_scale(xAccessor(d).toString())!,
-    (d: Partial<DataEntry>) => y_scale(yAccessor(d).toString())!,
+    (d: Partial<DataEntry>) => x_scale(xAccessor(d).toString()),
+    (d: Partial<DataEntry>) => y_scale(yAccessor(d).toString()),
   ];
-  const cGet = (d: Partial<DataEntry>) => colorScale!(metric_accessor(d)!);
+  const cGet = (d: Partial<DataEntry>) =>
+    colorScale && colorScale(metric_accessor(d));
 
   const dayCode = (day_num: number) => {
     if (day_num === 0) return "S";

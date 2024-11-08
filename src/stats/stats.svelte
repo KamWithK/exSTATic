@@ -7,7 +7,10 @@
   import { format } from "d3-format";
   import { parseISO, startOfYear, addYears, subYears, getYear } from "date-fns";
   import type { DataEntry } from "../data_wrangling/data_extraction";
-  import type { TooltipFormatters } from "../components/charts/popup.svelte";
+  import type {
+    TooltipAccessors,
+    TooltipFormatters,
+  } from "../components/charts/popup.svelte";
 
   const SECS_TO_HRS = 60 * 60;
 
@@ -15,27 +18,34 @@
     data: DataEntry[];
   }
 
-  let { data = $bindable() }: Props = $props();
+  let { data }: Props = $props();
 
-  let client_groups;
-  client_groups = groups(data, (d) => JSON.stringify([d.uuid, d.date]));
-  data = client_groups.map(([, v]) => ({
-    uuid:
-      v[0].type === "mokuro" ? JSON.parse(v[0].given_identifier)[0] : v[0].uuid,
-    name:
-      v[0].type === "mokuro" && v[0].name === v[0].given_identifier
-        ? JSON.parse(v[0].given_identifier)[0]
-        : v[0].name,
-    given_identifier: v[0].given_identifier,
-    type: v[0].type,
-    date: v[0].date,
-    time_read: sum(v, (d) => d.time_read),
-    chars_read: sum(v, (d) => d.chars_read),
-  }));
+  let client_groups = $derived(
+    groups(data, (d) => JSON.stringify([d.uuid, d.date])),
+  );
+  let processedData = $derived(
+    client_groups.map(([, v]) => ({
+      uuid:
+        v[0].type === "mokuro"
+          ? JSON.parse(v[0].given_identifier)[0]
+          : v[0].uuid,
+      name:
+        v[0].type === "mokuro" && v[0].name === v[0].given_identifier
+          ? JSON.parse(v[0].given_identifier)[0]
+          : v[0].name,
+      given_identifier: v[0].given_identifier,
+      type: v[0].type,
+      date: v[0].date,
+      time_read: sum(v, (d) => d.time_read),
+      chars_read: sum(v, (d) => d.chars_read),
+    })),
+  );
 
   const currentTime = new Date();
   const currentYearStart = startOfYear(currentTime);
-  const earliestStart = min(data, (d) => parseISO(d.date)) ?? currentTime;
+  const earliestStart = $derived(
+    min(processedData, (d) => parseISO(d.date)) ?? currentTime,
+  );
 
   let selectedYearStart = $state(currentYearStart);
   let selectedYearEnd = $derived(addYears(selectedYearStart, 1));
@@ -48,8 +58,8 @@
 
   let filteredData = $derived(
     enableAllTimeView
-      ? data
-      : data
+      ? processedData
+      : processedData
           .filter(
             (d) =>
               selectedYearStart <= parseISO(d.date) &&
@@ -67,35 +77,23 @@
     }
   };
 
-  let uuid_groups: [string, DataEntry[]][] = $derived(
-      groups(filteredData, (d) => d.uuid),
-    ),
-    uuid_summary: {
-      name: string;
-      time_read: number;
-      chars_read: number;
-    }[] = $derived(
-      uuid_groups.map(([, v]) => ({
-        name: v[0].name,
-        time_read: sum(v, (d) => d.time_read),
-        chars_read: sum(v, (d) => d.chars_read),
-      })),
-    );
+  let uuid_groups = $derived(groups(filteredData, (d) => d.uuid));
+  let uuid_summary = $derived(
+    uuid_groups.map(([, v]) => ({
+      name: v[0].name,
+      time_read: sum(v, (d) => d.time_read),
+      chars_read: sum(v, (d) => d.chars_read),
+    })),
+  );
 
-  let date_groups: [string, DataEntry[]][] = $derived(
-      groups(filteredData, (d) => d.date),
-    ),
-    date_summary: {
-      date: string;
-      time_read: number;
-      chars_read: number;
-    }[] = $derived(
-      date_groups.map(([, v]) => ({
-        date: v[0].date,
-        time_read: sum(v, (d) => d.time_read),
-        chars_read: sum(v, (d) => d.chars_read),
-      })),
-    );
+  let date_groups = $derived(groups(filteredData, (d) => d.date));
+  let date_summary = $derived(
+    date_groups.map(([, v]) => ({
+      date: v[0].date,
+      time_read: sum(v, (d) => d.time_read),
+      chars_read: sum(v, (d) => d.chars_read),
+    })),
+  );
 
   const name_accessor = (d: Partial<DataEntry>) => d.name!;
   const date_accessor = (d: Partial<DataEntry>) => parseISO(d.date!);
@@ -104,7 +102,7 @@
   const read_speed_accessor = (d: Partial<DataEntry>) =>
     (d.chars_read! / d.time_read!) * SECS_TO_HRS;
 
-  const tooltip_accessors = {
+  const tooltip_accessors: TooltipAccessors = {
     "Chars Read": chars_read_accessor,
     "Time Read": time_read_accessor,
     "Read Speed": read_speed_accessor,

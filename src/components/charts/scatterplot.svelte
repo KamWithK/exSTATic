@@ -43,7 +43,7 @@
   let radius = 60;
 
   let groups = $derived(Array.from(group(data, c_accessor).keys()));
-  let hues: string[] = $derived(
+  let hues = $derived(
     iwanthue(groups.length, {
       colorSpace: [0, 360, 0, 100, 50, 100],
       clustering: "force-vector",

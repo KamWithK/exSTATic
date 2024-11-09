@@ -37,7 +37,8 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "vtslsPatch": "vtslsPatch"
       }
     },
     "systems": {
@@ -53,6 +54,18 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "vtslsPatch": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-CjDvAFIHX5oGy4SDIZ38RYmdZqk7e5BRQ4eXt6iKLhg=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/347284.patch"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/347284.patch"
       }
     }
   },

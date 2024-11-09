@@ -79,7 +79,9 @@ Here's [my Ko-Fi](https://ko-fi.com/kamwithk) if you'd like to support.
 **NOTE:** Chrome and Firefox have ever so different Manifest V3 implementations, so require different Manifest files and so are build separately
 
 Make sure to start by having all the correct packages installed - `npm install`
-Each time you make a change run `npm run build` (this will take 2x longer since a separate Firefox and Chrome build are generated, this could potentially be improved by building once and copying everything apart from the manifest file over sometime in the future)
+Each time you make a change run `npm run build`
+
+**NOTE**: Specify your browser for faster build times, i.e. `npm run build -- firefox`
 
 To have live browser extension updates:
 * **Firefox** - `npm run web-ext-firefox -- run`

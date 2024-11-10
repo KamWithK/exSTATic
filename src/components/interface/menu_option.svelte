@@ -21,7 +21,7 @@
     description = "",
     units = "",
     type = "number",
-    value = $bindable(undefined),
+    value = $bindable(),
     root_css = undefined,
   }: Props = $props();
 

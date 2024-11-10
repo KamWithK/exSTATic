@@ -44,10 +44,21 @@
     }
   };
 
-  onMount(() => {
+  onMount(async () => {
     if (media_storage.properties.hasOwnProperty(id) && input_element) {
       value = media_storage.properties[id];
       input_element.value = (value ?? "").toString();
+
+      if (root_css !== undefined) {
+        document.documentElement.style.setProperty(
+          root_css,
+          `${value}${units}`,
+        );
+      }
+    } else {
+      await media_storage.type_storage.updateProperties({
+        [id]: value,
+      });
     }
 
     if (input_element?.value !== undefined) {

@@ -34,13 +34,8 @@
       document.documentElement.style.setProperty(root_css, `${value}${units}`);
     }
 
-    const properties: { [key: string]: string | undefined } = {};
-    properties[id] = value;
-    if (
-      media_storage !== undefined &&
-      media_storage.type_storage !== undefined
-    ) {
-      await media_storage.type_storage.updateProperties(properties);
+    if (media_storage && media_storage.type_storage) {
+      await media_storage.type_storage.updateProperties({ [id]: value });
     }
   };
 

@@ -88,10 +88,10 @@
   class="{show_popup ? 'absolute' : 'hidden'} z-50 p-3"
   style="left: {popup_x}px;top: {popup_y}px; background-color: {popout_color}; pointer-events: none"
 >
-  {#if popup_name !== undefined}
+  {#if popup_name}
     <p id="popup_title" class="font-semibold">{popup_name}</p>
   {/if}
-  {#if popup_date !== undefined && popup_date !== "" && popup_date !== "NaN  0NaN"}
+  {#if popup_date && popup_date !== "NaN  0NaN"}
     <p id="popup_date">{popup_date}</p>
   {/if}
 

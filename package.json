@@ -17,7 +17,7 @@
     "d3": "^7.8.5",
     "date-fns": "^2.30.0",
     "esbuild": "^0.19.5",
-    "esbuild-svelte": "^0.8.2",
+    "esbuild-svelte": "^0.9.0",
     "iwanthue": "^2.0.0",
     "papaparse": "^5.4.1",
     "postcss": "^8.4.31",

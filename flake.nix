@@ -27,7 +27,7 @@
             npm
             typescript
             prettier
-            patchedPkgs.vtsls
+            pkgs.vtsls
           ];
         };
       }

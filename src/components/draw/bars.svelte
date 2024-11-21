@@ -1,33 +1,52 @@
 <script lang="ts">
-    import type { ScaleBand, ScaleLinear } from "d3";
-    import type { DataEntry } from "../../data_wrangling/data_extraction";
+  import type { DataEntry } from "../../data_wrangling/data_extraction";
 
-    export let data: Partial<DataEntry>[]
+  interface Props {
+    data: Partial<DataEntry>[];
+    xGet: (d: Partial<DataEntry>) => number | undefined;
+    yGet: (d: Partial<DataEntry>) => number | undefined;
+    hGet: (d: Partial<DataEntry>) => number | undefined;
+    cGet: (d: Partial<DataEntry>) => string | number | undefined;
+    bar_width: number;
+    mouse_move: (event: MouseEvent) => void;
+    mouse_out: () => void;
+  }
 
-    export let xGet: (d: Partial<DataEntry>) => number | undefined
-    export let yGet: (d: Partial<DataEntry>) => number
-    export let hGet: (d: Partial<DataEntry>) => number, cGet: (d: Partial<DataEntry>) => string | number
-    export let x_scale: ScaleBand<string>, y_scale: ScaleLinear<number, number>
-    export let bar_width: number
+  let {
+    data = $bindable(),
+    xGet,
+    yGet,
+    hGet,
+    cGet,
+    bar_width,
+    mouse_move,
+    mouse_out,
+  }: Props = $props();
 
-    export let mouse_move: (event: MouseEvent) => void, mouse_out: () => void
-
-    let ready: boolean = false
-    $: ready = xGet !== undefined && yGet !== undefined
-        && hGet !== undefined && cGet !== undefined,
-        x_scale, y_scale
-
-    // Forced refreshes on resize
-    $: data = data, x_scale, y_scale
+  let ready: boolean = $derived(
+    xGet !== undefined &&
+      yGet !== undefined &&
+      hGet !== undefined &&
+      cGet !== undefined,
+  );
 </script>
 
-<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 {#if ready}
-    {#each data as d, i }
-        <rect data-index={i}
-            x={xGet(d)} y={yGet(d)} height={hGet(d)} width={bar_width}
-            fill={cGet(d).toString()} fill-opacity=0.8 class="z-10"
-            on:mousemove={mouse_move} on:mouseout={mouse_out}
-        />
-    {/each}
+  {#each data as d, i}
+    <rect
+      data-index={i}
+      x={xGet(d)}
+      y={yGet(d)}
+      height={hGet(d)}
+      width={bar_width}
+      fill={cGet(d)?.toString()}
+      fill-opacity="0.8"
+      class="z-10"
+      role="graphics-symbol"
+      aria-roledescription="bar"
+      onmousemove={mouse_move}
+      onmouseout={mouse_out}
+    />
+  {/each}
 {/if}

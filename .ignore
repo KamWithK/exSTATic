@@ -1,6 +1,6 @@
 test_data
-docs
+webextension/docs
 example_screenshots
-fonts
+webextension/fonts
 LICENSE
-package-lock.json
+webextension/package-lock.json

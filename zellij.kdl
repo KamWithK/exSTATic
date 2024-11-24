@@ -14,9 +14,11 @@ layout {
   }
   tab name="Build" split_direction="vertical" {
     pane command="npm" {
+      cwd "./webextension"
       args "run" "build" "--" "firefox"
     }
     pane command="npm" {
+      cwd "./webextension"
       args "run" "web-ext-firefox" "--" "run"
     }
   }

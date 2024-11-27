@@ -19,6 +19,7 @@
             typescript
             prettier
             pkgs.vtsls
+            web-ext
           ];
         };
       }

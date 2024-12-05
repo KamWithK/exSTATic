@@ -47,7 +47,7 @@ fn main() -> Result<(), eframe::Error> {
 
     let text_board = TextBoard {
         identifier: (*identifier_receiver.borrow()).clone(),
-        identifier_sender: identifier_sender,
+        identifier_sender,
     };
 
     // Create a new thread to monitor the clipboard on
@@ -63,9 +63,9 @@ fn main() -> Result<(), eframe::Error> {
     });
 
     // Start GUI
-    return eframe::run_native(
+    eframe::run_native(
         "TextBoard",
         NativeOptions::default(),
-        Box::new(|_cc| Box::new(text_board)),
-    );
+        Box::new(|_cc| Ok(Box::new(text_board))),
+    )
 }

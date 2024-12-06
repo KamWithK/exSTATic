@@ -9,41 +9,42 @@
     {
       nixpkgs,
       utils,
-      naersk,
       ...
     }:
     utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = import nixpkgs { inherit system; };
-        naersk-lib = pkgs.callPackage naersk { };
-        libPath =
-          with pkgs;
-          lib.makeLibraryPath [
-            libxkbcommon
-            libGL
-
-            # WINIT_UNIX_BACKEND=wayland
-            wayland
-
-            # WINIT_UNIX_BACKEND=x11
-            xorg.libXcursor
-            xorg.libXrandr
-            xorg.libXi
-            xorg.libX11
-          ];
       in
       {
-        defaultPackage = naersk-lib.buildPackage {
-          src = ./.;
-          nativeBuildInputs = [ pkgs.makeWrapper ];
-          postInstall = ''
-            wrapProgram "$out/bin/textboard" --prefix LD_LIBRARY_PATH : "${libPath}"
-          '';
-        };
+        defaultPackage =
+          with pkgs;
+          rustPlatform.buildRustPackage {
+            name = "textboard";
+            src = ./.;
+            cargoLock.lockFile = ./Cargo.lock;
+            nativeBuildInputs = [
+              pkg-config
+              autoPatchelfHook
+            ];
+            buildInputs = [ (lib.getLib stdenv.cc.cc) ];
+            runtimeDependencies = [
+              wayland
+              libxkbcommon
+              libGL
+              xorg.libXcursor
+              xorg.libXrandr
+              xorg.libXi
+              xorg.libX11
+            ];
+          };
         devShell =
           with pkgs;
           mkShell {
+            nativeBuildInputs = [
+              pkg-config
+              autoPatchelfHook
+            ];
             buildInputs = [
               cargo
               rustc
